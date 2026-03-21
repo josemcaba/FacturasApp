@@ -164,45 +164,80 @@ namespace FacturasApp.UI
             dgvFacturas.Columns.AddRange(new DataGridViewColumn[]
             {
                 new DataGridViewTextBoxColumn
-                    { Name = "colNumero",  HeaderText = "Nº Factura",
-                      DataPropertyName = "NumeroFactura",   Width = 120 },
+                    { Name = "colNumero",   HeaderText = "Nº Factura",
+                      DataPropertyName = "NumeroFactura",   Width = 110 },
                 new DataGridViewTextBoxColumn
-                    { Name = "colFecha",   HeaderText = "Fecha",
-                      DataPropertyName = "FechaFormateada", Width = 90  },
+                    { Name = "colFecha",    HeaderText = "Fecha",
+                      DataPropertyName = "FechaFormateada", Width = 85  },
                 new DataGridViewTextBoxColumn
-                    { Name = "colEmisor",  HeaderText = "Emisor",
-                      DataPropertyName = "EmisorNombre",    Width = 160 },
+                    { Name = "colEmisor",   HeaderText = "Emisor",
+                      DataPropertyName = "EmisorNombre",    Width = 140 },
                 new DataGridViewTextBoxColumn
-                    { Name = "colNif",     HeaderText = "NIF",
-                      DataPropertyName = "EmisorNif",       Width = 100 },
+                    { Name = "colNifEmisor", HeaderText = "NIF Emisor",
+                      DataPropertyName = "EmisorNif",       Width = 95  },
                 new DataGridViewTextBoxColumn
-                    { Name = "colBase",    HeaderText = "Base",
+                    { Name = "colCliente",  HeaderText = "Cliente",
+                      DataPropertyName = "ClienteNombre",   Width = 140 },
+                new DataGridViewTextBoxColumn
+                    { Name = "colNifCliente", HeaderText = "NIF Cliente",
+                      DataPropertyName = "ClienteNif",      Width = 95  },
+                new DataGridViewTextBoxColumn
+                    { Name = "colBase",     HeaderText = "Base",
                       DataPropertyName = "BaseFormateada",  Width = 90,
                       DefaultCellStyle  = { Alignment =
                           DataGridViewContentAlignment.MiddleRight }},
                 new DataGridViewTextBoxColumn
-                    { Name = "colIva",     HeaderText = "IVA %",
-                      DataPropertyName = "PorcentajeIVA",   Width = 60,
+                    { Name = "colIvaPct",   HeaderText = "% IVA",
+                      DataPropertyName = "PorcentajeIVA",   Width = 55,
                       DefaultCellStyle  = { Alignment =
                           DataGridViewContentAlignment.MiddleRight }},
                 new DataGridViewTextBoxColumn
-                    { Name = "colTotal",   HeaderText = "Total",
+                    { Name = "colIvaCuota", HeaderText = "Cuota IVA",
+                      DataPropertyName = "CuotaIvaFmt",     Width = 90,
+                      DefaultCellStyle  = { Alignment =
+                          DataGridViewContentAlignment.MiddleRight }},
+                new DataGridViewTextBoxColumn
+                    { Name = "colIrpfPct",  HeaderText = "% IRPF",
+                      DataPropertyName = "PorcentajeIRPF",  Width = 60,
+                      DefaultCellStyle  = { Alignment =
+                          DataGridViewContentAlignment.MiddleRight }},
+                new DataGridViewTextBoxColumn
+                    { Name = "colIrpfCuota", HeaderText = "Cuota IRPF",
+                      DataPropertyName = "CuotaIrpfFmt",    Width = 90,
+                      DefaultCellStyle  = { Alignment =
+                          DataGridViewContentAlignment.MiddleRight }},
+                new DataGridViewTextBoxColumn
+                    { Name = "colREPct",    HeaderText = "% RE",
+                      DataPropertyName = "PorcentajeRE",    Width = 55,
+                      DefaultCellStyle  = { Alignment =
+                          DataGridViewContentAlignment.MiddleRight }},
+                new DataGridViewTextBoxColumn
+                    { Name = "colRECuota",  HeaderText = "Cuota RE",
+                      DataPropertyName = "CuotaREFmt",      Width = 90,
+                      DefaultCellStyle  = { Alignment =
+                          DataGridViewContentAlignment.MiddleRight }},
+                new DataGridViewTextBoxColumn
+                    { Name = "colTotal",    HeaderText = "Total",
                       DataPropertyName = "TotalFormateado", Width = 100,
                       DefaultCellStyle  = { Alignment =
                           DataGridViewContentAlignment.MiddleRight }},
                 new DataGridViewTextBoxColumn
-                    { Name = "colEstado",  HeaderText = "Estado",
+                    { Name = "colTotalesOk", HeaderText = "Total OK",
+                      DataPropertyName = "TotalesOk",       Width = 90,
+                      DefaultCellStyle  = { Alignment =
+                          DataGridViewContentAlignment.MiddleCenter }},
+                new DataGridViewTextBoxColumn
+                    { Name = "colEstado",   HeaderText = "Estado",
                       DataPropertyName = "EstadoTexto",     Width = 130 },
                 new DataGridViewCheckBoxColumn
-                    { Name = "colOcr",     HeaderText = "OCR",
+                    { Name = "colOcr",      HeaderText = "OCR",
                       DataPropertyName = "ExtractedByOcr",  Width = 45  },
                 new DataGridViewTextBoxColumn
-                    { Name = "colArchivo", HeaderText = "Archivo",
+                    { Name = "colArchivo",  HeaderText = "Archivo",
                       DataPropertyName = "NombreArchivo",   Width = 180 },
-            });
-
-            dgvFacturas.CellDoubleClick += DgvFacturas_CellDoubleClick;
-            dgvFacturas.RowPrePaint += DgvFacturas_RowPrePaint;
+                        });
+                        dgvFacturas.CellDoubleClick += DgvFacturas_CellDoubleClick;
+                        dgvFacturas.RowPrePaint += DgvFacturas_RowPrePaint;
         }
 
         private void ConfigurarComboEstado()
@@ -254,7 +289,7 @@ namespace FacturasApp.UI
             int porOcr = facturas.Count(f => f.ExtractedByOcr);
             decimal totalEuros = facturas
                 .Where(f => f.Estado != EstadoFactura.Error)
-                .Sum(f => f.Total);
+                .Sum(f => f.TotalExtraido);
 
             lblResumen.Text =
                 $"Total: {total}  |  ✔ OK: {ok}  |  " +

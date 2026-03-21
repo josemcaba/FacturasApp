@@ -13,12 +13,17 @@ namespace FacturasApp.UI
         private CheckBox chkOcr = new();
         private TextBox txtEmisorNombre = new();
         private TextBox txtEmisorNif = new();
-        private TextBox txtEmisorDir = new();
         private TextBox txtClienteNombre = new();
         private TextBox txtClienteNif = new();
         private TextBox txtBase = new();
         private TextBox txtPorcentajeIva = new();
         private TextBox txtCuotaIva = new();
+        private TextBox txtPorcentajeIrpf = new();
+        private TextBox txtCuotaIrpf = new();
+        private TextBox txtPorcentajeRe = new();
+        private TextBox txtCuotaRe = new();
+        private TextBox txtTotalCalculado = new();
+        private TextBox txtDiferencia = new();
         private TextBox txtTotal = new();
         private TextBox txtRutaArchivo = new();
         private Panel panelError = new();
@@ -97,10 +102,8 @@ namespace FacturasApp.UI
             AgregarSeparador("Emisor");
             txtEmisorNombre.ReadOnly = true;
             txtEmisorNif.ReadOnly = true;
-            txtEmisorDir.ReadOnly = true;
             AgregarFila("Nombre:", txtEmisorNombre);
             AgregarFila("NIF:", txtEmisorNif);
-            AgregarFila("Dirección:", txtEmisorDir);
 
             // ── Cliente ───────────────────────────────────────────────────────
             AgregarSeparador("Cliente");
@@ -114,10 +117,24 @@ namespace FacturasApp.UI
             txtBase.ReadOnly = true;
             txtPorcentajeIva.ReadOnly = true;
             txtCuotaIva.ReadOnly = true;
+            txtPorcentajeIrpf.ReadOnly = true;
+            txtCuotaIrpf.ReadOnly = true;
+            txtPorcentajeRe.ReadOnly = true;
+            txtCuotaRe.ReadOnly = true;
+            txtTotalCalculado.ReadOnly = true;
+            txtDiferencia.ReadOnly = true;
             txtTotal.ReadOnly = true;
+
             AgregarFila("Base imponible:", txtBase);
             AgregarFila("% IVA:", txtPorcentajeIva);
             AgregarFila("Cuota IVA:", txtCuotaIva);
+            AgregarFila("% IRPF:", txtPorcentajeIrpf);
+            AgregarFila("Cuota IRPF:", txtCuotaIrpf);
+            AgregarFila("% RE:", txtPorcentajeRe);
+            AgregarFila("Cuota RE:", txtCuotaRe);
+            AgregarFila("Total factura:", txtTotal);
+            AgregarFila("Total calculado:", txtTotalCalculado);
+            AgregarFila("Diferencia:", txtDiferencia);
             AgregarFila("Total:", txtTotal);
 
             // ── Archivo ───────────────────────────────────────────────────────
@@ -174,7 +191,6 @@ namespace FacturasApp.UI
 
             txtEmisorNombre.Text = _factura.Emisor.Nombre;
             txtEmisorNif.Text = _factura.Emisor.NIF;
-            txtEmisorDir.Text = _factura.Emisor.Direccion ?? string.Empty;
 
             txtClienteNombre.Text = _factura.Receptor.Nombre;
             txtClienteNif.Text = _factura.Receptor.NIF;
@@ -182,7 +198,19 @@ namespace FacturasApp.UI
             txtBase.Text = $"{_factura.BaseImponible:N2} €";
             txtPorcentajeIva.Text = $"{_factura.PorcentajeIVA} %";
             txtCuotaIva.Text = $"{_factura.CuotaIVA:N2} €";
-            txtTotal.Text = $"{_factura.Total:N2} €";
+            txtTotal.Text = $"{_factura.TotalExtraido:N2} €";
+
+            txtPorcentajeIrpf.Text = $"{_factura.PorcentajeIRPF} %";
+            txtCuotaIrpf.Text = $"{_factura.CuotaIRPF:N2} €";
+            txtPorcentajeRe.Text = $"{_factura.PorcentajeRE} %";
+            txtCuotaRe.Text = $"{_factura.CuotaRE:N2} €";
+            txtTotalCalculado.Text = $"{_factura.TotalCalculado:N2} €";
+            txtDiferencia.Text = $"{_factura.DiferenciaTotal:N2} €";
+
+            // Color rojo en diferencia si los totales no coinciden
+            txtDiferencia.BackColor = _factura.TotalesCoinciden
+                ? System.Drawing.Color.FromArgb(226, 239, 218)
+                : System.Drawing.Color.FromArgb(252, 228, 214);
 
             txtRutaArchivo.Text = _factura.RutaArchivo;
 
@@ -204,6 +232,11 @@ namespace FacturasApp.UI
             // Desactivar botón PDF si el archivo viene de Excel
             btnAbrirPdf.Enabled = _factura.RutaArchivo.EndsWith(
                 ".pdf", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private void InitializeComponent()
+        {
+
         }
 
         private void btnAbrirPdf_Click(object? sender, EventArgs e)

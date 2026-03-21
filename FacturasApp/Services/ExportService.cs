@@ -29,13 +29,15 @@ namespace FacturasApp.Services
 
             string[] columnas =
             {
-                "Nº Factura", "Fecha", "Emisor", "NIF Emisor",
-                "Cliente", "NIF Cliente", "Base Imponible",
-                "% IVA", "Cuota IVA", "Total", "Estado",
-                "Via OCR", "Archivo"
+                "Nº Factura", "Fecha Factura", "Nombre Emisor", "NIF Emisor",
+                "Nombre Cliente", "NIF Cliente",
+                "Base Imponible", "% IVA", "Cuota IVA",
+                "% IRPF", "Cuota IRPF",
+                "% RE", "Cuota RE",
+                "Total Factura", "Estado", "Via OCR", "Archivo Factura"
             };
 
-            // ── Cabecera ──────────────────────────────────────────────────────
+            // ── Cabecera ──────────────────────────────────────────────────────────
             for (int i = 0; i < columnas.Length; i++)
             {
                 var celda = hoja.Cell(1, i + 1);
@@ -47,7 +49,7 @@ namespace FacturasApp.Services
                     XLAlignmentHorizontalValues.Center;
             }
 
-            // ── Datos ─────────────────────────────────────────────────────────
+            // ── Datos ─────────────────────────────────────────────────────────────
             for (int i = 0; i < facturas.Count; i++)
             {
                 var f = facturas[i];
@@ -61,21 +63,26 @@ namespace FacturasApp.Services
                 hoja.Cell(fila, 5).Value = f.Receptor.Nombre;
                 hoja.Cell(fila, 6).Value = f.Receptor.NIF;
                 hoja.Cell(fila, 7).Value = f.BaseImponible;
-                hoja.Cell(fila, 8).Value = f.PorcentajeIVA / 100;
+                hoja.Cell(fila, 8).Value = f.PorcentajeIVA / 100m;
                 hoja.Cell(fila, 9).Value = f.CuotaIVA;
-                hoja.Cell(fila, 10).Value = f.Total;
-                hoja.Cell(fila, 11).Value = f.Estado.ToString();
-                hoja.Cell(fila, 12).Value = f.ExtractedByOcr ? "Sí" : "No";
-                hoja.Cell(fila, 13).Value = Path.GetFileName(f.RutaArchivo);
+                hoja.Cell(fila, 10).Value = f.PorcentajeIRPF / 100m;
+                hoja.Cell(fila, 11).Value = f.CuotaIRPF;
+                hoja.Cell(fila, 12).Value = f.PorcentajeRE / 100m;
+                hoja.Cell(fila, 13).Value = f.CuotaRE;
+                hoja.Cell(fila, 14).Value = f.TotalExtraido;
+                hoja.Cell(fila, 15).Value = f.Estado.ToString();
+                hoja.Cell(fila, 16).Value = f.ExtractedByOcr ? "Sí" : "No";
+                hoja.Cell(fila, 17).Value = Path.GetFileName(f.RutaArchivo);
 
                 // Formato numérico
                 string fmtMoneda = "#,##0.00 €";
-                hoja.Cell(fila, 7).Style.NumberFormat.Format = fmtMoneda;
-                hoja.Cell(fila, 9).Style.NumberFormat.Format = fmtMoneda;
-                hoja.Cell(fila, 10).Style.NumberFormat.Format = fmtMoneda;
-                hoja.Cell(fila, 8).Style.NumberFormat.Format = "0%";
+                string fmtPct = "0.00%";
+                foreach (int col in new[] { 7, 9, 11, 13, 14 })
+                    hoja.Cell(fila, col).Style.NumberFormat.Format = fmtMoneda;
+                foreach (int col in new[] { 8, 10, 12 })
+                    hoja.Cell(fila, col).Style.NumberFormat.Format = fmtPct;
 
-                // Color de fila según estado
+                // Color por estado
                 var color = f.Estado switch
                 {
                     EstadoFactura.OK => XLColor.FromHtml("#E2EFDA"),
@@ -83,32 +90,37 @@ namespace FacturasApp.Services
                     EstadoFactura.Error => XLColor.FromHtml("#FCE4D6"),
                     _ => XLColor.White
                 };
-
                 hoja.Range(fila, 1, fila, columnas.Length)
                     .Style.Fill.BackgroundColor = color;
             }
 
-            // ── Fila de totales ───────────────────────────────────────────────
+            // ── Fila de totales ───────────────────────────────────────────────────
             int filaTotal = facturas.Count + 2;
             hoja.Cell(filaTotal, 6).Value = "TOTALES";
             hoja.Cell(filaTotal, 6).Style.Font.Bold = true;
 
-            hoja.Cell(filaTotal, 7).FormulaA1 = $"=SUM(G2:G{filaTotal - 1})";
-            hoja.Cell(filaTotal, 9).FormulaA1 = $"=SUM(I2:I{filaTotal - 1})";
-            hoja.Cell(filaTotal, 10).FormulaA1 = $"=SUM(J2:J{filaTotal - 1})";
+            // Totales de columnas numéricas
+            Dictionary<int, string> colsTotal = new()
+    {
+        { 7,  $"=SUM(G2:G{filaTotal - 1})" },  // Base
+        { 9,  $"=SUM(I2:I{filaTotal - 1})" },  // Cuota IVA
+        { 11, $"=SUM(K2:K{filaTotal - 1})" },  // Cuota IRPF
+        { 13, $"=SUM(M2:M{filaTotal - 1})" },  // Cuota RE
+        { 14, $"=SUM(N2:N{filaTotal - 1})" },  // Total
+    };
 
-            foreach (int col in new[] { 7, 9, 10 })
+            foreach (var kvp in colsTotal)
             {
-                hoja.Cell(filaTotal, col).Style.NumberFormat.Format = "#,##0.00 €";
-                hoja.Cell(filaTotal, col).Style.Font.Bold = true;
-                hoja.Cell(filaTotal, col).Style.Fill.BackgroundColor =
+                hoja.Cell(filaTotal, kvp.Key).FormulaA1 = kvp.Value;
+                hoja.Cell(filaTotal, kvp.Key).Style.NumberFormat.Format = "#,##0.00 €";
+                hoja.Cell(filaTotal, kvp.Key).Style.Font.Bold = true;
+                hoja.Cell(filaTotal, kvp.Key).Style.Fill.BackgroundColor =
                     XLColor.FromHtml("#BDD7EE");
             }
 
             hoja.Columns().AdjustToContents();
             hoja.RangeUsed()!.SetAutoFilter();
         }
-
         private void CrearHojaResumenEmisor(XLWorkbook workbook,
             List<Factura> facturas)
         {
@@ -136,7 +148,7 @@ namespace FacturasApp.Services
                     Cantidad = g.Count(),
                     BaseTotal = g.Sum(f => f.BaseImponible),
                     IvaTotal = g.Sum(f => f.CuotaIVA),
-                    Total = g.Sum(f => f.Total)
+                    Total = g.Sum(f => f.TotalExtraido)
                 })
                 .OrderByDescending(r => r.Total)
                 .ToList();
@@ -228,19 +240,23 @@ namespace FacturasApp.Services
         public FacturaCsvMap()
         {
             Map(f => f.NumeroFactura).Name("Nº Factura");
-            Map(f => f.Fecha).Name("Fecha")
+            Map(f => f.Fecha).Name("Fecha Factura")
                 .TypeConverterOption.Format("dd/MM/yyyy");
-            Map(f => f.Emisor.Nombre).Name("Emisor");
+            Map(f => f.Emisor.Nombre).Name("Nombre Emisor");
             Map(f => f.Emisor.NIF).Name("NIF Emisor");
-            Map(f => f.Receptor.Nombre).Name("Cliente");
+            Map(f => f.Receptor.Nombre).Name("Nombre Cliente");
             Map(f => f.Receptor.NIF).Name("NIF Cliente");
             Map(f => f.BaseImponible).Name("Base Imponible");
             Map(f => f.PorcentajeIVA).Name("% IVA");
             Map(f => f.CuotaIVA).Name("Cuota IVA");
-            Map(f => f.Total).Name("Total");
+            Map(f => f.PorcentajeIRPF).Name("% IRPF");
+            Map(f => f.CuotaIRPF).Name("Cuota IRPF");
+            Map(f => f.PorcentajeRE).Name("% RE");
+            Map(f => f.CuotaRE).Name("Cuota RE");
+            Map(f => f.TotalExtraido).Name("Total Factura");
             Map(f => f.Estado).Name("Estado");
             Map(f => f.ExtractedByOcr).Name("Via OCR");
-            Map(f => f.RutaArchivo).Name("Archivo")
+            Map(f => f.RutaArchivo).Name("Archivo Factura")
                 .Convert(f => Path.GetFileName(f.Value.RutaArchivo));
         }
     }

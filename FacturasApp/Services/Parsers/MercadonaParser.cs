@@ -42,7 +42,7 @@ namespace FacturasApp.Services.Parsers
 
             factura.NumeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
             factura.Fecha = ExtraerFecha(texto);
-            factura.Total = ExtraerDecimal(RegexTotal, texto, 1);
+            factura.TotalExtraido = ExtraerDecimal(RegexTotal, texto, 1);
             (factura.BaseImponible, factura.PorcentajeIVA) = ExtraerIva(texto);
             factura.Estado = DeterminarEstado(factura);
 

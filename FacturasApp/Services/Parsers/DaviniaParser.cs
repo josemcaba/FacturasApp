@@ -161,7 +161,7 @@ namespace FacturasApp.Services.Parsers
             factura.Fecha = LeerFecha(row, mapa);
             factura.BaseImponible = LeerDecimal(row, mapa, "BaseImponible");
             factura.PorcentajeIVA = LeerDecimal(row, mapa, "PorcentajeIVA");
-            factura.Total = LeerDecimal(row, mapa, "Total");
+            factura.TotalExtraido = LeerDecimal(row, mapa, "Total");
             factura.Estado = DeterminarEstado(factura);
 
             return factura;
@@ -265,7 +265,7 @@ namespace FacturasApp.Services.Parsers
         }
 
         private EstadoFactura DeterminarEstado(Factura f) =>
-            !string.IsNullOrEmpty(f.NumeroFactura) && f.Fecha.HasValue && f.Total > 0
+            !string.IsNullOrEmpty(f.NumeroFactura) && f.Fecha.HasValue && f.TotalExtraido > 0
                 ? EstadoFactura.OK
                 : EstadoFactura.RevisionManual;
     }

@@ -11,7 +11,7 @@ namespace FacturasApp.Services.Parsers
             PdfTextExtractor.ModoExtraccion.OrdenadoPosicion;
 
         private static readonly string[] Identificadores =
-            { "semirueda", "Andres Cazalla" };
+            { "cazalla", "andrés cazalla", "andres cazalla" };
 
         public override bool PuedeParsar(string texto) =>
             Identificadores.Any(id =>
@@ -22,11 +22,11 @@ namespace FacturasApp.Services.Parsers
             RegexOptions.Compiled);
 
         private static readonly Regex RegexFecha = new(
-            @"FACTURA\s+[\d]+\s+([\d/]+)",
+            @"FACTURA\s+20[\d]{5}\s+([\d/]+)\s",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexNif = new(
-            @"\b([A-Z]?\d{7,8}[A-Z]?)\s+\d{6}\b",
+            @"\b([A-Z]?\d{7,8}[A-Z]?)\s+\d*\s*semi",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RegexBase = new(
@@ -56,7 +56,9 @@ namespace FacturasApp.Services.Parsers
             factura.Emisor.NIF = ExtraerGrupo(RegexNif, texto, 1).ToUpper();
             factura.BaseImponible = ExtraerDecimal(RegexBase, texto, 1);
             factura.PorcentajeIVA = ExtraerPorcentajeIva(texto);
-            factura.Total = ExtraerDecimal(RegexTotal, texto, 1);
+            factura.PorcentajeIRPF = ExtraerPorcentajeIRPF(texto); // ← nuevo
+            factura.PorcentajeRE = ExtraerPorcentajeRE(texto);   // ← nuevo
+            factura.TotalExtraido = ExtraerDecimal(RegexTotal, texto, 1); // ← renombrado
             factura.Estado = DeterminarEstado(factura);
 
             return factura;
@@ -67,7 +69,7 @@ namespace FacturasApp.Services.Parsers
             var m = RegexFecha.Match(texto);
             if (!m.Success) return null;
             return DateTime.TryParse(
-                m.Groups[1].Value,
+                $"{m.Groups[1].Value}/{m.Groups[2].Value}/{m.Groups[3].Value}",
                 new System.Globalization.CultureInfo("es-ES"),
                 System.Globalization.DateTimeStyles.None, out var f) ? f : null;
         }

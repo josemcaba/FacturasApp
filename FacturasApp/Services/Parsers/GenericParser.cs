@@ -6,7 +6,6 @@ namespace FacturasApp.Services.Parsers
     public class GenericParser : BaseParser
     {
         public override string Nombre => "Genérico";
-
         public override bool PuedeParsar(string texto) => true;
 
         private static readonly Regex RegexNumero = new(
@@ -33,6 +32,10 @@ namespace FacturasApp.Services.Parsers
             @"(?:total\s+factura|total\s+a\s+pagar|importe\s+total|total)[:\s]*([\d.,]+)",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+        private static readonly Regex RegexNombre = new(
+            @"^([A-ZÁÉÍÓÚÑ][A-Za-záéíóúñ\s,\.]{5,60})(?:\n|S\.L\.|S\.A\.|NIF|CIF)",
+            RegexOptions.Multiline | RegexOptions.Compiled);
+
         public override Factura Parsear(string texto, string rutaArchivo, bool viaOcr)
         {
             var factura = new Factura
@@ -43,10 +46,23 @@ namespace FacturasApp.Services.Parsers
 
             factura.NumeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
             factura.Fecha = ExtraerFecha(texto);
+
+            var nifs = ExtraerTodosLosNifs(texto);
+            factura.Emisor = new Proveedor
+            {
+                Nombre = ExtraerGrupo(RegexNombre, texto, 1),
+                NIF = nifs.Count > 0 ? nifs[0] : string.Empty
+            };
+            factura.Receptor = new Cliente
+            {
+                NIF = nifs.Count > 1 ? nifs[1] : string.Empty
+            };
+
             factura.BaseImponible = ExtraerDecimal(RegexBase, texto, 1);
             factura.PorcentajeIVA = ExtraerPorcentajeIva(texto);
-            factura.Total = ExtraerDecimal(RegexTotal, texto, 1);
-            factura.Emisor.NIF = ExtraerGrupo(RegexNif, texto, 1).ToUpper();
+            factura.PorcentajeIRPF = ExtraerPorcentajeIRPF(texto);
+            factura.PorcentajeRE = ExtraerPorcentajeRE(texto);
+            factura.TotalExtraido = ExtraerDecimal(RegexTotal, texto, 1);
             factura.Estado = DeterminarEstado(factura);
 
             return factura;
@@ -66,7 +82,15 @@ namespace FacturasApp.Services.Parsers
         {
             var m = RegexIva.Match(texto);
             return m.Success && decimal.TryParse(
-                m.Groups[1].Value, out var pct) ? pct : 21m;
+                m.Groups[1].Value, out var pct) ? pct : 0m;
+        }
+
+        private List<string> ExtraerTodosLosNifs(string texto)
+        {
+            return RegexNif.Matches(texto)
+                .Select(m => m.Groups[1].Value.ToUpper())
+                .Distinct()
+                .ToList();
         }
     }
 }
