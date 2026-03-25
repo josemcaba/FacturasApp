@@ -69,7 +69,7 @@ namespace FacturasApp.Services
                 hoja.Cell(fila, 11).Value = f.CuotaIRPF;
                 hoja.Cell(fila, 12).Value = f.PorcentajeRE / 100m;
                 hoja.Cell(fila, 13).Value = f.CuotaRE;
-                hoja.Cell(fila, 14).Value = f.TotalExtraido;
+                hoja.Cell(fila, 14).Value = f.Total;
                 hoja.Cell(fila, 15).Value = f.Estado.ToString();
                 hoja.Cell(fila, 16).Value = f.ExtractedByOcr ? "Sí" : "No";
                 hoja.Cell(fila, 17).Value = Path.GetFileName(f.RutaArchivo);
@@ -148,7 +148,7 @@ namespace FacturasApp.Services
                     Cantidad = g.Count(),
                     BaseTotal = g.Sum(f => f.BaseImponible),
                     IvaTotal = g.Sum(f => f.CuotaIVA),
-                    Total = g.Sum(f => f.TotalExtraido)
+                    Total = g.Sum(f => f.Total)
                 })
                 .OrderByDescending(r => r.Total)
                 .ToList();
@@ -253,7 +253,7 @@ namespace FacturasApp.Services
             Map(f => f.CuotaIRPF).Name("Cuota IRPF");
             Map(f => f.PorcentajeRE).Name("% RE");
             Map(f => f.CuotaRE).Name("Cuota RE");
-            Map(f => f.TotalExtraido).Name("Total Factura");
+            Map(f => f.Total).Name("Total Factura");
             Map(f => f.Estado).Name("Estado");
             Map(f => f.ExtractedByOcr).Name("Via OCR");
             Map(f => f.RutaArchivo).Name("Archivo Factura")

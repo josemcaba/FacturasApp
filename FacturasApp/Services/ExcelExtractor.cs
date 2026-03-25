@@ -157,7 +157,7 @@ namespace FacturasApp.Services
             factura.Receptor.NIF = LeerTexto(row, mapaIndices, "ClienteNIF");
             factura.BaseImponible = LeerDecimal(row, mapaIndices, "BaseImponible");
             factura.PorcentajeIVA = LeerDecimal(row, mapaIndices, "PorcentajeIVA");
-            factura.TotalExtraido = LeerDecimal(row, mapaIndices, "Total");
+            factura.Total = LeerDecimal(row, mapaIndices, "Total");
 
             // Si el Excel no trae CuotaIVA pero sí Base y %, la calculamos
             if (factura.CuotaIVA == 0 &&
@@ -252,7 +252,7 @@ namespace FacturasApp.Services
         {
             bool camposCriticos = !string.IsNullOrEmpty(f.NumeroFactura)
                                && f.Fecha.HasValue
-                               && f.TotalExtraido > 0;
+                               && f.Total > 0;
 
             bool camposSecundarios = !string.IsNullOrEmpty(f.Emisor.NIF)
                                   && f.BaseImponible > 0;

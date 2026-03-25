@@ -1,14 +1,11 @@
-﻿using System.Text.RegularExpressions;
-using FacturasApp.Models;
+﻿using FacturasApp.Models;
+using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
     public class AndresCazallaParser : BaseParser
     {
         public override string Nombre => "Andrés Cazalla";
-
-        public override PdfTextExtractor.ModoExtraccion ModoExtraccion =>
-            PdfTextExtractor.ModoExtraccion.OrdenadoPosicion;
 
         private static readonly string[] Identificadores =
             { "cazalla", "andrés cazalla", "andres cazalla" };
@@ -25,21 +22,16 @@ namespace FacturasApp.Services.Parsers
             @"FACTURA\s+20[\d]{5}\s+([\d/]+)\s",
             RegexOptions.Compiled);
 
-        private static readonly Regex RegexNif = new(
-            @"\b([A-Z]?\d{7,8}[A-Z]?)\s+\d*\s*semi",
+        private static readonly Regex RegexNombre = new(
+            @"Calle Newton, 20 (.*)",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly Regex RegexBase = new(
-            @"([\d,]+)\s[\d,]+\s.*\n[\d,]+\s[\d,]+\s[\d,]+\s[\d,]+",
+        private static readonly Regex RegexNif = new(
+            @"\b([A-Z]?\d{7,8}[A-Z]?)\s+\d*\s*semirueda",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-            RegexOptions.Compiled);
-
-        private static readonly Regex RegexIva = new(
-            @"[\d,]+\s[\d,]+\s.*\n(\d+)\s[\d,]\s[\d,]+\s[\d,]+",
-            RegexOptions.Compiled);
-
-        private static readonly Regex RegexTotal = new(
-            @"[\d,]+\s[\d,]+\s.*\n\d+\s[\d,]\s[\d,]+\s([\d,]+)",
+        private static readonly Regex RegexImportes = new(
+            @"([\d,.]+)\s[\d,.]+\s.*\n([\d,]+)\s([\d,]+)\s[\d,]+\s([\d,.]+)",
             RegexOptions.Compiled);
 
         public override Factura Parsear(string texto, string rutaArchivo, bool viaOcr)
@@ -48,37 +40,21 @@ namespace FacturasApp.Services.Parsers
             {
                 RutaArchivo = rutaArchivo,
                 ExtractedByOcr = viaOcr,
-                Emisor = new Proveedor { Nombre = "Andrés Cazalla" }
             };
 
+            factura.Emisor.NIF = "26236236K";
+            factura.Emisor.Nombre = "Andrés Cazalla Medina";
             factura.NumeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
-            factura.Fecha = ExtraerFecha(texto);
-            factura.Emisor.NIF = ExtraerGrupo(RegexNif, texto, 1).ToUpper();
-            factura.BaseImponible = ExtraerDecimal(RegexBase, texto, 1);
-            factura.PorcentajeIVA = ExtraerPorcentajeIva(texto);
-            factura.PorcentajeIRPF = ExtraerPorcentajeIRPF(texto); // ← nuevo
-            factura.PorcentajeRE = ExtraerPorcentajeRE(texto);   // ← nuevo
-            factura.TotalExtraido = ExtraerDecimal(RegexTotal, texto, 1); // ← renombrado
+            factura.Fecha = ExtraerFecha(RegexFecha, texto);
+            factura.Receptor.Nombre = ExtraerGrupo(RegexNombre, texto, 1);
+            factura.Receptor.NIF = ExtraerGrupo(RegexNif, texto, 1).ToUpper();
+            factura.BaseImponible = ExtraerDecimal(RegexImportes, texto, 1);
+            factura.PorcentajeIVA = ExtraerDecimal(RegexImportes, texto, 2);
+            factura.PorcentajeIRPF = ExtraerDecimal(RegexImportes, texto, 3);
+            factura.Total = ExtraerDecimal(RegexImportes, texto, 4);
             factura.Estado = DeterminarEstado(factura);
 
             return factura;
-        }
-
-        private DateTime? ExtraerFecha(string texto)
-        {
-            var m = RegexFecha.Match(texto);
-            if (!m.Success) return null;
-            return DateTime.TryParse(
-                $"{m.Groups[1].Value}/{m.Groups[2].Value}/{m.Groups[3].Value}",
-                new System.Globalization.CultureInfo("es-ES"),
-                System.Globalization.DateTimeStyles.None, out var f) ? f : null;
-        }
-
-        private decimal ExtraerPorcentajeIva(string texto)
-        {
-            var m = RegexIva.Match(texto);
-            return m.Success && decimal.TryParse(
-                m.Groups[1].Value, out var pct) ? pct : 10m;
         }
     }
 }

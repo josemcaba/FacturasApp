@@ -168,7 +168,7 @@ namespace FacturasApp.UI
                       DataPropertyName = "NumeroFactura",   Width = 110 },
                 new DataGridViewTextBoxColumn
                     { Name = "colFecha",    HeaderText = "Fecha",
-                      DataPropertyName = "FechaFormateada", Width = 85  },
+                      DataPropertyName = "FechaFormateada", Width = 90  },
                 new DataGridViewTextBoxColumn
                     { Name = "colEmisor",   HeaderText = "Emisor",
                       DataPropertyName = "EmisorNombre",    Width = 140 },
@@ -289,7 +289,7 @@ namespace FacturasApp.UI
             int porOcr = facturas.Count(f => f.ExtractedByOcr);
             decimal totalEuros = facturas
                 .Where(f => f.Estado != EstadoFactura.Error)
-                .Sum(f => f.TotalExtraido);
+                .Sum(f => f.Total);
 
             lblResumen.Text =
                 $"Total: {total}  |  ✔ OK: {ok}  |  " +

@@ -1,28 +1,17 @@
 ﻿using System.Text.RegularExpressions;
 using FacturasApp.Models;
-using FacturasApp.Services;
 
 namespace FacturasApp.Services.Parsers
 {
     public abstract class BaseParser : IInvoiceParser
     {
         public abstract string Nombre { get; }
+
         public abstract bool PuedeParsar(string texto);
         public abstract Factura Parsear(string texto, string rutaArchivo, bool viaOcr);
 
         public virtual PdfTextExtractor.ModoExtraccion ModoExtraccion =>
-            PdfTextExtractor.ModoExtraccion.LayoutAnalysis;
-
-        // ── Regex comunes ────────────────────────────────────────────────────
-
-        protected static readonly Regex RegexIRPF = new(
-            @"IRPF\s*(\d{1,2})\s*%[:\s]*([\d.,]+)?",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        protected static readonly Regex RegexRE = new(
-            @"(?:recargo\s+de\s+equivalencia|recargo\s+equiv\.?|R\.?E\.?)\s*" +
-            @"(\d{1,2}[.,]\d{1,2}|\d{1,2})\s*%[:\s]*([\d.,]+)?",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            PdfTextExtractor.ModoExtraccion.OrdenadoPosicion;
 
         // ── Helpers de extracción ────────────────────────────────────────────
 
@@ -58,16 +47,15 @@ namespace FacturasApp.Services.Parsers
                 out var r) ? r : 0m;
         }
 
-        protected decimal ExtraerPorcentajeIRPF(string texto)
+        protected DateTime? ExtraerFecha(Regex regex, string texto)
         {
-            var m = RegexIRPF.Match(texto);
-            return m.Success ? ParsearDecimal(m.Groups[1].Value) : 0m;
-        }
+            var fecha = ExtraerGrupo(regex, texto, 1);
+            if (string.IsNullOrWhiteSpace(fecha))
+                return null;
 
-        protected decimal ExtraerPorcentajeRE(string texto)
-        {
-            var m = RegexRE.Match(texto);
-            return m.Success ? ParsearDecimal(m.Groups[1].Value) : 0m;
+            return DateTime.TryParse(
+                fecha, new System.Globalization.CultureInfo("es-ES"),
+                System.Globalization.DateTimeStyles.None, out var dt) ? dt : null;
         }
 
         // ── Estado ───────────────────────────────────────────────────────────
@@ -88,7 +76,7 @@ namespace FacturasApp.Services.Parsers
 
             // Verificación del total — si no coincide → RevisiónManual
             if (!f.TotalesCoinciden)
-                return EstadoFactura.RevisionManual;
+                return EstadoFactura.Error;
 
             return EstadoFactura.OK;
         }

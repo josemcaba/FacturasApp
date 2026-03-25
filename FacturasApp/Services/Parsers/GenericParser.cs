@@ -59,10 +59,7 @@ namespace FacturasApp.Services.Parsers
             };
 
             factura.BaseImponible = ExtraerDecimal(RegexBase, texto, 1);
-            factura.PorcentajeIVA = ExtraerPorcentajeIva(texto);
-            factura.PorcentajeIRPF = ExtraerPorcentajeIRPF(texto);
-            factura.PorcentajeRE = ExtraerPorcentajeRE(texto);
-            factura.TotalExtraido = ExtraerDecimal(RegexTotal, texto, 1);
+            factura.Total = ExtraerDecimal(RegexTotal, texto, 1);
             factura.Estado = DeterminarEstado(factura);
 
             return factura;
@@ -76,13 +73,6 @@ namespace FacturasApp.Services.Parsers
                 $"{m.Groups[1].Value}/{m.Groups[2].Value}/{m.Groups[3].Value}",
                 new System.Globalization.CultureInfo("es-ES"),
                 System.Globalization.DateTimeStyles.None, out var f) ? f : null;
-        }
-
-        private decimal ExtraerPorcentajeIva(string texto)
-        {
-            var m = RegexIva.Match(texto);
-            return m.Success && decimal.TryParse(
-                m.Groups[1].Value, out var pct) ? pct : 0m;
         }
 
         private List<string> ExtraerTodosLosNifs(string texto)

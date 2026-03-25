@@ -198,7 +198,7 @@ namespace FacturasApp.UI
             txtBase.Text = $"{_factura.BaseImponible:N2} €";
             txtPorcentajeIva.Text = $"{_factura.PorcentajeIVA} %";
             txtCuotaIva.Text = $"{_factura.CuotaIVA:N2} €";
-            txtTotal.Text = $"{_factura.TotalExtraido:N2} €";
+            txtTotal.Text = $"{_factura.Total:N2} €";
 
             txtPorcentajeIrpf.Text = $"{_factura.PorcentajeIRPF} %";
             txtCuotaIrpf.Text = $"{_factura.CuotaIRPF:N2} €";

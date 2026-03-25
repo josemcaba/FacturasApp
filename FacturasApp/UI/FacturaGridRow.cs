@@ -41,7 +41,7 @@ namespace FacturasApp.UI
             CuotaIrpfFmt = $"{f.CuotaIRPF:N2} €";
             PorcentajeRE = f.PorcentajeRE;
             CuotaREFmt = $"{f.CuotaRE:N2} €";
-            TotalFormateado = $"{f.TotalExtraido:N2} €";
+            TotalFormateado = $"{f.Total:N2} €";
             TotalesOk = f.TotalesCoinciden ? "✔" : "⚠ Diferencia";
             EstadoTexto = f.Estado switch
             {

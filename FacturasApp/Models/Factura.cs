@@ -25,7 +25,7 @@
         public decimal CuotaRE => BaseImponible * (PorcentajeRE / 100m);
 
         // Total extraído directamente de la factura
-        public decimal TotalExtraido { get; set; }
+        public decimal Total { get; set; }
 
         // Total calculado: Base + CuotaIVA - CuotaIRPF + CuotaRE
         public decimal TotalCalculado =>
@@ -33,7 +33,7 @@
 
         // Diferencia entre total extraído y calculado
         public decimal DiferenciaTotal =>
-            Math.Abs(TotalExtraido - TotalCalculado);
+            Math.Abs(Total - TotalCalculado);
 
         // Tolerancia aceptable en la comparación de totales (0,01€)
         private const decimal ToleranciaTotal = 0.01m;
