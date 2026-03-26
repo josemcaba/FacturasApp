@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using FacturasApp.Models;
+using FacturasApp.Services;
 
 namespace FacturasApp.Services.Parsers
 {
@@ -12,6 +13,12 @@ namespace FacturasApp.Services.Parsers
 
         public virtual PdfTextExtractor.ModoExtraccion ModoExtraccion =>
             PdfTextExtractor.ModoExtraccion.OrdenadoPosicion;
+
+        // Implementación base: devuelve lista con una sola factura
+        // MercadonaParser (y cualquier otro que lo necesite) lo sobreescribe
+        public virtual List<Factura> ParsearMultiple(
+            string texto, string rutaArchivo, bool viaOcr) =>
+            new() { Parsear(texto, rutaArchivo, viaOcr) };
 
         // ── Helpers de extracción ────────────────────────────────────────────
 

@@ -1,8 +1,5 @@
-﻿using CsvHelper;
-using FacturasApp.Models;
+﻿using FacturasApp.Models;
 using FacturasApp.Services.Parsers;
-using System.Runtime.Intrinsics.X86;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace FacturasApp.Services
 {
@@ -49,10 +46,15 @@ namespace FacturasApp.Services
                     {
                         // PDF escaneado — usamos OCR directamente
                         string textoOcr = _ocrExtractor.ExtraerTextoConOcr(ruta);
-                        IInvoiceParser parserOcr = _parserFactory.ObtenerParser(textoOcr);
-                        Factura facturaOcr = parserOcr.Parsear(textoOcr, ruta, true);
+                        IInvoiceParser parserOcr =
+                            _parserFactory.ObtenerParser(textoOcr);
 
-                        facturas.Add(facturaOcr);
+                        // ParsearMultiple también en flujo OCR
+                        List<Factura> facturasOcr = parserOcr is BaseParser baseParserOcr
+                            ? baseParserOcr.ParsearMultiple(textoOcr, ruta, true)
+                            : new List<Factura> { parserOcr.Parsear(textoOcr, ruta, true) };
+
+                        facturas.AddRange(facturasOcr);
                     }
                     else
                     {
@@ -67,9 +69,12 @@ namespace FacturasApp.Services
                             : _textExtractor.ExtraerTextoSeleccionable(ruta,
                                   parser.ModoExtraccion) ?? textoIdentificacion!;
 
-                        Factura factura = parser.Parsear(textoFinal, ruta, false);
+                        // ParsearMultiple devuelve 1 o N facturas según el parser
+                        List<Factura> nuevasFacturas = parser is BaseParser baseParser
+                            ? baseParser.ParsearMultiple(textoFinal, ruta, false)
+                            : new List<Factura> { parser.Parsear(textoFinal, ruta, false) };
 
-                        facturas.Add(factura);
+                        facturas.AddRange(nuevasFacturas);
                     }
                 }
                 catch (Exception ex)
@@ -90,14 +95,12 @@ namespace FacturasApp.Services
 
         public List<Factura> ImportarDesdeExcel(string rutaExcel)
         {
-            // Primero comprobamos si hay un parser específico para este Excel
             var (esEspecifico, parserEspecifico) =
                 _excelParserFactory.ObtenerParser(rutaExcel);
 
             if (esEspecifico && parserEspecifico != null)
                 return parserEspecifico.Parsear(rutaExcel);
 
-            // Si no, usamos el extractor genérico
             return _excelExtractor.ImportarDesdeExcel(rutaExcel);
         }
 
