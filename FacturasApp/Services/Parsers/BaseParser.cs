@@ -54,16 +54,17 @@ namespace FacturasApp.Services.Parsers
                 out var r) ? r : 0m;
         }
 
-        protected DateTime? ExtraerFecha(Regex regex, string texto)
+        protected DateTime? ExtraerFecha(Regex Regex, string texto)
         {
-            var fecha = ExtraerGrupo(regex, texto, 1);
-            if (string.IsNullOrWhiteSpace(fecha))
-                return null;
-
+            var m = Regex.Match(texto);
+            if (!m.Success) return null;
             return DateTime.TryParse(
-                fecha, new System.Globalization.CultureInfo("es-ES"),
-                System.Globalization.DateTimeStyles.None, out var dt) ? dt : null;
+                $"{m.Groups[1].Value}/{m.Groups[2].Value}/{m.Groups[3].Value}",
+                new System.Globalization.CultureInfo("es-ES"),
+                System.Globalization.DateTimeStyles.None, out var f) ? f : null;
         }
+
+
 
         // ── Estado ───────────────────────────────────────────────────────────
 

@@ -45,7 +45,7 @@ namespace FacturasApp.Services.Parsers
             };
 
             factura.NumeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
-            factura.Fecha = ExtraerFecha(texto);
+            factura.Fecha = ExtraerFecha(RegexFecha, texto);
 
             var nifs = ExtraerTodosLosNifs(texto);
             factura.Emisor = new Proveedor
@@ -63,16 +63,6 @@ namespace FacturasApp.Services.Parsers
             factura.Estado = DeterminarEstado(factura);
 
             return factura;
-        }
-
-        private DateTime? ExtraerFecha(string texto)
-        {
-            var m = RegexFecha.Match(texto);
-            if (!m.Success) return null;
-            return DateTime.TryParse(
-                $"{m.Groups[1].Value}/{m.Groups[2].Value}/{m.Groups[3].Value}",
-                new System.Globalization.CultureInfo("es-ES"),
-                System.Globalization.DateTimeStyles.None, out var f) ? f : null;
         }
 
         private List<string> ExtraerTodosLosNifs(string texto)

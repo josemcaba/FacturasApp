@@ -8,10 +8,10 @@ namespace FacturasApp.Services.Parsers
         public override string Nombre => "Mercadona";
 
         private static readonly string[] Identificadores =
-            { "MERCADONA S.A." };
+            { "MERCADONA S.A.", "A-46103834"};
 
         public override bool PuedeParsar(string texto) =>
-            Identificadores.Any(id =>
+            Identificadores.All(id =>
                 texto.Contains(id, StringComparison.OrdinalIgnoreCase));
 
         private static readonly Regex RegexNumero = new(
@@ -19,7 +19,7 @@ namespace FacturasApp.Services.Parsers
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RegexFecha = new(
-            @"Fecha\s*Factura:\s*(.*?)\s+",
+            @"Fecha\s*Factura:\s*\b(\d{1,2})[/\-\.](\d{1,2})[/\-\.](\d{4})\b",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexNombre = new(

@@ -66,7 +66,7 @@ namespace FacturasApp.Services.Parsers
             },
             ["EmisorNIF"] = new[]
             {
-                "nif", "cif", "nif emisor", "cif emisor", "nif/cif"
+                "nif", "cif", "nif emisor", "cif emisor"
             },
             ["ClienteNombre"] = new[]
             {
@@ -74,11 +74,11 @@ namespace FacturasApp.Services.Parsers
             },
             ["ClienteNIF"] = new[]
             {
-                "nif cliente", "cif cliente", "nif receptor"
+                "nif / cif", "cif cliente", "nif receptor"
             },
             ["BaseImponible"] = new[]
             {
-                "base", "base imponible", "subtotal", "importe base"
+                "importe total sin iva", "base imponible", "importe base"
             },
             ["PorcentajeIVA"] = new[]
             {
@@ -160,7 +160,7 @@ namespace FacturasApp.Services.Parsers
             factura.NumeroFactura = LeerTexto(row, mapa, "NumeroFactura");
             factura.Fecha = LeerFecha(row, mapa);
             factura.BaseImponible = LeerDecimal(row, mapa, "BaseImponible");
-            factura.PorcentajeIVA = LeerDecimal(row, mapa, "PorcentajeIVA");
+            factura.PorcentajeIVA = 21.0m;
             factura.Total = LeerDecimal(row, mapa, "Total");
             factura.Estado = DeterminarEstado(factura);
 
