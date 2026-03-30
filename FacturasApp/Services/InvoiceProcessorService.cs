@@ -1,5 +1,7 @@
 ﻿using FacturasApp.Models;
 using FacturasApp.Services.Parsers;
+using System.IO;
+using System.Linq;
 
 namespace FacturasApp.Services
 {
@@ -54,7 +56,7 @@ namespace FacturasApp.Services
                             ? baseParserOcr.ParsearMultiple(textoOcr, ruta, true)
                             : new List<Factura> { parserOcr.Parsear(textoOcr, ruta, true) };
 
-                        facturas.AddRange(facturasOcr);
+                        AddWithDuplicateDetection(facturas, facturasOcr);
                     }
                     else
                     {
@@ -74,7 +76,7 @@ namespace FacturasApp.Services
                             ? baseParser.ParsearMultiple(textoFinal, ruta, false)
                             : new List<Factura> { parser.Parsear(textoFinal, ruta, false) };
 
-                        facturas.AddRange(nuevasFacturas);
+                        AddWithDuplicateDetection(facturas, nuevasFacturas);
                     }
                 }
                 catch (Exception ex)
@@ -89,6 +91,61 @@ namespace FacturasApp.Services
             }
 
             return facturas;
+        }
+
+        // Helper: añade nuevas facturas a la lista comprobando duplicados por Número de factura
+        // Se consideran duplicadas sólo si tienen el mismo número y pertenecen a archivos diferentes.
+        private void AddWithDuplicateDetection(List<Factura> acumuladas, IEnumerable<Factura> nuevas)
+        {
+            foreach (var nueva in nuevas)
+            {
+                // Normalizamos el número de factura para comparación
+                var numero = (nueva.NumeroFactura ?? string.Empty).Trim();
+                // Normalizamos ruta (full path, uppercase) para comparación segura
+                string rutaNueva = (nueva.RutaArchivo ?? string.Empty).Trim();
+                string rutaNuevaFull = string.IsNullOrEmpty(rutaNueva)
+                    ? string.Empty
+                    : Path.GetFullPath(rutaNueva).ToUpperInvariant();
+
+                if (!string.IsNullOrEmpty(numero))
+                {
+                    // Buscamos una factura existente con el mismo número pero que pertenezca a un archivo distinto
+                    var existente = acumuladas.FirstOrDefault(f =>
+                    {
+                        var fNumero = (f.NumeroFactura ?? string.Empty).Trim();
+                        if (!string.Equals(fNumero, numero, StringComparison.OrdinalIgnoreCase))
+                            return false;
+
+                        string rutaExistente = (f.RutaArchivo ?? string.Empty).Trim();
+                        string rutaExistenteFull = string.IsNullOrEmpty(rutaExistente)
+                            ? string.Empty
+                            : Path.GetFullPath(rutaExistente).ToUpperInvariant();
+
+                        // Consider duplicates only when file paths differ
+                        return !string.Equals(rutaExistenteFull, rutaNuevaFull, StringComparison.OrdinalIgnoreCase);
+                    });
+
+                    if (existente != null)
+                    {
+                        // Marcar la nueva como duplicada y añadir un mensaje
+                        nueva.Estado = EstadoFactura.Duplicada;
+                        nueva.ErrorMensaje = $"Factura duplicada. Existe en: {existente.RutaArchivo}";
+
+                        // También marcar la factura existente como duplicada si aún no lo está
+                        if (existente.Estado != EstadoFactura.Duplicada)
+                        {
+                            existente.Estado = EstadoFactura.Duplicada;
+                            existente.ErrorMensaje = $"Factura duplicada. Otra copia: {nueva.RutaArchivo}";
+                        }
+
+                        acumuladas.Add(nueva);
+                        continue;
+                    }
+                }
+
+                // Si no es duplicada (o no hay número), añadir normalmente
+                acumuladas.Add(nueva);
+            }
         }
 
         // ── Importación desde Excel ──────────────────────────────────────────

@@ -5,6 +5,7 @@
         Pendiente,
         OK,
         RevisionManual,
+        Duplicada,
         Error
     }
 }
