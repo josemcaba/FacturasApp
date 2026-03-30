@@ -3,36 +3,39 @@ using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
-    public class AndresCazallaParser : BaseParser
+    public class OnaCorpParser : BaseParser
     {
-        public override string Nombre => "Andrés Cazalla Medina";
-        public override string Nif => "26236236K";
+        public override string Nombre => "ONA CORP, S.L.U.";
+        public override string Nif => "B85002764";
 
         private static readonly string[] Identificadores =
-            { "andres cazalla medina", "calle newton, 20", "semirueda"};
+            { "ona corp", "ESB85002764", "+34915079385"};
+
+        public override PdfTextExtractor.ModoExtraccion ModoExtraccion =>
+            PdfTextExtractor.ModoExtraccion.LayoutAnalysis;
 
         public override bool PuedeParsar(string texto) =>
             Identificadores.All(id =>
                 texto.Contains(id, StringComparison.OrdinalIgnoreCase));
 
         private static readonly Regex RegexNumero = new(
-            @"FACTURA\s+(20[\d]{5})\s+",
+            @"FACTURA(?:| RECTIFICATIVA)[\r\n]+(.+)[\r\n]+FECHA",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexFecha = new(
-            @"FACTURA\s+20[\d]{5}\s+\b(\d{1,2})[/\-\.](\d{1,2})[/\-\.](\d{4})\b",
+            @"FECHA[\r\n]+\b(\d{1,2})[/\-\.](\d{1,2})[/\-\.](\d{4})\b[\r\n]+Nº CLIENTE",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexNombre = new(
-            @"Calle Newton, 20 (.*)",
+            @"Dirección de Facturación[\r\n]+.*[\r\n]+(.+)",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RegexNif = new(
-            @"\b([A-Z]?\d{7,8}[A-Z]?)\s+\d*\s*semirueda",
+            @"España[\r\n]+(.+)[\r\n]+Dirección",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RegexImportes = new(
-            @"([\d,.]+)\s[\d,.]+\s.*\n([\d,]+)\s([\d,]+)\s[\d,]+\s([\d,.]+)",
+            @"Base Imponible ([\d,.]+)€[\r\n]+IVA Total \((\d+)%\) [\d,.]+€[\r\n]+TOTAL FACTURA ([\d,.]+)€",
             RegexOptions.Compiled);
 
         public override Factura Parsear(string texto, string rutaArchivo, bool viaOcr)
@@ -51,8 +54,7 @@ namespace FacturasApp.Services.Parsers
             factura.Receptor.NIF = ExtraerGrupo(RegexNif, texto, 1).ToUpper();
             factura.BaseImponible = ExtraerDecimal(RegexImportes, texto, 1);
             factura.PorcentajeIVA = ExtraerDecimal(RegexImportes, texto, 2);
-            factura.PorcentajeIRPF = ExtraerDecimal(RegexImportes, texto, 3);
-            factura.Total = ExtraerDecimal(RegexImportes, texto, 4);
+            factura.Total = ExtraerDecimal(RegexImportes, texto, 3);
             factura.Estado = DeterminarEstado(factura);
 
             return factura;

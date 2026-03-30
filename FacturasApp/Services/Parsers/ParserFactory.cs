@@ -14,8 +14,8 @@ namespace FacturasApp.Services.Parsers
                 new AndresCazallaParser(),
                 new MercadonaParser(),
                 new EmasaParser(),
-                new PescaderiasParser(),
-                new IgnacioParser()
+                new OnaCorpParser(),
+                new LidlParser()
             };
         }
 

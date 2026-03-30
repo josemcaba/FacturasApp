@@ -6,6 +6,7 @@ namespace FacturasApp.Services.Parsers
     public class GenericParser : BaseParser
     {
         public override string Nombre => "Genérico";
+        public override string Nif => "General";
         public override bool PuedeParsar(string texto) => true;
 
         private static readonly Regex RegexNumero = new(

@@ -5,10 +5,11 @@ namespace FacturasApp.Services.Parsers
 {
     public class EmasaParser : BaseParser
     {
-        public override string Nombre => "Emasa";
+        public override string Nombre => "Empresa Municipal Aguas de Málaga S.A.";
+        public override string Nif => "A29185519";
 
         private static readonly string[] Identificadores =
-            { "EMASA", "plaza general torrijos", "agua"};
+            { "emasa", "plaza general torrijos", "agua"};
 
         public override bool PuedeParsar(string texto) =>
             Identificadores.All(id =>
@@ -49,8 +50,8 @@ namespace FacturasApp.Services.Parsers
             var facturas = new List<Factura>();
 
             // Datos de cabecera comunes a todas las subfacturas
-            string emisorNIF = "A29185519";
-            string emisorNombre = "Empresa Municipal Aguas de Málaga S.A.";
+            string emisorNIF = Nif;
+            string emisorNombre = Nombre;
             string numeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
             DateTime? fecha = ExtraerFecha(RegexFecha, texto);
             string receptorNombre = ExtraerGrupo(RegexNombre, texto, 1);

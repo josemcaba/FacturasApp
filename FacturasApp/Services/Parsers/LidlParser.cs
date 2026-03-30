@@ -3,36 +3,36 @@ using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
-    public class MercadonaParser : BaseParser
+    public class LidlParser : BaseParser
     {
-        public override string Nombre => "MERCADONA, S.A.";
-        public override string Nif => "A46103834";
+        public override string Nombre => "LIDL SUPERMERCADOS S.A.U.";
+        public override string Nif => "A60195278";
 
         private static readonly string[] Identificadores =
-            { "mercadona s.a.", "a-46103834"};
+            { "lidl supermercados", "factura"};
 
         public override bool PuedeParsar(string texto) =>
             Identificadores.All(id =>
                 texto.Contains(id, StringComparison.OrdinalIgnoreCase));
 
         private static readonly Regex RegexNumero = new(
-            @"N.\s*Factura:\s*(.*?)\s+",
+            @"Nº Factura:\s([\d]+)\b",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RegexFecha = new(
-            @"Fecha\s*Factura:\s*\b(\d{1,2})[/\-\.](\d{1,2})[/\-\.](\d{4})\b",
+            @"Fecha\sFactura:\s\b(\d{1,2})[/\-\.]((?:\d{1,2})|\S{3})[/\-\.](\d{4})\b",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexNombre = new(
-            @"Razón Social: (.*)",
+            @"\b(.*)\b\sFecha\sTique",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RegexNif = new(
-            @"NIF: ([A-Z]?\d{7,8}[A-Z]?)\s",
+            @"Barcelona[\r\n]+([A-Z]?\d{7,8}[A-Z]?)\b",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RegexLineaIva = new(
-            @"(\d+)% ([\d,]+) ([\d,.]+) ([\d,.]+)\r",
+            @"Tipo\sIVA\s(\d{1,2},00)\s([\d.,]+)\s[\d., ]+\s([\d.,]+)",
             RegexOptions.Compiled);
 
         // ── Parsear devuelve solo la primera línea de IVA (compatibilidad) ──
@@ -71,7 +71,7 @@ namespace FacturasApp.Services.Parsers
                     { Nombre = receptorNombre, NIF = receptorNIF },
                     BaseImponible = ParsearDecimal(linea.Groups[2].Value),
                     PorcentajeIVA = ParsearDecimal(linea.Groups[1].Value),
-                    Total = ParsearDecimal(linea.Groups[4].Value)
+                    Total = ParsearDecimal(linea.Groups[3].Value)
                 };
                 factura.Estado = DeterminarEstado(factura);
                 facturas.Add(factura);

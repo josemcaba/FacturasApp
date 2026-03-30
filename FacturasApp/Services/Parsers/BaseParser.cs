@@ -7,6 +7,7 @@ namespace FacturasApp.Services.Parsers
     public abstract class BaseParser : IInvoiceParser
     {
         public abstract string Nombre { get; }
+        public abstract string Nif { get; }
 
         public abstract bool PuedeParsar(string texto);
         public abstract Factura Parsear(string texto, string rutaArchivo, bool viaOcr);
