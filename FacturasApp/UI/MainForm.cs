@@ -1,6 +1,5 @@
 using FacturasApp.Models;
 using FacturasApp.Services;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace FacturasApp.UI
 {
@@ -134,7 +133,6 @@ namespace FacturasApp.UI
 
                 lblEstado.Text = $"✔ Completado — {_facturas.Count} facturas";
                 // Habilitamos los botones de exportar Excel (Ingresos y Gastos)
-                btnExportarExcel.Enabled = true;
                 btnExportarExcelIngresos.Enabled = true;
                 btnExportarExcelGastos.Enabled = true;
             }
@@ -448,8 +446,6 @@ namespace FacturasApp.UI
             btnSeleccionarExcel.Enabled = !procesando;
             btnLimpiarLista.Enabled = !procesando;
             btnProcesar.Enabled = !procesando;
-            btnExportarExcel.Enabled = !procesando;
-            // Nuevos botones de exportación Excel
             btnExportarExcelIngresos.Enabled = !procesando;
             btnExportarExcelGastos.Enabled = !procesando;
             progressBar.Visible = procesando;
