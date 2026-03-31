@@ -133,8 +133,10 @@ namespace FacturasApp.UI
                 MostrarResumenEstadisticas(_facturas);
 
                 lblEstado.Text = $"✔ Completado — {_facturas.Count} facturas";
+                // Habilitamos los botones de exportar Excel (Ingresos y Gastos)
                 btnExportarExcel.Enabled = true;
-                btnExportarCsv.Enabled = true;
+                btnExportarExcelIngresos.Enabled = true;
+                btnExportarExcelGastos.Enabled = true;
             }
             catch (Exception ex)
             {
@@ -367,13 +369,14 @@ namespace FacturasApp.UI
             }
         }
 
-        private void btnExportarCsv_Click(object sender, EventArgs e)
+        // Nuevo: Exportar Excel — Ingresos
+        private void btnExportarExcelIngresos_Click(object sender, EventArgs e)
         {
             using var dialogo = new SaveFileDialog
             {
-                Title = "Guardar como CSV",
-                Filter = "CSV (*.csv)|*.csv",
-                FileName = $"Facturas_{DateTime.Now:yyyyMMdd_HHmm}.csv",
+                Title = "Guardar como Excel (Ingresos)",
+                Filter = "Excel (*.xlsx)|*.xlsx",
+                FileName = $"Facturas_Ingresos_{DateTime.Now:yyyyMMdd_HHmm}.xlsx",
                 InitialDirectory = Environment.GetFolderPath(
                                        Environment.SpecialFolder.MyDocuments)
             };
@@ -382,7 +385,35 @@ namespace FacturasApp.UI
 
             try
             {
-                _exportador.ExportarACsv(_facturas, dialogo.FileName);
+                // Actualmente exporta todas las facturas; el sufijo indica "Ingresos"
+                _exportador.ExportarAExcel(_facturas, dialogo.FileName);
+                MostrarExitoExportacion(dialogo.FileName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al exportar:\n{ex.Message}",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // Nuevo: Exportar Excel — Gastos
+        private void btnExportarExcelGastos_Click(object sender, EventArgs e)
+        {
+            using var dialogo = new SaveFileDialog
+            {
+                Title = "Guardar como Excel (Gastos)",
+                Filter = "Excel (*.xlsx)|*.xlsx",
+                FileName = $"Facturas_Gastos_{DateTime.Now:yyyyMMdd_HHmm}.xlsx",
+                InitialDirectory = Environment.GetFolderPath(
+                                       Environment.SpecialFolder.MyDocuments)
+            };
+
+            if (dialogo.ShowDialog() != DialogResult.OK) return;
+
+            try
+            {
+                // Actualmente exporta todas las facturas; el sufijo indica "Gastos"
+                _exportador.ExportarAExcel(_facturas, dialogo.FileName);
                 MostrarExitoExportacion(dialogo.FileName);
             }
             catch (Exception ex)
@@ -418,7 +449,9 @@ namespace FacturasApp.UI
             btnLimpiarLista.Enabled = !procesando;
             btnProcesar.Enabled = !procesando;
             btnExportarExcel.Enabled = !procesando;
-            btnExportarCsv.Enabled = !procesando;
+            // Nuevos botones de exportación Excel
+            btnExportarExcelIngresos.Enabled = !procesando;
+            btnExportarExcelGastos.Enabled = !procesando;
             progressBar.Visible = procesando;
             lblPorcentaje.Visible = procesando;
         }

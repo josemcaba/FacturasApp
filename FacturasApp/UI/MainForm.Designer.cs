@@ -32,7 +32,8 @@ namespace FacturasApp.UI
             dgvFacturas = new DataGridView();
             lblResumen = new Label();
             btnExportarExcel = new Button();
-            btnExportarCsv = new Button();
+            btnExportarExcelIngresos = new Button();
+            btnExportarExcelGastos = new Button();
             lblFiltro = new Label();
             lblEstadoFiltro = new Label();
             ((System.ComponentModel.ISupportInitialize)dgvFacturas).BeginInit();
@@ -210,20 +211,35 @@ namespace FacturasApp.UI
             btnExportarExcel.UseVisualStyleBackColor = false;
             btnExportarExcel.Click += btnExportarExcel_Click;
             // 
-            // btnExportarCsv
+            // btnExportarExcelIngresos
             // 
-            btnExportarCsv.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            btnExportarCsv.BackColor = Color.FromArgb(100, 100, 100);
-            btnExportarCsv.Enabled = false;
-            btnExportarCsv.FlatStyle = FlatStyle.Flat;
-            btnExportarCsv.ForeColor = Color.White;
-            btnExportarCsv.Location = new Point(170, 688);
-            btnExportarCsv.Name = "btnExportarCsv";
-            btnExportarCsv.Size = new Size(150, 34);
-            btnExportarCsv.TabIndex = 18;
-            btnExportarCsv.Text = "📋 Exportar CSV";
-            btnExportarCsv.UseVisualStyleBackColor = false;
-            btnExportarCsv.Click += btnExportarCsv_Click;
+            btnExportarExcelIngresos.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            btnExportarExcelIngresos.BackColor = Color.FromArgb(33, 115, 70);
+            btnExportarExcelIngresos.Enabled = false;
+            btnExportarExcelIngresos.FlatStyle = FlatStyle.Flat;
+            btnExportarExcelIngresos.ForeColor = Color.White;
+            btnExportarExcelIngresos.Location = new Point(170, 688);
+            btnExportarExcelIngresos.Name = "btnExportarExcelIngresos";
+            btnExportarExcelIngresos.Size = new Size(150, 34);
+            btnExportarExcelIngresos.TabIndex = 18;
+            btnExportarExcelIngresos.Text = "📊 Exportar Ingresos";
+            btnExportarExcelIngresos.UseVisualStyleBackColor = false;
+            btnExportarExcelIngresos.Click += btnExportarExcelIngresos_Click;
+            // 
+            // btnExportarExcelGastos
+            // 
+            btnExportarExcelGastos.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            btnExportarExcelGastos.BackColor = Color.FromArgb(100, 100, 100);
+            btnExportarExcelGastos.Enabled = false;
+            btnExportarExcelGastos.FlatStyle = FlatStyle.Flat;
+            btnExportarExcelGastos.ForeColor = Color.White;
+            btnExportarExcelGastos.Location = new Point(328, 688);
+            btnExportarExcelGastos.Name = "btnExportarExcelGastos";
+            btnExportarExcelGastos.Size = new Size(150, 34);
+            btnExportarExcelGastos.TabIndex = 19;
+            btnExportarExcelGastos.Text = "📊 Exportar Gastos";
+            btnExportarExcelGastos.UseVisualStyleBackColor = false;
+            btnExportarExcelGastos.Click += btnExportarExcelGastos_Click;
             // 
             // lblFiltro
             // 
@@ -260,7 +276,8 @@ namespace FacturasApp.UI
             Controls.Add(dgvFacturas);
             Controls.Add(lblResumen);
             Controls.Add(btnExportarExcel);
-            Controls.Add(btnExportarCsv);
+            Controls.Add(btnExportarExcelIngresos);
+            Controls.Add(btnExportarExcelGastos);
             Font = new Font("Segoe UI", 9F);
             MinimumSize = new Size(800, 600);
             Name = "MainForm";
@@ -278,7 +295,8 @@ namespace FacturasApp.UI
         private Button btnLimpiarLista;
         private Button btnProcesar;
         private Button btnExportarExcel;
-        private Button btnExportarCsv;
+        private Button btnExportarExcelIngresos;
+        private Button btnExportarExcelGastos;
         private ListBox lstArchivos;
         private TextBox txtRutaExcel;
         private ProgressBar progressBar;
