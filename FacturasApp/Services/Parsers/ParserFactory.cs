@@ -15,7 +15,8 @@ namespace FacturasApp.Services.Parsers
                 new MercadonaParser(),
                 new EmasaParser(),
                 new OnaCorpParser(),
-                new LidlParser()
+                new LidlParser(),
+                new PlenergyParser(),
             };
         }
 
