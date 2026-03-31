@@ -1,5 +1,8 @@
 using FacturasApp.Models;
 using FacturasApp.Services;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.IO;
+using System.Linq;
 
 namespace FacturasApp.UI
 {
@@ -383,8 +386,7 @@ namespace FacturasApp.UI
 
             try
             {
-                // Actualmente exporta todas las facturas; el sufijo indica "Ingresos"
-                _exportador.ExportarAExcel(_facturas, dialogo.FileName);
+                _exportador.ExportarAExcelIngresos(_facturas, dialogo.FileName);
                 MostrarExitoExportacion(dialogo.FileName);
             }
             catch (Exception ex)
@@ -410,8 +412,8 @@ namespace FacturasApp.UI
 
             try
             {
-                // Actualmente exporta todas las facturas; el sufijo indica "Gastos"
-                _exportador.ExportarAExcel(_facturas, dialogo.FileName);
+                // Exportar todas las facturas sin alterarlas
+                _exportador.ExportarAExcelGastos(_facturas, dialogo.FileName);
                 MostrarExitoExportacion(dialogo.FileName);
             }
             catch (Exception ex)
@@ -446,6 +448,7 @@ namespace FacturasApp.UI
             btnSeleccionarExcel.Enabled = !procesando;
             btnLimpiarLista.Enabled = !procesando;
             btnProcesar.Enabled = !procesando;
+            // Nuevos botones de exportación Excel
             btnExportarExcelIngresos.Enabled = !procesando;
             btnExportarExcelGastos.Enabled = !procesando;
             progressBar.Visible = procesando;

@@ -12,6 +12,9 @@
         // ── Receptor ─────────────────────────────────────────────────────────
         public Cliente Receptor { get; set; } = new Cliente();
 
+        // ── Concepto contable ────────────────────────────────────────────────
+        public string Concepto { get; set; } = string.Empty; // Código contable
+
         // ── Importes ─────────────────────────────────────────────────────────
         public decimal BaseImponible { get; set; }
 

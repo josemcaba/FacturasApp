@@ -1,8 +1,6 @@
 ﻿using ClosedXML.Excel;
 using CsvHelper;
 using CsvHelper.Configuration;
-using CsvHelper.TypeConversion;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using FacturasApp.Models;
 using System.Globalization;
 
@@ -20,6 +18,180 @@ namespace FacturasApp.Services
             CrearHojaResumenEmisor(workbook, facturas);
             CrearHojaIncidencias(workbook, facturas);
 
+            workbook.SaveAs(rutaDestino);
+        }
+
+        public void ExportarAExcelIngresos(List<Factura> facturas, string rutaDestino)
+        {
+            using var workbook = new XLWorkbook();
+            var hoja = workbook.Worksheets.Add("Ingresos");
+
+            string[] columnas =
+            {
+                "Número de factura",
+                "Fecha de factura",
+                "Fecha de operación",
+                "Concepto",
+                "Base IVA",
+                "% IVA",
+                "Cuota IVA",
+                "Base IRPF",
+                "% IRPF",
+                "Cuota IRPF",
+                "Base RE",
+                "% RE",
+                "Cuota RE",
+                "NIF del Cliente",
+                "Nombre del Cliente"
+            };
+
+            // Cabecera
+            for (int i = 0; i < columnas.Length; i++)
+            {
+                var celda = hoja.Cell(1, i + 1);
+                celda.Value = columnas[i];
+                celda.Style.Font.Bold = true;
+                celda.Style.Fill.BackgroundColor = XLColor.FromHtml("#2E75B6");
+                celda.Style.Font.FontColor = XLColor.White;
+                celda.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            }
+
+            // Datos
+            for (int i = 0; i < facturas.Count; i++)
+            {
+                var f = facturas[i];
+                int fila = i + 2;
+
+                hoja.Cell(fila, 1).Value = f.NumeroFactura;
+                hoja.Cell(fila, 2).Value = f.Fecha.HasValue
+                    ? f.Fecha.Value.ToString("dd/MM/yyyy") : string.Empty;
+                // Fecha de operación: igual que fecha factura
+                hoja.Cell(fila, 3).Value = f.Fecha.HasValue
+                    ? f.Fecha.Value.ToString("dd/MM/yyyy") : string.Empty;
+                // Concepto: siempre 700 para Excel de Ingresos (sobrescribe valor en Factura)
+                hoja.Cell(fila, 4).Value = "700";
+                // Base IVA = BaseImponible
+                hoja.Cell(fila, 5).Value = f.BaseImponible;
+                // % IVA -> export as numeric percentage value (e.g. 21.00), not as Excel percent cell
+                hoja.Cell(fila, 6).Value = f.PorcentajeIVA;
+                hoja.Cell(fila, 7).Value = f.CuotaIVA;
+                // Base IRPF = BaseImponible
+                hoja.Cell(fila, 8).Value = f.BaseImponible;
+                hoja.Cell(fila, 9).Value = f.PorcentajeIRPF;
+                hoja.Cell(fila, 10).Value = f.CuotaIRPF;
+                // Base RE = BaseImponible
+                hoja.Cell(fila, 11).Value = f.BaseImponible;
+                hoja.Cell(fila, 12).Value = f.PorcentajeRE;
+                hoja.Cell(fila, 13).Value = f.CuotaRE;
+                hoja.Cell(fila, 14).Value = f.Receptor.NIF;
+                hoja.Cell(fila, 15).Value = f.Receptor.Nombre;
+
+                // Formatos
+                string fmtMoneda = "#,##0.00";
+                string fmtNumero = "0.00";
+                string fmtEntero = "0";
+
+                // Moneda
+                foreach (int col in new[] { 5, 7, 8, 10, 11, 13 })
+                    hoja.Cell(fila, col).Style.NumberFormat.Format = fmtMoneda;
+
+                // Percentage columns must be be general numeric (e.g. 21.00), not percent format
+                foreach (int col in new[] { 6, 9, 12 })
+                    hoja.Cell(fila, col).Style.NumberFormat.Format = fmtNumero;
+
+                // Concepto as integer format
+                hoja.Cell(fila, 4).Style.NumberFormat.Format = fmtEntero;
+
+                // Texto para columna de concepto
+                string fmtTexto = "@";  // Formato de texto
+                hoja.Cell(fila, 4).Style.NumberFormat.Format = fmtTexto;
+            }
+
+            hoja.Columns().AdjustToContents();
+            workbook.SaveAs(rutaDestino);
+        }
+        public void ExportarAExcelGastos(List<Factura> facturas, string rutaDestino)
+        {
+            using var workbook = new XLWorkbook();
+            var hoja = workbook.Worksheets.Add("Gastos");
+
+            string[] columnas =
+            {
+                "Número de factura",
+                "Fecha de factura",
+                "Fecha de operación",
+                "Concepto",
+                "Base IVA",
+                "% IVA",
+                "Cuota IVA",
+                "Base IRPF",
+                "% IRPF",
+                "Cuota IRPF",
+                "Base RE",
+                "% RE",
+                "Cuota RE",
+                "NIF del Emisor",
+                "Nombre del Emisor"
+            };
+
+            // Cabecera
+            for (int i = 0; i < columnas.Length; i++)
+            {
+                var celda = hoja.Cell(1, i + 1);
+                celda.Value = columnas[i];
+                celda.Style.Font.Bold = true;
+                celda.Style.Fill.BackgroundColor = XLColor.FromHtml("#2E75B6");
+                celda.Style.Font.FontColor = XLColor.White;
+                celda.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            }
+
+            // Datos
+            for (int i = 0; i < facturas.Count; i++)
+            {
+                var f = facturas[i];
+                int fila = i + 2;
+
+                hoja.Cell(fila, 1).Value = f.NumeroFactura;
+                hoja.Cell(fila, 2).Value = f.Fecha.HasValue
+                    ? f.Fecha.Value.ToString("dd/MM/yyyy") : string.Empty;
+                // Fecha de operación: igual que fecha factura
+                hoja.Cell(fila, 3).Value = f.Fecha.HasValue
+                    ? f.Fecha.Value.ToString("dd/MM/yyyy") : string.Empty;
+                // Concepto contable: si el campo Concepto en Factura no está vacío ni es "0", usar su valor; si no, usar "600" (concepto genérico para gastos)
+                hoja.Cell(fila, 4).Value = !string.IsNullOrEmpty(f.Concepto) && f.Concepto != "0" ? f.Concepto : "600";
+                // Base IVA = BaseImponible
+                hoja.Cell(fila, 5).Value = f.BaseImponible;
+                // % IVA -> numeric general (e.g. 21.00)
+                hoja.Cell(fila, 6).Value = f.PorcentajeIVA;
+                hoja.Cell(fila, 7).Value = f.CuotaIVA;
+                // Base IRPF = BaseImponible
+                hoja.Cell(fila, 8).Value = f.BaseImponible;
+                hoja.Cell(fila, 9).Value = f.PorcentajeIRPF;
+                hoja.Cell(fila, 10).Value = f.CuotaIRPF;
+                // Base RE = BaseImponible
+                hoja.Cell(fila, 11).Value = f.BaseImponible;
+                hoja.Cell(fila, 12).Value = f.PorcentajeRE;
+                hoja.Cell(fila, 13).Value = f.CuotaRE;
+                hoja.Cell(fila, 14).Value = f.Emisor.NIF;
+                hoja.Cell(fila, 15).Value = f.Emisor.Nombre;
+
+                // Formatos
+                string fmtMoneda = "#,##0.00";
+                string fmtNumero = "0.00";
+
+                foreach (int col in new[] { 5, 7, 8, 10, 11, 13 })
+                    hoja.Cell(fila, col).Style.NumberFormat.Format = fmtMoneda;
+
+                // Percentage columns as numeric values (general numeric)
+                foreach (int col in new[] { 6, 9, 12 })
+                    hoja.Cell(fila, col).Style.NumberFormat.Format = fmtNumero;
+
+                // Texto para columna de concepto
+                string fmtTexto = "@";  // Formato de texto
+                hoja.Cell(fila, 4).Style.NumberFormat.Format = fmtTexto;
+            }
+
+            hoja.Columns().AdjustToContents();
             workbook.SaveAs(rutaDestino);
         }
 
@@ -63,11 +235,11 @@ namespace FacturasApp.Services
                 hoja.Cell(fila, 5).Value = f.Receptor.Nombre;
                 hoja.Cell(fila, 6).Value = f.Receptor.NIF;
                 hoja.Cell(fila, 7).Value = f.BaseImponible;
-                hoja.Cell(fila, 8).Value = f.PorcentajeIVA / 100m;
+                hoja.Cell(fila, 8).Value = f.PorcentajeIVA;
                 hoja.Cell(fila, 9).Value = f.CuotaIVA;
-                hoja.Cell(fila, 10).Value = f.PorcentajeIRPF / 100m;
+                hoja.Cell(fila, 10).Value = f.PorcentajeIRPF;
                 hoja.Cell(fila, 11).Value = f.CuotaIRPF;
-                hoja.Cell(fila, 12).Value = f.PorcentajeRE / 100m;
+                hoja.Cell(fila, 12).Value = f.PorcentajeRE;
                 hoja.Cell(fila, 13).Value = f.CuotaRE;
                 hoja.Cell(fila, 14).Value = f.Total;
                 hoja.Cell(fila, 15).Value = f.Estado.ToString();
@@ -76,11 +248,11 @@ namespace FacturasApp.Services
 
                 // Formato numérico
                 string fmtMoneda = "#,##0.00 €";
-                string fmtPct = "0.00%";
+                string fmtNumero = "0.00";
                 foreach (int col in new[] { 7, 9, 11, 13, 14 })
                     hoja.Cell(fila, col).Style.NumberFormat.Format = fmtMoneda;
                 foreach (int col in new[] { 8, 10, 12 })
-                    hoja.Cell(fila, col).Style.NumberFormat.Format = fmtPct;
+                    hoja.Cell(fila, col).Style.NumberFormat.Format = fmtNumero;
 
                 // Color por estado
                 var color = f.Estado switch
@@ -101,13 +273,13 @@ namespace FacturasApp.Services
 
             // Totales de columnas numéricas
             Dictionary<int, string> colsTotal = new()
-    {
-        { 7,  $"=SUM(G2:G{filaTotal - 1})" },  // Base
-        { 9,  $"=SUM(I2:I{filaTotal - 1})" },  // Cuota IVA
-        { 11, $"=SUM(K2:K{filaTotal - 1})" },  // Cuota IRPF
-        { 13, $"=SUM(M2:M{filaTotal - 1})" },  // Cuota RE
-        { 14, $"=SUM(N2:N{filaTotal - 1})" },  // Total
-    };
+            {
+                { 7,  $"=SUM(G2:G{filaTotal - 1})" },  // Base
+                { 9,  $"=SUM(I2:I{filaTotal - 1})" },  // Cuota IVA
+                { 11, $"=SUM(K2:K{filaTotal - 1})" },  // Cuota IRPF
+                { 13, $"=SUM(M2:M{filaTotal - 1})" },  // Cuota RE
+                { 14, $"=SUM(N2:N{filaTotal - 1})" },  // Total
+            };
 
             foreach (var kvp in colsTotal)
             {
