@@ -1,6 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 using FacturasApp.Models;
-using FacturasApp.Services;
 
 namespace FacturasApp.Services.Parsers
 {
@@ -8,7 +7,6 @@ namespace FacturasApp.Services.Parsers
     {
         public abstract string Nombre { get; }
         public abstract string Nif { get; }
-
         public virtual string Concepto => "0"; // Código contable, por defecto 0 (sin asignar)
         public abstract bool PuedeParsar(string texto);
         public abstract Factura Parsear(string texto, string rutaArchivo, bool viaOcr);

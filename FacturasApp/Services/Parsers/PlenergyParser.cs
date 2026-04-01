@@ -7,6 +7,7 @@ namespace FacturasApp.Services.Parsers
     {
         public override string Nombre => "PLENERGY GRUPO, S.L.";
         public override string Nif => "B93275394";
+        public override string Concepto => "628";
 
         private static readonly string[] Identificadores =
             { "PLENERGY GRUPO", "B93275394"};
@@ -31,11 +32,11 @@ namespace FacturasApp.Services.Parsers
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RegexNif = new(
-            @"España[\r\n]+(.+)[\r\n]+Dirección",
+            @"Málaga[\r\n]+(.+)[\r\n]+PLENERGY",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RegexImportes = new(
-            @"Base Imponible ([\d,.]+)€[\r\n]+IVA Total \((\d+)%\) [\d,.]+€[\r\n]+TOTAL FACTURA ([\d,.]+)€",
+            @"Importe\sTOTAL[\r\n]+([\d,.]+)\s+(\d+)%\s+([\d,.]+)\s+[\d,.]+\s+€\s+([\d,.]+)\s+€",
             RegexOptions.Compiled);
 
         public override Factura Parsear(string texto, string rutaArchivo, bool viaOcr)
@@ -48,13 +49,14 @@ namespace FacturasApp.Services.Parsers
 
             factura.Emisor.NIF = Nif;
             factura.Emisor.Nombre = Nombre;
+            factura.Concepto = Concepto;
             factura.NumeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
             factura.Fecha = ExtraerFecha(RegexFecha, texto);
             factura.Receptor.Nombre = ExtraerGrupo(RegexNombre, texto, 1);
             factura.Receptor.NIF = ExtraerGrupo(RegexNif, texto, 1).ToUpper();
             factura.BaseImponible = ExtraerDecimal(RegexImportes, texto, 1);
             factura.PorcentajeIVA = ExtraerDecimal(RegexImportes, texto, 2);
-            factura.Total = ExtraerDecimal(RegexImportes, texto, 3);
+            factura.Total = ExtraerDecimal(RegexImportes, texto, 4);
             factura.Estado = DeterminarEstado(factura);
 
             return factura;
