@@ -7,7 +7,7 @@ namespace FacturasApp.Services.Parsers
     {
         public override string Nombre => "PLENERGY GRUPO, S.L.";
         public override string Nif => "B93275394";
-        public override string Concepto => "628";
+        public override string Concepto => "624";
 
         private static readonly string[] Identificadores =
             { "PLENERGY GRUPO", "B93275394"};
