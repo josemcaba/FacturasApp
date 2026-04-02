@@ -17,6 +17,8 @@ namespace FacturasApp.Services.Parsers
                 new OnaCorpParser(),
                 new LidlParser(),
                 new PlenergyParser(),
+                new GruasJuandiParser(),
+                new MoncayoParser(),
             };
         }
 

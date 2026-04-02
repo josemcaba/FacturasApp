@@ -8,7 +8,7 @@ namespace FacturasApp.Services.Parsers
         bool PuedeParsar(string texto);
         Factura Parsear(string texto, string rutaArchivo, bool viaOcr);
 
-        // Modo de extracción preferido para este emisor
+        // Modo de extracción preferido
         // Por defecto LayoutAnalysis, cada parser puede sobreescribirlo
         PdfTextExtractor.ModoExtraccion ModoExtraccion =>
             PdfTextExtractor.ModoExtraccion.LayoutAnalysis;
