@@ -33,6 +33,10 @@ namespace FacturasApp.UI
         public DefinirPlantillaForm()
         {
             InitializeComponent(); // ← llama al del Designer
+            
+            // Poblamos el desplegable con los campos disponibles
+            //cmbCampo.Items.AddRange(CamposDisponibles);
+            //cmbCampo.SelectedIndex = 0;
         }
 
         // ── Carga del PDF ─────────────────────────────────────────────────────

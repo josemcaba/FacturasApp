@@ -38,7 +38,7 @@ namespace FacturasApp.UI
             picFactura.Cursor = Cursors.Cross;
             picFactura.Location = new Point(12, 12);
             picFactura.Name = "picFactura";
-            picFactura.Size = new Size(720, 688);
+            picFactura.Size = new Size(720, 696);
             picFactura.SizeMode = PictureBoxSizeMode.Zoom;
             picFactura.TabIndex = 0;
             picFactura.TabStop = false;
@@ -61,6 +61,9 @@ namespace FacturasApp.UI
             cmbCampo.Name = "cmbCampo";
             cmbCampo.Size = new Size(320, 28);
             cmbCampo.TabIndex = 6;
+            // Poblamos el desplegable con los campos disponibles
+            cmbCampo.Items.AddRange(CamposDisponibles);
+            cmbCampo.SelectedIndex = 0;
             // 
             // btnCargarPdf
             // 
@@ -99,11 +102,14 @@ namespace FacturasApp.UI
             btnGuardar.Click += BtnGuardar_Click;
             // 
             // btnCerrar
-            // 
-            btnCerrar.Location = new Point(0, 0);
+            //
+            btnCerrar.FlatStyle = FlatStyle.Flat;
+            btnCerrar.Text = "Cerrar";
+            btnCerrar.Location = new Point(910, 620);
             btnCerrar.Name = "btnCerrar";
-            btnCerrar.Size = new Size(75, 23);
+            btnCerrar.Size = new Size(80, 34);
             btnCerrar.TabIndex = 11;
+            btnCerrar.Click += (s, e) => Close();
             // 
             // lblInstrucciones
             // 
@@ -133,10 +139,12 @@ namespace FacturasApp.UI
             // 
             // lblZonas
             // 
-            lblZonas.Location = new Point(0, 0);
+            lblZonas.AutoSize = true;
+            lblZonas.Location = new Point(745, 285);
             lblZonas.Name = "lblZonas";
             lblZonas.Size = new Size(100, 23);
             lblZonas.TabIndex = 7;
+            lblZonas.Text = "Zonas definidas:";
             // 
             // DefinirPlantillaForm
             // 
