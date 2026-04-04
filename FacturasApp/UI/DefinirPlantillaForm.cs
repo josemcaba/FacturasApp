@@ -33,10 +33,10 @@ namespace FacturasApp.UI
         public DefinirPlantillaForm()
         {
             InitializeComponent(); // ← llama al del Designer
-            
-            // Poblamos el desplegable con los campos disponibles
-            //cmbCampo.Items.AddRange(CamposDisponibles);
-            //cmbCampo.SelectedIndex = 0;
+
+            // Poblamos aqui el desplegable para evitar problemas con el diseñador
+            cmbCampo.Items.AddRange(CamposDisponibles);
+            cmbCampo.SelectedIndex = 0;
         }
 
         // ── Carga del PDF ─────────────────────────────────────────────────────
@@ -281,10 +281,10 @@ namespace FacturasApp.UI
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        protected override void OnFormClosed(FormClosedEventArgs e)
+        private void btnCerrar_Click(object sender, EventArgs e)
         {
             _imagenPagina?.Dispose();
-            base.OnFormClosed(e);
+            base.Close();
         }
     }
 }
