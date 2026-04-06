@@ -41,6 +41,9 @@ namespace FacturasApp.Models
         [XmlAttribute("Alto")]
         public double Alto { get; set; }
 
+        [XmlAttribute("Regex")]
+        public string RegexPersonalizada { get; set; } = string.Empty;
+
         // Convierte las coordenadas porcentuales a píxeles
         // según el tamaño real de la imagen
         public System.Drawing.Rectangle ToRectangle(int imgAncho, int imgAlto)

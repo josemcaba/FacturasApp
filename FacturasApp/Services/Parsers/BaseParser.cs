@@ -28,6 +28,17 @@ namespace FacturasApp.Services.Parsers
             return m.Success ? m.Groups[grupo].Value.Trim() : string.Empty;
         }
 
+        protected string ExtraerNif(Regex regex, string texto, string nifEmisor)
+        {
+            var m = regex.Match(texto);
+            for (int i = 0; i < m.Length; i++)
+            {
+                if (m.Groups[i].Value.Trim() != nifEmisor)
+                    return m.Groups[i].Value.Trim();
+            }
+            return string.Empty;
+        }
+
         protected decimal ExtraerDecimal(Regex regex, string texto, int grupo)
         {
             var m = regex.Match(texto);

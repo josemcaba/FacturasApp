@@ -19,6 +19,7 @@ namespace FacturasApp.Services.Parsers
                 new PlenergyParser(),
                 new GruasJuandiParser(),
                 new MoncayoParser(),
+                new GregorioArandaParser(),
             };
         }
 
