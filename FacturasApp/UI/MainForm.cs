@@ -264,9 +264,9 @@ namespace FacturasApp.UI
             dgvFacturas.Rows[e.RowIndex].DefaultCellStyle.BackColor =
                 _facturas[e.RowIndex].Estado switch
                 {
-                    EstadoFactura.OK => Color.FromArgb(226, 239, 218),
-                    EstadoFactura.RevisionManual => Color.FromArgb(255, 242, 204),
-                    EstadoFactura.Error => Color.FromArgb(252, 228, 214),
+                    EstadoFactura.OK => Color.FromArgb(226, 239, 218),               // Verde claro
+                    EstadoFactura.RevisionManual => Color.FromArgb(255, 242, 204),   // Amarillo claro
+                    EstadoFactura.Error => Color.FromArgb(255, 228, 214),            // Rojo claro
                     _ => Color.White
                 };
         }

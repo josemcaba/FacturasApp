@@ -42,11 +42,11 @@ namespace FacturasApp.UI
             PorcentajeRE = f.PorcentajeRE;
             CuotaREFmt = $"{f.CuotaRE:N2} €";
             TotalFormateado = $"{f.Total:N2} €";
-            TotalesOk = f.TotalesCoinciden ? "✔" : "⚠ Diferencia";
+            TotalesOk = f.TotalesCoinciden ? "✔" : "⚠ Cálculos";
             EstadoTexto = f.Estado switch
             {
                 EstadoFactura.OK => "✔ Correcto",
-                EstadoFactura.RevisionManual => "⚠ Revisión manual",
+                EstadoFactura.RevisionManual => "⚠ Revisar",
                 EstadoFactura.Error => "✖ Error",
                 _ => "Pendiente"
             };
