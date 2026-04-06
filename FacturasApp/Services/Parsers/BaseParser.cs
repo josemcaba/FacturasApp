@@ -30,12 +30,24 @@ namespace FacturasApp.Services.Parsers
 
         protected string ExtraerNif(Regex regex, string texto, string nifEmisor)
         {
-            var m = regex.Match(texto);
-            for (int i = 0; i < m.Length; i++)
+            // Matches() devuelve TODAS las coincidencias, no solo la primera
+            var coincidencias = regex.Matches(texto);
+
+            foreach (Match m in coincidencias)
             {
-                if (m.Groups[i].Value.Trim() != nifEmisor)
-                    return m.Groups[i].Value.Trim();
+                string nif = m.Groups.Count > 1
+                    ? m.Groups[1].Value.Trim()  // usamos grupo de captura si existe
+                    : m.Value.Trim();           // si no, el match completo
+
+                if (string.IsNullOrEmpty(nif)) continue;
+
+                // Ignoramos el NIF del emisor
+                if (nif.Equals(nifEmisor, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                return nif; // Primer NIF que no es el del emisor
             }
+
             return string.Empty;
         }
 
@@ -88,7 +100,8 @@ namespace FacturasApp.Services.Parsers
                 !string.IsNullOrEmpty(f.Emisor.Nombre) &&
                 !string.IsNullOrEmpty(f.Emisor.NIF) &&
                 !string.IsNullOrEmpty(f.Receptor.Nombre) &&
-                !string.IsNullOrEmpty(f.Receptor.NIF);
+                !string.IsNullOrEmpty(f.Receptor.NIF) &&
+                f.Total != 0.0m;
 
             if (!camposObligatoriosOk)
                 return EstadoFactura.RevisionManual;

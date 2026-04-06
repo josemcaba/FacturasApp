@@ -51,7 +51,7 @@ namespace FacturasApp.Services
                 var celda = hoja.Cell(1, i + 1);
                 celda.Value = columnas[i];
                 celda.Style.Font.Bold = true;
-                celda.Style.Fill.BackgroundColor = XLColor.FromHtml("#2E75B6");
+                celda.Style.Fill.BackgroundColor = XLColor.FromHtml("#2E75B6");  // #2E75B6 es un azul oscuro
                 celda.Style.Font.FontColor = XLColor.White;
                 celda.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
             }

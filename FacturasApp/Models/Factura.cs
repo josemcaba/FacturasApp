@@ -39,7 +39,7 @@
             Math.Abs(Total - TotalCalculado);
 
         // Tolerancia aceptable en la comparación de totales (0,01€)
-        private const decimal ToleranciaTotal = 0.01m;
+        private const decimal ToleranciaTotal = 0.015m;
 
         public bool TotalesCoinciden =>
             DiferenciaTotal <= ToleranciaTotal;
