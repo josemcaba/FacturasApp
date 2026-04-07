@@ -18,7 +18,6 @@ namespace FacturasApp.UI
         public decimal PorcentajeRE { get; }
         public string CuotaREFmt { get; }
         public string TotalFormateado { get; }
-        public string TotalesOk { get; }
         public string EstadoTexto { get; }
         public bool ExtractedByOcr { get; }
         public string NombreArchivo { get; }
@@ -42,7 +41,6 @@ namespace FacturasApp.UI
             PorcentajeRE = f.PorcentajeRE;
             CuotaREFmt = $"{f.CuotaRE:N2} €";
             TotalFormateado = $"{f.Total:N2} €";
-            TotalesOk = f.TotalesCoinciden ? "✔" : "⚠ Cálculos";
             EstadoTexto = f.Estado switch
             {
                 EstadoFactura.OK => "✔ Correcto",

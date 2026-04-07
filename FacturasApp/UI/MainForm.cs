@@ -225,11 +225,6 @@ namespace FacturasApp.UI
                       DefaultCellStyle  = { Alignment =
                           DataGridViewContentAlignment.MiddleRight }},
                 new DataGridViewTextBoxColumn
-                    { Name = "colTotalesOk", HeaderText = "Total OK",
-                      DataPropertyName = "TotalesOk",       Width = 90,
-                      DefaultCellStyle  = { Alignment =
-                          DataGridViewContentAlignment.MiddleCenter }},
-                new DataGridViewTextBoxColumn
                     { Name = "colEstado",   HeaderText = "Estado",
                       DataPropertyName = "EstadoTexto",     Width = 130 },
                 new DataGridViewCheckBoxColumn
