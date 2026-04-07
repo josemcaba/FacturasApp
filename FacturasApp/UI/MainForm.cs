@@ -259,14 +259,18 @@ namespace FacturasApp.UI
         private void DgvFacturas_RowPrePaint(object? sender,
             DataGridViewRowPrePaintEventArgs e)
         {
-            if (e.RowIndex < 0 || e.RowIndex >= _facturas.Count) return;
+            if (e.RowIndex < 0) return;
+
+            // ← Obtenemos la factura directamente desde el DTO de la fila
+            if (dgvFacturas.Rows[e.RowIndex].DataBoundItem
+                is not FacturaGridRow fila) return;
 
             dgvFacturas.Rows[e.RowIndex].DefaultCellStyle.BackColor =
-                _facturas[e.RowIndex].Estado switch
+                fila.FacturaOriginal.Estado switch
                 {
-                    EstadoFactura.OK => Color.FromArgb(226, 239, 218),               // Verde claro
-                    EstadoFactura.RevisionManual => Color.FromArgb(255, 242, 204),   // Amarillo claro
-                    EstadoFactura.Error => Color.FromArgb(255, 228, 214),            // Rojo claro
+                    EstadoFactura.OK => Color.FromArgb(226, 239, 218),
+                    EstadoFactura.RevisionManual => Color.FromArgb(255, 242, 204),
+                    EstadoFactura.Error => Color.FromArgb(255, 228, 214),
                     _ => Color.White
                 };
         }
@@ -274,9 +278,14 @@ namespace FacturasApp.UI
         private void DgvFacturas_CellDoubleClick(object? sender,
             DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0 || e.RowIndex >= _facturas.Count) return;
+            if (e.RowIndex < 0) return;
 
-            using var detalle = new DetalleFacturaForm(_facturas[e.RowIndex]);
+            // ← Obtenemos la factura directamente desde el DTO de la fila
+            // Esto funciona correctamente tanto con filtro como sin él
+            if (dgvFacturas.Rows[e.RowIndex].DataBoundItem
+                is not FacturaGridRow fila) return;
+
+            using var detalle = new DetalleFacturaForm(fila.FacturaOriginal);
             detalle.ShowDialog(this);
         }
 

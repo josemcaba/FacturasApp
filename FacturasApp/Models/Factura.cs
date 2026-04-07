@@ -19,13 +19,17 @@
         public decimal BaseImponible { get; set; }
 
         public decimal PorcentajeIVA { get; set; } = 0m;
-        public decimal CuotaIVA => BaseImponible * (PorcentajeIVA / 100m);
+        // Calculamos la cuota de IVA a partir de la base imponible y el porcentaje redondeando a 2 decimales
+        public decimal CuotaIVA => Math.Round(BaseImponible * (PorcentajeIVA / 100m), 2, 
+            MidpointRounding.AwayFromZero);
 
         public decimal PorcentajeIRPF { get; set; } = 0m;
-        public decimal CuotaIRPF => BaseImponible * (PorcentajeIRPF / 100m);
+        public decimal CuotaIRPF => Math.Round(BaseImponible * (PorcentajeIRPF / 100m), 2,
+            MidpointRounding.AwayFromZero);
 
         public decimal PorcentajeRE { get; set; } = 0m;
-        public decimal CuotaRE => BaseImponible * (PorcentajeRE / 100m);
+        public decimal CuotaRE => Math.Round(BaseImponible * (PorcentajeRE / 100m), 2,
+            MidpointRounding.AwayFromZero);
 
         // Total extraído directamente de la factura
         public decimal Total { get; set; }
@@ -39,7 +43,7 @@
             Math.Abs(Total - TotalCalculado);
 
         // Tolerancia aceptable en la comparación de totales (0,01€)
-        private const decimal ToleranciaTotal = 0.015m;
+        private const decimal ToleranciaTotal = 0.01m;
 
         public bool TotalesCoinciden =>
             DiferenciaTotal <= ToleranciaTotal;
