@@ -263,10 +263,10 @@ namespace FacturasApp.UI
             dgvFacturas.Rows[e.RowIndex].DefaultCellStyle.BackColor =
                 fila.FacturaOriginal.Estado switch
                 {
-                    EstadoFactura.OK => Color.FromArgb(226, 239, 218),
+                    EstadoFactura.OK             => Color.FromArgb(226, 239, 218),
                     EstadoFactura.RevisionManual => Color.FromArgb(255, 242, 204),
-                    EstadoFactura.Error => Color.FromArgb(255, 228, 214),
-                    _ => Color.White
+                    EstadoFactura.Error          => Color.FromArgb(255, 228, 214),
+                    _                            => Color.White
                 };
         }
 
@@ -348,31 +348,6 @@ namespace FacturasApp.UI
         }
 
         // ── Exportación ───────────────────────────────────────────────────────
-
-        private void btnExportarExcel_Click(object sender, EventArgs e)
-        {
-            using var dialogo = new SaveFileDialog
-            {
-                Title = "Guardar como Excel",
-                Filter = "Excel (*.xlsx)|*.xlsx",
-                FileName = $"Facturas_{DateTime.Now:yyyyMMdd_HHmm}.xlsx",
-                InitialDirectory = Environment.GetFolderPath(
-                                       Environment.SpecialFolder.MyDocuments)
-            };
-
-            if (dialogo.ShowDialog() != DialogResult.OK) return;
-
-            try
-            {
-                _exportador.ExportarAExcel(_facturas, dialogo.FileName);
-                MostrarExitoExportacion(dialogo.FileName);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al exportar:\n{ex.Message}",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
 
         // Nuevo: Exportar Excel — Ingresos
         private void btnExportarExcelIngresos_Click(object sender, EventArgs e)
