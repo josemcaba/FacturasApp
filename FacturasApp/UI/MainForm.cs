@@ -387,8 +387,11 @@ namespace FacturasApp.UI
                 Title = "Guardar como Excel (Gastos)",
                 Filter = "Excel (*.xlsx)|*.xlsx",
                 FileName = $"Facturas_Gastos_{DateTime.Now:yyyyMMdd_HHmm}.xlsx",
-                InitialDirectory = Environment.GetFolderPath(
-                                       Environment.SpecialFolder.MyDocuments)
+                // Usamos la carpeta de la primera factura selecciona para mayor comodidad
+                InitialDirectory = _facturas.Count > 0
+                    ? Path.GetDirectoryName(_facturas[0].RutaArchivo) ?? Environment.GetFolderPath(
+                        Environment.SpecialFolder.MyDocuments)
+                    : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
             };
 
             if (dialogo.ShowDialog() != DialogResult.OK) return;
