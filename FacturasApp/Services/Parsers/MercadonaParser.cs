@@ -53,7 +53,7 @@ namespace FacturasApp.Services.Parsers
             string numeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
             DateTime? fecha = ExtraerFecha(RegexFecha, texto);
             string receptorNombre = ExtraerGrupo(RegexNombre, texto, 1);
-            string receptorNIF = ExtraerGrupo(RegexNif, texto, 1).ToUpper();
+            string receptorNIF = ExtraerGrupo(RegexNif, texto, 1);
 
             // Una factura por cada línea de IVA encontrada
 

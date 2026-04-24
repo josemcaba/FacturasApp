@@ -54,7 +54,7 @@ namespace FacturasApp.Services.Parsers
             factura.NumeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
             factura.Fecha = ExtraerFecha(RegexFecha, texto);
             factura.Receptor.Nombre = ExtraerGrupo(RegexNombre, texto, 1);
-            factura.Receptor.NIF = ExtraerGrupo(RegexNif, texto, 1).ToUpper();
+            factura.Receptor.NIF = ExtraerGrupo(RegexNif, texto, 1);
             factura.BaseImponible = ExtraerDecimal(RegexImportes, texto, 2);
             factura.PorcentajeIVA = ExtraerDecimal(RegexImportes, texto, 1);
             factura.Total = ExtraerDecimal(RegexImportes, texto, 4);

@@ -38,8 +38,16 @@ namespace FacturasApp.Services.Parsers
                 string nif = m.Groups.Count > 1
                     ? m.Groups[1].Value.Trim()  // usamos grupo de captura si existe
                     : m.Value.Trim();           // si no, el match completo
-
+                
                 if (string.IsNullOrEmpty(nif)) continue;
+
+                // Eliminamos espacios, guiones y puntos comunes en los NIFs
+                nif = nif.Replace(" ", "")
+                         .Replace("-", "")
+                         .Replace(".", "")
+                         .Replace(",", "")
+                         .Trim()
+                         .ToUpper();
 
                 // Ignoramos el NIF del emisor
                 if (nif.Equals(nifEmisor, StringComparison.OrdinalIgnoreCase))

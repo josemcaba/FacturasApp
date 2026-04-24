@@ -1,43 +1,44 @@
 ﻿using CsvHelper;
 using FacturasApp.Models;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
-    public class GregorioArandaParser : BaseParser
+    public class IgnacioIbanezParser : BaseParser
     {
-        public override string Nombre => "Gregorio Aranda Garcia";
-        public override string Nif => "25693621E";
+        public override string Nombre => "Ignacio Ibañez Pacheco";
+        public override string Nif => "33360360X";
 
         private static readonly string[] Identificadores =
-            { "25693621E"};
+            { "SERVINFOTEC", "33.360.360-X"};
 
         public override bool PuedeParsar(string texto) =>
             Identificadores.All(id =>
                 texto.Contains(id, StringComparison.OrdinalIgnoreCase));
 
         private static readonly Regex RegexNumero = new(
-            @"Número de Factura.*[\n\r]+(?:Fact-)?(\d+)",
+            @"Número\s+Fecha[\s\n\r]+([^\s]+)",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexFecha = new(
-            @"Fecha de Facturación.*[\n\r]+(\d{1,2})[/\-\.](\d{1,2})[/\-\.](\d{4})\b",
+            @"Número\s+Fecha[\s\n\r]+[^\s]+\s+(\d{1,2})[/\-\.](\d{1,2})[/\-\.](\d{4})\b",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexNombre = new(
-            @"Proveedor[\n\r]+(.*?)\s+Gregorio Aranda",
+            @"952\s*27\s*30\s*91[\s\n\r]+(.+)",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RegexNif = new(
-            @"\b([A-Z]?\d{7,8}[A-Z]?)\b",
+            @"\b(.+)[\r\n]+\d{6}\b",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RegexImportes = new(
-            @"otal.*?([\d,.]+)[\n\r]*IVA\s*\(([\d]+)%\)",
+            @"TOTAL[\n\r]+.*?%[\n\r\s]*(.+?)\s(.+?)\s(.+?)\s(.+?)\s(.+?)[\n\r\s]",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexTotal = new(
-            @"Envío[\s\n\r]+(?:[\d,.\s\n\r]*)Total\s+([\d.,]+)",
+            @"\s(.+?)\s+Euros",
             RegexOptions.Compiled);
 
         public override Factura Parsear(string texto, string rutaArchivo, bool viaOcr)
