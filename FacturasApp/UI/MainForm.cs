@@ -15,6 +15,13 @@ namespace FacturasApp.UI
         public MainForm()
         {
             InitializeComponent();
+
+            // Make these controls adapt to the window width
+            dgvFacturas.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            progressBar.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
+            txtRutaExcel.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+            lstArchivos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+
             ConfigurarDataGridView();
             ConfigurarComboEstado();
         }
