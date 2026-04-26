@@ -33,7 +33,7 @@ namespace FacturasApp.UI
             lblResumen = new Label();
             btnExportarExcelIngresos = new Button();
             btnExportarExcelGastos = new Button();
-            btnDefinirPlantilla = new Button();
+            btnDefinirZonas = new Button();
             lblFiltro = new Label();
             lblEstadoFiltro = new Label();
             ((System.ComponentModel.ISupportInitialize)dgvFacturas).BeginInit();
@@ -44,7 +44,7 @@ namespace FacturasApp.UI
             btnSeleccionarArchivos.BackColor = Color.DarkCyan;
             btnSeleccionarArchivos.FlatStyle = FlatStyle.Flat;
             btnSeleccionarArchivos.ForeColor = Color.White;
-            btnSeleccionarArchivos.Location = new Point(12, 12);
+            btnSeleccionarArchivos.Location = new Point(304, 12);
             btnSeleccionarArchivos.Name = "btnSeleccionarArchivos";
             btnSeleccionarArchivos.Size = new Size(140, 32);
             btnSeleccionarArchivos.TabIndex = 0;
@@ -57,7 +57,7 @@ namespace FacturasApp.UI
             btnSeleccionarCarpeta.BackColor = Color.DarkBlue;
             btnSeleccionarCarpeta.FlatStyle = FlatStyle.Flat;
             btnSeleccionarCarpeta.ForeColor = Color.White;
-            btnSeleccionarCarpeta.Location = new Point(160, 12);
+            btnSeleccionarCarpeta.Location = new Point(12, 12);
             btnSeleccionarCarpeta.Name = "btnSeleccionarCarpeta";
             btnSeleccionarCarpeta.Size = new Size(140, 32);
             btnSeleccionarCarpeta.TabIndex = 1;
@@ -70,7 +70,7 @@ namespace FacturasApp.UI
             btnSeleccionarExcel.BackColor = Color.DarkViolet;
             btnSeleccionarExcel.FlatStyle = FlatStyle.Flat;
             btnSeleccionarExcel.ForeColor = Color.White;
-            btnSeleccionarExcel.Location = new Point(308, 12);
+            btnSeleccionarExcel.Location = new Point(158, 12);
             btnSeleccionarExcel.Name = "btnSeleccionarExcel";
             btnSeleccionarExcel.Size = new Size(140, 32);
             btnSeleccionarExcel.TabIndex = 2;
@@ -81,7 +81,7 @@ namespace FacturasApp.UI
             // btnLimpiarLista
             // 
             btnLimpiarLista.FlatStyle = FlatStyle.Flat;
-            btnLimpiarLista.Location = new Point(456, 12);
+            btnLimpiarLista.Location = new Point(596, 12);
             btnLimpiarLista.Name = "btnLimpiarLista";
             btnLimpiarLista.Size = new Size(90, 32);
             btnLimpiarLista.TabIndex = 3;
@@ -183,7 +183,7 @@ namespace FacturasApp.UI
             dgvFacturas.Location = new Point(12, 318);
             dgvFacturas.Name = "dgvFacturas";
             dgvFacturas.RowHeadersWidth = 51;
-            dgvFacturas.Size = new Size(960, 330);
+            dgvFacturas.Size = new Size(960, 360);
             dgvFacturas.TabIndex = 15;
             // 
             // lblResumen
@@ -226,19 +226,18 @@ namespace FacturasApp.UI
             btnExportarExcelGastos.UseVisualStyleBackColor = false;
             btnExportarExcelGastos.Click += btnExportarExcelGastos_Click;
             // 
-            // btnDefinirPlantilla
+            // btnDefinirZonas
             // 
-            btnDefinirPlantilla.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            btnDefinirPlantilla.BackColor = Color.DarkGray;
-            btnDefinirPlantilla.FlatStyle = FlatStyle.Flat;
-            btnDefinirPlantilla.ForeColor = Color.White;
-            btnDefinirPlantilla.Location = new Point(811, 688);
-            btnDefinirPlantilla.Name = "btnDefinirPlantilla";
-            btnDefinirPlantilla.Size = new Size(161, 34);
-            btnDefinirPlantilla.TabIndex = 20;
-            btnDefinirPlantilla.Text = "🔲 Zonas OCR";
-            btnDefinirPlantilla.UseVisualStyleBackColor = false;
-            btnDefinirPlantilla.Click += btnDefinirPlantilla_Click;
+            btnDefinirZonas.BackColor = Color.DarkGray;
+            btnDefinirZonas.FlatStyle = FlatStyle.Flat;
+            btnDefinirZonas.ForeColor = Color.White;
+            btnDefinirZonas.Location = new Point(450, 12);
+            btnDefinirZonas.Name = "btnDefinirZonas";
+            btnDefinirZonas.Size = new Size(140, 32);
+            btnDefinirZonas.TabIndex = 20;
+            btnDefinirZonas.Text = "🔲 Zonas OCR";
+            btnDefinirZonas.UseVisualStyleBackColor = false;
+            btnDefinirZonas.Click += btnDefinirPlantilla_Click;
             // 
             // lblFiltro
             // 
@@ -276,7 +275,7 @@ namespace FacturasApp.UI
             Controls.Add(lblResumen);
             Controls.Add(btnExportarExcelIngresos);
             Controls.Add(btnExportarExcelGastos);
-            Controls.Add(btnDefinirPlantilla);
+            Controls.Add(btnDefinirZonas);
             Font = new Font("Segoe UI", 9F);
             MinimumSize = new Size(800, 600);
             Name = "MainForm";
@@ -295,7 +294,7 @@ namespace FacturasApp.UI
         private Button btnProcesar;
         private Button btnExportarExcelIngresos;
         private Button btnExportarExcelGastos;
-        private Button btnDefinirPlantilla;
+        private Button btnDefinirZonas;
         private ListBox lstArchivos;
         private TextBox txtRutaExcel;
         private ProgressBar progressBar;

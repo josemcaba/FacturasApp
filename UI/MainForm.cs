@@ -20,7 +20,7 @@ namespace FacturasApp.UI
             dgvFacturas.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             progressBar.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
             txtRutaExcel.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
-            lstArchivos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            lstArchivos.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 
             ConfigurarDataGridView();
             ConfigurarComboEstado();
