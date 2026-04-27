@@ -122,7 +122,17 @@ namespace FacturasApp.Services.Parsers
 
             // Nombre del cliente (receptor) muy largo — si >40 caracteres → RevisiónManual
             if (f.Receptor.Nombre.Length > 40)
+            { 
+                f.ErrorMensaje = "Nombre del cliente demasiado largo";
                 return EstadoFactura.RevisionManual;
+            }
+
+            // Verificación del NIF del emisor y del receptor — si no son válidos → Error
+            if (!NifValidator.ValidarNif(f.Emisor.NIF) || !NifValidator.ValidarNif(f.Receptor.NIF))
+            {
+                f.ErrorMensaje = "NIF no válido";
+                return EstadoFactura.Error;
+            }
 
             // Verificación del total — si no coincide → Error
             if (!f.TotalesCoinciden)
