@@ -32,6 +32,9 @@ namespace FacturasApp.UI
             cmbEmisor.Items.AddRange(emisoresDisponibles.Cast<object>().ToArray());
             if (cmbEmisor.Items.Count > 0)
                 cmbEmisor.SelectedIndex = 0;
+
+            // Evento para mostrar texto cuando se selecciona una zona
+            lstZonas.SelectedIndexChanged += LstZonas_SelectedIndexChanged;
         }
 
         // ── Carga del PDF ─────────────────────────────────────────────────────
@@ -127,6 +130,9 @@ namespace FacturasApp.UI
             _plantilla.Zonas.Add(zonaOcr);
             ActualizarListaZonas();
 
+            // ← Extraer y mostrar el texto OCR de la zona creada
+            MostrarTextoZona(zonaOcr);
+
             _rectanguloActivo = false;
             picFactura.Invalidate();
         }
@@ -218,7 +224,7 @@ namespace FacturasApp.UI
             return new Rectangle(offsetX, offsetY, anchoReal, altoReal);
         }
 
-        // ── Gestión de zonas ──────────────────────────────────────────────────
+        // ── Gestión de zonas y OCR ───────────────────────────────────────────
 
         private void ActualizarListaZonas()
         {
@@ -230,6 +236,47 @@ namespace FacturasApp.UI
                     $"W:{zona.Ancho:F1}% H:{zona.Alto:F1}%]");
         }
 
+        private void LstZonas_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            if (lstZonas.SelectedIndex < 0)
+            {
+                lblTexto.Text = string.Empty;
+                return;
+            }
+
+            var zonaSeleccionada = _plantilla.Zonas[lstZonas.SelectedIndex];
+            MostrarTextoZona(zonaSeleccionada);
+        }
+
+        private void MostrarTextoZona(ZonaOcr zona)
+        {
+            if (string.IsNullOrEmpty(_rutaPdf))
+            {
+                lblTexto.Text = "Carga un PDF primero";
+                return;
+            }
+
+            try
+            {
+                lblTexto.Text = "Extrayendo OCR...";
+                Application.DoEvents();
+
+                // Convertir zona a pixels
+                var rectPixeles = ConvertirAPixelesPictureBox(zona);
+
+                // Extraer texto OCR de la zona
+                string textoZona = _ocrExtractor.ExtraerTextoZonal(_rutaPdf, zona);
+
+                lblTexto.Text = string.IsNullOrEmpty(textoZona)
+                    ? "(Sin texto detectado)"
+                    : textoZona;
+            }
+            catch (Exception ex)
+            {
+                lblTexto.Text = $"Error en OCR: {ex.Message}";
+            }
+        }
+
         private void BtnEliminarZona_Click(object? sender, EventArgs e)
         {
             if (lstZonas.SelectedIndex < 0) return;
@@ -238,6 +285,7 @@ namespace FacturasApp.UI
             for (int i = 0; i < _plantilla.Zonas.Count; i++)
                 _plantilla.Zonas[i].Campo = $"Zona{i + 1}";
             ActualizarListaZonas();
+            lblTexto.Text = string.Empty;
             picFactura.Invalidate();
         }
 

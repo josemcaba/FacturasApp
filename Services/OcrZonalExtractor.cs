@@ -10,7 +10,7 @@ namespace FacturasApp.Services
     {
         private readonly string _tessDataPath;
         private const string Idiomas = "spa+eng";
-        private const int DpiRender = 300;
+        private const int DpiRender = 400;
 
         public OcrZonalExtractor(string tessDataPath = @"./tessdata")
         {
@@ -55,6 +55,45 @@ namespace FacturasApp.Services
             }
 
             return resultado;
+        }
+
+        // ── Extracción de texto de una zona específica ───────────────────────
+
+        /// <summary>
+        /// Extrae el texto OCR de una zona específica del PDF.
+        /// </summary>
+        public string ExtraerTextoZonal(string rutaPdf, ZonaOcr zona)
+        {
+            if (zona == null)
+                return string.Empty;
+
+            using var engine = new TesseractEngine(
+                _tessDataPath, Idiomas, EngineMode.Default);
+
+            // Renderizamos la primera página del PDF
+            using var paginaBitmap = RenderizarPagina(rutaPdf, 0);
+            if (paginaBitmap == null)
+                return string.Empty;
+
+            try
+            {
+                // Convertimos coordenadas porcentuales a píxeles
+                var rect = zona.ToRectangle(paginaBitmap.Width, paginaBitmap.Height);
+
+                // Recortamos la zona de la imagen
+                using var zonaImagen = RecortarZona(paginaBitmap, rect);
+                if (zonaImagen == null)
+                    return string.Empty;
+
+                // Aplicamos OCR a la zona recortada
+                string texto = AplicarOcr(engine, zonaImagen);
+                return texto.Trim();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error extrayendo zona: {ex.Message}");
+                return string.Empty;
+            }
         }
 
         // ── Renderizado de página ─────────────────────────────────────────────

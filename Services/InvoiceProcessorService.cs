@@ -9,9 +9,11 @@ namespace FacturasApp.Services
     {
         private readonly PdfTextExtractor _textExtractor = new();
         private readonly OcrExtractor _ocrExtractor;
+        private readonly OcrZonalExtractor _ocrZonalExtractor;
         private readonly ParserFactory _parserFactory = new();
         private readonly ExcelExtractor _excelExtractor = new();
         private readonly ParserFactoryExcel _excelParserFactory = new();
+        private readonly PlantillaOcrService _plantillaService = new();
 
         public PdfTextExtractor.ModoExtraccion ModoExtraccion { get; set; } =
             PdfTextExtractor.ModoExtraccion.OrdenadoPosicion;
@@ -19,6 +21,7 @@ namespace FacturasApp.Services
         public InvoiceProcessorService(string tessDataPath = @"./tessdata")
         {
             _ocrExtractor = new OcrExtractor(tessDataPath);
+            _ocrZonalExtractor = new OcrZonalExtractor(tessDataPath);
         }
 
         // ── Procesado de PDFs por lotes ──────────────────────────────────────
@@ -46,15 +49,20 @@ namespace FacturasApp.Services
 
                     if (usaOcr)
                     {
-                        // PDF escaneado — usamos OCR directamente
-                        string textoOcr = _ocrExtractor.ExtraerTextoConOcr(ruta);
+                        // PDF escaneado — intentamos OCR zonal primero
+                        string textoOcrZonal = ExtraerTextoOcrZonal(ruta);
+                        
+                        // Si no hay plantilla definida, usamos OCR completo
+                        if (string.IsNullOrEmpty(textoOcrZonal))
+                            textoOcrZonal = _ocrExtractor.ExtraerTextoConOcr(ruta);
+
                         IInvoiceParser parserOcr =
-                            _parserFactory.ObtenerParser(textoOcr);
+                            _parserFactory.ObtenerParser(textoOcrZonal);
 
                         // ParsearMultiple también en flujo OCR
                         List<Factura> facturasOcr = parserOcr is BaseParser baseParserOcr
-                            ? baseParserOcr.ParsearMultiple(textoOcr, ruta, true)
-                            : new List<Factura> { parserOcr.Parsear(textoOcr, ruta, true) };
+                            ? baseParserOcr.ParsearMultiple(textoOcrZonal, ruta, true)
+                            : new List<Factura> { parserOcr.Parsear(textoOcrZonal, ruta, true) };
 
                         AddWithDuplicateDetection(facturas, facturasOcr);
                     }
@@ -93,15 +101,53 @@ namespace FacturasApp.Services
             return facturas;
         }
 
+        // ── OCR Zonal: extrae texto de las zonas definidas en la plantilla ────
+
+        /// <summary>
+        /// Intenta extraer texto usando OCR zonal basado en las plantillas definidas.
+        /// Retorna el texto concatenado de todas las zonas, o string.Empty si no hay plantilla.
+        /// </summary>
+        private string ExtraerTextoOcrZonal(string rutaPdf)
+        {
+            try
+            {
+                // Intentamos identificar el emisor primero
+                // Para esto, podrías usar OCR completo rápido o un patrón simple
+                string textoIdentificacion = _ocrExtractor.ExtraerTextoConOcr(rutaPdf);
+                IInvoiceParser parser = _parserFactory.ObtenerParser(textoIdentificacion);
+                string nombreEmisor = parser.Nombre;
+
+                // Buscamos la plantilla definida para este emisor
+                var plantilla = _plantillaService.ObtenerPorEmisor(nombreEmisor);
+                if (plantilla == null || plantilla.Zonas.Count == 0)
+                    return string.Empty;
+
+                // Extraemos OCR zonal
+                var textosZonas = _ocrZonalExtractor.ExtraerZonas(rutaPdf, plantilla);
+
+                // Concatenamos los textos de todas las zonas
+                var textoFinal = new System.Text.StringBuilder();
+                foreach (var zona in plantilla.Zonas)
+                {
+                    if (textosZonas.TryGetValue(zona.Campo, out string? textoZona))
+                        textoFinal.AppendLine(textoZona);
+                }
+
+                return textoFinal.ToString().Trim();
+            }
+            catch
+            {
+                // Si algo falla en OCR zonal, retornamos vacío para fallback a OCR completo
+                return string.Empty;
+            }
+        }
+
         // Helper: añade nuevas facturas a la lista comprobando duplicados por Número de factura
-        // Se consideran duplicadas sólo si tienen el mismo número y pertenecen a archivos diferentes.
         private void AddWithDuplicateDetection(List<Factura> acumuladas, IEnumerable<Factura> nuevas)
         {
             foreach (var nueva in nuevas)
             {
-                // Normalizamos el número de factura para comparación
                 var numero = (nueva.NumeroFactura ?? string.Empty).Trim();
-                // Normalizamos ruta (full path, uppercase) para comparación segura
                 string rutaNueva = (nueva.RutaArchivo ?? string.Empty).Trim();
                 string rutaNuevaFull = string.IsNullOrEmpty(rutaNueva)
                     ? string.Empty
@@ -109,7 +155,6 @@ namespace FacturasApp.Services
 
                 if (!string.IsNullOrEmpty(numero))
                 {
-                    // Buscamos una factura existente con el mismo número pero que pertenezca a un archivo distinto
                     var existente = acumuladas.FirstOrDefault(f =>
                     {
                         var fNumero = (f.NumeroFactura ?? string.Empty).Trim();
@@ -121,17 +166,14 @@ namespace FacturasApp.Services
                             ? string.Empty
                             : Path.GetFullPath(rutaExistente).ToUpperInvariant();
 
-                        // Consider duplicates only when file paths differ
                         return !string.Equals(rutaExistenteFull, rutaNuevaFull, StringComparison.OrdinalIgnoreCase);
                     });
 
                     if (existente != null)
                     {
-                        // Marcar la nueva como duplicada y añadir un mensaje
                         nueva.Estado = EstadoFactura.Duplicada;
                         nueva.ErrorMensaje = $"Factura duplicada. Existe en: {existente.RutaArchivo}";
 
-                        // También marcar la factura existente como duplicada si aún no lo está
                         if (existente.Estado != EstadoFactura.Duplicada)
                         {
                             existente.Estado = EstadoFactura.Duplicada;
@@ -143,7 +185,6 @@ namespace FacturasApp.Services
                     }
                 }
 
-                // Si no es duplicada (o no hay número), añadir normalmente
                 acumuladas.Add(nueva);
             }
         }

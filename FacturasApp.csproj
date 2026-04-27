@@ -32,4 +32,22 @@
     <PackageReference Include="Tesseract" Version="5.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="FacturasApp\UI\DefinirPlantillaForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="FacturasApp\UI\DetalleFacturaForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="FacturasApp\UI\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="FacturasApp\UI\MainForm.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

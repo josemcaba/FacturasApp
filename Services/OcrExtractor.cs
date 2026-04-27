@@ -11,7 +11,7 @@ namespace FacturasApp.Services
 
         // DPI de renderizado — mayor DPI = mejor OCR pero más lento
         // 300 es el estándar recomendado para OCR
-        private const int DpiRenderizado = 300;
+        private const int DpiRenderizado = 400;
 
         public OcrExtractor(string tessDataPath = @"./tessdata")
         {
