@@ -16,6 +16,7 @@ namespace FacturasApp.UI
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             btnSeleccionarArchivos = new Button();
             btnSeleccionarCarpeta = new Button();
             btnSeleccionarExcel = new Button();
@@ -44,7 +45,7 @@ namespace FacturasApp.UI
             btnSeleccionarArchivos.BackColor = Color.DarkCyan;
             btnSeleccionarArchivos.FlatStyle = FlatStyle.Flat;
             btnSeleccionarArchivos.ForeColor = Color.White;
-            btnSeleccionarArchivos.Location = new Point(304, 12);
+            btnSeleccionarArchivos.Location = new Point(158, 12);
             btnSeleccionarArchivos.Name = "btnSeleccionarArchivos";
             btnSeleccionarArchivos.Size = new Size(140, 32);
             btnSeleccionarArchivos.TabIndex = 0;
@@ -70,7 +71,7 @@ namespace FacturasApp.UI
             btnSeleccionarExcel.BackColor = Color.DarkViolet;
             btnSeleccionarExcel.FlatStyle = FlatStyle.Flat;
             btnSeleccionarExcel.ForeColor = Color.White;
-            btnSeleccionarExcel.Location = new Point(158, 12);
+            btnSeleccionarExcel.Location = new Point(304, 12);
             btnSeleccionarExcel.Name = "btnSeleccionarExcel";
             btnSeleccionarExcel.Size = new Size(140, 32);
             btnSeleccionarExcel.TabIndex = 2;
@@ -277,10 +278,11 @@ namespace FacturasApp.UI
             Controls.Add(btnExportarExcelGastos);
             Controls.Add(btnDefinirZonas);
             Font = new Font("Segoe UI", 9F);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MinimumSize = new Size(800, 600);
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Gestión de Facturas PDF";
+            Text = "Gestión de Facturas";
             ((System.ComponentModel.ISupportInitialize)dgvFacturas).EndInit();
             ResumeLayout(false);
             PerformLayout();

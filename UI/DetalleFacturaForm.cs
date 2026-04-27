@@ -236,6 +236,14 @@ namespace FacturasApp.UI
 
         private void InitializeComponent()
         {
+            SuspendLayout();
+            // 
+            // DetalleFacturaForm
+            // 
+            AutoSize = true;
+            ClientSize = new Size(282, 253);
+            Name = "DetalleFacturaForm";
+            ResumeLayout(false);
 
         }
 

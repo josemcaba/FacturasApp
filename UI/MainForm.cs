@@ -1,8 +1,5 @@
 using FacturasApp.Models;
 using FacturasApp.Services;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.IO;
-using System.Linq;
 
 namespace FacturasApp.UI
 {
@@ -18,7 +15,7 @@ namespace FacturasApp.UI
 
             // Make these controls adapt to the window width
             dgvFacturas.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            progressBar.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
+            progressBar.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
             txtRutaExcel.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
             lstArchivos.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 
