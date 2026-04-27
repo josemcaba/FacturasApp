@@ -22,10 +22,6 @@ namespace FacturasApp.Services.Parsers
             @"FACTURA(?:| RECTIFICATIVA)[\r\n]+(.+)[\r\n]+FECHA",
             RegexOptions.Compiled);
 
-        private static readonly Regex RegexFecha = new(
-            @"FECHA[\r\n]+\b(.+)\b[\r\n]+Nº CLIENTE",
-            RegexOptions.Compiled);
-
         private static readonly Regex RegexNombre = new(
             @"Dirección de Facturación[\r\n]+.*[\r\n]+(.+)",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);

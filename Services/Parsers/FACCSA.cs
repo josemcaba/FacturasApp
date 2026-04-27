@@ -3,13 +3,14 @@ using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
-    public class MercadonaParser : BaseParser
+    public class FACCSA : BaseParser
     {
-        public override string Nombre => "MERCADONA, S.A.";
-        public override string Nif => "A46103834";
+        public override string Nombre => "FACCSA: Frigorif. And. Conservas Carne";
+        public override string Nif => "A17001231";
+        public override string Concepto => "600";
 
         private static readonly string[] Identificadores =
-            { "mercadona s.a.", "a-46103834"};
+            { "A-17001231", "www.faccsa.es"};
 
         public override bool PuedeParsar(string texto) =>
             Identificadores.All(id =>
@@ -18,10 +19,6 @@ namespace FacturasApp.Services.Parsers
         private static readonly Regex RegexNumero = new(
             @"N.\s*Factura:\s*(.*?)\s+",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        private static readonly Regex RegexFecha = new(
-            @"Fecha\s*Factura:\s*\b(.+)\b",
-            RegexOptions.Compiled);
 
         private static readonly Regex RegexNombre = new(
             @"Razón Social: (.*)",

@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
-    public class EmasaParser : BaseParser
+    public class EMASA : BaseParser
     {
         public override string Nombre => "Empresa Municipal Aguas de Málaga S.A.";
         public override string Nif => "A29185519";
@@ -18,10 +18,6 @@ namespace FacturasApp.Services.Parsers
 
         private static readonly Regex RegexNumero = new(
             @"FACTURA:\s*(\S+)",
-            RegexOptions.Compiled);
-
-        private static readonly Regex RegexFecha = new(
-            @"EMISIÓN:\s*\b(.+)\b",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexNombre = new(

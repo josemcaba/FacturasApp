@@ -11,7 +11,7 @@ namespace FacturasApp.Services
         private readonly OcrExtractor _ocrExtractor;
         private readonly ParserFactory _parserFactory = new();
         private readonly ExcelExtractor _excelExtractor = new();
-        private readonly ExcelParserFactory _excelParserFactory = new();
+        private readonly ParserFactoryExcel _excelParserFactory = new();
 
         public PdfTextExtractor.ModoExtraccion ModoExtraccion { get; set; } =
             PdfTextExtractor.ModoExtraccion.OrdenadoPosicion;

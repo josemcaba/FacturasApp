@@ -11,9 +11,10 @@ namespace FacturasApp.Services.Parsers
         {
             _parsers = new List<IInvoiceParser>
             {
-                new AndresCazallaParser(),
-                new MercadonaParser(),
-                new EmasaParser(),
+                new AndresCazalla(),
+                new EMASA(),
+                new FACCSA(),
+                new MERCADONA(),
                 new OnaCorpParser(),
                 new LidlParser(),
                 new PlenergyParser(),

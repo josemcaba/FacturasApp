@@ -21,10 +21,6 @@ namespace FacturasApp.Services.Parsers
             @"Número\s+Fecha[\s\n\r]+([^\s]+)",
             RegexOptions.Compiled);
 
-        private static readonly Regex RegexFecha = new(
-            @"Número\s+Fecha[\s\n\r]+[^\s]+\s+(.+)\b",
-            RegexOptions.Compiled);
-
         private static readonly Regex RegexNombre = new(
             @"952\s*27\s*30\s*91[\s\n\r]+(.+)",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);

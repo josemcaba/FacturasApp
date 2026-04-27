@@ -3,32 +3,32 @@ using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
-    public class LidlParser : BaseParser
+    public class MERCADONA: BaseParser
     {
-        public override string Nombre => "LIDL SUPERMERCADOS S.A.U.";
-        public override string Nif => "A60195278";
+        public override string Nombre => "MERCADONA, S.A.";
+        public override string Nif => "A46103834";
 
         private static readonly string[] Identificadores =
-            { "lidl supermercados", "factura"};
+            { "mercadona s.a.", "a-46103834"};
 
         public override bool PuedeParsar(string texto) =>
             Identificadores.All(id =>
                 texto.Contains(id, StringComparison.OrdinalIgnoreCase));
 
         private static readonly Regex RegexNumero = new(
-            @"Nº Factura:\s([\d]+)\b",
+            @"N.\s*Factura:\s*(.*?)\s+",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RegexNombre = new(
-            @"\b(.*)\b\sFecha\sTique",
+            @"Razón Social: (.*)",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RegexNif = new(
-            @"Barcelona[\r\n]+([A-Z]?\d{7,8}[A-Z]?)\b",
+            @"NIF: ([A-Z]?\d{7,8}[A-Z]?)\s",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RegexLineaIva = new(
-            @"Tipo\sIVA\s(\d{1,2},00)\s([\d.,]+)\s[\d., ]+\s([\d.,]+)",
+            @"(\d+)% ([\d,]+) ([\d,.]+) ([\d,.]+)\r",
             RegexOptions.Compiled);
 
         // ── Parsear devuelve solo la primera línea de IVA (compatibilidad) ──
@@ -67,7 +67,7 @@ namespace FacturasApp.Services.Parsers
                     { Nombre = receptorNombre, NIF = receptorNIF },
                     BaseImponible = ParsearDecimal(linea.Groups[2].Value),
                     PorcentajeIVA = ParsearDecimal(linea.Groups[1].Value),
-                    Total = ParsearDecimal(linea.Groups[3].Value)
+                    Total = ParsearDecimal(linea.Groups[4].Value)
                 };
                 factura.Estado = DeterminarEstado(factura);
                 facturas.Add(factura);

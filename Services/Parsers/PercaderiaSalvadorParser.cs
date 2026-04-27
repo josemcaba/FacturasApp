@@ -21,10 +21,6 @@ namespace FacturasApp.Services.Parsers
             @"Nº factura\s*(.+)",
             RegexOptions.Compiled);
 
-        private static readonly Regex RegexFecha = new(
-            @"Fecha\s+emisión\s+(.+)\b",
-            RegexOptions.Compiled);
-
         private static readonly Regex RegexNombre = new(
             @"Pescadería\s+Salvador\s+(.+)",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -35,6 +31,10 @@ namespace FacturasApp.Services.Parsers
 
         private static readonly Regex RegexImportes = new(
             @"Base\s+(.+?)\s+IVA\s+.+?\s+Total\s+(.+?)\s+",
+            RegexOptions.Compiled);
+
+        private static readonly Regex RegexTotal = new(
+            @"\s+IVA\s+.+?\s+Total\s+(.+?)\s+",
             RegexOptions.Compiled);
 
         public override Factura Parsear(string texto, string rutaArchivo, bool viaOcr)
@@ -48,14 +48,15 @@ namespace FacturasApp.Services.Parsers
             factura.Emisor.NIF = Nif;
             factura.Emisor.Nombre = Nombre;
             factura.NumeroFactura = ExtraerGrupo(RegexNumero, texto,1);
-            string texto_f = Regex.Replace(texto, @",", "");
+            string texto_f = Regex.Replace(texto, @"(\d{1}),(\d{3}\s)", "$1$2");
+            texto_f = Regex.Replace(texto_f, @"(\d{1}),(\d{1})", "$1/$2");
             factura.Fecha = ExtraerFecha(RegexFecha, texto_f);
             factura.Receptor.Nombre = ExtraerGrupo(RegexNombre, texto, 1);
             factura.Receptor.Nombre = AcortaNombreCliente(factura);
             factura.Receptor.NIF = ExtraerNif(RegexNif, texto, Nif);
             factura.BaseImponible = ExtraerDecimal(RegexImportes, texto, 1);
             factura.PorcentajeIVA = 10;
-            factura.Total = ExtraerDecimal(RegexImportes, texto, 2);
+            factura.Total = ExtraerDecimal(RegexTotal, texto, 1);
             factura.Estado = DeterminarEstado(factura);
             
             return factura;

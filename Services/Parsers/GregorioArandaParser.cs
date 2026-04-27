@@ -20,10 +20,6 @@ namespace FacturasApp.Services.Parsers
             @"Número de Factura.*[\n\r]+(?:Fact-)?(\d+)",
             RegexOptions.Compiled);
 
-        private static readonly Regex RegexFecha = new(
-            @"Fecha de Facturación.*[\n\r]+(.+)\b",
-            RegexOptions.Compiled);
-
         private static readonly Regex RegexNombre = new(
             @"Proveedor[\n\r]+(.*?)\s+Gregorio Aranda",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);

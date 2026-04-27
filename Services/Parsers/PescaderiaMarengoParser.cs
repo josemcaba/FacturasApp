@@ -21,10 +21,6 @@ namespace FacturasApp.Services.Parsers
             @"Nº factura\s*(.+)",
             RegexOptions.Compiled);
 
-        private static readonly Regex RegexFecha = new(
-            @"Fecha\s+emisión\s+(.+)\b",
-            RegexOptions.Compiled);
-
         private static readonly Regex RegexNombre = new(
             @"Pescadería\s+Marengo\s+(.+)",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);

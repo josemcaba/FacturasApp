@@ -7,7 +7,7 @@ namespace FacturasApp.Services.Parsers
     {
         public abstract string Nombre { get; }
         public abstract string Nif { get; }
-        public virtual string Concepto => "0"; // Código contable, por defecto 0 (sin asignar)
+        public virtual string Concepto => "600"; // Código contable por defecto
         public abstract bool PuedeParsar(string texto);
         public abstract Factura Parsear(string texto, string rutaArchivo, bool viaOcr);
 
@@ -85,16 +85,16 @@ namespace FacturasApp.Services.Parsers
                 out var r) ? r : 0m;
         }
 
-        private static readonly Regex RegexFecha = new(
-            @"(\d{1,2})[/\-\.]((?:\d{1,2})|\S{3})[/\-\.](\d{4})",
+        public static readonly Regex RegexFecha = new(
+            @"\b(\d{1,2})[\/\.-]((?:\d{1,2}|\D{3}))[\/\.-](\d{2,4})\b",
             RegexOptions.Compiled);
 
         protected DateTime? ExtraerFecha(Regex Regex, string texto)
         {
-            var n = Regex.Match(texto);
-            if (!n.Success) return null;
-            var m = RegexFecha.Match(n.Groups[1].Value);
-            if (!m.Success) return null;
+            var m = Regex.Match(texto);
+            if ((!m.Success) | (m.Captures.Count != 1)) 
+                return null;
+
             return DateTime.TryParse(
                 $"{m.Groups[1].Value}/{m.Groups[2].Value}/{m.Groups[3].Value}",
                 new System.Globalization.CultureInfo("es-ES"),

@@ -20,10 +20,6 @@ namespace FacturasApp.Services.Parsers
             @"No.fact.:\s+(\d+)",
             RegexOptions.Compiled);
 
-        private static readonly Regex RegexFecha = new(
-            @"Fecha:\s+(.+)\b",
-            RegexOptions.Compiled);
-
         private static readonly Regex RegexNombre = new(
             @"Nombre:\s+(.*)\s+Fecha",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);

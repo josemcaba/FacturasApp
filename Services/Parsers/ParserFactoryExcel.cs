@@ -1,11 +1,11 @@
 ﻿namespace FacturasApp.Services.Parsers
 {
-    public class ExcelParserFactory
+    public class ParserFactoryExcel
     {
         private readonly List<IExcelInvoiceParser> _parsers;
         private readonly ExcelExtractor _genericExtractor = new();
 
-        public ExcelParserFactory()
+        public ParserFactoryExcel()
         {
             _parsers = new List<IExcelInvoiceParser>
             {

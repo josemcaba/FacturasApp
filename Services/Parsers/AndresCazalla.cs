@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
-    public class AndresCazallaParser : BaseParser
+    public class AndresCazalla : BaseParser
     {
         public override string Nombre => "Andrés Cazalla Medina";
         public override string Nif => "26236236K";
@@ -17,10 +17,6 @@ namespace FacturasApp.Services.Parsers
 
         private static readonly Regex RegexNumero = new(
             @"FACTURA\s+(20[\d]{5})\s+",
-            RegexOptions.Compiled);
-
-        private static readonly Regex RegexFecha = new(
-            @"FACTURA\s+20[\d]{5}\s+\b(.+)\b",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexNombre = new(

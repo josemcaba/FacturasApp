@@ -7,16 +7,11 @@ namespace FacturasApp.Services.Parsers
     {
         public override string Nombre => "Genérico";
         public override string Nif => "General";
-        public override string Concepto => "600";
         public override bool PuedeParsar(string texto) => true;
 
         private static readonly Regex RegexNumero = new(
             @"(?:factura|fra\.?|nº|n[uú]mero)[:\s#]*([A-Z0-9][-A-Z0-9/\\]{2,20})",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        private static readonly Regex RegexFecha = new(
-            @"\b(\d{1,2})[/\-\.](\d{1,2})[/\-\.](\d{4})\b",
-            RegexOptions.Compiled);
 
         private static readonly Regex RegexNif = new(
             @"\b([A-Z]?\d{7,8}[A-Z])\b",
