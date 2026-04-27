@@ -17,15 +17,15 @@ namespace FacturasApp.Services.Parsers
                 texto.Contains(id, StringComparison.OrdinalIgnoreCase));
 
         private static readonly Regex RegexNumero = new(
-            @"N.\s*Factura:\s*(.*?)\s+",
+            @"\bFACTURA\s+(.*?)\s+",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RegexNombre = new(
-            @"Razón Social: (.*)",
+            @"PROVEEDOR(.*)",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RegexNif = new(
-            @"NIF: ([A-Z]?\d{7,8}[A-Z]?)\s",
+            @"CIF: (.*?)\s",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RegexLineaIva = new(

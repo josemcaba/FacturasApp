@@ -1,7 +1,6 @@
 ﻿using FacturasApp.Models;
 using PDFtoImage;
 using SkiaSharp;
-using System.Drawing;
 using DrawingImageFormat = System.Drawing.Imaging.ImageFormat;
 using Tesseract;
 

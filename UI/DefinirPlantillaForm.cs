@@ -1,6 +1,6 @@
 ﻿using FacturasApp.Models;
 using FacturasApp.Services;
-using System.Drawing;
+using FacturasApp.Services.Parsers;
 using System.Drawing.Drawing2D;
 
 namespace FacturasApp.UI
@@ -10,6 +10,7 @@ namespace FacturasApp.UI
         // ── Servicios ─────────────────────────────────────────────────────────
         private readonly PlantillaOcrService _plantillaService = new();
         private readonly OcrZonalExtractor _ocrExtractor = new();
+        private readonly ParserFactory _parserFactory = new();
 
         // ── Estado ────────────────────────────────────────────────────────────
         private Bitmap? _imagenPagina;
@@ -22,21 +23,15 @@ namespace FacturasApp.UI
         private Point _puntoActual;
         private bool _rectanguloActivo = false;
 
-        private static readonly string[] CamposDisponibles =
-        {
-            "NumeroFactura", "Fecha", "EmisorNombre", "EmisorNIF",
-            "ClienteNombre", "ClienteNIF", "BaseImponible",
-            "PorcentajeIVA", "CuotaIVA", "PorcentajeIRPF",
-            "CuotaIRPF", "PorcentajeRE", "CuotaRE", "TotalFactura"
-        };
-
         public DefinirPlantillaForm()
         {
             InitializeComponent(); // ← llama al del Designer
 
-            // Poblamos aqui el desplegable para evitar problemas con el diseñador
-            cmbCampo.Items.AddRange(CamposDisponibles);
-            cmbCampo.SelectedIndex = 0;
+            // Poblamos el ComboBox de emisores con los parsers disponibles
+            var emisoresDisponibles = _parserFactory.ParsersDisponibles.ToList();
+            cmbEmisor.Items.AddRange(emisoresDisponibles.Cast<object>().ToArray());
+            if (cmbEmisor.Items.Count > 0)
+                cmbEmisor.SelectedIndex = 0;
         }
 
         // ── Carga del PDF ─────────────────────────────────────────────────────
@@ -53,8 +48,8 @@ namespace FacturasApp.UI
 
             _rutaPdf = dialogo.FileName;
 
-            if (string.IsNullOrEmpty(txtEmisor.Text))
-                txtEmisor.Text = Path.GetFileNameWithoutExtension(_rutaPdf);
+            if (string.IsNullOrEmpty(cmbEmisor.Text))
+                cmbEmisor.Text = Path.GetFileNameWithoutExtension(_rutaPdf);
 
             _imagenPagina?.Dispose();
             _imagenPagina = _ocrExtractor.RenderizarPagina(_rutaPdf, 0);
@@ -68,7 +63,7 @@ namespace FacturasApp.UI
 
             picFactura.Image = _imagenPagina;
 
-            _nombreEmisor = txtEmisor.Text.Trim();
+            _nombreEmisor = cmbEmisor.Text.Trim();
             var existente = _plantillaService.ObtenerPorEmisor(_nombreEmisor);
             if (existente != null)
             {
@@ -125,18 +120,12 @@ namespace FacturasApp.UI
 
             var zonaOcr = ConvertirARectanglePorcentual(rect);
 
-            if (cmbCampo.SelectedItem is string campo)
-            {
-                zonaOcr.Campo = campo;
-                _plantilla.Zonas.RemoveAll(z =>
-                    z.Campo.Equals(campo, StringComparison.OrdinalIgnoreCase));
-                _plantilla.Zonas.Add(zonaOcr);
-                ActualizarListaZonas();
+            // ← Generar nombre secuencial de zona: Zona1, Zona2, Zona3, etc.
+            int numeroZona = _plantilla.Zonas.Count + 1;
+            zonaOcr.Campo = $"Zona{numeroZona}";
 
-                int siguiente = cmbCampo.SelectedIndex + 1;
-                if (siguiente < cmbCampo.Items.Count)
-                    cmbCampo.SelectedIndex = siguiente;
-            }
+            _plantilla.Zonas.Add(zonaOcr);
+            ActualizarListaZonas();
 
             _rectanguloActivo = false;
             picFactura.Invalidate();
@@ -245,6 +234,9 @@ namespace FacturasApp.UI
         {
             if (lstZonas.SelectedIndex < 0) return;
             _plantilla.Zonas.RemoveAt(lstZonas.SelectedIndex);
+            // ← Renumerar las zonas restantes para mantener consistencia
+            for (int i = 0; i < _plantilla.Zonas.Count; i++)
+                _plantilla.Zonas[i].Campo = $"Zona{i + 1}";
             ActualizarListaZonas();
             picFactura.Invalidate();
         }
@@ -253,7 +245,7 @@ namespace FacturasApp.UI
 
         private void BtnGuardar_Click(object? sender, EventArgs e)
         {
-            _nombreEmisor = txtEmisor.Text.Trim();
+            _nombreEmisor = cmbEmisor.Text.Trim();
 
             if (string.IsNullOrEmpty(_nombreEmisor))
             {

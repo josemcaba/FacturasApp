@@ -1,11 +1,6 @@
-﻿using UglyToad.PdfPig;
-using PdfPigPage = UglyToad.PdfPig.Content.Page;
-using System.Drawing;
-using DrawingImageFormat = System.Drawing.Imaging.ImageFormat;
+﻿using DrawingImageFormat = System.Drawing.Imaging.ImageFormat;
 using Tesseract;
 using PDFtoImage;
-using SkiaSharp;
-using FacturasApp.Models;
 
 namespace FacturasApp.Services
 {

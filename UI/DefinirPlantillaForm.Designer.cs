@@ -18,16 +18,14 @@ namespace FacturasApp.UI
         {
             picFactura = new PictureBox();
             lstZonas = new ListBox();
-            cmbCampo = new ComboBox();
             btnCargarPdf = new Button();
             btnEliminarZona = new Button();
             btnGuardar = new Button();
             btnCerrar = new Button();
             lblInstrucciones = new Label();
             lblEmisor = new Label();
-            txtEmisor = new TextBox();
+            cmbEmisor = new ComboBox();
             lblZonas = new Label();
-            label1 = new Label();
             ((System.ComponentModel.ISupportInitialize)picFactura).BeginInit();
             SuspendLayout();
             // 
@@ -50,18 +48,10 @@ namespace FacturasApp.UI
             // 
             // lstZonas
             // 
-            lstZonas.Location = new Point(12, 308);
+            lstZonas.Location = new Point(12, 248);
             lstZonas.Name = "lstZonas";
-            lstZonas.Size = new Size(365, 224);
+            lstZonas.Size = new Size(365, 284);
             lstZonas.TabIndex = 8;
-            // 
-            // cmbCampo
-            // 
-            cmbCampo.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbCampo.Location = new Point(12, 246);
-            cmbCampo.Name = "cmbCampo";
-            cmbCampo.Size = new Size(365, 28);
-            cmbCampo.TabIndex = 6;
             // 
             // btnCargarPdf
             // 
@@ -112,11 +102,11 @@ namespace FacturasApp.UI
             // lblInstrucciones
             // 
             lblInstrucciones.ForeColor = Color.DimGray;
-            lblInstrucciones.Location = new Point(12, 109);
+            lblInstrucciones.Location = new Point(12, 114);
             lblInstrucciones.Name = "lblInstrucciones";
             lblInstrucciones.Size = new Size(320, 100);
             lblInstrucciones.TabIndex = 4;
-            lblInstrucciones.Text = "1. Carga un PDF de muestra\n2. Selecciona el campo en el desplegable\n3. Dibuja un rectángulo sobre la zona\n4. Repite para cada campo\n5. Guarda la plantilla";
+            lblInstrucciones.Text = "1. Selecciona el Emisor de la factura\r\n2. Carga un PDF de muestra\r\n3. Dibuja un rectángulo sobre la zona\r\n4. Repite para cada zona\r\n5. Guarda la plantilla";
             // 
             // lblEmisor
             // 
@@ -127,41 +117,31 @@ namespace FacturasApp.UI
             lblEmisor.TabIndex = 1;
             lblEmisor.Text = "Emisor:";
             // 
-            // txtEmisor
+            // cmbEmisor
             // 
-            txtEmisor.Location = new Point(12, 32);
-            txtEmisor.Name = "txtEmisor";
-            txtEmisor.PlaceholderText = "Nombre del emisor...";
-            txtEmisor.Size = new Size(365, 27);
-            txtEmisor.TabIndex = 2;
+            cmbEmisor.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbEmisor.FormattingEnabled = true;
+            cmbEmisor.Location = new Point(12, 32);
+            cmbEmisor.Name = "cmbEmisor";
+            cmbEmisor.Size = new Size(365, 28);
+            cmbEmisor.TabIndex = 2;
             // 
             // lblZonas
             // 
             lblZonas.AutoSize = true;
-            lblZonas.Location = new Point(12, 285);
+            lblZonas.Location = new Point(12, 226);
             lblZonas.Name = "lblZonas";
             lblZonas.Size = new Size(117, 20);
             lblZonas.TabIndex = 7;
             lblZonas.Text = "Zonas definidas:";
             // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(12, 223);
-            label1.Name = "label1";
-            label1.Size = new Size(106, 20);
-            label1.TabIndex = 12;
-            label1.Text = "Zonas a elegir:";
-            // 
             // DefinirPlantillaForm
             // 
             ClientSize = new Size(1080, 720);
-            Controls.Add(label1);
             Controls.Add(lblEmisor);
-            Controls.Add(txtEmisor);
+            Controls.Add(cmbEmisor);
             Controls.Add(btnCargarPdf);
             Controls.Add(lblInstrucciones);
-            Controls.Add(cmbCampo);
             Controls.Add(lblZonas);
             Controls.Add(lstZonas);
             Controls.Add(btnEliminarZona);
@@ -181,15 +161,13 @@ namespace FacturasApp.UI
         // ── Declaración de controles ──────────────────────────────────────────
         private PictureBox picFactura;
         private ListBox lstZonas;
-        private ComboBox cmbCampo;
         private Button btnCargarPdf;
         private Button btnEliminarZona;
         private Button btnGuardar;
         private Button btnCerrar;
         private Label lblInstrucciones;
         private Label lblEmisor;
-        private TextBox txtEmisor;
+        private ComboBox cmbEmisor;
         private Label lblZonas;
-        private Label label1;
     }
 }
