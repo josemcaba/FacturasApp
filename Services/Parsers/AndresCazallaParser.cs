@@ -20,7 +20,7 @@ namespace FacturasApp.Services.Parsers
             RegexOptions.Compiled);
 
         private static readonly Regex RegexFecha = new(
-            @"FACTURA\s+20[\d]{5}\s+\b(\d{1,2})[/\-\.](\d{1,2})[/\-\.](\d{4})\b",
+            @"FACTURA\s+20[\d]{5}\s+\b(.+)\b",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexNombre = new(

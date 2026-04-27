@@ -21,7 +21,7 @@ namespace FacturasApp.Services.Parsers
             RegexOptions.Compiled);
 
         private static readonly Regex RegexFecha = new(
-            @"EMISIÓN:\s*\b(\d{1,2})[/\-\.](\d{1,2})[/\-\.](\d{4})\b",
+            @"EMISIÓN:\s*\b(.+)\b",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexNombre = new(

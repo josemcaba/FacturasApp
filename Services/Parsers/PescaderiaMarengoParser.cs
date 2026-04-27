@@ -1,43 +1,42 @@
-﻿using FacturasApp.Models;
+﻿using CsvHelper;
+using FacturasApp.Models;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
-    public class PlenergyParser : BaseParser
+    public class PescaderiaMarengoParser : BaseParser
     {
-        public override string Nombre => "PLENERGY GRUPO, S.L.";
-        public override string Nif => "B93275394";
-        public override string Concepto => "624";
+        public override string Nombre => "Pescadería Marengo";
+        public override string Nif => "33384986A";
 
         private static readonly string[] Identificadores =
-            { "PLENERGY GRUPO", "B93275394"};
-
-        public override PdfTextExtractor.ModoExtraccion ModoExtraccion =>
-            PdfTextExtractor.ModoExtraccion.LayoutAnalysis;
+            { "Marengo", "33384986-A"};
 
         public override bool PuedeParsar(string texto) =>
             Identificadores.All(id =>
                 texto.Contains(id, StringComparison.OrdinalIgnoreCase));
 
         private static readonly Regex RegexNumero = new(
-            @"Nº FACTURA:\s+(.+)\b",
+            @"Nº factura\s*(.+)",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexFecha = new(
-            @"FECHA:\s+(.+)\b",
+            @"Fecha\s+emisión\s+(.+)\b",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexNombre = new(
-            @"(.*)[\r\n]+",
+            @"Pescadería\s+Marengo\s+(.+)",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RegexNif = new(
-            @"Málaga[\r\n]+(.+)[\r\n]+PLENERGY",
+            @"\b33384986-A\s+(.+)\b",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RegexImportes = new(
-            @"Importe\sTOTAL[\r\n]+([\d,.]+)\s+(\d+)%\s+([\d,.]+)\s+[\d,.]+\s+€\s+([\d,.]+)\s+€",
+            @"Base\s+(.+?)\s+IVA\s+.+?\s+Total\s+(.+?)\s+",
             RegexOptions.Compiled);
+
 
         public override Factura Parsear(string texto, string rutaArchivo, bool viaOcr)
         {
@@ -49,16 +48,16 @@ namespace FacturasApp.Services.Parsers
 
             factura.Emisor.NIF = Nif;
             factura.Emisor.Nombre = Nombre;
-            factura.Concepto = Concepto;
             factura.NumeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
-            factura.Fecha = ExtraerFecha(RegexFecha, texto);
+            string texto_f = Regex.Replace(texto, @",", "");
+            factura.Fecha = ExtraerFecha(RegexFecha, texto_f);
             factura.Receptor.Nombre = ExtraerGrupo(RegexNombre, texto, 1);
-            factura.Receptor.NIF = ExtraerGrupo(RegexNif, texto, 1);
+            factura.Receptor.NIF = ExtraerNif(RegexNif, texto, Nif);
             factura.BaseImponible = ExtraerDecimal(RegexImportes, texto, 1);
-            factura.PorcentajeIVA = ExtraerDecimal(RegexImportes, texto, 2);
-            factura.Total = ExtraerDecimal(RegexImportes, texto, 4);
+            factura.PorcentajeIVA = 10;
+            factura.Total = ExtraerDecimal(RegexImportes, texto, 2);
             factura.Estado = DeterminarEstado(factura);
-
+            
             return factura;
         }
     }

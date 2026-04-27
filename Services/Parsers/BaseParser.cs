@@ -85,9 +85,15 @@ namespace FacturasApp.Services.Parsers
                 out var r) ? r : 0m;
         }
 
+        private static readonly Regex RegexFecha = new(
+            @"(\d{1,2})[/\-\.]((?:\d{1,2})|\S{3})[/\-\.](\d{4})",
+            RegexOptions.Compiled);
+
         protected DateTime? ExtraerFecha(Regex Regex, string texto)
         {
-            var m = Regex.Match(texto);
+            var n = Regex.Match(texto);
+            if (!n.Success) return null;
+            var m = RegexFecha.Match(n.Groups[1].Value);
             if (!m.Success) return null;
             return DateTime.TryParse(
                 $"{m.Groups[1].Value}/{m.Groups[2].Value}/{m.Groups[3].Value}",
@@ -114,7 +120,11 @@ namespace FacturasApp.Services.Parsers
             if (!camposObligatoriosOk)
                 return EstadoFactura.RevisionManual;
 
-            // Verificación del total — si no coincide → RevisiónManual
+            // Nombre del cliente (receptor) muy largo — si >40 caracteres → RevisiónManual
+            if (f.Receptor.Nombre.Length > 40)
+                return EstadoFactura.RevisionManual;
+
+            // Verificación del total — si no coincide → Error
             if (!f.TotalesCoinciden)
                 return EstadoFactura.Error;
 

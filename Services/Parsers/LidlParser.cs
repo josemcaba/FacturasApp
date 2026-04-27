@@ -20,7 +20,7 @@ namespace FacturasApp.Services.Parsers
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RegexFecha = new(
-            @"Fecha\sFactura:\s\b(\d{1,2})[/\-\.]((?:\d{1,2})|\S{3})[/\-\.](\d{4})\b",
+            @"Fecha\sFactura:\s\b(.+)\b",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexNombre = new(

@@ -1,5 +1,4 @@
 ﻿using UglyToad.PdfPig;
-using UglyToad.PdfPig.Content;
 using UglyToad.PdfPig.DocumentLayoutAnalysis.TextExtractor;
 using PdfPigPage = UglyToad.PdfPig.Content.Page;
 
