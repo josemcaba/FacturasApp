@@ -1,5 +1,6 @@
 ﻿using ClosedXML.Excel;
 using FacturasApp.Models;
+using System.Globalization;
 
 namespace FacturasApp.Services
 {
@@ -11,52 +12,51 @@ namespace FacturasApp.Services
         {
             ["NumeroFactura"] = new[]
             {
-                "número de factura", "numero de factura", "nº factura",
-                "n factura", "factura", "fra", "nº", "numero"
+                "número de factura",
             },
             ["Fecha"] = new[]
             {
-                "fecha", "fecha factura", "date", "fecha emisión", "fecha emision"
+                "fecha factura",
             },
             ["EmisorNombre"] = new[]
             {
-                "nombre del emisor", "emisor", "proveedor", "nombre proveedor",
-                "razón social", "razon social", "nombre emisor"
+                "nombre del emisor",
             },
             ["EmisorNIF"] = new[]
             {
-                "nif del emisor", "nif emisor", "cif emisor", "nif proveedor",
-                "cif proveedor", "nif/cif emisor"
+                "nif del emisor",
             },
             ["ClienteNombre"] = new[]
             {
-                "nombre del cliente", "cliente", "nombre cliente",
-                "receptor", "nombre receptor"
+                "cliente",
             },
             ["ClienteNIF"] = new[]
             {
-                "nif del cliente", "nif cliente", "cif cliente",
-                "nif receptor", "nif/cif cliente"
+                "nif / cif",
             },
             ["BaseImponible"] = new[]
             {
-                "base imponible", "base", "subtotal", "base imp",
-                "importe base", "base imponible €"
+                "base imponible",
             },
             ["PorcentajeIVA"] = new[]
             {
-                "% iva", "iva %", "tipo iva", "porcentaje iva",
-                "% impuesto", "iva porcentaje"
+                "% iva",
             },
             ["CuotaIVA"] = new[]
             {
-                "cuota iva", "importe iva", "iva", "iva €",
-                "cuota impuesto", "importe impuesto"
+                "iva",
+            },
+            ["PorcentajeIRPF"] = new[]
+            {
+                "% irpf",
+            },
+            ["PorcentajeRE"] = new[]
+            {
+                "% re",
             },
             ["Total"] = new[]
             {
-                "total", "total factura", "importe total", "total €",
-                "total a pagar", "importe"
+                "importe total",
             }
         };
 
@@ -149,6 +149,7 @@ namespace FacturasApp.Services
                 Receptor = new Cliente()
             };
 
+            // Lectura de campos
             factura.NumeroFactura = LeerTexto(row, mapaIndices, "NumeroFactura");
             factura.Fecha = LeerFecha(row, mapaIndices);
             factura.Emisor.Nombre = LeerTexto(row, mapaIndices, "EmisorNombre");
@@ -157,17 +158,14 @@ namespace FacturasApp.Services
             factura.Receptor.NIF = LeerTexto(row, mapaIndices, "ClienteNIF");
             factura.BaseImponible = LeerDecimal(row, mapaIndices, "BaseImponible");
             factura.PorcentajeIVA = LeerDecimal(row, mapaIndices, "PorcentajeIVA");
+            factura.PorcentajeIVA = 21m; // Forzamos al 21% para evitar errores de redondeo 
+            factura.PorcentajeIRPF = LeerDecimal(row, mapaIndices, "PorcentajeIRPF");
+            factura.PorcentajeRE = LeerDecimal(row, mapaIndices, "PorcentajeRE");
             factura.Total = LeerDecimal(row, mapaIndices, "Total");
 
-            // Si el Excel no trae CuotaIVA pero sí Base y %, la calculamos
-            if (factura.CuotaIVA == 0 &&
-                factura.BaseImponible > 0 && factura.PorcentajeIVA > 0)
-            {
-                // CuotaIVA es una propiedad calculada en el modelo,
-                // no hace falta asignarla
-            }
+            // Determinar estado y mensajes de error
+            factura.Estado = DeterminarEstadoYValidar(factura);
 
-            factura.Estado = DeterminarEstado(factura);
             return factura;
         }
 
@@ -198,14 +196,15 @@ namespace FacturasApp.Services
             string[] formatos =
             {
                 "dd/MM/yyyy", "d/M/yyyy", "dd-MM-yyyy",
-                "d-M-yyyy",   "dd.MM.yyyy", "yyyy-MM-dd"
+                "d-M-yyyy",   "dd.MM.yyyy", "yyyy-MM-dd",
+                "dd/MMM/yyyy" // Ene, Feb, Mar...
             };
 
             foreach (string formato in formatos)
             {
                 if (DateTime.TryParseExact(texto, formato,
-                    new System.Globalization.CultureInfo("es-ES"),
-                    System.Globalization.DateTimeStyles.None,
+                    new CultureInfo("es-ES"),
+                    DateTimeStyles.None,
                     out DateTime fecha))
                     return fecha;
             }
@@ -241,25 +240,73 @@ namespace FacturasApp.Services
                 texto = texto.Replace(",", ".");
 
             return decimal.TryParse(texto,
-                System.Globalization.NumberStyles.Any,
-                System.Globalization.CultureInfo.InvariantCulture,
+                NumberStyles.Any,
+                CultureInfo.InvariantCulture,
                 out var r) ? r : 0m;
         }
 
-        // ── Estado ───────────────────────────────────────────────────────────
+        // ── Validación y Estado ──────────────────────────────────────────────
 
-        private EstadoFactura DeterminarEstado(Factura f)
+        /// <summary>
+        /// Aplica las mismas validaciones que BaseParser.DeterminarEstado()
+        /// para asegurar paridad con el procesamiento de PDFs.
+        /// </summary>
+        private EstadoFactura DeterminarEstadoYValidar(Factura f)
         {
-            bool camposCriticos = !string.IsNullOrEmpty(f.NumeroFactura)
-                               && f.Fecha.HasValue
-                               && f.Total > 0;
+            // 1. Campos obligatorios — si falta alguno → RevisiónManual
+            bool camposObligatoriosOk =
+                !string.IsNullOrEmpty(f.NumeroFactura) &&
+                f.Fecha.HasValue &&
+                !string.IsNullOrEmpty(f.Emisor.Nombre) &&
+                !string.IsNullOrEmpty(f.Emisor.NIF) &&
+                !string.IsNullOrEmpty(f.Receptor.Nombre) &&
+                !string.IsNullOrEmpty(f.Receptor.NIF) &&
+                f.Total != 0.0m;
 
-            bool camposSecundarios = !string.IsNullOrEmpty(f.Emisor.NIF)
-                                  && f.BaseImponible > 0;
+            if (!camposObligatoriosOk)
+            {
+                f.ErrorMensaje = "Falta uno o más campos obligatorios";
+                return EstadoFactura.RevisionManual;
+            }
 
-            if (camposCriticos && camposSecundarios) return EstadoFactura.OK;
-            if (camposCriticos) return EstadoFactura.RevisionManual;
-            return EstadoFactura.RevisionManual;
+            // 2. Validación de BaseImponible > 0
+            if (f.BaseImponible <= 0)
+            {
+                f.ErrorMensaje = "Base imponible debe ser mayor que cero";
+                return EstadoFactura.RevisionManual;
+            }
+
+            // 3. Nombre del cliente (receptor) no demasiado largo
+            if (f.Receptor.Nombre.Length > 40)
+            {
+                f.ErrorMensaje = "Nombre del cliente demasiado largo (>40 caracteres)";
+                return EstadoFactura.RevisionManual;
+            }
+
+            // 4. Validación de NIFs — si no son válidos → Error
+            bool emiNifValido = NifValidator.ValidarNif(f.Emisor.NIF);
+            bool recepNifValido = NifValidator.ValidarNif(f.Receptor.NIF);
+
+            if (!emiNifValido)
+            {
+                f.ErrorMensaje = $"NIF emisor no válido: {f.Emisor.NIF}";
+                return EstadoFactura.Error;
+            }
+
+            if (!recepNifValido)
+            {
+                f.ErrorMensaje = $"NIF receptor no válido: {f.Receptor.NIF}";
+                return EstadoFactura.Error;
+            }
+
+            // 5. Verificación del total — si no coincide → Error
+            if (!f.TotalesCoinciden)
+            {
+                f.ErrorMensaje = $"Totales no coinciden (calculado: {f.TotalCalculado:F2}€, extraído: {f.Total:F2}€)";
+                return EstadoFactura.Error;
+            }
+
+            return EstadoFactura.OK;
         }
 
         // ── Utilidad: columnas no reconocidas ────────────────────────────────

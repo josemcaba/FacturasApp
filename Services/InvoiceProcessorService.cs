@@ -12,7 +12,6 @@ namespace FacturasApp.Services
         private readonly OcrZonalExtractor _ocrZonalExtractor;
         private readonly ParserFactory _parserFactory = new();
         private readonly ExcelExtractor _excelExtractor = new();
-        private readonly ParserFactoryExcel _excelParserFactory = new();
         private readonly PlantillaOcrService _plantillaService = new();
 
         public PdfTextExtractor.ModoExtraccion ModoExtraccion { get; set; } =
@@ -193,12 +192,6 @@ namespace FacturasApp.Services
 
         public List<Factura> ImportarDesdeExcel(string rutaExcel)
         {
-            var (esEspecifico, parserEspecifico) =
-                _excelParserFactory.ObtenerParser(rutaExcel);
-
-            if (esEspecifico && parserEspecifico != null)
-                return parserEspecifico.Parsear(rutaExcel);
-
             return _excelExtractor.ImportarDesdeExcel(rutaExcel);
         }
 
@@ -230,7 +223,5 @@ namespace FacturasApp.Services
         public IReadOnlyList<string> ParsersDisponibles =>
             _parserFactory.ParsersDisponibles;
 
-        public IReadOnlyList<string> ParsersExcelDisponibles =>
-            _excelParserFactory.ParsersDisponibles;
     }
 }
