@@ -7,11 +7,11 @@ namespace FacturasApp.Services
     public class OcrExtractor
     {
         private readonly string _tessDataPath;
-        private const string Idiomas = "spa+eng";
+        private const string Idiomas = "spa";
 
         // DPI de renderizado — mayor DPI = mejor OCR pero más lento
         // 300 es el estándar recomendado para OCR
-        private const int DpiRenderizado = 400;
+        private const int DpiRenderizado = 300;
 
         public OcrExtractor(string tessDataPath = @"./tessdata")
         {
@@ -22,8 +22,8 @@ namespace FacturasApp.Services
         {
             var textoTotal = new System.Text.StringBuilder();
 
-            using var engine = new TesseractEngine(
-                _tessDataPath, Idiomas, EngineMode.Default);
+            using var engine = new TesseractEngine(_tessDataPath, Idiomas, EngineMode.TesseractAndLstm);
+            ConfigurarParametrosTesseract(engine);
 
             var paginas = RenderizarPaginas(rutaPdf);
 
@@ -31,7 +31,6 @@ namespace FacturasApp.Services
             {
                 try
                 {
-                    // ← Convertimos Bitmap a byte[] antes de pasarlo a ConvertirAPix
                     using var ms = new MemoryStream();
                     bitmap.Save(ms, DrawingImageFormat.Png);
                     byte[] bytes = ms.ToArray();
@@ -54,6 +53,26 @@ namespace FacturasApp.Services
 
             return textoTotal.ToString().Trim();
         }
+
+        // ── Configuración de parámetros Tesseract ─────────────────────────────
+
+        private void ConfigurarParametrosTesseract(TesseractEngine engine)
+        {
+            // PSM 6: Assume a single uniform block of text
+            engine.SetVariable("tesseract_create_pdf", false);
+            engine.SetVariable("tessedit_pageseg_mode", 6);
+            
+            // Caracteres a ignorar (blacklist)
+            engine.SetVariable("tessedit_char_blacklist", "\\!|=@#$£&*{}[]:;");
+            
+            // Preservar espacios entre palabras
+            engine.SetVariable("preserve_interword_spaces", 1);
+            
+            // Opcional: Mejorar precisión con español
+            engine.SetVariable("language_model_penalty_non_dict_word", 0.1);
+            engine.SetVariable("language_model_penalty_non_freq_dict_word", 0.1);
+        }
+
         // ── Renderizado de páginas ────────────────────────────────────────────
 
         private List<Bitmap> RenderizarPaginas(string rutaPdf)
@@ -118,45 +137,12 @@ namespace FacturasApp.Services
         {
             try
             {
-                using var ms = new MemoryStream(bytesImagen);
-                using var bitmap = new Bitmap(ms);
-
-                using var msPng = new MemoryStream();
-                bitmap.Save(msPng, DrawingImageFormat.Png); // ← alias aquí
-                return Pix.LoadFromMemory(msPng.ToArray());
+                return Pix.LoadFromMemory(bytesImagen);
             }
             catch
             {
                 return null;
             }
-        }
-
-        // ── Extracción con plantilla zonal ────────────────────────────────────────
-
-        // Si existe plantilla para el emisor usa extracción zonal
-        // Si no existe usa OCR completo de página
-        public string ExtraerTextoConOcrInteligente(string rutaPdf, string nombreEmisor)
-        {
-            var plantillaService = new PlantillaOcrService();
-            var plantilla = plantillaService.ObtenerPorEmisor(nombreEmisor);
-
-            if (plantilla == null || plantilla.Zonas.Count == 0)
-            {
-                // Sin plantilla — OCR completo
-                return ExtraerTextoConOcr(rutaPdf);
-            }
-
-            // Con plantilla — OCR zonal
-            var zonalExtractor = new OcrZonalExtractor(_tessDataPath);
-            var textosPorCampo = zonalExtractor.ExtraerZonas(rutaPdf, plantilla);
-
-            // Construimos un texto estructurado con separadores
-            // que los parsers pueden interpretar fácilmente
-            var sb = new System.Text.StringBuilder();
-            foreach (var kvp in textosPorCampo)
-                sb.AppendLine($"[{kvp.Key}]: {kvp.Value}");
-
-            return sb.ToString();
         }
     }
 }

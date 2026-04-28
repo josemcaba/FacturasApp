@@ -11,7 +11,7 @@ namespace FacturasApp.Services.Parsers
         public override string Nif => "A17001231";
 
         private static readonly string[] Identificadores =
-            { "frigor", "ficos", "andaluces", "carne"};
+            { "andaluces", "conservas", "carne"};
 
         public override bool PuedeParsar(string texto) =>
             Identificadores.All(id =>
@@ -30,11 +30,11 @@ namespace FacturasApp.Services.Parsers
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RegexImportes = new(
-            @"([\d,]+)\s+([\d,]+)\s+[\d,]+\s+([\d,]+)\s+[\d,]+\s",
+            @"ASE\s+IMPONIB\.?\s+([\d.,]+)",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexTotal = new(
-            @"TOTAL\s+FACTURA.*?([\d,.]+)",
+            @"OTAL\s+FACTURA.*?([\d,.]+)",
             RegexOptions.Compiled);
 
         public override Factura Parsear(string texto, string rutaArchivo, bool viaOcr)
@@ -52,8 +52,8 @@ namespace FacturasApp.Services.Parsers
             factura.Receptor.Nombre = ExtraerGrupo(RegexNombre, texto, 1);
             factura.Receptor.NIF = ExtraerNif(RegexNif, texto, Nif);
             factura.BaseImponible = ExtraerDecimal(RegexImportes, texto, 1);
-            factura.PorcentajeIVA = ExtraerDecimal(RegexImportes, texto, 2);
-            factura.PorcentajeRE = ExtraerDecimal(RegexImportes, texto, 3);
+            factura.PorcentajeIVA = 10m;
+            factura.PorcentajeRE = 1.4m;
             factura.Total = ExtraerDecimal(RegexTotal, texto, 1);
             factura.Estado = DeterminarEstado(factura);
 

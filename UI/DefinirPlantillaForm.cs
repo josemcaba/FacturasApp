@@ -240,7 +240,7 @@ namespace FacturasApp.UI
         {
             if (lstZonas.SelectedIndex < 0)
             {
-                lblTexto.Text = string.Empty;
+                txtTexto.Text = string.Empty;
                 return;
             }
 
@@ -252,13 +252,13 @@ namespace FacturasApp.UI
         {
             if (string.IsNullOrEmpty(_rutaPdf))
             {
-                lblTexto.Text = "Carga un PDF primero";
+                txtTexto.Text = "Carga un PDF primero";
                 return;
             }
 
             try
             {
-                lblTexto.Text = "Extrayendo OCR...";
+                txtTexto.Text = "Extrayendo OCR...";
                 Application.DoEvents();
 
                 // Convertir zona a pixels
@@ -267,13 +267,13 @@ namespace FacturasApp.UI
                 // Extraer texto OCR de la zona
                 string textoZona = _ocrExtractor.ExtraerTextoZonal(_rutaPdf, zona);
 
-                lblTexto.Text = string.IsNullOrEmpty(textoZona)
+                txtTexto.Text = string.IsNullOrEmpty(textoZona)
                     ? "(Sin texto detectado)"
-                    : textoZona;
+                    : textoZona.Replace("\n", "\r\n");
             }
             catch (Exception ex)
             {
-                lblTexto.Text = $"Error en OCR: {ex.Message}";
+                txtTexto.Text = $"Error en OCR: {ex.Message}";
             }
         }
 
@@ -285,7 +285,7 @@ namespace FacturasApp.UI
             for (int i = 0; i < _plantilla.Zonas.Count; i++)
                 _plantilla.Zonas[i].Campo = $"Zona{i + 1}";
             ActualizarListaZonas();
-            lblTexto.Text = string.Empty;
+            txtTexto.Text = string.Empty;
             picFactura.Invalidate();
         }
 
