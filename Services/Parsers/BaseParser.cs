@@ -85,18 +85,26 @@ namespace FacturasApp.Services.Parsers
                 out var r) ? r : 0m;
         }
 
-        public static readonly Regex RegexFecha = new(
+        protected virtual Regex RegexFecha { get; } = new(
+            @"\b(\d{1,2}[\/\.-](?:\d{1,2}|\D{3})[\/\.-]\d{2,4})\b",
+            RegexOptions.Compiled);
+
+        protected DateTime? ExtraerFecha(Regex RegexF, string texto)
+        {
+            var m = RegexF.Matches(texto);
+            if (m.Count != 1)
+                return null;
+
+            Regex RegexFechaFormateada = new(
             @"\b(\d{1,2})[\/\.-]((?:\d{1,2}|\D{3}))[\/\.-](\d{2,4})\b",
             RegexOptions.Compiled);
 
-        protected DateTime? ExtraerFecha(Regex Regex, string texto)
-        {
-            var m = Regex.Match(texto);
-            if ((!m.Success) | (m.Captures.Count != 1)) 
+            m = RegexFechaFormateada.Matches(m[0].Value);
+            if (m.Count != 1)
                 return null;
 
             return DateTime.TryParse(
-                $"{m.Groups[1].Value}/{m.Groups[2].Value}/{m.Groups[3].Value}",
+                $"{m[0].Groups[1].Value}/{m[0].Groups[2].Value}/{m[0].Groups[3].Value}",
                 new System.Globalization.CultureInfo("es-ES"),
                 System.Globalization.DateTimeStyles.None, out var f) ? f : null;
         }

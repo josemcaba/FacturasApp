@@ -31,6 +31,10 @@ namespace FacturasApp.Services.Parsers
             @"Málaga[\r\n]+(.+)[\r\n]+PLENERGY",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+        protected override Regex RegexFecha { get; } = new(
+            @"\bFECHA:\s*(.*?)[\s\n\r]+CLIENTE",
+            RegexOptions.Compiled);
+
         private static readonly Regex RegexImportes = new(
             @"Importe\sTOTAL[\r\n]+([\d,.]+)\s+(\d+)%\s+([\d,.]+)\s+[\d,.]+\s+€\s+([\d,.]+)\s+€",
             RegexOptions.Compiled);

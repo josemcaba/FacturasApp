@@ -27,6 +27,10 @@ namespace FacturasApp.Services.Parsers
             @"NIF: ([A-Z]?\d{7,8}[A-Z]?)\s",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+        protected override Regex RegexFecha { get; } = new(
+            @"\bFecha\sFactura:\s*(.*?)\s",
+            RegexOptions.Compiled);
+
         private static readonly Regex RegexLineaIva = new(
             @"(\d+)% ([\d,]+) ([\d,.]+) ([\d,.]+)\r",
             RegexOptions.Compiled);

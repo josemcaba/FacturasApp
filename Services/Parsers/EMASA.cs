@@ -28,6 +28,10 @@ namespace FacturasApp.Services.Parsers
             @"NIF/CIF:\s*(\S+)",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+        protected override Regex RegexFecha { get; } = new(
+            @"\bFECHA\sDE\sEMISIÓN:\s(.*?)\s",
+            RegexOptions.Compiled);
+
         private static readonly Regex RegexImportes = new(
             @"\(Ley 9/2010\) ([\d,]+) €\r\n+IVA \(B.I. ([\d,]+)\) (\d+)% ([\d,]+)",
             RegexOptions.Compiled);

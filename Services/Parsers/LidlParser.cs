@@ -27,6 +27,10 @@ namespace FacturasApp.Services.Parsers
             @"Barcelona[\r\n]+([A-Z]?\d{7,8}[A-Z]?)\b",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+        protected override Regex RegexFecha { get; } = new(
+            @"\bFecha\sFactura:\s+(.*?)\s",
+            RegexOptions.Compiled);
+
         private static readonly Regex RegexLineaIva = new(
             @"Tipo\sIVA\s(\d{1,2},00)\s([\d.,]+)\s[\d., ]+\s([\d.,]+)",
             RegexOptions.Compiled);

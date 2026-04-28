@@ -26,6 +26,10 @@ namespace FacturasApp.Services.Parsers
             @"Dirección de Facturación[\r\n]+.*[\r\n]+(.+)",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+        protected override Regex RegexFecha { get; } = new(
+            @"\bFECHA[\s\n\r]+(.*?)[\s\n\r]+N",
+            RegexOptions.Compiled);
+
         private static readonly Regex RegexNif = new(
             @"España[\r\n]+(.+)[\r\n]+Dirección",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);

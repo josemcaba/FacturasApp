@@ -32,6 +32,10 @@ namespace FacturasApp.Services.Parsers
             @"otal.*?([\d,.]+)[\n\r]*IVA\s*\(([\d]+)%\)",
             RegexOptions.Compiled);
 
+        protected override Regex RegexFecha { get; } = new(
+            @"\bVencimiento[\s\r\n]+(.*?)\s",
+            RegexOptions.Compiled);
+
         private static readonly Regex RegexTotal = new(
             @"Envío[\s\n\r]+(?:[\d,.\s\n\r]*)Total\s+([\d.,]+)",
             RegexOptions.Compiled);

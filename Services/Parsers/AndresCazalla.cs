@@ -26,6 +26,9 @@ namespace FacturasApp.Services.Parsers
         private static readonly Regex RegexNif = new(
             @"\b([A-Z]?\d{7,8}[A-Z]?)\s+\d*\s*semirueda",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        protected override Regex RegexFecha { get; } = new(
+            @"\bFACTURA\s.*?\s(.*)\b",
+            RegexOptions.Compiled);
 
         private static readonly Regex RegexImportes = new(
             @"([\d,.]+)\s[\d,.]+\s.*\n([\d,]+)\s([\d,]+)\s[\d,]+\s([\d,.]+)",
