@@ -93,7 +93,12 @@ namespace FacturasApp.Services.Parsers
         {
             var m = RegexF.Matches(texto);
             if (m.Count != 1)
-                return null;
+            {
+                // Comprobamos si todas las coincidencias encontradas son iguales.
+                // Si es así, continuamos. Si no, devolvemos null por ambigüedad.
+                if (m.Count > 1 && !m.All(match => match.Value == m[0].Value))
+                    return null;
+            }
 
             Regex RegexFechaFormateada = new(
             @"\b(\d{1,2})[\/\.-]((?:\d{1,2}|\D{3}))[\/\.-](\d{2,4})\b",
@@ -107,46 +112,6 @@ namespace FacturasApp.Services.Parsers
                 $"{m[0].Groups[1].Value}/{m[0].Groups[2].Value}/{m[0].Groups[3].Value}",
                 new System.Globalization.CultureInfo("es-ES"),
                 System.Globalization.DateTimeStyles.None, out var f) ? f : null;
-        }
-
-
-
-        // ── Estado ───────────────────────────────────────────────────────────
-
-        protected EstadoFactura DeterminarEstado(Factura f)
-        {
-            // Campos obligatorios — si falta alguno → RevisiónManual
-            bool camposObligatoriosOk =
-                !string.IsNullOrEmpty(f.NumeroFactura) &&
-                f.Fecha.HasValue &&
-                !string.IsNullOrEmpty(f.Emisor.Nombre) &&
-                !string.IsNullOrEmpty(f.Emisor.NIF) &&
-                !string.IsNullOrEmpty(f.Receptor.Nombre) &&
-                !string.IsNullOrEmpty(f.Receptor.NIF) &&
-                f.Total != 0.0m;
-
-            if (!camposObligatoriosOk)
-                return EstadoFactura.RevisionManual;
-
-            // Nombre del cliente (receptor) muy largo — si >40 caracteres → RevisiónManual
-            if (f.Receptor.Nombre.Length > 40)
-            { 
-                f.ErrorMensaje = "Nombre del cliente demasiado largo";
-                return EstadoFactura.RevisionManual;
-            }
-
-            // Verificación del NIF del emisor y del receptor — si no son válidos → Error
-            if (!NifValidator.ValidarNif(f.Emisor.NIF) || !NifValidator.ValidarNif(f.Receptor.NIF))
-            {
-                f.ErrorMensaje = "NIF no válido";
-                return EstadoFactura.Error;
-            }
-
-            // Verificación del total — si no coincide → Error
-            if (!f.TotalesCoinciden)
-                return EstadoFactura.Error;
-
-            return EstadoFactura.OK;
         }
     }
 }

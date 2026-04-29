@@ -75,7 +75,7 @@ namespace FacturasApp.Services.Parsers
                 PorcentajeIVA = ExtraerDecimal(RegexImportes, texto, 3),
                 Total = ExtraerDecimal(RegexImportes, texto, 4) + ExtraerDecimal(RegexImportes, texto, 2)
             };
-            parteEmasa.Estado = DeterminarEstado(parteEmasa);
+            parteEmasa.Estado = FacturaEstado.Determinar(parteEmasa);
             facturas.Add(parteEmasa);
 
             var parteJunta = new Factura
@@ -92,15 +92,15 @@ namespace FacturasApp.Services.Parsers
                 BaseImponible = ExtraerDecimal(RegexImportes, texto, 1),
                 Total = ExtraerDecimal(RegexImportes, texto, 1)
             };
-            parteJunta.Estado = DeterminarEstado(parteJunta);
+            parteJunta.Estado = FacturaEstado.Determinar(parteJunta);
             facturas.Add(parteJunta);
 
             var totalFactura = ExtraerDecimal(RegexTotalFactura, texto, 1);
             if (parteEmasa.Total + parteJunta.Total != totalFactura)
-            {   parteEmasa.ErrorMensaje = $"La suma de partes ({parteEmasa.Total + parteJunta.Total} €) no coincide con el total de factura ({totalFactura} €)";
-                parteEmasa.Estado = EstadoFactura.Error;
-                parteJunta.ErrorMensaje = parteEmasa.ErrorMensaje;
-                parteJunta.Estado = EstadoFactura.Error;
+            {   parteEmasa.MensajeError.Add($"La suma de partes ({parteEmasa.Total + parteJunta.Total} €) no coincide con el total de factura ({totalFactura} €)");
+                parteEmasa.Estado = FacturaEstado.Determinar(parteEmasa);
+                parteJunta.MensajeError = parteEmasa.MensajeError;
+                parteJunta.Estado = FacturaEstado.Determinar(parteJunta);
             }
 
             return facturas;

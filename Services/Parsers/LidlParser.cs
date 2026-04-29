@@ -73,7 +73,7 @@ namespace FacturasApp.Services.Parsers
                     PorcentajeIVA = ParsearDecimal(linea.Groups[1].Value),
                     Total = ParsearDecimal(linea.Groups[3].Value)
                 };
-                factura.Estado = DeterminarEstado(factura);
+                factura.Estado = FacturaEstado.Determinar(factura);
                 facturas.Add(factura);
             };
             return facturas;

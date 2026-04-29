@@ -1,4 +1,5 @@
 ﻿using FacturasApp.Models;
+using FacturasApp.Services;
 
 namespace FacturasApp.UI
 {
@@ -43,9 +44,9 @@ namespace FacturasApp.UI
             TotalFormateado = $"{f.Total:N2} €";
             EstadoTexto = f.Estado switch
             {
-                EstadoFactura.OK => "✔ Correcto",
-                EstadoFactura.RevisionManual => "⚠ Revisar",
-                EstadoFactura.Error => "✖ Error",
+                _Estado.OK => "✔ Correcto",
+                _Estado.Revisar => "⚠ Revisar",
+                _Estado.Error => "✖ Error",
                 _ => "Pendiente"
             };
             ExtractedByOcr = f.ExtractedByOcr;

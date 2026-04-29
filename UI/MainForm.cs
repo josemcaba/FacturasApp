@@ -245,7 +245,7 @@ namespace FacturasApp.UI
         private void ConfigurarComboEstado()
         {
             cmbFiltroEstado.Items.AddRange(
-                new object[] { "Todos", "OK", "RevisionManual", "Error" });
+                new object[] { "Todos", "OK", "Revisar", "Error" });
             cmbFiltroEstado.SelectedIndex = 0;
         }
 
@@ -267,10 +267,10 @@ namespace FacturasApp.UI
             dgvFacturas.Rows[e.RowIndex].DefaultCellStyle.BackColor =
                 fila.FacturaOriginal.Estado switch
                 {
-                    EstadoFactura.OK             => Color.FromArgb(226, 239, 218),
-                    EstadoFactura.RevisionManual => Color.FromArgb(255, 242, 204),
-                    EstadoFactura.Error          => Color.FromArgb(255, 228, 214),
-                    _                            => Color.White
+                    _Estado.OK      => Color.FromArgb(226, 239, 218),
+                    _Estado.Revisar => Color.FromArgb(255, 242, 204),
+                    _Estado.Error   => Color.FromArgb(255, 228, 214),
+                    _                     => Color.White
                 };
         }
 
@@ -293,13 +293,13 @@ namespace FacturasApp.UI
         private void MostrarResumenEstadisticas(List<Factura> facturas)
         {
             int total = facturas.Count;
-            int ok = facturas.Count(f => f.Estado == EstadoFactura.OK);
+            int ok = facturas.Count(f => f.Estado == _Estado.OK);
             int revision = facturas.Count(f => f.Estado ==
-                                     EstadoFactura.RevisionManual);
-            int errores = facturas.Count(f => f.Estado == EstadoFactura.Error);
+                                     _Estado.Revisar);
+            int errores = facturas.Count(f => f.Estado == _Estado.Error);
             int porOcr = facturas.Count(f => f.ExtractedByOcr);
             decimal totalEuros = facturas
-                .Where(f => f.Estado != EstadoFactura.Error)
+                .Where(f => f.Estado != _Estado.Error)
                 .Sum(f => f.Total);
 
             lblResumen.Text =

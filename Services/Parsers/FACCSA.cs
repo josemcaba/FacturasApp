@@ -55,7 +55,7 @@ namespace FacturasApp.Services.Parsers
             factura.PorcentajeIVA = 10m;
             factura.PorcentajeRE = 1.4m;
             factura.Total = ExtraerDecimal(RegexTotal, texto, 1);
-            factura.Estado = DeterminarEstado(factura);
+            factura.Estado = FacturaEstado.Determinar(factura);
 
             return factura;
         }

@@ -123,8 +123,8 @@ namespace FacturasApp.Services.Parsers
                     facturas.Add(new Factura
                     {
                         RutaArchivo = rutaExcel,
-                        Estado = EstadoFactura.Error,
-                        ErrorMensaje = $"Fila {fila}: {ex.Message}"
+                        Estado = _Estado.Error,
+                        MensajeError = new List<string> { $"Fila {fila}: {ex.Message}" }
                     });
                 }
             }
@@ -264,9 +264,9 @@ namespace FacturasApp.Services.Parsers
                 out var r) ? r : 0m;
         }
 
-        private EstadoFactura DeterminarEstado(Factura f) =>
+        private _Estado DeterminarEstado(Factura f) =>
             !string.IsNullOrEmpty(f.NumeroFactura) && f.Fecha.HasValue && f.Total > 0
-                ? EstadoFactura.OK
-                : EstadoFactura.RevisionManual;
+                ? _Estado.OK
+                : _Estado.Revisar;
     }
 }

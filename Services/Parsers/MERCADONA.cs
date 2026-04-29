@@ -28,7 +28,7 @@ namespace FacturasApp.Services.Parsers
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         protected override Regex RegexFecha { get; } = new(
-            @"\bFecha\sFactura:\s*(.*?)\s",
+            @"\bFecha\sFactura:\s*(.*?)[\s\n\r]+",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexLineaIva = new(
@@ -73,7 +73,7 @@ namespace FacturasApp.Services.Parsers
                     PorcentajeIVA = ParsearDecimal(linea.Groups[1].Value),
                     Total = ParsearDecimal(linea.Groups[4].Value)
                 };
-                factura.Estado = DeterminarEstado(factura);
+                factura.Estado = FacturaEstado.Determinar(factura);
                 facturas.Add(factura);
             };
             return facturas;

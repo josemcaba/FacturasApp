@@ -23,7 +23,6 @@ namespace FacturasApp.Models
     public class ZonaOcr
     {
         // Nombre del campo que contiene esta zona
-        // Debe coincidir con los campos de Factura
         [XmlAttribute("Campo")]
         public string Campo { get; set; } = string.Empty;
 

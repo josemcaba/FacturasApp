@@ -1,44 +1,27 @@
-﻿namespace FacturasApp.Models
+﻿using FacturasApp.Services;
+
+namespace FacturasApp.Models
 {
     public class Factura
     {
-        // ── Identificación ───────────────────────────────────────────────────
         public string NumeroFactura { get; set; } = string.Empty;
         public DateTime? Fecha { get; set; }
-
-        // ── Emisor ───────────────────────────────────────────────────────────
         public Proveedor Emisor { get; set; } = new Proveedor();
-
-        // ── Receptor ─────────────────────────────────────────────────────────
         public Cliente Receptor { get; set; } = new Cliente();
-
-        // ── Concepto contable ────────────────────────────────────────────────
         public string Concepto { get; set; } = string.Empty; // Código contable
-
-        // ── Importes ─────────────────────────────────────────────────────────
         public decimal BaseImponible { get; set; }
-
         public decimal PorcentajeIVA { get; set; } = 0m;
-        // Calculamos la cuota de IVA a partir de la base imponible y el porcentaje redondeando a 2 decimales
         public decimal CuotaIVA => Math.Round(BaseImponible * (PorcentajeIVA / 100m), 2, 
             MidpointRounding.AwayFromZero);
-
         public decimal PorcentajeIRPF { get; set; } = 0m;
         public decimal CuotaIRPF => Math.Round(BaseImponible * (PorcentajeIRPF / 100m), 2,
             MidpointRounding.AwayFromZero);
-
         public decimal PorcentajeRE { get; set; } = 0m;
         public decimal CuotaRE => Math.Round(BaseImponible * (PorcentajeRE / 100m), 2,
             MidpointRounding.AwayFromZero);
-
-        // Total extraído directamente de la factura
         public decimal Total { get; set; }
-
-        // Total calculado: Base + CuotaIVA - CuotaIRPF + CuotaRE
         public decimal TotalCalculado =>
             BaseImponible + CuotaIVA - CuotaIRPF + CuotaRE;
-
-        // Diferencia entre total extraído y calculado
         public decimal DiferenciaTotal =>
             Math.Abs(Total - TotalCalculado);
 
@@ -51,7 +34,7 @@
         // ── Metadatos ────────────────────────────────────────────────────────
         public string RutaArchivo { get; set; } = string.Empty;
         public bool ExtractedByOcr { get; set; }
-        public EstadoFactura Estado { get; set; } = EstadoFactura.Pendiente;
-        public string? ErrorMensaje { get; set; }
+        public _Estado Estado { get; set; } = _Estado.Pendiente;
+        public List<string> MensajeError { get; set; } = new();
     }
 }

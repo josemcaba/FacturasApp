@@ -1,4 +1,5 @@
 ﻿using FacturasApp.Models;
+using FacturasApp.Services;
 
 namespace FacturasApp.UI
 {
@@ -217,16 +218,16 @@ namespace FacturasApp.UI
             // Color del campo estado según valor
             txtEstado.BackColor = _factura.Estado switch
             {
-                EstadoFactura.OK => Color.FromArgb(226, 239, 218),
-                EstadoFactura.RevisionManual => Color.FromArgb(255, 242, 204),
-                EstadoFactura.Error => Color.FromArgb(252, 228, 214),
+                _Estado.OK => Color.FromArgb(226, 239, 218),
+                _Estado.Revisar => Color.FromArgb(255, 242, 204),
+                _Estado.Error => Color.FromArgb(252, 228, 214),
                 _ => SystemColors.Window
             };
 
-            if (!string.IsNullOrEmpty(_factura.ErrorMensaje))
+            if (_factura.MensajeError != null && _factura.MensajeError.Count > 0)
             {
                 panelError.Visible = true;
-                txtError.Text = _factura.ErrorMensaje;
+                txtError.Text = string.Join(Environment.NewLine, _factura.MensajeError);
             }
 
             // Desactivar botón PDF si el archivo viene de Excel

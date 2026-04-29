@@ -91,8 +91,8 @@ namespace FacturasApp.Services
                     facturas.Add(new Factura
                     {
                         RutaArchivo = ruta,
-                        Estado = EstadoFactura.Error,
-                        ErrorMensaje = ex.Message
+                        Estado = _Estado.Error,
+                        MensajeError = new List<string> { ex.Message }
                     });
                 }
             }
@@ -170,13 +170,13 @@ namespace FacturasApp.Services
 
                     if (existente != null)
                     {
-                        nueva.Estado = EstadoFactura.Duplicada;
-                        nueva.ErrorMensaje = $"Factura duplicada. Existe en: {existente.RutaArchivo}";
+                        nueva.Estado = _Estado.Duplicada;
+                        nueva.MensajeError.Add($"Factura duplicada. Existe en: {existente.RutaArchivo}");
 
-                        if (existente.Estado != EstadoFactura.Duplicada)
+                        if (existente.Estado != _Estado.Duplicada)
                         {
-                            existente.Estado = EstadoFactura.Duplicada;
-                            existente.ErrorMensaje = $"Factura duplicada. Otra copia: {nueva.RutaArchivo}";
+                            existente.Estado = _Estado.Duplicada;
+                            existente.MensajeError.Add($"Factura duplicada. Otra copia: {nueva.RutaArchivo}");
                         }
 
                         acumuladas.Add(nueva);

@@ -1,6 +1,7 @@
 ﻿using ClosedXML.Excel;
 using FacturasApp.Models;
 using System.Globalization;
+using FacturasApp.Services; 
 
 namespace FacturasApp.Services
 {
@@ -96,8 +97,8 @@ namespace FacturasApp.Services
                     // Si una fila falla la registramos y continuamos
                     facturas.Add(new Factura
                     {
-                        Estado = EstadoFactura.Error,
-                        ErrorMensaje = $"Fila {fila}: {ex.Message}"
+                        Estado = _Estado.Error,
+                        MensajeError = new List<string> { $"Error en fila {fila}: {ex.Message}" }
                     });
                 }
             }
@@ -164,7 +165,7 @@ namespace FacturasApp.Services
             factura.Total = LeerDecimal(row, mapaIndices, "Total");
 
             // Determinar estado y mensajes de error
-            factura.Estado = DeterminarEstadoYValidar(factura);
+            factura.Estado = FacturaEstado.Determinar(factura);
 
             return factura;
         }
@@ -245,74 +246,8 @@ namespace FacturasApp.Services
                 out var r) ? r : 0m;
         }
 
-        // ── Validación y Estado ──────────────────────────────────────────────
-
-        /// <summary>
-        /// Aplica las mismas validaciones que BaseParser.DeterminarEstado()
-        /// para asegurar paridad con el procesamiento de PDFs.
-        /// </summary>
-        private EstadoFactura DeterminarEstadoYValidar(Factura f)
-        {
-            // 1. Campos obligatorios — si falta alguno → RevisiónManual
-            bool camposObligatoriosOk =
-                !string.IsNullOrEmpty(f.NumeroFactura) &&
-                f.Fecha.HasValue &&
-                !string.IsNullOrEmpty(f.Emisor.Nombre) &&
-                !string.IsNullOrEmpty(f.Emisor.NIF) &&
-                !string.IsNullOrEmpty(f.Receptor.Nombre) &&
-                !string.IsNullOrEmpty(f.Receptor.NIF) &&
-                f.Total != 0.0m;
-
-            if (!camposObligatoriosOk)
-            {
-                f.ErrorMensaje = "Falta uno o más campos obligatorios";
-                return EstadoFactura.RevisionManual;
-            }
-
-            // 2. Validación de BaseImponible > 0
-            if (f.BaseImponible <= 0)
-            {
-                f.ErrorMensaje = "Base imponible debe ser mayor que cero";
-                return EstadoFactura.RevisionManual;
-            }
-
-            // 3. Nombre del cliente (receptor) no demasiado largo
-            if (f.Receptor.Nombre.Length > 40)
-            {
-                f.ErrorMensaje = "Nombre del cliente demasiado largo (>40 caracteres)";
-                return EstadoFactura.RevisionManual;
-            }
-
-            // 4. Validación de NIFs — si no son válidos → Error
-            bool emiNifValido = NifValidator.ValidarNif(f.Emisor.NIF);
-            bool recepNifValido = NifValidator.ValidarNif(f.Receptor.NIF);
-
-            if (!emiNifValido)
-            {
-                f.ErrorMensaje = $"NIF emisor no válido: {f.Emisor.NIF}";
-                return EstadoFactura.Error;
-            }
-
-            if (!recepNifValido)
-            {
-                f.ErrorMensaje = $"NIF receptor no válido: {f.Receptor.NIF}";
-                return EstadoFactura.Error;
-            }
-
-            // 5. Verificación del total — si no coincide → Error
-            if (!f.TotalesCoinciden)
-            {
-                f.ErrorMensaje = $"Totales no coinciden (calculado: {f.TotalCalculado:F2}€, extraído: {f.Total:F2}€)";
-                return EstadoFactura.Error;
-            }
-
-            return EstadoFactura.OK;
-        }
 
         // ── Utilidad: columnas no reconocidas ────────────────────────────────
-
-        // Devuelve las cabeceras del Excel que no se han podido mapear
-        // Útil para mostrar al usuario qué columnas se ignoraron
         public List<string> ObtenerColumnasNoReconocidas(string rutaExcel)
         {
             using var workbook = new XLWorkbook(rutaExcel);
