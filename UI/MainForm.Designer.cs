@@ -47,7 +47,7 @@ namespace FacturasApp.UI
             btnSeleccionarArchivos.ForeColor = Color.White;
             btnSeleccionarArchivos.Location = new Point(158, 12);
             btnSeleccionarArchivos.Name = "btnSeleccionarArchivos";
-            btnSeleccionarArchivos.Size = new Size(140, 32);
+            btnSeleccionarArchivos.Size = new Size(140, 34);
             btnSeleccionarArchivos.TabIndex = 0;
             btnSeleccionarArchivos.Text = "📄 Archivos PDF";
             btnSeleccionarArchivos.UseVisualStyleBackColor = false;
@@ -60,7 +60,7 @@ namespace FacturasApp.UI
             btnSeleccionarCarpeta.ForeColor = Color.White;
             btnSeleccionarCarpeta.Location = new Point(12, 12);
             btnSeleccionarCarpeta.Name = "btnSeleccionarCarpeta";
-            btnSeleccionarCarpeta.Size = new Size(140, 32);
+            btnSeleccionarCarpeta.Size = new Size(140, 34);
             btnSeleccionarCarpeta.TabIndex = 1;
             btnSeleccionarCarpeta.Text = "📁 Carpeta PDF";
             btnSeleccionarCarpeta.UseVisualStyleBackColor = false;
@@ -73,7 +73,7 @@ namespace FacturasApp.UI
             btnSeleccionarExcel.ForeColor = Color.White;
             btnSeleccionarExcel.Location = new Point(304, 12);
             btnSeleccionarExcel.Name = "btnSeleccionarExcel";
-            btnSeleccionarExcel.Size = new Size(140, 32);
+            btnSeleccionarExcel.Size = new Size(140, 34);
             btnSeleccionarExcel.TabIndex = 2;
             btnSeleccionarExcel.Text = "📊 Excel facturas";
             btnSeleccionarExcel.UseVisualStyleBackColor = false;
@@ -84,7 +84,7 @@ namespace FacturasApp.UI
             btnLimpiarLista.FlatStyle = FlatStyle.Flat;
             btnLimpiarLista.Location = new Point(596, 12);
             btnLimpiarLista.Name = "btnLimpiarLista";
-            btnLimpiarLista.Size = new Size(90, 32);
+            btnLimpiarLista.Size = new Size(140, 34);
             btnLimpiarLista.TabIndex = 3;
             btnLimpiarLista.Text = "✖ Limpiar";
             btnLimpiarLista.Click += btnLimpiarLista_Click;
@@ -126,7 +126,7 @@ namespace FacturasApp.UI
             btnProcesar.ForeColor = Color.White;
             btnProcesar.Location = new Point(12, 216);
             btnProcesar.Name = "btnProcesar";
-            btnProcesar.Size = new Size(130, 34);
+            btnProcesar.Size = new Size(140, 34);
             btnProcesar.TabIndex = 7;
             btnProcesar.Text = "▶  Procesar";
             btnProcesar.UseVisualStyleBackColor = false;
@@ -134,9 +134,9 @@ namespace FacturasApp.UI
             // 
             // progressBar
             // 
-            progressBar.Location = new Point(152, 221);
+            progressBar.Location = new Point(188, 221);
             progressBar.Name = "progressBar";
-            progressBar.Size = new Size(820, 24);
+            progressBar.Size = new Size(784, 24);
             progressBar.TabIndex = 8;
             progressBar.Visible = false;
             // 
@@ -234,7 +234,7 @@ namespace FacturasApp.UI
             btnDefinirZonas.ForeColor = Color.White;
             btnDefinirZonas.Location = new Point(450, 12);
             btnDefinirZonas.Name = "btnDefinirZonas";
-            btnDefinirZonas.Size = new Size(140, 32);
+            btnDefinirZonas.Size = new Size(140, 34);
             btnDefinirZonas.TabIndex = 20;
             btnDefinirZonas.Text = "🔲 Zonas OCR";
             btnDefinirZonas.UseVisualStyleBackColor = false;

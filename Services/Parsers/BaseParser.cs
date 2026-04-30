@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using FacturasApp.Models;
+using System.Globalization;
 
 namespace FacturasApp.Services.Parsers
 {
@@ -80,8 +81,8 @@ namespace FacturasApp.Services.Parsers
                 v = v.Replace(",", ".");
 
             return decimal.TryParse(v,
-                System.Globalization.NumberStyles.Any,
-                System.Globalization.CultureInfo.InvariantCulture,
+                NumberStyles.Any,
+                CultureInfo.InvariantCulture,
                 out var r) ? r : 0m;
         }
 
@@ -110,8 +111,8 @@ namespace FacturasApp.Services.Parsers
 
             return DateTime.TryParse(
                 $"{m[0].Groups[1].Value}/{m[0].Groups[2].Value}/{m[0].Groups[3].Value}",
-                new System.Globalization.CultureInfo("es-ES"),
-                System.Globalization.DateTimeStyles.None, out var f) ? f : null;
+                new CultureInfo("es-ES"),
+                DateTimeStyles.None, out var f) ? f : null;
         }
     }
 }

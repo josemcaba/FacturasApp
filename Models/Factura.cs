@@ -11,17 +11,20 @@ namespace FacturasApp.Models
         public string Concepto { get; set; } = string.Empty; // Código contable
         public decimal BaseImponible { get; set; }
         public decimal PorcentajeIVA { get; set; } = 0m;
-        public decimal CuotaIVA => Math.Round(BaseImponible * (PorcentajeIVA / 100m), 2, 
+        public decimal CuotaIVA { get; set; }
+        public decimal CuotaIVACalculado => Math.Round(BaseImponible * (PorcentajeIVA / 100m), 2, 
             MidpointRounding.AwayFromZero);
         public decimal PorcentajeIRPF { get; set; } = 0m;
-        public decimal CuotaIRPF => Math.Round(BaseImponible * (PorcentajeIRPF / 100m), 2,
+        public decimal CuotaIRPF{ get; set; }
+        public decimal CuotaIRPFCalculado => Math.Round(BaseImponible * (PorcentajeIRPF / 100m), 2,
             MidpointRounding.AwayFromZero);
         public decimal PorcentajeRE { get; set; } = 0m;
-        public decimal CuotaRE => Math.Round(BaseImponible * (PorcentajeRE / 100m), 2,
+        public decimal CuotaRE { get; set; }
+        public decimal CuotaRECalculado => Math.Round(BaseImponible * (PorcentajeRE / 100m), 2,
             MidpointRounding.AwayFromZero);
         public decimal Total { get; set; }
         public decimal TotalCalculado =>
-            BaseImponible + CuotaIVA - CuotaIRPF + CuotaRE;
+            BaseImponible + CuotaIVACalculado - CuotaIRPFCalculado + CuotaRECalculado;
         public decimal DiferenciaTotal =>
             Math.Abs(Total - TotalCalculado);
 

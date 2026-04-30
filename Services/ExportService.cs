@@ -121,13 +121,13 @@ namespace FacturasApp.Services
                 hoja.Cell(fila, 3).Value = f.Fecha?.ToString("dd/MM/yyyy") ?? string.Empty;
                 hoja.Cell(fila, 5).Value = f.BaseImponible;
                 hoja.Cell(fila, 6).Value = f.PorcentajeIVA;
-                hoja.Cell(fila, 7).Value = f.CuotaIVA;
+                hoja.Cell(fila, 7).Value = f.CuotaIVACalculado;
                 hoja.Cell(fila, 8).Value = f.BaseImponible;
                 hoja.Cell(fila, 9).Value = f.PorcentajeIRPF;
-                hoja.Cell(fila, 10).Value = f.CuotaIRPF;
+                hoja.Cell(fila, 10).Value = f.CuotaIRPFCalculado;
                 hoja.Cell(fila, 11).Value = f.BaseImponible;
                 hoja.Cell(fila, 12).Value = f.PorcentajeRE;
-                hoja.Cell(fila, 13).Value = f.CuotaRE;
+                hoja.Cell(fila, 13).Value = f.CuotaRECalculado;
                 if (hoja.Name.Contains("Pendientes"))
                     hoja.Cell(fila, 16).Value = Path.GetFileName(f.RutaArchivo);
 

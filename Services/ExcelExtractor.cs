@@ -1,7 +1,6 @@
 ﻿using ClosedXML.Excel;
 using FacturasApp.Models;
 using System.Globalization;
-using FacturasApp.Services; 
 
 namespace FacturasApp.Services
 {
@@ -160,8 +159,11 @@ namespace FacturasApp.Services
             factura.BaseImponible = LeerDecimal(row, mapaIndices, "BaseImponible");
             factura.PorcentajeIVA = LeerDecimal(row, mapaIndices, "PorcentajeIVA");
             factura.PorcentajeIVA = 21m; // Forzamos al 21% para evitar errores de redondeo 
+            factura.CuotaIVA = LeerDecimal(row, mapaIndices, "CuotaIVA");
             factura.PorcentajeIRPF = LeerDecimal(row, mapaIndices, "PorcentajeIRPF");
+            factura.CuotaIRPF = LeerDecimal(row, mapaIndices, "CuotaIRPF");
             factura.PorcentajeRE = LeerDecimal(row, mapaIndices, "PorcentajeRE");
+            factura.CuotaRE = LeerDecimal(row, mapaIndices, "CuotaRE");
             factura.Total = LeerDecimal(row, mapaIndices, "Total");
 
             // Determinar estado y mensajes de error
@@ -193,22 +195,11 @@ namespace FacturasApp.Services
             string texto = celda.GetString().Trim();
             if (string.IsNullOrEmpty(texto)) return null;
 
-            // Intentamos varios formatos habituales en España
-            string[] formatos =
-            {
-                "dd/MM/yyyy", "d/M/yyyy", "dd-MM-yyyy",
-                "d-M-yyyy",   "dd.MM.yyyy", "yyyy-MM-dd",
-                "dd/MMM/yyyy" // Ene, Feb, Mar...
-            };
-
-            foreach (string formato in formatos)
-            {
-                if (DateTime.TryParseExact(texto, formato,
-                    new CultureInfo("es-ES"),
-                    DateTimeStyles.None,
-                    out DateTime fecha))
-                    return fecha;
-            }
+            if (DateTime.TryParse(texto,
+                new CultureInfo("es-ES"),
+                DateTimeStyles.None,
+                out DateTime fecha))
+                return fecha;
 
             return null;
         }

@@ -36,11 +36,11 @@ namespace FacturasApp.UI
             BaseFormateada = f.BaseImponible > 0
                                 ? $"{f.BaseImponible:N2} €" : "0,00 €";
             PorcentajeIVA = f.PorcentajeIVA;
-            CuotaIvaFmt = $"{f.CuotaIVA:N2} €";
+            CuotaIvaFmt = $"{f.CuotaIVACalculado:N2} €";
             PorcentajeIRPF = f.PorcentajeIRPF;
-            CuotaIrpfFmt = $"{f.CuotaIRPF:N2} €";
+            CuotaIrpfFmt = $"{f.CuotaIRPFCalculado:N2} €";
             PorcentajeRE = f.PorcentajeRE;
-            CuotaREFmt = $"{f.CuotaRE:N2} €";
+            CuotaREFmt = $"{f.CuotaRECalculado:N2} €";
             TotalFormateado = $"{f.Total:N2} €";
             EstadoTexto = f.Estado switch
             {

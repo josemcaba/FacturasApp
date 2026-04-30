@@ -198,13 +198,13 @@ namespace FacturasApp.UI
 
             txtBase.Text = $"{_factura.BaseImponible:N2} €";
             txtPorcentajeIva.Text = $"{_factura.PorcentajeIVA} %";
-            txtCuotaIva.Text = $"{_factura.CuotaIVA:N2} €";
+            txtCuotaIva.Text = $"{_factura.CuotaIVACalculado:N2} €";
             txtTotal.Text = $"{_factura.Total:N2} €";
 
             txtPorcentajeIrpf.Text = $"{_factura.PorcentajeIRPF} %";
-            txtCuotaIrpf.Text = $"{_factura.CuotaIRPF:N2} €";
+            txtCuotaIrpf.Text = $"{_factura.CuotaIRPFCalculado:N2} €";
             txtPorcentajeRe.Text = $"{_factura.PorcentajeRE} %";
-            txtCuotaRe.Text = $"{_factura.CuotaRE:N2} €";
+            txtCuotaRe.Text = $"{_factura.CuotaRECalculado:N2} €";
             txtTotalCalculado.Text = $"{_factura.TotalCalculado:N2} €";
             txtDiferencia.Text = $"{_factura.DiferenciaTotal:N2} €";
 
