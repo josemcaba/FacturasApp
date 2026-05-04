@@ -284,8 +284,11 @@ namespace FacturasApp.UI
             if (dgvFacturas.Rows[e.RowIndex].DataBoundItem
                 is not FacturaGridRow fila) return;
 
-            using var detalle = new DetalleFacturaForm(fila.FacturaOriginal);
-            detalle.ShowDialog(this);
+            // using var detalle = new DetalleFacturaForm(fila.FacturaOriginal);
+            // detalle.ShowDialog(this);
+
+            using var detalle2 = new DetalleFacturaForm(fila.FacturaOriginal);
+            detalle2.ShowDialog(this);
         }
 
         // ── Estadísticas ──────────────────────────────────────────────────────
