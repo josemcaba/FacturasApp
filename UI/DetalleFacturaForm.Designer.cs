@@ -632,11 +632,11 @@
             btnAbrirArchivoPDF.BackColor = SystemColors.MenuHighlight;
             btnAbrirArchivoPDF.Enabled = false;
             btnAbrirArchivoPDF.FlatStyle = FlatStyle.Flat;
-            btnAbrirArchivoPDF.Location = new Point(717, 622);
+            btnAbrirArchivoPDF.Location = new Point(677, 622);
             btnAbrirArchivoPDF.Name = "btnAbrirArchivoPDF";
-            btnAbrirArchivoPDF.Size = new Size(150, 29);
+            btnAbrirArchivoPDF.Size = new Size(190, 29);
             btnAbrirArchivoPDF.TabIndex = 1;
-            btnAbrirArchivoPDF.Text = "Abrir Factura PDF";
+            btnAbrirArchivoPDF.Text = "📄 Abrir Factura PDF";
             btnAbrirArchivoPDF.UseVisualStyleBackColor = false;
             btnAbrirArchivoPDF.Click += btnAbrirArchivoPDF_Click;
             // 
