@@ -29,17 +29,17 @@ namespace FacturasApp.UI
             txtNombreCliente.Text = _factura.Receptor.Nombre;
 
             txtBaseExtraida.Text = $"{_factura.BaseImponible.ToString("N2")} €";
-            txtIvaExtraido.Text = _factura.PorcentajeIVA.ToString("N0");
+            txtIvaExtraido.Text = $"{_factura.PorcentajeIVA.ToString("N0")} %";
             txtCuotaIvaCalculada.Text = _factura.CuotaIVACalculado.ToString("N2");
 
             if (_factura.PorcentajeIRPF > 0)
             {
-                txtIrpfExtraido.Text = _factura.PorcentajeIRPF.ToString("N0");
+                txtIrpfExtraido.Text = $"{_factura.PorcentajeIRPF.ToString("N0")} %";
                 txtCuotaIrpfCalculada.Text = _factura.CuotaIRPFCalculado.ToString("N2");
             }
             if (_factura.PorcentajeRE > 0)
             {
-                txtReExtraido.Text = _factura.PorcentajeRE.ToString("N1");
+                txtReExtraido.Text = $"{_factura.PorcentajeRE.ToString("N1")} %";
                 txtCuotaReCalculada.Text = _factura.CuotaRECalculado.ToString("N2");
             }
             txtTotalCalculado.Text = $"{_factura.TotalCalculado.ToString("N2")} €";
@@ -56,7 +56,6 @@ namespace FacturasApp.UI
             txtMensajes.Text = string.Join(Environment.NewLine, _factura.MensajeError);
         }
 
-
         private void btnAbrirArchivoPDF_Click(object sender, EventArgs e)
         {
             if (!File.Exists(_factura.RutaArchivo))
@@ -71,6 +70,13 @@ namespace FacturasApp.UI
                 FileName = _factura.RutaArchivo,
                 UseShellExecute = true
             });
+        }
+
+        // Sobreescribe OnShown para quitar el foco de cualquier control al mostrar el formulario:
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+            ActiveControl = null;
         }
     }
 }

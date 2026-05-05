@@ -629,13 +629,15 @@
             // 
             // btnAbrirArchivoPDF
             // 
+            btnAbrirArchivoPDF.BackColor = SystemColors.MenuHighlight;
             btnAbrirArchivoPDF.Enabled = false;
+            btnAbrirArchivoPDF.FlatStyle = FlatStyle.Flat;
             btnAbrirArchivoPDF.Location = new Point(717, 622);
             btnAbrirArchivoPDF.Name = "btnAbrirArchivoPDF";
             btnAbrirArchivoPDF.Size = new Size(150, 29);
-            btnAbrirArchivoPDF.TabIndex = 39;
+            btnAbrirArchivoPDF.TabIndex = 1;
             btnAbrirArchivoPDF.Text = "Abrir Factura PDF";
-            btnAbrirArchivoPDF.UseVisualStyleBackColor = true;
+            btnAbrirArchivoPDF.UseVisualStyleBackColor = false;
             btnAbrirArchivoPDF.Click += btnAbrirArchivoPDF_Click;
             // 
             // txtMensajes
