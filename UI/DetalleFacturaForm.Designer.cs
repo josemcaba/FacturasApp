@@ -630,7 +630,7 @@
             // btnAbrirArchivoPDF
             // 
             btnAbrirArchivoPDF.Enabled = false;
-            btnAbrirArchivoPDF.Location = new Point(12, 622);
+            btnAbrirArchivoPDF.Location = new Point(717, 622);
             btnAbrirArchivoPDF.Name = "btnAbrirArchivoPDF";
             btnAbrirArchivoPDF.Size = new Size(150, 29);
             btnAbrirArchivoPDF.TabIndex = 39;
@@ -648,7 +648,7 @@
             txtMensajes.Size = new Size(855, 87);
             txtMensajes.TabIndex = 42;
             // 
-            // DetalleF
+            // DetalleFacturaForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -661,7 +661,11 @@
             Controls.Add(gboxCliente);
             Controls.Add(gboxEmisor);
             Controls.Add(gboxFactura);
-            Name = "DetalleF";
+            MaximizeBox = false;
+            MaximumSize = new Size(897, 710);
+            MinimizeBox = false;
+            MinimumSize = new Size(897, 710);
+            Name = "DetalleFacturaForm";
             Text = "Detalle";
             gboxFactura.ResumeLayout(false);
             gboxFactura.PerformLayout();
