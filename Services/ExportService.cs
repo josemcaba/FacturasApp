@@ -50,7 +50,8 @@ namespace FacturasApp.Services
                 var f = facturas[i];
                 int fila = i + 2;
 
-                hoja.Cell(fila, 4).Value = "700";
+                hoja.Cell(fila, 4).Value = !string.IsNullOrEmpty(f.Concepto) && f.Concepto != "0"
+                                            ? f.Concepto : "700";
                 hoja.Cell(fila, 14).Value = f.Receptor.NIF;
                 hoja.Cell(fila, 15).Value = f.Receptor.Nombre;
             }
