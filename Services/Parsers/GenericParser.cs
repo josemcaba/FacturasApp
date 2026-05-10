@@ -5,7 +5,7 @@ namespace FacturasApp.Services.Parsers
 {
     public class GenericParser : BaseParser
     {
-        public override string Nombre => "Genérico";
+        public override string Nombre => "Parser Genérico";
         public override string Nif => "General";
         public override bool PuedeParsar(string texto) => true;
 
@@ -29,10 +29,6 @@ namespace FacturasApp.Services.Parsers
             @"(?:total\s+factura|total\s+a\s+pagar|importe\s+total|total)[:\s]*([\d.,]+)",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly Regex RegexNombre = new(
-            @"^([A-ZÁÉÍÓÚÑ][A-Za-záéíóúñ\s,\.]{5,60})(?:\n|S\.L\.|S\.A\.|NIF|CIF)",
-            RegexOptions.Multiline | RegexOptions.Compiled);
-
         public override Factura Parsear(string texto, string rutaArchivo, bool viaOcr)
         {
             var factura = new Factura
@@ -47,7 +43,7 @@ namespace FacturasApp.Services.Parsers
             var nifs = ExtraerTodosLosNifs(texto);
             factura.Emisor = new Proveedor
             {
-                Nombre = ExtraerGrupo(RegexNombre, texto, 1),
+                Nombre = this.Nombre,
                 NIF = nifs.Count > 0 ? nifs[0] : string.Empty
             };
             factura.Receptor = new Cliente

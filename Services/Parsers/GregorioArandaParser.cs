@@ -10,7 +10,7 @@ namespace FacturasApp.Services.Parsers
         public override string Nif => "25693621E";
 
         private static readonly string[] Identificadores =
-            { "25693621E"};
+            { "25693621E", "fecha de vencimiento", "datos proveedor"};
 
         public override bool PuedeParsar(string texto) =>
             Identificadores.All(id =>
