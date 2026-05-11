@@ -10,30 +10,43 @@ namespace FacturasApp.Services
 
         // ── Extracción de todas las zonas de una plantilla ────────────────────
 
-        public Dictionary<string, string> ExtraerZonas(
-            string rutaPdf, PlantillaOcr plantilla)
+        public Dictionary<string, string> ExtraerZonas(string rutaPdf, PlantillaOcr plantilla)
         {
             var resultado = new Dictionary<string, string>();
 
             using var engine = CrearEngine();
             using var paginaBitmap = RenderizarPagina(rutaPdf, 0);
 
+            if (paginaBitmap == null) return resultado;
+
             ConfigurarParametrosTesseract(engine);
 
-            if (paginaBitmap == null) return resultado;
+            // Texto completo para respaldo (solo si alguna zona tiene RegexRespaldo)
+            string? textoCompleto = null;
+            bool necesitaRespaldo = plantilla.Zonas.Any(z => !string.IsNullOrEmpty(z.RegexRespaldo));
 
             foreach (var zona in plantilla.Zonas)
             {
                 try
                 {
-                    var rect = zona.ToRectangle(
-                        paginaBitmap.Width, paginaBitmap.Height);
+                    var rect = zona.ToRectangle(paginaBitmap.Width, paginaBitmap.Height);
 
                     using var zonaImagen = RecortarZona(paginaBitmap, rect);
                     if (zonaImagen == null) continue;
 
-                    string texto = AplicarOcr(engine, zonaImagen);
-                    resultado[zona.Campo] = texto.Trim();
+                    string textoDirecto = AplicarOcr(engine, zonaImagen).Trim();
+
+                    // Respaldo con regex si es necesario
+                    if (string.IsNullOrEmpty(textoDirecto) && !string.IsNullOrEmpty(zona.RegexRespaldo))
+                    {
+                        if (necesitaRespaldo && textoCompleto == null)
+                        {
+                            textoCompleto = AplicarOcr(engine, paginaBitmap);
+                        }
+                        textoDirecto = zona.ExtraerConRespaldo(textoDirecto, textoCompleto);
+                    }
+
+                    resultado[zona.Campo] = textoDirecto;
                 }
                 catch
                 {

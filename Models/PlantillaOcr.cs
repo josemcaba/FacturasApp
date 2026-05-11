@@ -18,6 +18,18 @@ namespace FacturasApp.Models
 
         [XmlElement("Zona")]
         public List<ZonaOcr> Zonas { get; set; } = new();
+
+        // NUEVAS PROPIEDADES (con valores por defecto para compatibilidad)
+        public double AnchoReferencia { get; set; } = 1000;
+        public double AltoReferencia { get; set; } = 1000;
+        public TipoCoordenadas TipoCoordenada { get; set; } = TipoCoordenadas.Normalizadas;
+    }
+
+    public enum TipoCoordenadas
+    {
+        Normalizadas = 0,    // 0-1 (comportamiento actual)
+        AbsolutasPuntos = 1,
+        AbsolutasPixels = 2
     }
 
     public class ZonaOcr
@@ -43,6 +55,11 @@ namespace FacturasApp.Models
         [XmlAttribute("Regex")]
         public string RegexPersonalizada { get; set; } = string.Empty;
 
+        // NUEVAS PROPIEDADES
+        public string? RegexRespaldo { get; set; }
+        public bool Opcional { get; set; } = false;
+        public PreprocesamientoOcr Preprocesamiento { get; set; } = new();
+
         // Convierte las coordenadas porcentuales a píxeles
         // según el tamaño real de la imagen
         public System.Drawing.Rectangle ToRectangle(int imgAncho, int imgAlto)
@@ -52,6 +69,30 @@ namespace FacturasApp.Models
                 (int)(Y * imgAlto / 100.0),
                 (int)(Ancho * imgAncho / 100.0),
                 (int)(Alto * imgAlto / 100.0));
+        }
+
+
+
+        public string ExtraerConRespaldo(string textoZonaDirecto, string? textoCompleto = null)
+        {
+            if (!string.IsNullOrWhiteSpace(textoZonaDirecto))
+                return textoZonaDirecto.Trim();
+
+            if (Opcional)
+                return string.Empty;
+
+            if (!string.IsNullOrEmpty(RegexRespaldo) && !string.IsNullOrEmpty(textoCompleto))
+            {
+                var match = System.Text.RegularExpressions.Regex.Match(
+                    textoCompleto,
+                    RegexRespaldo,
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+                if (match.Success)
+                    return match.Groups.Count > 1 ? match.Groups[1].Value.Trim() : match.Value.Trim();
+            }
+
+            return string.Empty;
         }
     }
 }

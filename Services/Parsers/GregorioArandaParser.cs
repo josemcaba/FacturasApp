@@ -21,7 +21,7 @@ namespace FacturasApp.Services.Parsers
             RegexOptions.Compiled);
 
         private static readonly Regex RegexNombre = new(
-            @"Proveedor[\n\r]+(.*?)\s+Gregorio Aranda",
+            @"Datos Cliente[\n\r]+(.*)",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex RegexNif = new(

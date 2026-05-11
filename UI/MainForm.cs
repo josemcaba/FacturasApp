@@ -5,12 +5,15 @@ namespace FacturasApp.UI
 {
     public partial class MainForm : Form
     {
-        private readonly InvoiceProcessorService _procesador = new();
+        private readonly InvoiceProcessorService _procesador;
         private readonly ExportService _exportador = new();
         private List<Factura> _facturas = new();
 
         public MainForm()
         {
+            // Configurar el servicio ANTES de InitializeComponent()
+            _procesador = CrearProcesadorConfigurado();
+
             InitializeComponent();
 
             // Make these controls adapt to the window width
@@ -21,6 +24,27 @@ namespace FacturasApp.UI
 
             ConfigurarDataGridView();
             ConfigurarComboEstado();
+        }
+
+        // ── Configuración centralizada del procesador ─────────────────────────
+
+        private InvoiceProcessorService CrearProcesadorConfigurado()
+        {
+            // Ruta a tessdata - carpeta en el directorio de ejecución
+            string tessDataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "tessdata");
+
+            // Si la carpeta no existe, intentamos con ruta relativa
+            if (!Directory.Exists(tessDataPath))
+                tessDataPath = @"./tessdata";
+
+            var service = new InvoiceProcessorService(tessDataPath);
+
+            // Configuración óptima para usar zonas cuando sea posible
+            service.UsarZonasSiempre = true;        // Intentar extracción por zonas primero
+            service.FallbackATextoCompleto = true;  // Si falla zona, usar texto completo
+            service.ModoExtraccion = PdfTextExtractor.ModoExtraccion.OrdenadoPosicion;
+
+            return service;
         }
 
         // ── Selección de archivos PDF ─────────────────────────────────────────
@@ -238,8 +262,8 @@ namespace FacturasApp.UI
                     { Name = "colArchivo",  HeaderText = "Archivo",
                       DataPropertyName = "NombreArchivo",   Width = 180 },
                         });
-                        dgvFacturas.CellDoubleClick += DgvFacturas_CellDoubleClick;
-                        dgvFacturas.RowPrePaint += DgvFacturas_RowPrePaint;
+            dgvFacturas.CellDoubleClick += DgvFacturas_CellDoubleClick;
+            dgvFacturas.RowPrePaint += DgvFacturas_RowPrePaint;
         }
 
         private void ConfigurarComboEstado()
@@ -267,10 +291,10 @@ namespace FacturasApp.UI
             dgvFacturas.Rows[e.RowIndex].DefaultCellStyle.BackColor =
                 fila.FacturaOriginal.Estado switch
                 {
-                    _Estado.OK      => Color.FromArgb(226, 239, 218),
+                    _Estado.OK => Color.FromArgb(226, 239, 218),
                     _Estado.Revisar => Color.FromArgb(255, 242, 204),
-                    _Estado.Error   => Color.FromArgb(255, 228, 214),
-                    _                     => Color.White
+                    _Estado.Error => Color.FromArgb(255, 228, 214),
+                    _ => Color.White
                 };
         }
 
@@ -364,7 +388,7 @@ namespace FacturasApp.UI
                 Title = "Guardar como Excel (Ingresos)",
                 Filter = "Excel (*.xlsx)|*.xlsx",
                 FileName = $"Facturas_Ingresos_{DateTime.Now:yyyyMMdd_HHmm}.xlsx",
-                
+
                 // Usamos la carpeta de la primera factura selecciona para mayor comodidad
                 InitialDirectory = _facturas.Count > 0
                     ? Path.GetDirectoryName(_facturas[0].RutaArchivo) ?? Environment.GetFolderPath(
