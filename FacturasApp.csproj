@@ -1,53 +1,57 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ImplicitUsings>enable</ImplicitUsings>
-    
-    <ApplicationIcon>Assets/app-icon.ico</ApplicationIcon>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ImplicitUsings>enable</ImplicitUsings>
 
-  <ItemGroup>
-    <None Remove="tessdata\eng.traineddata" />
-    <None Remove="tessdata\spa.traineddata" />
-  </ItemGroup>
+		<ApplicationIcon>Assets/app-icon.ico</ApplicationIcon>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Content Include="tessdata\eng.traineddata">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="tessdata\spa.traineddata">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Data\plantillas_ocr.xml" />
+		<None Remove="tessdata\eng.traineddata" />
+		<None Remove="tessdata\spa.traineddata" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="ClosedXML" Version="0.105.0" />
-    <PackageReference Include="CsvHelper" Version="33.1.0" />
-    <PackageReference Include="PdfPig" Version="0.1.13" />
-    <PackageReference Include="PDFtoImage" Version="5.2.0" />
-    <PackageReference Include="Tesseract" Version="5.2.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="Data\plantillas_ocr.xml">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="tessdata\eng.traineddata">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="tessdata\spa.traineddata">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="FacturasApp\UI\DefinirPlantillaForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="FacturasApp\UI\DetalleFacturaForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="FacturasApp\UI\MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="ClosedXML" Version="0.105.0" />
+		<PackageReference Include="CsvHelper" Version="33.1.0" />
+		<PackageReference Include="PdfPig" Version="0.1.13" />
+		<PackageReference Include="PDFtoImage" Version="5.2.0" />
+		<PackageReference Include="Tesseract" Version="5.2.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="FacturasApp\UI\MainForm.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="FacturasApp\UI\DefinirPlantillaForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="FacturasApp\UI\DetalleFacturaForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="FacturasApp\UI\MainForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="FacturasApp\UI\MainForm.resx">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+	</ItemGroup>
 
 </Project>
