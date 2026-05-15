@@ -16,9 +16,6 @@ namespace FacturasApp.Services
         // ── Ubicación del archivo de la aplicación ──
         private static string ObtenerRutaXmlAplicacion()
         {
-            // Obtener la ruta base donde se ejecuta la aplicación
-            // En ClickOnce: caché local de ClickOnce
-            // En debug: carpeta bin\Debug
             string rutaApp = AppDomain.CurrentDomain.BaseDirectory;
             return Path.Combine(rutaApp, "Data", "plantillas_ocr.xml");
         }
@@ -30,16 +27,14 @@ namespace FacturasApp.Services
 
         /// <summary>
         /// Carga las plantillas. En primer inicio copia el archivo predefinido 
-        /// a AppData. En actualizaciones, sobrescribe el archivo del usuario 
-        /// con la versión nueva de la aplicación.
+        /// a AppData. En actualizaciones, sobrescribe si la app tiene versión más reciente.
         /// </summary>
         public PlantillasOcrColeccion Cargar()
         {
             // Asegurar que el directorio en AppData existe
             Directory.CreateDirectory(RutaDirectorio);
 
-            // Estrategia de actualización: si el archivo de la aplicación es más reciente,
-            // sobrescribir el del usuario (para actualizaciones)
+            // Actualizar plantillas si hay nueva versión
             ActualizarSiNecesario();
 
             // Intentar cargar del directorio de usuario (AppData)
@@ -66,9 +61,12 @@ namespace FacturasApp.Services
         // ── Actualización automática en cada inicio ──────────────────────────
 
         /// <summary>
-        /// Si el archivo en la aplicación es más reciente que el del usuario,
-        /// lo sobrescribe. Esto permite que las actualizaciones de ClickOnce
-        /// actualicen también las plantillas predefinidas.
+        /// Compara la fecha del archivo de la aplicación con el del usuario.
+        /// Si el de la aplicación es más reciente (nueva publicación),
+        /// sobrescribe el del usuario con la nueva versión.
+        /// 
+        /// Esto es más confiable que comparar versiones de ensamblado,
+        /// especialmente con ClickOnce que no siempre actualiza las fechas correctamente.
         /// </summary>
         private void ActualizarSiNecesario()
         {
@@ -92,15 +90,31 @@ namespace FacturasApp.Services
                     return;
                 }
 
-                // Comparar fechas: si la aplicación tiene una versión más reciente, actualizar
+                // Obtener fechas de modificación
                 var infoApp = new FileInfo(rutaXmlAplicacion);
                 var infoUsuario = new FileInfo(RutaXmlUsuario);
 
-                if (infoApp.LastWriteTimeUtc > infoUsuario.LastWriteTimeUtc)
+                // Comparar con tolerancia de 1 segundo para evitar problemas de precisión
+                TimeSpan diferencia = infoApp.LastWriteTimeUtc - infoUsuario.LastWriteTimeUtc;
+
+                System.Diagnostics.Debug.WriteLine(
+                    $"App: {infoApp.LastWriteTimeUtc:yyyy-MM-dd HH:mm:ss}, " +
+                    $"Usuario: {infoUsuario.LastWriteTimeUtc:yyyy-MM-dd HH:mm:ss}, " +
+                    $"Diferencia: {diferencia.TotalSeconds:F1}s");
+
+                // Si la app tiene una versión más reciente (al menos 1 segundo), actualizar
+                if (diferencia.TotalSeconds > 1.0)
                 {
                     File.Copy(rutaXmlAplicacion, RutaXmlUsuario, overwrite: true);
                     System.Diagnostics.Debug.WriteLine(
-                        $"Plantillas actualizadas desde: {rutaXmlAplicacion}");
+                        $"Plantillas actualizadas desde la aplicación " +
+                        $"({Math.Abs(diferencia.TotalSeconds):F1}s más nueva)");
+                }
+                else if (diferencia.TotalSeconds < -1.0)
+                {
+                    // El archivo del usuario es más reciente
+                    System.Diagnostics.Debug.WriteLine(
+                        $"Archivo del usuario es más reciente, no se actualiza");
                 }
             }
             catch (Exception ex)
@@ -176,15 +190,20 @@ namespace FacturasApp.Services
         /// <summary>
         /// Retorna información sobre las rutas de los archivos para debugging.
         /// </summary>
-        public (string rutaApp, string rutaUsuario, bool existeApp, bool existeUsuario)
+        public (string rutaApp, string rutaUsuario, bool existeApp, bool existeUsuario, DateTime? fechaApp, DateTime? fechaUsuario)
             ObtenerInfoRutas()
         {
             string rutaApp = ObtenerRutaXmlAplicacion();
+            DateTime? fechaApp = File.Exists(rutaApp) ? new FileInfo(rutaApp).LastWriteTimeUtc : null;
+            DateTime? fechaUsuario = File.Exists(RutaXmlUsuario) ? new FileInfo(RutaXmlUsuario).LastWriteTimeUtc : null;
+
             return (
                 rutaApp: rutaApp,
                 rutaUsuario: RutaXmlUsuario,
                 existeApp: File.Exists(rutaApp),
-                existeUsuario: File.Exists(RutaXmlUsuario)
+                existeUsuario: File.Exists(RutaXmlUsuario),
+                fechaApp: fechaApp,
+                fechaUsuario: fechaUsuario
             );
         }
     }

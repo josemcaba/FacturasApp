@@ -1,64 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PlantillasOcr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Plantilla Emisor="Gregorio Aranda Garcia">
-    <Zona Campo="Zona1" X="47.14285714285714" Y="17.706576728499158" Ancho="48.333333333333336" Alto="16.020236087689714" Regex="">
-      <Opcional>false</Opcional>
-      <Preprocesamiento>
-        <EscalaGrises>true</EscalaGrises>
-        <Binarizacion>false</Binarizacion>
-        <UmbralBinarizacion>128</UmbralBinarizacion>
-        <Redimensionar>false</Redimensionar>
-        <FactorEscala>2</FactorEscala>
-        <EliminarRuido>true</EliminarRuido>
-        <InvertirColores>false</InvertirColores>
-        <AutoRecortar>false</AutoRecortar>
-        <PaddingAutoRecorte>5</PaddingAutoRecorte>
-      </Preprocesamiento>
-    </Zona>
-    <AnchoReferencia>1000</AnchoReferencia>
-    <AltoReferencia>1000</AltoReferencia>
-    <TipoCoordenada>Normalizadas</TipoCoordenada>
-  </Plantilla>
-  <Plantilla Emisor="ONA CORP, S.L.U.">
-    <Zona Campo="Zona1" X="5.250596658711217" Y="2.1885521885521886" Ancho="23.15035799522673" Alto="11.784511784511785" Regex="">
-      <Opcional>false</Opcional>
-      <Preprocesamiento>
-        <EscalaGrises>true</EscalaGrises>
-        <Binarizacion>false</Binarizacion>
-        <UmbralBinarizacion>128</UmbralBinarizacion>
-        <Redimensionar>false</Redimensionar>
-        <FactorEscala>2</FactorEscala>
-        <EliminarRuido>true</EliminarRuido>
-        <InvertirColores>false</InvertirColores>
-        <AutoRecortar>false</AutoRecortar>
-        <PaddingAutoRecorte>5</PaddingAutoRecorte>
-      </Preprocesamiento>
-    </Zona>
-    <AnchoReferencia>1000</AnchoReferencia>
-    <AltoReferencia>1000</AltoReferencia>
-    <TipoCoordenada>Normalizadas</TipoCoordenada>
-  </Plantilla>
-  <Plantilla Emisor="PLENERGY GRUPO, S.L.">
-    <Zona Campo="Zona1" X="3.8095238095238098" Y="14.502529510961216" Ancho="48.333333333333336" Alto="11.467116357504215" Regex="">
-      <Opcional>false</Opcional>
-      <Preprocesamiento>
-        <EscalaGrises>true</EscalaGrises>
-        <Binarizacion>false</Binarizacion>
-        <UmbralBinarizacion>128</UmbralBinarizacion>
-        <Redimensionar>false</Redimensionar>
-        <FactorEscala>2</FactorEscala>
-        <EliminarRuido>true</EliminarRuido>
-        <InvertirColores>false</InvertirColores>
-        <AutoRecortar>false</AutoRecortar>
-        <PaddingAutoRecorte>5</PaddingAutoRecorte>
-      </Preprocesamiento>
-    </Zona>
-    <AnchoReferencia>1000</AnchoReferencia>
-    <AltoReferencia>1000</AltoReferencia>
-    <TipoCoordenada>Normalizadas</TipoCoordenada>
-  </Plantilla>
   <Plantilla Emisor="MERCADONA, S.A.">
-    <Zona Campo="Zona1" X="3.8186157517899764" Y="2.861952861952862" Ancho="34.12887828162291" Alto="15.824915824915825" Regex="">
+    <Zona Campo="Zona1" X="3.22108345534407" Y="6.928645294725956" Ancho="22.10834553440703" Alto="11.271975180972078" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="Zona2" X="60.02928257686676" Y="7.0320579110651495" Ancho="38.3601756954612" Alto="12.099276111685626" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="Zona3" X="3.513909224011713" Y="28.43846949327818" Ancho="64.86090775988286" Alto="57.70423991726991" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
