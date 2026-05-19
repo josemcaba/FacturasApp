@@ -43,6 +43,20 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
+    <Zona Campo="Zona4" X="73.26968973747017" Y="85.35353535353535" Ancho="24.821002386634845" Alto="13.299663299663301" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
     <AnchoReferencia>1000</AnchoReferencia>
     <AltoReferencia>1000</AltoReferencia>
     <TipoCoordenada>Normalizadas</TipoCoordenada>

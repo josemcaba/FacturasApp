@@ -8,6 +8,27 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 
 		<ApplicationIcon>Assets/app-icon.ico</ApplicationIcon>
+		
+		<!-- Versionado -->
+		<Version>1.0.0</Version>
+		<AssemblyVersion>1.0.0.0</AssemblyVersion>
+		<FileVersion>1.0.0.0</FileVersion>
+		
+		<!-- Información de la aplicación -->
+		<Company>FacturasApp</Company>
+		<Product>FacturasApp</Product>
+		<Description>Aplicación para procesar y gestionar facturas</Description>
+		
+		<!-- ClickOnce Configuration for .NET Desktop SDK Projects -->
+		<PublishUrl>https://github.com/josemcaba/FacturasApp/releases/</PublishUrl>
+		<Install>true</Install>
+		<InstallFrom>Web</InstallFrom>
+		<UpdateEnabled>true</UpdateEnabled>
+		<UpdateMode>Foreground</UpdateMode>
+		<UpdateInterval>7</UpdateInterval>
+		<UpdateIntervalUnits>Days</UpdateIntervalUnits>
+		<CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+		<WebPage>publish.htm</WebPage>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -16,15 +37,21 @@
 		<None Remove="tessdata\spa.traineddata" />
 	</ItemGroup>
 
+	<!-- Archivo de datos: plantillas OCR (requerido, siempre se descarga) -->
 	<ItemGroup>
 		<Content Include="Data\plantillas_ocr.xml">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<Publish>true</Publish>
 		</Content>
+		
+		<!-- Archivos de Tesseract (entrenamiento OCR) -->
 		<Content Include="tessdata\eng.traineddata">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Publish>true</Publish>
 		</Content>
 		<Content Include="tessdata\spa.traineddata">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Publish>true</Publish>
 		</Content>
 	</ItemGroup>
 
