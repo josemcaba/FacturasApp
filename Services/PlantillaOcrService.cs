@@ -1,6 +1,8 @@
 ﻿using FacturasApp.Models;
 using System.Xml.Serialization;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace FacturasApp.Services
 {
@@ -14,10 +16,9 @@ namespace FacturasApp.Services
         private static readonly string RutaXmlUsuario = Path.Combine(
             RutaDirectorio, "plantillas_ocr.xml");
 
-        // ── Archivo de control de versión ──
-        // Almacena qué versión del ensamblado fue la última que instaló las plantillas
-        private static readonly string RutaVersionInfo = Path.Combine(
-            RutaDirectorio, ".plantillas_version");
+        // ── Archivo de control: guarda el hash de la última plantilla distribuida ──
+        private static readonly string RutaHashControl = Path.Combine(
+            RutaDirectorio, ".plantillas_hash");
 
         private readonly XmlSerializer _serializer =
             new(typeof(PlantillasOcrColeccion));
@@ -25,9 +26,10 @@ namespace FacturasApp.Services
         // ── Carga ─────────────────────────────────────────────────────────────
 
         /// <summary>
-        /// Carga las plantillas del usuario. Si no existen, las extrae desde
-        /// el ensamblado (recurso embebido) en primer inicio.
-        /// En actualizaciones, solo sobrescribe si la versión cambió.
+        /// Carga las plantillas del usuario.
+        /// - Primera vez: copia desde el ensamblado
+        /// - Si el usuario editó: mantiene sus cambios
+        /// - Si hay nueva versión distribuida: sobrescribe con la nueva
         /// Siempre retorna una PlantillasOcrColeccion (nunca null).
         /// </summary>
         public PlantillasOcrColeccion Cargar()
@@ -37,7 +39,7 @@ namespace FacturasApp.Services
                 // Asegurar que el directorio en AppData existe
                 Directory.CreateDirectory(RutaDirectorio);
 
-                // Solo copiar plantillas iniciales o en caso de actualización
+                // Instalar o actualizar plantillas si es necesario
                 InstalarOActualizarPlantillasSiNecesario();
 
                 // Intentar cargar del directorio de usuario (AppData)
@@ -72,54 +74,50 @@ namespace FacturasApp.Services
             return new PlantillasOcrColeccion();
         }
 
-        // ── Obtener versión del ensamblado ────────────────────────────────────
+        // ── Calcular hash de contenido ───────────────────────────────────────
 
         /// <summary>
-        /// Obtiene la versión actual del ensamblado.
+        /// Calcula el hash SHA256 de un contenido de texto.
         /// </summary>
-        private static string ObtenerVersionEnsamblado()
+        private static string CalcularHash(string contenido)
         {
-            try
+            using (var sha256 = SHA256.Create())
             {
-                var version = Assembly.GetExecutingAssembly().GetName().Version;
-                return version?.ToString() ?? "0.0.0.0";
-            }
-            catch
-            {
-                return "0.0.0.0";
+                var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(contenido));
+                return Convert.ToBase64String(hash);
             }
         }
 
         /// <summary>
-        /// Obtiene la versión guardada la última vez que se instalaron las plantillas.
+        /// Obtiene el hash guardado de la última plantilla distribuida.
         /// </summary>
-        private static string ObtenerVersionGuardada()
+        private static string ObtenerHashGuardado()
         {
             try
             {
-                if (File.Exists(RutaVersionInfo))
+                if (File.Exists(RutaHashControl))
                 {
-                    return File.ReadAllText(RutaVersionInfo).Trim();
+                    return File.ReadAllText(RutaHashControl).Trim();
                 }
             }
             catch { }
 
-            return "0.0.0.0";
+            return string.Empty;
         }
 
         /// <summary>
-        /// Guarda la versión actual del ensamblado.
+        /// Guarda el hash de la plantilla actual.
         /// </summary>
-        private static void GuardarVersionActual()
+        private static void GuardarHash(string contenido)
         {
             try
             {
-                string version = ObtenerVersionEnsamblado();
-                File.WriteAllText(RutaVersionInfo, version);
+                string hash = CalcularHash(contenido);
+                File.WriteAllText(RutaHashControl, hash);
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"✗ Error guardando versión: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"✗ Error guardando hash: {ex.Message}");
             }
         }
 
@@ -179,74 +177,59 @@ namespace FacturasApp.Services
             }
         }
 
-        // ── Instalar o actualizar plantillas solo si es necesario ──────────────
+        // ── Instalar o actualizar plantillas ───────────────────────────────────
 
         /// <summary>
-        /// Instala las plantillas en primer inicio o las actualiza si cambió la versión.
-        /// NO modifica las plantillas si el usuario ya las editó en la misma versión.
+        /// Instala las plantillas en primer inicio.
+        /// Si el usuario las editó, mantiene sus cambios.
+        /// Si hay nueva versión (distinto hash), sobrescribe.
         /// </summary>
         private void InstalarOActualizarPlantillasSiNecesario()
         {
             try
             {
-                string versionActual = ObtenerVersionEnsamblado();
-                string versionGuardada = ObtenerVersionGuardada();
+                // Obtener plantillas del ensamblado
+                string? contenidoNuevo = ObtenerPlantillasDelEnsamblado();
 
-                System.Diagnostics.Debug.WriteLine(
-                    $"Versión ensamblado: {versionActual}, Versión guardada: {versionGuardada}");
-
-                // Primera vez: no existe archivo del usuario
-                if (!File.Exists(RutaXmlUsuario))
-                {
-                    System.Diagnostics.Debug.WriteLine("📋 Primera instalación: copiando plantillas iniciales...");
-                    CopiarPlantillasDelEnsamblado();
-                    GuardarVersionActual();
-                    return;
-                }
-
-                // Si la versión cambió (actualización de la aplicación)
-                // Sobrescribir las plantillas con la nueva versión
-                if (versionActual != versionGuardada)
-                {
-                    System.Diagnostics.Debug.WriteLine(
-                        $"🔄 Actualización detectada ({versionGuardada} → {versionActual}): actualizando plantillas...");
-                    CopiarPlantillasDelEnsamblado();
-                    GuardarVersionActual();
-                    return;
-                }
-
-                // Versión no cambió: dejar las plantillas del usuario intactas
-                System.Diagnostics.Debug.WriteLine("ℹ Versión sin cambios: manteniendo plantillas del usuario");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"✗ Error en InstalarOActualizarPlantillas: {ex.Message}");
-            }
-        }
-
-        /// <summary>
-        /// Copia el archivo de plantillas desde el ensamblado (recurso embebido) a AppData.
-        /// </summary>
-        private void CopiarPlantillasDelEnsamblado()
-        {
-            try
-            {
-                // Obtener contenido desde el ensamblado
-                string? contenidoPlantillas = ObtenerPlantillasDelEnsamblado();
-
-                if (string.IsNullOrEmpty(contenidoPlantillas))
+                if (string.IsNullOrEmpty(contenidoNuevo))
                 {
                     System.Diagnostics.Debug.WriteLine("✗ No se pudo obtener plantillas del ensamblado");
                     return;
                 }
 
-                // Escribir o actualizar el contenido en AppData
-                File.WriteAllText(RutaXmlUsuario, contenidoPlantillas);
-                System.Diagnostics.Debug.WriteLine($"✓ Plantillas instaladas/actualizadas en: {RutaXmlUsuario}");
+                string hashNuevo = CalcularHash(contenidoNuevo);
+                string hashGuardado = ObtenerHashGuardado();
+
+                System.Diagnostics.Debug.WriteLine(
+                    $"Hash actual: {hashNuevo.Substring(0, 8)}..., Hash guardado: {hashGuardado.Substring(0, Math.Min(8, hashGuardado.Length))}...");
+
+                // Primera vez: no existe archivo del usuario
+                if (!File.Exists(RutaXmlUsuario))
+                {
+                    System.Diagnostics.Debug.WriteLine("📋 Primera instalación: instalando plantillas iniciales...");
+                    File.WriteAllText(RutaXmlUsuario, contenidoNuevo);
+                    GuardarHash(contenidoNuevo);
+                    System.Diagnostics.Debug.WriteLine($"✓ Plantillas instaladas en: {RutaXmlUsuario}");
+                    return;
+                }
+
+                // Si el hash cambió, significa que hay nueva versión distribuida
+                if (hashNuevo != hashGuardado)
+                {
+                    System.Diagnostics.Debug.WriteLine(
+                        $"🔄 Nueva versión detectada: actualizando plantillas...");
+                    File.WriteAllText(RutaXmlUsuario, contenidoNuevo);
+                    GuardarHash(contenidoNuevo);
+                    System.Diagnostics.Debug.WriteLine($"✓ Plantillas actualizadas en: {RutaXmlUsuario}");
+                    return;
+                }
+
+                // Hash no cambió: usuario puede haber editado, mantener sus cambios
+                System.Diagnostics.Debug.WriteLine("ℹ Versión sin cambios: manteniendo plantillas del usuario");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"✗ Error copiando plantillas: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"✗ Error en InstalarOActualizarPlantillas: {ex.Message}");
             }
         }
 
@@ -310,18 +293,20 @@ namespace FacturasApp.Services
 
         // ── Diagnóstico ──────────────────────────────────────────────────────
 
-        public (string rutaUsuario, bool existeUsuario, bool recursoDisponible, string versionEnsamblado, string versionGuardada)
+        public (string rutaUsuario, bool existeUsuario, bool recursoDisponible, string hashActual, string hashGuardado)
             ObtenerInfoRutas()
         {
             string? contenido = ObtenerPlantillasDelEnsamblado();
             bool recursoDisponible = contenido != null;
+            string hashActual = contenido != null ? CalcularHash(contenido).Substring(0, 8) : "N/A";
+            string hashGuardado = ObtenerHashGuardado().Substring(0, Math.Min(8, ObtenerHashGuardado().Length));
 
             return (
                 rutaUsuario: RutaXmlUsuario,
                 existeUsuario: File.Exists(RutaXmlUsuario),
                 recursoDisponible: recursoDisponible,
-                versionEnsamblado: ObtenerVersionEnsamblado(),
-                versionGuardada: ObtenerVersionGuardada()
+                hashActual: hashActual,
+                hashGuardado: hashGuardado
             );
         }
     }
