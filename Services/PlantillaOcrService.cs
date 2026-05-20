@@ -14,6 +14,11 @@ namespace FacturasApp.Services
         private static readonly string RutaXmlUsuario = Path.Combine(
             RutaDirectorio, "plantillas_ocr.xml");
 
+        // ── Archivo de control de versión ──
+        // Almacena qué versión del ensamblado fue la última que instaló las plantillas
+        private static readonly string RutaVersionInfo = Path.Combine(
+            RutaDirectorio, ".plantillas_version");
+
         private readonly XmlSerializer _serializer =
             new(typeof(PlantillasOcrColeccion));
 
@@ -22,6 +27,7 @@ namespace FacturasApp.Services
         /// <summary>
         /// Carga las plantillas del usuario. Si no existen, las extrae desde
         /// el ensamblado (recurso embebido) en primer inicio.
+        /// En actualizaciones, solo sobrescribe si la versión cambió.
         /// Siempre retorna una PlantillasOcrColeccion (nunca null).
         /// </summary>
         public PlantillasOcrColeccion Cargar()
@@ -31,8 +37,8 @@ namespace FacturasApp.Services
                 // Asegurar que el directorio en AppData existe
                 Directory.CreateDirectory(RutaDirectorio);
 
-                // Copiar plantillas iniciales o actualizadas si es necesario
-                CopiarPlantillasIniciales();
+                // Solo copiar plantillas iniciales o en caso de actualización
+                InstalarOActualizarPlantillasSiNecesario();
 
                 // Intentar cargar del directorio de usuario (AppData)
                 if (File.Exists(RutaXmlUsuario))
@@ -64,6 +70,57 @@ namespace FacturasApp.Services
 
             // Siempre retornar una colección válida, nunca null
             return new PlantillasOcrColeccion();
+        }
+
+        // ── Obtener versión del ensamblado ────────────────────────────────────
+
+        /// <summary>
+        /// Obtiene la versión actual del ensamblado.
+        /// </summary>
+        private static string ObtenerVersionEnsamblado()
+        {
+            try
+            {
+                var version = Assembly.GetExecutingAssembly().GetName().Version;
+                return version?.ToString() ?? "0.0.0.0";
+            }
+            catch
+            {
+                return "0.0.0.0";
+            }
+        }
+
+        /// <summary>
+        /// Obtiene la versión guardada la última vez que se instalaron las plantillas.
+        /// </summary>
+        private static string ObtenerVersionGuardada()
+        {
+            try
+            {
+                if (File.Exists(RutaVersionInfo))
+                {
+                    return File.ReadAllText(RutaVersionInfo).Trim();
+                }
+            }
+            catch { }
+
+            return "0.0.0.0";
+        }
+
+        /// <summary>
+        /// Guarda la versión actual del ensamblado.
+        /// </summary>
+        private static void GuardarVersionActual()
+        {
+            try
+            {
+                string version = ObtenerVersionEnsamblado();
+                File.WriteAllText(RutaVersionInfo, version);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"✗ Error guardando versión: {ex.Message}");
+            }
         }
 
         // ── Obtener plantillas desde recurso embebido ─────────────────────────
@@ -122,12 +179,55 @@ namespace FacturasApp.Services
             }
         }
 
-        // ── Copiar plantillas iniciales o actualizadas ────────────────────────
+        // ── Instalar o actualizar plantillas solo si es necesario ──────────────
+
+        /// <summary>
+        /// Instala las plantillas en primer inicio o las actualiza si cambió la versión.
+        /// NO modifica las plantillas si el usuario ya las editó en la misma versión.
+        /// </summary>
+        private void InstalarOActualizarPlantillasSiNecesario()
+        {
+            try
+            {
+                string versionActual = ObtenerVersionEnsamblado();
+                string versionGuardada = ObtenerVersionGuardada();
+
+                System.Diagnostics.Debug.WriteLine(
+                    $"Versión ensamblado: {versionActual}, Versión guardada: {versionGuardada}");
+
+                // Primera vez: no existe archivo del usuario
+                if (!File.Exists(RutaXmlUsuario))
+                {
+                    System.Diagnostics.Debug.WriteLine("📋 Primera instalación: copiando plantillas iniciales...");
+                    CopiarPlantillasDelEnsamblado();
+                    GuardarVersionActual();
+                    return;
+                }
+
+                // Si la versión cambió (actualización de la aplicación)
+                // Sobrescribir las plantillas con la nueva versión
+                if (versionActual != versionGuardada)
+                {
+                    System.Diagnostics.Debug.WriteLine(
+                        $"🔄 Actualización detectada ({versionGuardada} → {versionActual}): actualizando plantillas...");
+                    CopiarPlantillasDelEnsamblado();
+                    GuardarVersionActual();
+                    return;
+                }
+
+                // Versión no cambió: dejar las plantillas del usuario intactas
+                System.Diagnostics.Debug.WriteLine("ℹ Versión sin cambios: manteniendo plantillas del usuario");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"✗ Error en InstalarOActualizarPlantillas: {ex.Message}");
+            }
+        }
 
         /// <summary>
         /// Copia el archivo de plantillas desde el ensamblado (recurso embebido) a AppData.
         /// </summary>
-        private void CopiarPlantillasIniciales()
+        private void CopiarPlantillasDelEnsamblado()
         {
             try
             {
@@ -138,24 +238,6 @@ namespace FacturasApp.Services
                 {
                     System.Diagnostics.Debug.WriteLine("✗ No se pudo obtener plantillas del ensamblado");
                     return;
-                }
-
-                // Si ya existe, solo actualizar si es diferente
-                if (File.Exists(RutaXmlUsuario))
-                {
-                    try
-                    {
-                        string contenidoExistente = File.ReadAllText(RutaXmlUsuario);
-                        if (contenidoExistente == contenidoPlantillas)
-                        {
-                            System.Diagnostics.Debug.WriteLine("ℹ Plantillas ya están actualizadas");
-                            return;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"⚠ Error al leer plantillas existentes: {ex.Message}");
-                    }
                 }
 
                 // Escribir o actualizar el contenido en AppData
@@ -228,7 +310,7 @@ namespace FacturasApp.Services
 
         // ── Diagnóstico ──────────────────────────────────────────────────────
 
-        public (string rutaUsuario, bool existeUsuario, bool recursoDisponible)
+        public (string rutaUsuario, bool existeUsuario, bool recursoDisponible, string versionEnsamblado, string versionGuardada)
             ObtenerInfoRutas()
         {
             string? contenido = ObtenerPlantillasDelEnsamblado();
@@ -237,7 +319,9 @@ namespace FacturasApp.Services
             return (
                 rutaUsuario: RutaXmlUsuario,
                 existeUsuario: File.Exists(RutaXmlUsuario),
-                recursoDisponible: recursoDisponible
+                recursoDisponible: recursoDisponible,
+                versionEnsamblado: ObtenerVersionEnsamblado(),
+                versionGuardada: ObtenerVersionGuardada()
             );
         }
     }
