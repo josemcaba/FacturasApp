@@ -184,7 +184,7 @@ namespace FacturasApp.UI
             dgvFacturas.Location = new Point(12, 318);
             dgvFacturas.Name = "dgvFacturas";
             dgvFacturas.RowHeadersWidth = 51;
-            dgvFacturas.Size = new Size(960, 185);
+            dgvFacturas.Size = new Size(958, 235);
             dgvFacturas.TabIndex = 15;
             // 
             // lblResumen
@@ -192,7 +192,7 @@ namespace FacturasApp.UI
             lblResumen.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             lblResumen.AutoSize = true;
             lblResumen.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lblResumen.Location = new Point(12, 475);
+            lblResumen.Location = new Point(12, 525);
             lblResumen.Name = "lblResumen";
             lblResumen.Size = new Size(0, 20);
             lblResumen.TabIndex = 16;
@@ -204,7 +204,7 @@ namespace FacturasApp.UI
             btnExportarExcelIngresos.Enabled = false;
             btnExportarExcelIngresos.FlatStyle = FlatStyle.Flat;
             btnExportarExcelIngresos.ForeColor = Color.White;
-            btnExportarExcelIngresos.Location = new Point(12, 509);
+            btnExportarExcelIngresos.Location = new Point(12, 559);
             btnExportarExcelIngresos.Name = "btnExportarExcelIngresos";
             btnExportarExcelIngresos.Size = new Size(161, 34);
             btnExportarExcelIngresos.TabIndex = 18;
@@ -219,7 +219,7 @@ namespace FacturasApp.UI
             btnExportarExcelGastos.Enabled = false;
             btnExportarExcelGastos.FlatStyle = FlatStyle.Flat;
             btnExportarExcelGastos.ForeColor = Color.White;
-            btnExportarExcelGastos.Location = new Point(179, 509);
+            btnExportarExcelGastos.Location = new Point(179, 559);
             btnExportarExcelGastos.Name = "btnExportarExcelGastos";
             btnExportarExcelGastos.Size = new Size(161, 34);
             btnExportarExcelGastos.TabIndex = 19;
@@ -256,7 +256,7 @@ namespace FacturasApp.UI
             // 
             // MainForm
             // 
-            ClientSize = new Size(984, 553);
+            ClientSize = new Size(982, 603);
             Controls.Add(btnSeleccionarArchivos);
             Controls.Add(btnSeleccionarCarpeta);
             Controls.Add(btnSeleccionarExcel);

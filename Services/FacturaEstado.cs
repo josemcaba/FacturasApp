@@ -1,4 +1,5 @@
-﻿using FacturasApp.Models;
+﻿using CsvHelper;
+using FacturasApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -62,7 +63,10 @@ namespace FacturasApp.Services
             // Nombre del cliente (receptor) muy largo — si >40 caracteres → RevisiónManual
             if (f.Receptor.Nombre.Length > 40)
             {
-                f.MensajeError.Add("Nombre del cliente demasiado largo (>40)");
+                // Preserve caller intent: limit receptor name to 40 characters safely
+                f.Receptor.Nombre = f.Receptor.Nombre.Substring(0, 40);
+
+                f.MensajeError.Add("Nombre del cliente truncado a 40 caracteres");
                 return _Estado.Revisar;
             }
             return _Estado.OK;

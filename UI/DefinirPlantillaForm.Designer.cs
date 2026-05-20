@@ -35,7 +35,7 @@ namespace FacturasApp.UI
             picFactura.BackColor = Color.LightGray;
             picFactura.BorderStyle = BorderStyle.FixedSingle;
             picFactura.Cursor = Cursors.Cross;
-            picFactura.Location = new Point(468, 12);
+            picFactura.Location = new Point(448, 12);
             picFactura.Name = "picFactura";
             picFactura.Size = new Size(420, 594);
             picFactura.SizeMode = PictureBoxSizeMode.Zoom;
@@ -50,7 +50,7 @@ namespace FacturasApp.UI
             // 
             lstZonas.Location = new Point(12, 147);
             lstZonas.Name = "lstZonas";
-            lstZonas.Size = new Size(450, 164);
+            lstZonas.Size = new Size(430, 164);
             lstZonas.TabIndex = 8;
             // 
             // btnCargarPdf
@@ -71,7 +71,7 @@ namespace FacturasApp.UI
             btnEliminarZona.FlatStyle = FlatStyle.Flat;
             btnEliminarZona.Location = new Point(12, 317);
             btnEliminarZona.Name = "btnEliminarZona";
-            btnEliminarZona.Size = new Size(450, 30);
+            btnEliminarZona.Size = new Size(430, 30);
             btnEliminarZona.TabIndex = 9;
             btnEliminarZona.Text = "🗑 Eliminar zona seleccionada";
             btnEliminarZona.Click += BtnEliminarZona_Click;
@@ -94,7 +94,7 @@ namespace FacturasApp.UI
             // 
             btnCerrar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             btnCerrar.FlatStyle = FlatStyle.Flat;
-            btnCerrar.Location = new Point(382, 572);
+            btnCerrar.Location = new Point(362, 572);
             btnCerrar.Name = "btnCerrar";
             btnCerrar.Size = new Size(80, 34);
             btnCerrar.TabIndex = 11;
@@ -116,7 +116,7 @@ namespace FacturasApp.UI
             cmbEmisor.FormattingEnabled = true;
             cmbEmisor.Location = new Point(12, 35);
             cmbEmisor.Name = "cmbEmisor";
-            cmbEmisor.Size = new Size(450, 28);
+            cmbEmisor.Size = new Size(430, 28);
             cmbEmisor.TabIndex = 2;
             // 
             // lblZonas
@@ -137,14 +137,14 @@ namespace FacturasApp.UI
             txtTexto.Multiline = true;
             txtTexto.Name = "txtTexto";
             txtTexto.ReadOnly = true;
-            txtTexto.ScrollBars = ScrollBars.Both;
-            txtTexto.Size = new Size(450, 213);
+            txtTexto.ScrollBars = ScrollBars.Vertical;
+            txtTexto.Size = new Size(430, 213);
             txtTexto.TabIndex = 13;
             txtTexto.WordWrap = false;
             // 
             // DefinirPlantillaForm
             // 
-            ClientSize = new Size(900, 618);
+            ClientSize = new Size(880, 618);
             Controls.Add(txtTexto);
             Controls.Add(lblEmisor);
             Controls.Add(cmbEmisor);
@@ -156,7 +156,7 @@ namespace FacturasApp.UI
             Controls.Add(btnCerrar);
             Controls.Add(picFactura);
             Font = new Font("Segoe UI", 9F);
-            MinimumSize = new Size(918, 665);
+            MinimumSize = new Size(898, 665);
             Name = "DefinirPlantillaForm";
             RightToLeftLayout = true;
             StartPosition = FormStartPosition.CenterParent;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PlantillasOcr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Plantilla Emisor="MERCADONA, S.A.">
-    <Zona Campo="Zona1" X="3.22108345534407" Y="6.928645294725956" Ancho="22.10834553440703" Alto="11.271975180972078" Regex="">
+  <Plantilla Emisor="FACCSA: Frigorif. And. Conservas Carne">
+    <Zona Campo="Zona1" X="25.183016105417277" Y="2.5853154084798344" Ancho="51.68374816983895" Alto="6.308169596690797" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -15,7 +15,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona2" X="60.02928257686676" Y="7.0320579110651495" Ancho="38.3601756954612" Alto="12.099276111685626" Regex="">
+    <Zona Campo="Zona2" X="3.953147877013177" Y="10.961737331954497" Ancho="26.061493411420205" Alto="13.340227507755948" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -29,7 +29,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona3" X="74.94033412887828" Y="33.16498316498316" Ancho="23.389021479713605" Alto="17.845117845117844" Regex="">
+    <Zona Campo="Zona3" X="59.443631039531475" Y="11.06514994829369" Ancho="32.650073206442165" Alto="12.719751809720787" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -43,7 +43,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona4" X="36.9928400954654" Y="54.04040404040404" Ancho="24.58233890214797" Alto="7.23905723905724" Regex="">
+    <Zona Campo="Zona4" X="65.30014641288433" Y="74.04343329886245" Ancho="30.30746705710102" Alto="12.82316442605998" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -57,7 +57,12 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona5" X="42.720763723150355" Y="75.42087542087542" Ancho="20.286396181384248" Alto="6.902356902356903" Regex="">
+    <AnchoReferencia>1000</AnchoReferencia>
+    <AltoReferencia>1000</AltoReferencia>
+    <TipoCoordenada>Normalizadas</TipoCoordenada>
+  </Plantilla>
+  <Plantilla Emisor="Gregorio Aranda Garcia">
+    <Zona Campo="Zona1" X="47.38095238095238" Y="18.54974704890388" Ancho="48.333333333333336" Alto="15.851602023608768" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -71,7 +76,21 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona6" X="78.28162291169451" Y="94.78114478114477" Ancho="18.377088305489263" Alto="4.040404040404041" Regex="">
+    <Zona Campo="Zona2" X="4.0476190476190474" Y="18.54974704890388" Ancho="43.333333333333336" Alto="23.102866779089375" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="Zona3" X="59.76190476190476" Y="44.51939291736931" Ancho="35.23809523809524" Alto="51.433389544688026" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>

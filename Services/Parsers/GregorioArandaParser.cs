@@ -33,7 +33,7 @@ namespace FacturasApp.Services.Parsers
             RegexOptions.Compiled);
 
         protected override Regex RegexFecha { get; } = new(
-            @"\bVencimiento[\s\r\n]+(.*?)\s",
+            @"\bFacturación[\s\r\n]+(.*?)\s",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexTotal = new(

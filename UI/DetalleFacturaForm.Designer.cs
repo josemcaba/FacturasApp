@@ -203,7 +203,7 @@
             lblNombreEmisor.AutoSize = true;
             lblNombreEmisor.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             lblNombreEmisor.ForeColor = SystemColors.ControlText;
-            lblNombreEmisor.Location = new Point(6, 60);
+            lblNombreEmisor.Location = new Point(6, 63);
             lblNombreEmisor.Name = "lblNombreEmisor";
             lblNombreEmisor.Size = new Size(71, 20);
             lblNombreEmisor.TabIndex = 4;
@@ -214,7 +214,7 @@
             lblNifEmisor.AutoSize = true;
             lblNifEmisor.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             lblNifEmisor.ForeColor = SystemColors.ControlText;
-            lblNifEmisor.Location = new Point(6, 31);
+            lblNifEmisor.Location = new Point(6, 30);
             lblNifEmisor.Name = "lblNifEmisor";
             lblNifEmisor.Size = new Size(38, 20);
             lblNifEmisor.TabIndex = 3;
@@ -238,7 +238,7 @@
             // txtNombreCliente
             // 
             txtNombreCliente.Font = new Font("Segoe UI", 9F);
-            txtNombreCliente.Location = new Point(83, 57);
+            txtNombreCliente.Location = new Point(83, 60);
             txtNombreCliente.Name = "txtNombreCliente";
             txtNombreCliente.ReadOnly = true;
             txtNombreCliente.Size = new Size(336, 27);
@@ -249,7 +249,7 @@
             lblNombreCliente.AutoSize = true;
             lblNombreCliente.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             lblNombreCliente.ForeColor = SystemColors.ControlText;
-            lblNombreCliente.Location = new Point(6, 60);
+            lblNombreCliente.Location = new Point(6, 63);
             lblNombreCliente.Name = "lblNombreCliente";
             lblNombreCliente.Size = new Size(71, 20);
             lblNombreCliente.TabIndex = 4;
@@ -258,7 +258,7 @@
             // txtNifCliente
             // 
             txtNifCliente.Font = new Font("Segoe UI", 9F);
-            txtNifCliente.Location = new Point(83, 26);
+            txtNifCliente.Location = new Point(83, 27);
             txtNifCliente.Name = "txtNifCliente";
             txtNifCliente.ReadOnly = true;
             txtNifCliente.Size = new Size(336, 27);
@@ -269,7 +269,7 @@
             lblNifCliente.AutoSize = true;
             lblNifCliente.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             lblNifCliente.ForeColor = SystemColors.ControlText;
-            lblNifCliente.Location = new Point(6, 31);
+            lblNifCliente.Location = new Point(6, 30);
             lblNifCliente.Name = "lblNifCliente";
             lblNifCliente.Size = new Size(38, 20);
             lblNifCliente.TabIndex = 3;
@@ -614,7 +614,6 @@
             txtRuta.ReadOnly = true;
             txtRuta.Size = new Size(791, 27);
             txtRuta.TabIndex = 10;
-            txtRuta.TextAlign = HorizontalAlignment.Right;
             // 
             // lblRuta
             // 
