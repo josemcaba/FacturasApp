@@ -27,6 +27,19 @@ namespace FacturasApp.UI
         {
             InitializeComponent(); // ← llama al del Designer
 
+            // 🔒 Bloquear UI de edición en producción
+            if (!EnvironmentService.EsDesarrollo())
+            {
+                btnGuardar.Hide();
+
+                // Mostrar indicador de modo de producción
+                Text = "FacturasApp - 🔒 Modo Lectura (Cliente)";
+            }
+            else
+            {
+                Text = "FacturasApp - ✏️ Modo Edición (Desarrollo)";
+            }
+
             // Poblamos el ComboBox de emisores con los parsers disponibles
             var emisoresDisponibles = _parserFactory.ParsersDisponibles.ToList();
             cmbEmisor.Items.AddRange(emisoresDisponibles.Cast<object>().ToArray());
@@ -73,8 +86,7 @@ namespace FacturasApp.UI
                 _plantilla = existente;
                 ActualizarListaZonas();
                 MessageBox.Show(
-                    $"Se ha cargado la plantilla existente para '{_nombreEmisor}'.\n" +
-                    "Puedes modificarla añadiendo o eliminando zonas.",
+                    $"Se ha cargado la plantilla existente para '{_nombreEmisor}'",
                     "Plantilla cargada",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -311,15 +323,15 @@ namespace FacturasApp.UI
                 return;
             }
 
-            _plantilla.Emisor = _nombreEmisor;
-            _plantillaService.GuardarPlantilla(_plantilla);
+                _plantilla.Emisor = _nombreEmisor;
+                _plantillaService.GuardarPlantilla(_plantilla);
 
-            MessageBox.Show(
-                $"Plantilla guardada correctamente para '{_nombreEmisor}'.\n" +
-                $"Zonas definidas: {_plantilla.Zonas.Count}",
-                "Plantilla guardada",
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
+                MessageBox.Show(
+                    $"Plantilla guardada correctamente para '{_nombreEmisor}'.\n" +
+                    $"Zonas definidas: {_plantilla.Zonas.Count}",
+                    "Plantilla guardada",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
 
         private void btnCerrar_Click(object sender, EventArgs e)
         {
