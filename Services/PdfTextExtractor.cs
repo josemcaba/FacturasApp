@@ -133,6 +133,29 @@ namespace FacturasApp.Services
         }
 
         /// <summary>
+        /// Extrae texto de una zona específica del PDF si el PDF tiene texto seleccionable.
+        /// Retorna null si no se puede extraer texto (PDF sin texto seleccionable).
+        /// </summary>
+        public string? ExtraerTextoZonal(string rutaPdf, ZonaOcr zona)
+        {
+            if (zona == null) return null;
+
+            try
+            {
+                using var documento = PdfDocument.Open(rutaPdf);
+                var pagina = documento.GetPages().First();
+
+                var rect = ConvertirZonaAPdfRectangle(zona, pagina.Width, pagina.Height);
+                return ExtraerTextoLayoutDesdeArea(pagina, rect);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error extrayendo zona {zona.Campo}: {ex.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Extrae texto de un área específica respetando el layout original.
         /// Filtra las palabras por su posición y luego aplica el extractor de layout.
         /// </summary>

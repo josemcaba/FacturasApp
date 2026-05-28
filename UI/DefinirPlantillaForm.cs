@@ -253,6 +253,7 @@ namespace FacturasApp.UI
             if (lstZonas.SelectedIndex < 0)
             {
                 txtTexto.Text = string.Empty;
+                txtTexto.ForeColor = Color.Black;
                 return;
             }
 
@@ -265,27 +266,37 @@ namespace FacturasApp.UI
             if (string.IsNullOrEmpty(_rutaPdf))
             {
                 txtTexto.Text = "Carga un PDF primero";
+                txtTexto.ForeColor = Color.Black;
                 return;
             }
 
             try
             {
-                txtTexto.Text = "Extrayendo OCR...";
+                txtTexto.Text = "Extrayendo...";
+                txtTexto.ForeColor = Color.DarkGray;
                 Application.DoEvents();
 
-                // Convertir zona a pixels
-                var rectPixeles = ConvertirAPixelesPictureBox(zona);
+                // Extraer texto con información del método utilizado
+                var resultado = _ocrExtractor.ExtraerTextoZonalConMetadata(_rutaPdf, zona);
 
-                // Extraer texto OCR de la zona
-                string textoZona = _ocrExtractor.ExtraerTextoZonal(_rutaPdf, zona);
+                // Mostrar indicador visual y descripción
+                string prefijo = resultado.ObtenerPrefijo();
+                string descripcion = resultado.ObtenerDescripcion();
+                string contenido = resultado.EstaVacia ? "(Sin texto detectado)" : resultado.Texto.Replace("\n", "\r\n");
 
-                txtTexto.Text = string.IsNullOrEmpty(textoZona)
-                    ? "(Sin texto detectado)"
-                    : textoZona.Replace("\n", "\r\n");
+                // Mostrar en el cuadro de texto
+                txtTexto.Text = $"{prefijo} [{descripcion}]\r\n{new string('-', 40)}\r\n{contenido}";
+
+                // Cambiar color del indicador según el método
+                txtTexto.ForeColor = resultado.ObtenerColor();
+
+                System.Diagnostics.Debug.WriteLine(
+                    $"Método: {descripcion}, Vacía: {resultado.EstaVacia}, Longitud: {resultado.Texto.Length}");
             }
             catch (Exception ex)
             {
-                txtTexto.Text = $"Error en OCR: {ex.Message}";
+                txtTexto.Text = $"❌ Error: {ex.Message}";
+                txtTexto.ForeColor = Color.Red;
             }
         }
 
@@ -298,6 +309,7 @@ namespace FacturasApp.UI
                 _plantilla.Zonas[i].Campo = $"Zona{i + 1}";
             ActualizarListaZonas();
             txtTexto.Text = string.Empty;
+            txtTexto.ForeColor = Color.Black;
             picFactura.Invalidate();
         }
 
@@ -323,6 +335,8 @@ namespace FacturasApp.UI
                 return;
             }
 
+            try
+            {
                 _plantilla.Emisor = _nombreEmisor;
                 _plantillaService.GuardarPlantilla(_plantilla);
 
@@ -332,6 +346,21 @@ namespace FacturasApp.UI
                     "Plantilla guardada",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(
+                    $"❌ Operación bloqueada\n\n{ex.Message}",
+                    "Acceso denegado",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"❌ Error guardando plantilla:\n\n{ex.Message}",
+                    "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
         private void btnCerrar_Click(object sender, EventArgs e)
         {

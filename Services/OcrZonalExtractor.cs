@@ -5,6 +5,8 @@ namespace FacturasApp.Services
 {
     public class OcrZonalExtractor : OcrBase
     {
+        private readonly PdfTextExtractor _pdfTextExtractor = new();
+
         public OcrZonalExtractor(string tessDataPath = @"./tessdata")
             : base(tessDataPath) { }
 
@@ -14,6 +16,18 @@ namespace FacturasApp.Services
         {
             var resultado = new Dictionary<string, string>();
 
+            // 🔍 Verificar si el PDF tiene texto seleccionable
+            bool esSeleccionable = _pdfTextExtractor.EsSeleccionable(rutaPdf);
+            System.Diagnostics.Debug.WriteLine(
+                $"📄 PDF {(esSeleccionable ? "CON" : "SIN")} texto seleccionable");
+
+            if (esSeleccionable)
+            {
+                // ✅ Usar extracción de texto directo
+                return _pdfTextExtractor.ExtraerZonasTexto(rutaPdf, plantilla);
+            }
+
+            // ❌ Fallback a OCR
             using var engine = CrearEngine();
             using var paginaBitmap = RenderizarPagina(rutaPdf, 0);
 
@@ -59,14 +73,37 @@ namespace FacturasApp.Services
 
         // ── Extracción de una zona específica ─────────────────────────────────
 
-        public string ExtraerTextoZonal(string rutaPdf, ZonaOcr zona)
+        /// <summary>
+        /// Extrae texto de una zona específica.
+        /// Retorna información sobre el método utilizado (Texto directo o OCR).
+        /// </summary>
+        public ResultadoExtraccionTexto ExtraerTextoZonalConMetadata(string rutaPdf, ZonaOcr zona)
         {
-            if (zona == null) return string.Empty;
+            if (zona == null)
+                return new ResultadoExtraccionTexto(string.Empty, ResultadoExtraccionTexto.MetodoExtraccion.Ocr, estaVacia: true);
 
+            // 🔍 Verificar si el PDF tiene texto seleccionable
+            bool esSeleccionable = _pdfTextExtractor.EsSeleccionable(rutaPdf);
+
+            if (esSeleccionable)
+            {
+                // ✅ Intenta extraer texto directo primero
+                var textoDirecto = _pdfTextExtractor.ExtraerTextoZonal(rutaPdf, zona);
+                if (!string.IsNullOrEmpty(textoDirecto))
+                {
+                    System.Diagnostics.Debug.WriteLine(
+                        $"✓ Texto extraído directamente: {textoDirecto.Substring(0, Math.Min(50, textoDirecto.Length))}...");
+                    return new ResultadoExtraccionTexto(textoDirecto, ResultadoExtraccionTexto.MetodoExtraccion.TextoSeleccionable);
+                }
+                System.Diagnostics.Debug.WriteLine("⚠ Zona vacía en PDF, intentando OCR...");
+            }
+
+            // ❌ Fallback a OCR
             using var engine = CrearEngine();
             using var paginaBitmap = RenderizarPagina(rutaPdf, 0);
 
-            if (paginaBitmap == null) return string.Empty;
+            if (paginaBitmap == null)
+                return new ResultadoExtraccionTexto(string.Empty, ResultadoExtraccionTexto.MetodoExtraccion.Ocr, estaVacia: true);
 
             try
             {
@@ -74,14 +111,30 @@ namespace FacturasApp.Services
                     paginaBitmap.Width, paginaBitmap.Height);
 
                 using var zonaImagen = RecortarZona(paginaBitmap, rect);
-                if (zonaImagen == null) return string.Empty;
+                if (zonaImagen == null)
+                    return new ResultadoExtraccionTexto(string.Empty, ResultadoExtraccionTexto.MetodoExtraccion.Ocr, estaVacia: true);
 
-                return AplicarOcr(engine, zonaImagen).Trim();
+                var textoOcr = AplicarOcr(engine, zonaImagen).Trim();
+                System.Diagnostics.Debug.WriteLine(
+                    $"🔤 Texto extraído con OCR: {textoOcr.Substring(0, Math.Min(50, textoOcr.Length))}...");
+
+                bool estaVacia = string.IsNullOrEmpty(textoOcr);
+                return new ResultadoExtraccionTexto(textoOcr, ResultadoExtraccionTexto.MetodoExtraccion.Ocr, estaVacia);
             }
             catch
             {
-                return string.Empty;
+                return new ResultadoExtraccionTexto(string.Empty, ResultadoExtraccionTexto.MetodoExtraccion.Ocr, estaVacia: true);
             }
+        }
+
+        /// <summary>
+        /// Método antiguo mantenido para compatibilidad.
+        /// Retorna solo el texto sin información del método.
+        /// </summary>
+        public string ExtraerTextoZonal(string rutaPdf, ZonaOcr zona)
+        {
+            var resultado = ExtraerTextoZonalConMetadata(rutaPdf, zona);
+            return resultado.Texto;
         }
 
         // ── Helper de recorte ─────────────────────────────────────────────────
