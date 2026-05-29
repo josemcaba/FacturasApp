@@ -124,6 +124,8 @@ namespace FacturasApp.UI
         {
             lstArchivos.Items.Clear();
             txtRutaExcel.Text = string.Empty;
+            dgvFacturas.DataSource = null;
+            lblEstado.Text = "Listo";
             btnProcesar.Enabled = false;
             ActualizarContadorArchivos();
         }
