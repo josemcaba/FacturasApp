@@ -3,67 +3,60 @@ using FacturasApp.Models;
 
 namespace FacturasApp.Services.Parsers
 {
-    public class GenericParser : BaseParser
+    public partial class GenericParser : BaseParser
     {
         public override string Nombre => "Parser Genérico";
         public override string Nif => "General";
         public override bool PuedeParsar(string texto) => true;
 
-        private static readonly Regex RegexNumero = new(
-            @"(?:factura|fra\.?|nº|n[uú]mero)[:\s#]*([A-Z0-9][-A-Z0-9/\\]{2,20})",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        [GeneratedRegex(@"(?:factura|fra\.?|nº|n[uú]mero)[:\s#]*([A-Z0-9][-A-Z0-9/\\]{2,20})", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        private static partial Regex RegexNumero();
 
-        private static readonly Regex RegexNif = new(
-            @"\b([A-Z]?\d{7,8}[A-Z])\b",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        [GeneratedRegex(@"\b([A-Z]?\d{7,8}[A-Z])\b", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        private static partial Regex RegexNif();
 
-        private static readonly Regex RegexBase = new(
-            @"(?:base\s+imponible|subtotal|base)[:\s]*([\d.,]+)",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        [GeneratedRegex(@"(?:base\s+imponible|subtotal|base)[:\s]*([\d.,]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        private static partial Regex RegexBase();
 
-        private static readonly Regex RegexIva = new(
-            @"IVA\s*(\d{1,2})\s*%",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        [GeneratedRegex(@"IVA\s*(\d{1,2})\s*%", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        private static partial Regex RegexIva();
 
-        private static readonly Regex RegexTotal = new(
-            @"(?:total\s+factura|total\s+a\s+pagar|importe\s+total|total)[:\s]*([\d.,]+)",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        [GeneratedRegex(@"(?:total\s+factura|total\s+a\s+pagar|importe\s+total|total)[:\s]*([\d.,]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        private static partial Regex RegexTotal();
 
         public override Factura Parsear(string texto, string rutaArchivo, bool viaOcr)
         {
+            var nifs = ExtraerTodosLosNifs(texto);
+
             var factura = new Factura
             {
                 RutaArchivo = rutaArchivo,
-                ExtractedByOcr = viaOcr
+                ExtractedByOcr = viaOcr,
+                NumeroFactura = ExtraerGrupo(RegexNumero(), texto, 1),
+                Fecha = ExtraerFecha(RegexFecha, texto),
+                Emisor = new Proveedor
+                {
+                    Nombre = this.Nombre,
+                    NIF = nifs.Count > 0 ? nifs[0] : string.Empty
+                },
+                Receptor = new Cliente
+                {
+                    NIF = nifs.Count > 1 ? nifs[1] : string.Empty
+                },
+                BaseImponible = ExtraerDecimal(RegexBase(), texto, 1),
+                Total = ExtraerDecimal(RegexTotal(), texto, 1)
             };
 
-            factura.NumeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
-            factura.Fecha = ExtraerFecha(RegexFecha, texto);
-
-            var nifs = ExtraerTodosLosNifs(texto);
-            factura.Emisor = new Proveedor
-            {
-                Nombre = this.Nombre,
-                NIF = nifs.Count > 0 ? nifs[0] : string.Empty
-            };
-            factura.Receptor = new Cliente
-            {
-                NIF = nifs.Count > 1 ? nifs[1] : string.Empty
-            };
-
-            factura.BaseImponible = ExtraerDecimal(RegexBase, texto, 1);
-            factura.Total = ExtraerDecimal(RegexTotal, texto, 1);
             factura.Estado = FacturaEstado.Determinar(factura);
 
             return factura;
         }
 
-        private List<string> ExtraerTodosLosNifs(string texto)
+        private static List<string> ExtraerTodosLosNifs(string texto)
         {
-            return RegexNif.Matches(texto)
+            return [.. RegexNif().Matches(texto)
                 .Select(m => m.Groups[1].Value.ToUpper())
-                .Distinct()
-                .ToList();
+                .Distinct()];
         }
     }
 }

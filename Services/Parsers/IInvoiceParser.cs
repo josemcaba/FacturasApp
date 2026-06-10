@@ -11,6 +11,6 @@ namespace FacturasApp.Services.Parsers
         // Modo de extracción preferido
         // Por defecto LayoutAnalysis, cada parser puede sobreescribirlo
         PdfTextExtractor.ModoExtraccion ModoExtraccion =>
-            PdfTextExtractor.ModoExtraccion.LayoutAnalysis;
+            PdfTextExtractor.ModoExtraccion.OrdenadoPosicion;
     }
 }

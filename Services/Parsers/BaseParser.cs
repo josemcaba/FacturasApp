@@ -19,17 +19,40 @@ namespace FacturasApp.Services.Parsers
         // MercadonaParser (y cualquier otro que lo necesite) lo sobreescribe
         public virtual List<Factura> ParsearMultiple(
             string texto, string rutaArchivo, bool viaOcr) =>
-            new() { Parsear(texto, rutaArchivo, viaOcr) };
+                [Parsear(texto, rutaArchivo, viaOcr)];
+
+        // ── Expresiones regulares genéricas (pueden ser sobrescritas) ────────
+
+        /// <summary>
+        /// Expresión regular genérica para extraer fechas.
+        /// Puede ser sobrescrita si se necesita un patrón específico.
+        /// </summary>
+        protected virtual Regex RegexFecha { get; } = new(
+            @"\b(\d{1,2}[\/\.-](?:\d{1,2}|\D{3})[\/\.-]\d{2,4})\b",
+            RegexOptions.Compiled);
+
+        /// <summary>
+        /// Expresión regular genérica para extraer NIFs.
+        /// Puede ser sobrescrita si se necesita un patrón específico.
+        /// </summary>
+        protected virtual Regex RegexNif { get; } = new(
+            @"\b([A-Z]?\d{7,8}[A-Z]?)\s",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         // ── Helpers de extracción ────────────────────────────────────────────
 
-        protected string ExtraerGrupo(Regex regex, string texto, int grupo)
+        protected static string ExtraerGrupo(Regex regex, string texto, int grupo)
         {
             var m = regex.Match(texto);
             return m.Success ? m.Groups[grupo].Value.Trim() : string.Empty;
         }
 
-        protected string ExtraerNif(Regex regex, string texto, string nifEmisor)
+        protected string ExtraerNif(string texto)
+        {
+            return ExtraerNif(RegexNif, texto, Nif);
+        }
+
+        protected static string ExtraerNif(Regex regex, string texto, string nifEmisor)
         {
             // Matches() devuelve TODAS las coincidencias, no solo la primera
             var coincidencias = regex.Matches(texto);
@@ -39,7 +62,7 @@ namespace FacturasApp.Services.Parsers
                 string nif = m.Groups.Count > 1
                     ? m.Groups[1].Value.Trim()  // usamos grupo de captura si existe
                     : m.Value.Trim();           // si no, el match completo
-                
+
                 if (string.IsNullOrEmpty(nif)) continue;
 
                 // Eliminamos espacios, guiones y puntos comunes en los NIFs
@@ -60,14 +83,14 @@ namespace FacturasApp.Services.Parsers
             return string.Empty;
         }
 
-        protected decimal ExtraerDecimal(Regex regex, string texto, int grupo)
+        protected static decimal ExtraerDecimal(Regex regex, string texto, int grupo)
         {
             var m = regex.Match(texto);
             if (!m.Success) return 0m;
             return ParsearDecimal(m.Groups[grupo].Value);
         }
 
-        protected decimal ParsearDecimal(string valor)
+        protected static decimal ParsearDecimal(string valor)
         {
             if (string.IsNullOrWhiteSpace(valor)) return 0m;
             string v = valor.Trim()
@@ -86,11 +109,12 @@ namespace FacturasApp.Services.Parsers
                 out var r) ? r : 0m;
         }
 
-        protected virtual Regex RegexFecha { get; } = new(
-            @"\b(\d{1,2}[\/\.-](?:\d{1,2}|\D{3})[\/\.-]\d{2,4})\b",
-            RegexOptions.Compiled);
+        protected DateTime? ExtraerFecha(string texto)
+        {
+            return ExtraerFecha(RegexFecha, texto);
+        }
 
-        protected DateTime? ExtraerFecha(Regex RegexF, string texto)
+        protected static DateTime? ExtraerFecha(Regex RegexF, string texto)
         {
             var m = RegexF.Matches(texto);
             if (m.Count != 1)
@@ -102,8 +126,8 @@ namespace FacturasApp.Services.Parsers
             }
 
             Regex RegexFechaFormateada = new(
-            @"\b(\d{1,2})[\/\.-]((?:\d{1,2}|\D{3}))[\/\.-](\d{2,4})\b",
-            RegexOptions.Compiled);
+                @"\b(\d{1,2})[\/\.-]((?:\d{1,2}|\D{3}))[\/\.-](\d{2,4})\b",
+                RegexOptions.Compiled);
 
             m = RegexFechaFormateada.Matches(m[0].Value);
             if (m.Count != 1)

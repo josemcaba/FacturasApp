@@ -9,8 +9,9 @@ namespace FacturasApp.Services.Parsers
 
         public ParserFactory()
         {
-            _parsers = new List<IInvoiceParser>
-            {
+            _parsers =
+            [
+                new OscarAriasParser(),
                 new AndresCazalla(),
                 new EMASA(),
                 new FACCSA(),
@@ -24,7 +25,7 @@ namespace FacturasApp.Services.Parsers
                 new IgnacioIbanezParser(),
                 new PescaderiaMarengoParser(),
                 new PescaderiaSalvadorParser(),
-            };
+            ];
         }
 
         public IInvoiceParser ObtenerParser(string texto)
@@ -34,6 +35,6 @@ namespace FacturasApp.Services.Parsers
         }
 
         public IReadOnlyList<string> ParsersDisponibles =>
-            _parsers.Select(p => p.Nombre).ToList();
+            [.. _parsers.Select(p => p.Nombre)];
     }
 }

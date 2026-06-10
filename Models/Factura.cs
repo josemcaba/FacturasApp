@@ -20,11 +20,11 @@ namespace FacturasApp.Models
             MidpointRounding.AwayFromZero);
         public decimal PorcentajeRE { get; set; } = 0m;
         public decimal CuotaRE { get; set; }
-        public decimal CuotaRECalculado => Math.Round(BaseImponible * (PorcentajeRE / 100m), 2,
-            MidpointRounding.AwayFromZero);
         public decimal Total { get; set; }
         public decimal TotalCalculado =>
             BaseImponible + CuotaIVACalculado - CuotaIRPFCalculado + CuotaRECalculado;
+        public decimal CuotaRECalculado => Math.Round(BaseImponible * (PorcentajeRE / 100m), 2,
+            MidpointRounding.AwayFromZero);
         public decimal DiferenciaTotal =>
             Math.Abs(Total - TotalCalculado);
 
