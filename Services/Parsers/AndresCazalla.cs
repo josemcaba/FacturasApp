@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
-    public class AndresCazalla : BaseParser
+    public partial class AndresCazalla : BaseParser
     {
         public override string Nombre => "Andrés Cazalla Medina";
         public override string Nif => "26236236K";
@@ -23,9 +23,13 @@ namespace FacturasApp.Services.Parsers
             @"Calle Newton, 20 (.*)",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly Regex RegexNif = new(
-            @"\b([A-Z]?\d{7,8}[A-Z]?)\s+\d*\s*semirueda",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        // Crear método GeneratedRegex específico
+        [GeneratedRegex(@"\b([A-Z]?\d{7,8}[A-Z]?)\s+\d*\s*semirueda", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        private static partial Regex RegexNifEspecifico();
+
+        // Sobrescribir usando el método generado
+        protected override Regex RegexNif { get; } = RegexNifEspecifico();
+
         protected override Regex RegexFecha { get; } = new(
             @"\bFACTURA\s.*?\s(.*)\b",
             RegexOptions.Compiled);

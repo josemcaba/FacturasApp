@@ -29,8 +29,8 @@ namespace FacturasApp.Services
         // ── Procesado de PDFs por lotes (VERSIÓN UNIFICADA) ───────────────────
 
         public List<Factura> ProcesarLote(
-            IEnumerable<string> rutasPdf,
-            IProgress<(int actual, int total, string archivo)>? progreso = null)
+    IEnumerable<string> rutasPdf,
+    IProgress<(int actual, int total, string archivo)>? progreso = null)
         {
             var rutas = rutasPdf.ToList();
             var facturas = new List<Factura>();
@@ -42,9 +42,10 @@ namespace FacturasApp.Services
 
                 try
                 {
-                    Factura? factura = ProcesarUnPdf(ruta);
-                    if (factura != null)
-                        AddWithDuplicateDetection(facturas, new List<Factura> { factura });
+                    // ✅ Ahora recibe múltiples facturas
+                    List<Factura> facturasDelPdf = ProcesarUnPdf(ruta);
+                    if (facturasDelPdf.Any())
+                        AddWithDuplicateDetection(facturas, facturasDelPdf);
                 }
                 catch (Exception ex)
                 {
@@ -67,17 +68,19 @@ namespace FacturasApp.Services
         /// 3. Intenta extracción por zonas (si existe plantilla)
         /// 4. Fallback a texto completo si no hay plantilla o falló
         /// 5. Parseo con el parser correspondiente
+        /// 
+        /// Retorna una LISTA de facturas (puede ser múltiples si hay varias líneas de IVA).
         /// </summary>
-        private Factura? ProcesarUnPdf(string rutaPdf)
+        private List<Factura> ProcesarUnPdf(string rutaPdf)
         {
-            // ── PASO 1: Detectar tipo de PDF ─────────────────────────────────────
+            // ── PASO 1: Detectar tipo de PDF ──────────────────────────────────
             string? textoRapido = _textExtractor.ExtraerTextoSeleccionable(rutaPdf,
                 PdfTextExtractor.ModoExtraccion.Simple);
 
             bool esPdfSeleccionable = textoRapido != null;
             bool usarOcr = !esPdfSeleccionable;
 
-            // ── PASO 2: Identificar emisor (con método rápido) ───────────────────
+            // ── PASO 2: Identificar emisor (con método rápido) ──────────────
             string textoIdentificacion;
             IInvoiceParser parser;
             string nombreEmisor;
@@ -97,7 +100,7 @@ namespace FacturasApp.Services
                 nombreEmisor = parser.Nombre;
             }
 
-            // ── PASO 3: Intentar extracción por zonas (si hay plantilla) ─────────
+            // ── PASO 3: Intentar extracción por zonas (si hay plantilla) ──────
             string textoExtraido = "";
             bool extraccionZonalExitosa = false;
             PlantillaOcr? plantilla = _plantillaService.ObtenerPorEmisor(nombreEmisor);
@@ -128,7 +131,7 @@ namespace FacturasApp.Services
                 }
             }
 
-            // ── PASO 4: Fallback a extracción completa si la zonal falló ─────────
+            // ── PASO 4: Fallback a extracción completa si la zonal falló ──────
             if (!extraccionZonalExitosa && FallbackATextoCompleto)
             {
                 if (esPdfSeleccionable)
@@ -146,10 +149,11 @@ namespace FacturasApp.Services
                 }
             }
 
-            // ── PASO 5: Parsear el texto extraído ─────────────────────────────────
+            // ── PASO 5: Parsear el texto extraído ──────────────────────────────
             if (string.IsNullOrEmpty(textoExtraido))
                 throw new InvalidOperationException("No se pudo extraer texto del PDF");
 
+            // ✅ Usar ParsearMultiple para obtener TODAS las facturas
             List<Factura> facturasParseadas = parser is BaseParser baseParser
                 ? baseParser.ParsearMultiple(textoExtraido, rutaPdf, usarOcr)
                 : new List<Factura> { parser.Parsear(textoExtraido, rutaPdf, usarOcr) };
@@ -164,7 +168,7 @@ namespace FacturasApp.Services
                 }
             }
 
-            return facturasParseadas.FirstOrDefault();
+            return facturasParseadas;  // ✅ Retorna TODAS las facturas
         }
 
         // ── Extracción zonal para PDFs con texto seleccionable ───────────────────
