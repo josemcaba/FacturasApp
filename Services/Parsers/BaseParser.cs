@@ -36,7 +36,7 @@ namespace FacturasApp.Services.Parsers
         /// Puede ser sobrescrita si se necesita un patrón específico.
         /// </summary>
         protected virtual Regex RegexNif { get; } = new(
-            @"\b((?:\d{8}[A-Z]|[A-Z]\d{8}))\b",
+            @"\b((?:\d{8}[A-Z]|[A-Z](?:-|)\d{8}))\b",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         // ── Helpers de extracción ────────────────────────────────────────────

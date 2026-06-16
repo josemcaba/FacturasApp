@@ -4,45 +4,34 @@ using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
-    public partial class OscarAriasParser : BaseParser
+    public partial class SarigaboParser : BaseParser
     {
-        public override PdfTextExtractor.ModoExtraccion ModoExtraccion =>
-            PdfTextExtractor.ModoExtraccion.OrdenadoPosicion;
-        public override string Nombre => "Oscar Arias Merino";
-        public override string Nif => "74890980J";
+        public override string Nombre => "Sarigabo, S.L.";
+        public override string Nif => "B41256264";
 
         private static readonly string[] Identificadores =
-            ["oscar arias merino", "74890980-j", "deudor"];
+            ["sarigabo", "b41256264"];
 
         public override bool PuedeParsar(string texto) =>
             Identificadores.All(id =>
                 texto.Contains(id, StringComparison.OrdinalIgnoreCase));
 
-        [GeneratedRegex(@"(FV[\d]{5})\b", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        [GeneratedRegex(@"FACTURA\s+(FVR\d+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         private static partial Regex RegexNumero();
 
-        [GeneratedRegex(@"CLIENTE[\r\n]+(.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        [GeneratedRegex(@"\[Zona2\]:\s+(.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         private static partial Regex RegexNombre();
 
         // Base Imponible
-        [GeneratedRegex(@"IMPONIBLE\s+([,\.0-9]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
-        private static partial Regex RegexBaseImponible();
+        [GeneratedRegex(@"([,\.0-9]+)€\s+(\d+)%", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        private static partial Regex RegexImportes();
 
-        // Total Parcial en caso de que no haya Base Imponible (compatibilidad)
-        [GeneratedRegex(@"TOTAL\s+PARCIAL\s+([,\.0-9]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
-        private static partial Regex RegexTotalParcial();
-
-        // Porcentaje
-        [GeneratedRegex(@"\(([,\.0-9]+)%\)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
-        private static partial Regex RegexPorcentaje();
-
-        // Total factura
-        [GeneratedRegex(@"TOTAL\s+([,\.0-9]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        // TOTAL FACTURA
+        [GeneratedRegex(@"\bTotal Factura\s+([,\.0-9]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         private static partial Regex RegexTotalFactura();
 
         public override Factura Parsear(string texto, string rutaArchivo, bool viaOcr)
         {
-            texto = EliminarDuplicadosNoNumericos(texto);
             var factura = new Factura
             {
                 RutaArchivo = rutaArchivo,
@@ -55,15 +44,8 @@ namespace FacturasApp.Services.Parsers
             factura.Fecha = ExtraerFecha(texto);  // ← Usa el genérico de BaseParser
             factura.Receptor.Nombre = ExtraerGrupo(RegexNombre(), texto, 1);
             factura.Receptor.NIF = ExtraerNif(texto);
-            factura.BaseImponible = ExtraerDecimal(RegexBaseImponible(), texto, 1);
-            if (factura.BaseImponible == 0)
-                factura.BaseImponible = ExtraerDecimal(RegexTotalParcial(), texto, 1);
-            factura.PorcentajeIVA = decimal.Parse(EliminarDuplicadosNumericos(ExtraerGrupo(RegexPorcentaje(), texto, 1)));
-            if (factura.PorcentajeIVA == 1.4m)
-            {
-                factura.PorcentajeIVA = 10m;
-                factura.PorcentajeRE = 1.4m;
-            }
+            factura.BaseImponible = ExtraerDecimal(RegexImportes(), texto, 1);
+            factura.PorcentajeIVA = ExtraerDecimal(RegexImportes(), texto, 2);
             factura.Total = ExtraerDecimal(RegexTotalFactura(), texto, 1);
             factura.Estado = FacturaEstado.Determinar(factura);
 

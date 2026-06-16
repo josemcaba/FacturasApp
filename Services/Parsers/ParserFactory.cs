@@ -11,6 +11,7 @@ namespace FacturasApp.Services.Parsers
         {
             _parsers =
             [
+                new SarigaboParser(),
                 new FiestaParser(),
                 new DulceriaParser(),
                 new OscarAriasParser(),
