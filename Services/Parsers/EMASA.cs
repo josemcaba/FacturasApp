@@ -24,10 +24,6 @@ namespace FacturasApp.Services.Parsers
             @"www.emasa.es\r*\n*(.+)",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly Regex RegexNif = new(
-            @"NIF/CIF:\s*(\S+)",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
         protected override Regex RegexFecha { get; } = new(
             @"\bFECHA\sDE\sEMISIÓN:\s(.*?)\s",
             RegexOptions.Compiled);

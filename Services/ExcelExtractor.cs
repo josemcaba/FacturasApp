@@ -10,54 +10,20 @@ namespace FacturasApp.Services
         // Añade aquí cualquier nombre de columna que puedas encontrar
         private static readonly Dictionary<string, string[]> MapaColumnas = new()
         {
-            ["NumeroFactura"] = new[]
-            {
-                "número de factura",
-            },
-            ["Fecha"] = new[]
-            {
-                "fecha factura",
-            },
-            ["EmisorNombre"] = new[]
-            {
-                "nombre del emisor",
-            },
-            ["EmisorNIF"] = new[]
-            {
-                "nif del emisor",
-            },
-            ["ClienteNombre"] = new[]
-            {
-                "cliente",
-            },
-            ["ClienteNIF"] = new[]
-            {
-                "nif / cif",
-            },
-            ["BaseImponible"] = new[]
-            {
-                "base imponible",
-            },
-            ["PorcentajeIVA"] = new[]
-            {
-                "% iva",
-            },
-            ["CuotaIVA"] = new[]
-            {
-                "iva",
-            },
-            ["PorcentajeIRPF"] = new[]
-            {
-                "% irpf",
-            },
-            ["PorcentajeRE"] = new[]
-            {
-                "% re",
-            },
-            ["Total"] = new[]
-            {
-                "importe total",
-            }
+            ["NumeroFactura"]   = ["número factura", "número de factura"],
+            ["Fecha"]           = ["fecha factura"],
+            ["EmisorNombre"]    = [],
+            ["EmisorNIF"]       = [],
+            ["ClienteNombre"]   = ["cliente"],
+            ["ClienteNIF"]      = ["cif", "nif / cif"],
+            ["BaseImponible"]   = ["base", "base imponible"],
+            ["PorcentajeIVA"]   = ["tipo"],
+            ["CuotaIVA"]        = ["iva"],
+            ["PorcentajeIRPF"]  = [],
+            ["CuotaIRPF"]       = ["irpf"],
+            ["PorcentajeRE"]    = [],
+            ["CuotaRE"]         = ["re"],
+            ["Total"]           = ["total", "importe total"],
         };
 
         // ── Método principal ─────────────────────────────────────────────────
@@ -152,14 +118,16 @@ namespace FacturasApp.Services
             // Lectura de campos
             factura.NumeroFactura = LeerTexto(row, mapaIndices, "NumeroFactura");
             factura.Fecha = LeerFecha(row, mapaIndices);
-            factura.Emisor.Nombre = LeerTexto(row, mapaIndices, "EmisorNombre");
-            factura.Emisor.NIF = LeerTexto(row, mapaIndices, "EmisorNIF");
+            factura.Emisor.Nombre = "Emisor";
+            factura.Emisor.NIF = "99999999R";
             factura.Receptor.Nombre = LeerTexto(row, mapaIndices, "ClienteNombre");
             factura.Receptor.NIF = LeerTexto(row, mapaIndices, "ClienteNIF");
             factura.BaseImponible = LeerDecimal(row, mapaIndices, "BaseImponible");
-            factura.PorcentajeIVA = LeerDecimal(row, mapaIndices, "PorcentajeIVA");
-            factura.PorcentajeIVA = 21m; // Forzamos al 21% para evitar errores de redondeo 
             factura.CuotaIVA = LeerDecimal(row, mapaIndices, "CuotaIVA");
+            factura.PorcentajeIVA = LeerDecimal(row, mapaIndices, "PorcentajeIVA");
+            // Si el porcentaje de IVA es 0 y la cuota de IVA es distinto de 0, asumimos que es 21%
+            if (factura.PorcentajeIVA == 0m && factura.CuotaIVA != 0m)
+                factura.PorcentajeIVA = 21m;
             factura.PorcentajeIRPF = LeerDecimal(row, mapaIndices, "PorcentajeIRPF");
             factura.CuotaIRPF = LeerDecimal(row, mapaIndices, "CuotaIRPF");
             factura.PorcentajeRE = LeerDecimal(row, mapaIndices, "PorcentajeRE");
