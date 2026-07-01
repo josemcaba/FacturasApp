@@ -15,15 +15,17 @@ namespace FacturasApp.Services.Parsers
         public override bool PuedeParsar(string texto) =>
             Identificadores.All(id =>
                 texto.Contains(id, StringComparison.OrdinalIgnoreCase));
+        public override PdfTextExtractor.ModoExtraccion ModoExtraccion =>
+            PdfTextExtractor.ModoExtraccion.Simple;
 
-        [GeneratedRegex(@"FACTURA\s+(FVR\d+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        [GeneratedRegex(@"\s(FVR\d+)\s", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         private static partial Regex RegexNumero();
 
         [GeneratedRegex(@"\[Zona2\]:\s+(.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         private static partial Regex RegexNombre();
 
         // Base Imponible
-        [GeneratedRegex(@"([,\.0-9]+)€\s+(\d+)%", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        [GeneratedRegex(@"\bTotal Importe\s+([,\.0-9]+)€\s", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         private static partial Regex RegexImportes();
 
         // TOTAL FACTURA
@@ -45,7 +47,7 @@ namespace FacturasApp.Services.Parsers
             factura.Receptor.Nombre = ExtraerGrupo(RegexNombre(), texto, 1);
             factura.Receptor.NIF = ExtraerNif(texto);
             factura.BaseImponible = ExtraerDecimal(RegexImportes(), texto, 1);
-            factura.PorcentajeIVA = ExtraerDecimal(RegexImportes(), texto, 2);
+            factura.PorcentajeIVA = 10.0m;
             factura.Total = ExtraerDecimal(RegexTotalFactura(), texto, 1);
             factura.Estado = FacturaEstado.Determinar(factura);
 

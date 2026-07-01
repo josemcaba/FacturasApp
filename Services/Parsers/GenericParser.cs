@@ -12,9 +12,6 @@ namespace FacturasApp.Services.Parsers
         [GeneratedRegex(@"(?:factura|fra\.?|nº|n[uú]mero)[:\s#]*([A-Z0-9][-A-Z0-9/\\]{2,20})", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         private static partial Regex RegexNumero();
 
-        [GeneratedRegex(@"\b([A-Z]?\d{7,8}[A-Z])\b", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
-        private static partial Regex RegexNif();
-
         [GeneratedRegex(@"(?:base\s+imponible|subtotal|base)[:\s]*([\d.,]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         private static partial Regex RegexBase();
 
@@ -26,8 +23,6 @@ namespace FacturasApp.Services.Parsers
 
         public override Factura Parsear(string texto, string rutaArchivo, bool viaOcr)
         {
-            var nifs = ExtraerTodosLosNifs(texto);
-
             var factura = new Factura
             {
                 RutaArchivo = rutaArchivo,
@@ -37,11 +32,11 @@ namespace FacturasApp.Services.Parsers
                 Emisor = new Proveedor
                 {
                     Nombre = this.Nombre,
-                    NIF = nifs.Count > 0 ? nifs[0] : string.Empty
+                    NIF = ExtraerNif(texto)
                 },
                 Receptor = new Cliente
                 {
-                    NIF = nifs.Count > 1 ? nifs[1] : string.Empty
+                    NIF = ExtraerNif(texto)
                 },
                 BaseImponible = ExtraerDecimal(RegexBase(), texto, 1),
                 Total = ExtraerDecimal(RegexTotal(), texto, 1)
@@ -50,13 +45,6 @@ namespace FacturasApp.Services.Parsers
             factura.Estado = FacturaEstado.Determinar(factura);
 
             return factura;
-        }
-
-        private static List<string> ExtraerTodosLosNifs(string texto)
-        {
-            return [.. RegexNif().Matches(texto)
-                .Select(m => m.Groups[1].Value.ToUpper())
-                .Distinct()];
         }
     }
 }

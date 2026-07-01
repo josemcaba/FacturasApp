@@ -28,6 +28,10 @@ namespace FacturasApp.Services.Parsers
         [GeneratedRegex(@"IMPONIBLE\s+([,\.0-9]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         private static partial Regex RegexBaseImponible();
 
+        // Descuento
+        [GeneratedRegex(@"DESCUENTO\s+([-,\.0-9]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        private static partial Regex RegexDescuento();
+
         // Total Parcial en caso de que no haya Base Imponible (compatibilidad)
         [GeneratedRegex(@"TOTAL\s+PARCIAL\s+([,\.0-9]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         private static partial Regex RegexTotalParcial();
@@ -58,6 +62,7 @@ namespace FacturasApp.Services.Parsers
             factura.BaseImponible = ExtraerDecimal(RegexBaseImponible(), texto, 1);
             if (factura.BaseImponible == 0)
                 factura.BaseImponible = ExtraerDecimal(RegexTotalParcial(), texto, 1);
+            factura.BaseImponible += ExtraerDecimal(RegexDescuento(), texto, 1);
             factura.PorcentajeIVA = decimal.Parse(EliminarDuplicadosNumericos(ExtraerGrupo(RegexPorcentaje(), texto, 1)));
             if (factura.PorcentajeIVA == 1.4m)
             {
