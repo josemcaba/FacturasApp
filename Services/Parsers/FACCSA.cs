@@ -1,6 +1,4 @@
-﻿using CsvHelper;
-using DocumentFormat.OpenXml.Vml;
-using FacturasApp.Models;
+﻿using FacturasApp.Models;
 using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
@@ -10,12 +8,8 @@ namespace FacturasApp.Services.Parsers
         public override string Nombre => "FACCSA: Frigorif. And. Conservas Carne";
         public override string Nif => "A17001231";
 
-        private static readonly string[] Identificadores =
-            { "andaluces", "conservas", "carne"};
-
-        public override bool PuedeParsar(string texto) =>
-            Identificadores.All(id =>
-                texto.Contains(id, StringComparison.OrdinalIgnoreCase));
+        protected override string[] Identificadores =>
+            ["andaluces", "conservas", "carne"];
 
         private static readonly Regex RegexNumero = new(
             @"\bFACTURA\s+(.*?)\s+",
@@ -25,9 +19,10 @@ namespace FacturasApp.Services.Parsers
             @"CIF\s+.*?[\s\r\n]+(.*)\s",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly Regex RegexNif = new(
+        private static readonly Regex _regexNif = new(
             @"CIF\s+(.*?)\s",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        protected override Regex RegexNif => _regexNif;
 
         private static readonly Regex RegexImportes = new(
             @"ASE\s+IMPONIB\.?\s+([\d.,]+)",

@@ -1,5 +1,4 @@
 ﻿using FacturasApp.Models;
-using FacturasApp.Services;
 
 namespace FacturasApp.UI
 {
@@ -42,13 +41,7 @@ namespace FacturasApp.UI
             PorcentajeRE = f.PorcentajeRE;
             CuotaREFmt = $"{f.CuotaRECalculado:N2} €";
             TotalFormateado = $"{f.Total:N2} €";
-            EstadoTexto = f.Estado switch
-            {
-                _Estado.OK => "✔ Correcto",
-                _Estado.Revisar => "⚠ Revisar",
-                _Estado.Error => "✖ Error",
-                _ => "Pendiente"
-            };
+            EstadoTexto = f.Estado.ToDisplayText();
             ExtractedByOcr = f.ExtractedByOcr;
             NombreArchivo = Path.GetFileName(f.RutaArchivo);
         }

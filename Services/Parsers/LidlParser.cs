@@ -8,12 +8,8 @@ namespace FacturasApp.Services.Parsers
         public override string Nombre => "LIDL SUPERMERCADOS S.A.U.";
         public override string Nif => "A60195278";
 
-        private static readonly string[] Identificadores =
-            { "lidl supermercados", "factura"};
-
-        public override bool PuedeParsar(string texto) =>
-            Identificadores.All(id =>
-                texto.Contains(id, StringComparison.OrdinalIgnoreCase));
+        protected override string[] Identificadores =>
+            ["lidl supermercados", "factura"];
 
         private static readonly Regex RegexNumero = new(
             @"Nº Factura:\s([\d]+)\b",
@@ -23,9 +19,10 @@ namespace FacturasApp.Services.Parsers
             @"\b(.*)\b\sFecha\sTique",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly Regex RegexNif = new(
+        private static readonly Regex _regexNif = new(
             @"Barcelona[\r\n]+([A-Z]?\d{7,8}[A-Z]?)\b",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        protected override Regex RegexNif => _regexNif;
 
         protected override Regex RegexFecha { get; } = new(
             @"\bFecha\sFactura:\s+(.*?)\s",
@@ -53,7 +50,7 @@ namespace FacturasApp.Services.Parsers
             string numeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
             DateTime? fecha = ExtraerFecha(RegexFecha, texto);
             string receptorNombre = ExtraerGrupo(RegexNombre, texto, 1);
-            string receptorNIF = ExtraerGrupo(RegexNif, texto, 1);
+            string receptorNIF = ExtraerNif(RegexNif, texto, Nif);
 
             // Una factura por cada línea de IVA encontrada
 

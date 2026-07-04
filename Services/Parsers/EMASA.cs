@@ -9,12 +9,8 @@ namespace FacturasApp.Services.Parsers
         public override string Nif => "A29185519";
         public override string Concepto => "628"; // Suministro de agua 628 (G15)
 
-        private static readonly string[] Identificadores =
-            { "emasa", "plaza general torrijos", "agua"};
-
-        public override bool PuedeParsar(string texto) =>
-            Identificadores.All(id =>
-                texto.Contains(id, StringComparison.OrdinalIgnoreCase));
+        protected override string[] Identificadores =>
+            ["emasa", "plaza general torrijos", "agua"];
 
         private static readonly Regex RegexNumero = new(
             @"FACTURA:\s*(\S+)",
@@ -53,7 +49,7 @@ namespace FacturasApp.Services.Parsers
             string numeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
             DateTime? fecha = ExtraerFecha(RegexFecha, texto);
             string receptorNombre = ExtraerGrupo(RegexNombre, texto, 1);
-            string receptorNIF = ExtraerGrupo(RegexNif, texto, 1);
+            string receptorNIF = ExtraerNif(RegexNif, texto, Nif);
 
 
             var parteEmasa= new Factura

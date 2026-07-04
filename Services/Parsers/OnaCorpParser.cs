@@ -8,15 +8,11 @@ namespace FacturasApp.Services.Parsers
         public override string Nombre => "ONA CORP, S.L.U.";
         public override string Nif => "B85002764";
 
-        private static readonly string[] Identificadores =
-            { "ona corp", "ESB85002764", "+34915079385"};
+        protected override string[] Identificadores =>
+            ["ona corp", "ESB85002764", "+34915079385"];
 
         public override PdfTextExtractor.ModoExtraccion ModoExtraccion =>
             PdfTextExtractor.ModoExtraccion.LayoutAnalysis;
-
-        public override bool PuedeParsar(string texto) =>
-            Identificadores.All(id =>
-                texto.Contains(id, StringComparison.OrdinalIgnoreCase));
 
         private static readonly Regex RegexNumero = new(
             @"FACTURA(?:| RECTIFICATIVA)[\r\n]+(.+)[\r\n]+FECHA",
@@ -30,9 +26,10 @@ namespace FacturasApp.Services.Parsers
             @"\bFECHA[\s\n\r]+(.*?)[\s\n\r]+N",
             RegexOptions.Compiled);
 
-        private static readonly Regex RegexNif = new(
+        private static readonly Regex _regexNif = new(
             @"España[\r\n]+(.+)[\r\n]+Dirección",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        protected override Regex RegexNif => _regexNif;
 
         private static readonly Regex RegexImportes = new(
             @"Base Imponible ([\d,.]+)€[\r\n]+IVA Total \((\d+)%\) [\d,.]+€[\r\n]+TOTAL FACTURA ([\d,.]+)€",
@@ -51,7 +48,7 @@ namespace FacturasApp.Services.Parsers
             factura.NumeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
             factura.Fecha = ExtraerFecha(RegexFecha, texto);
             factura.Receptor.Nombre = ExtraerGrupo(RegexNombre, texto, 1);
-            factura.Receptor.NIF = ExtraerGrupo(RegexNif, texto, 1);
+            factura.Receptor.NIF = ExtraerNif(RegexNif, texto, Nif);
             factura.BaseImponible = ExtraerDecimal(RegexImportes, texto, 1);
             factura.PorcentajeIVA = ExtraerDecimal(RegexImportes, texto, 2);
             factura.Total = ExtraerDecimal(RegexImportes, texto, 3);

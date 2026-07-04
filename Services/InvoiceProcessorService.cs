@@ -1,7 +1,6 @@
 ﻿using FacturasApp.Models;
 using FacturasApp.Services.Parsers;
 
-
 namespace FacturasApp.Services
 {
     public class InvoiceProcessorService
@@ -13,12 +12,9 @@ namespace FacturasApp.Services
         private readonly ExcelExtractor _excelExtractor = new();
         private readonly PlantillaOcrService _plantillaService = new();
 
-        public PdfTextExtractor.ModoExtraccion ModoExtraccion { get; set; } =
-            PdfTextExtractor.ModoExtraccion.OrdenadoPosicion;
-
         // Configuración de tolerancia para extracción zonal
-        public bool UsarZonasSiempre { get; set; } = true;  // Si false, usa zonalsolo si hay plantilla
-        public bool FallbackATextoCompleto { get; set; } = true;  // Si zona falla, usar texto completo
+        public bool UsarZonasSiempre { get; set; } = true;
+        public bool FallbackATextoCompleto { get; set; } = true;
 
         public InvoiceProcessorService(string tessDataPath = @"./tessdata")
         {
@@ -52,7 +48,7 @@ namespace FacturasApp.Services
                     facturas.Add(new Factura
                     {
                         RutaArchivo = ruta,
-                        Estado = _Estado.Error,
+                        Estado = EstadoFactura.Error,
                         MensajeError = new List<string> { ex.Message }
                     });
                 }
@@ -196,7 +192,7 @@ namespace FacturasApp.Services
                 string resultado = textoFinal.ToString().Trim();
 
                 // Verificar si al menos una zona no vacía fue extraída
-                if (resultado.Length < 10)  // Umbleral mínimo de texto
+                if (resultado.Length < 10)  // Umbral mínimo de texto
                     return string.Empty;
 
                 return resultado;
@@ -248,33 +244,6 @@ namespace FacturasApp.Services
             }
         }
 
-        // ── Método legacy (mantener por compatibilidad, pero usar el nuevo flujo) ─
-
-        /// <summary>
-        /// Método legacy para compatibilidad. Usa ProcesarUnPdf internamente.
-        /// </summary>
-        [Obsolete("Usar ProcesarLote que unifica ambos flujos")]
-        private string ExtraerTextoOcrZonal(string rutaPdf)
-        {
-            try
-            {
-                // Para compatibilidad, identificamos emisor y buscamos plantilla
-                string textoIdentificacion = _ocrExtractor.ExtraerTextoConOcr(rutaPdf);
-                IInvoiceParser parser = _parserFactory.ObtenerParser(textoIdentificacion);
-                string nombreEmisor = parser.Nombre;
-
-                var plantilla = _plantillaService.ObtenerPorEmisor(nombreEmisor);
-                if (plantilla == null || plantilla.Zonas.Count == 0)
-                    return string.Empty;
-
-                return ExtraerTextoOcrZonalConPlantilla(rutaPdf, plantilla);
-            }
-            catch
-            {
-                return string.Empty;
-            }
-        }
-
         // ── Helper: detección de duplicados ─────────────────────────────────────
 
         private void AddWithDuplicateDetection(List<Factura> acumuladas, IEnumerable<Factura> nuevas)
@@ -305,13 +274,13 @@ namespace FacturasApp.Services
 
                     if (existente != null)
                     {
-                        nueva.Estado = _Estado.Duplicada;
+                        nueva.Estado = EstadoFactura.Duplicada;
                         nueva.MensajeError ??= new List<string>();
                         nueva.MensajeError.Add($"Factura duplicada. Existe en: {existente.RutaArchivo}");
 
-                        if (existente.Estado != _Estado.Duplicada)
+                        if (existente.Estado != EstadoFactura.Duplicada)
                         {
-                            existente.Estado = _Estado.Duplicada;
+                            existente.Estado = EstadoFactura.Duplicada;
                             existente.MensajeError ??= new List<string>();
                             existente.MensajeError.Add($"Factura duplicada. Otra copia: {nueva.RutaArchivo}");
                         }

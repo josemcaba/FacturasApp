@@ -9,15 +9,11 @@ namespace FacturasApp.Services.Parsers
         public override string Nif => "B93275394";
         public override string Concepto => "624";
 
-        private static readonly string[] Identificadores =
-            { "PLENERGY GRUPO", "B93275394"};
+        protected override string[] Identificadores =>
+            ["PLENERGY GRUPO", "B93275394"];
 
         public override PdfTextExtractor.ModoExtraccion ModoExtraccion =>
             PdfTextExtractor.ModoExtraccion.LayoutAnalysis;
-
-        public override bool PuedeParsar(string texto) =>
-            Identificadores.All(id =>
-                texto.Contains(id, StringComparison.OrdinalIgnoreCase));
 
         private static readonly Regex RegexNumero = new(
             @"Nº FACTURA:\s+(.+)\b",
@@ -27,9 +23,10 @@ namespace FacturasApp.Services.Parsers
             @"(.*)[\r\n]+",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly Regex RegexNif = new(
+        private static readonly Regex _regexNif = new(
             @"Málaga[\r\n]+(.+)[\r\n]+PLENERGY",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        protected override Regex RegexNif => _regexNif;
 
         protected override Regex RegexFecha { get; } = new(
             @"\bFECHA:\s*(.*?)[\s\n\r]+CLIENTE",
@@ -53,7 +50,7 @@ namespace FacturasApp.Services.Parsers
             factura.NumeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
             factura.Fecha = ExtraerFecha(RegexFecha, texto);
             factura.Receptor.Nombre = ExtraerGrupo(RegexNombre, texto, 1);
-            factura.Receptor.NIF = ExtraerGrupo(RegexNif, texto, 1);
+            factura.Receptor.NIF = ExtraerNif(RegexNif, texto, Nif);
             factura.BaseImponible = ExtraerDecimal(RegexImportes, texto, 1);
             factura.PorcentajeIVA = ExtraerDecimal(RegexImportes, texto, 2);
             factura.Total = ExtraerDecimal(RegexImportes, texto, 4);

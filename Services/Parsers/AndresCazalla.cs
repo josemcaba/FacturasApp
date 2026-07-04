@@ -8,12 +8,8 @@ namespace FacturasApp.Services.Parsers
         public override string Nombre => "Andrés Cazalla Medina";
         public override string Nif => "26236236K";
 
-        private static readonly string[] Identificadores =
-            { "andres cazalla medina", "calle newton, 20", "semirueda"};
-
-        public override bool PuedeParsar(string texto) =>
-            Identificadores.All(id =>
-                texto.Contains(id, StringComparison.OrdinalIgnoreCase));
+        protected override string[] Identificadores =>
+            ["andres cazalla medina", "calle newton, 20", "semirueda"];
 
         private static readonly Regex RegexNumero = new(
             @"FACTURA\s+(20[\d]{5})\s+",

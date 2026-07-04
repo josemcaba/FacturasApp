@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Text;
+using System.Text.RegularExpressions;
 using FacturasApp.Models;
 using System.Globalization;
 
@@ -9,7 +10,6 @@ namespace FacturasApp.Services.Parsers
         public abstract string Nombre { get; }
         public abstract string Nif { get; }
         public virtual string Concepto => "600"; // Código contable por defecto
-        public abstract bool PuedeParsar(string texto);
         public abstract Factura Parsear(string texto, string rutaArchivo, bool viaOcr);
 
         public virtual PdfTextExtractor.ModoExtraccion ModoExtraccion =>
@@ -20,6 +20,14 @@ namespace FacturasApp.Services.Parsers
         public virtual List<Factura> ParsearMultiple(
             string texto, string rutaArchivo, bool viaOcr) =>
                 [Parsear(texto, rutaArchivo, viaOcr)];
+
+        // ── PuedeParsar: template method ──────────────────────────────────
+
+        protected virtual string[] Identificadores => [];
+
+        public virtual bool PuedeParsar(string texto) =>
+            Identificadores.All(id =>
+                texto.Contains(id, StringComparison.OrdinalIgnoreCase));
 
         // ── Expresiones regulares genéricas (pueden ser sobrescritas) ────────
 
@@ -40,6 +48,78 @@ namespace FacturasApp.Services.Parsers
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         // ── Helpers de extracción ────────────────────────────────────────────
+
+        protected Factura CrearFacturaBase(string rutaArchivo, bool viaOcr)
+        {
+            var factura = new Factura
+            {
+                RutaArchivo = rutaArchivo,
+                ExtractedByOcr = viaOcr,
+            };
+            factura.Emisor.NIF = Nif;
+            factura.Emisor.Nombre = Nombre;
+            return factura;
+        }
+
+        protected static string EliminarDuplicadosNoNumericos(string texto)
+        {
+            if (string.IsNullOrEmpty(texto))
+                return texto;
+
+            var resultado = new StringBuilder();
+            char? ultimoCaracter = null;
+
+            foreach (char c in texto)
+            {
+                bool esNumero = c >= '0' && c <= '9';
+
+                if (esNumero)
+                {
+                    resultado.Append(c);
+                    ultimoCaracter = c;
+                }
+                else
+                {
+                    if (!ultimoCaracter.HasValue || c != ultimoCaracter.Value)
+                    {
+                        resultado.Append(c);
+                        ultimoCaracter = c;
+                    }
+                }
+            }
+
+            return resultado.ToString();
+        }
+
+        protected static string EliminarDuplicadosNumericos(string texto)
+        {
+            if (string.IsNullOrEmpty(texto))
+                return texto;
+
+            var resultado = new StringBuilder();
+            char? ultimoCaracter = null;
+
+            foreach (char c in texto)
+            {
+                bool esNumero = c >= '0' && c <= '9';
+
+                if (!esNumero)
+                {
+                    resultado.Append(c);
+                    ultimoCaracter = c;
+                }
+                else
+                {
+                    if (!ultimoCaracter.HasValue || c != ultimoCaracter.Value)
+                    {
+                        resultado.Append(c);
+                        ultimoCaracter = c;
+                    }
+                }
+            }
+
+            return resultado.ToString();
+        }
 
         protected static string ExtraerGrupo(Regex regex, string texto, int grupo)
         {

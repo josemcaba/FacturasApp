@@ -40,9 +40,8 @@ namespace FacturasApp.UI
             var service = new InvoiceProcessorService(tessDataPath);
 
             // Configuración óptima para usar zonas cuando sea posible
-            service.UsarZonasSiempre = true;        // Intentar extracción por zonas primero
-            service.FallbackATextoCompleto = true;  // Si falla zona, usar texto completo
-            service.ModoExtraccion = PdfTextExtractor.ModoExtraccion.OrdenadoPosicion;
+            service.UsarZonasSiempre = true;
+            service.FallbackATextoCompleto = true;
 
             return service;
         }
@@ -291,13 +290,7 @@ namespace FacturasApp.UI
                 is not FacturaGridRow fila) return;
 
             dgvFacturas.Rows[e.RowIndex].DefaultCellStyle.BackColor =
-                fila.FacturaOriginal.Estado switch
-                {
-                    _Estado.OK => Color.FromArgb(226, 239, 218),
-                    _Estado.Revisar => Color.FromArgb(255, 242, 204),
-                    _Estado.Error => Color.FromArgb(255, 228, 214),
-                    _ => Color.White
-                };
+                fila.FacturaOriginal.Estado.ToColor();
         }
 
         private void DgvFacturas_CellDoubleClick(object? sender,
@@ -322,13 +315,13 @@ namespace FacturasApp.UI
         private void MostrarResumenEstadisticas(List<Factura> facturas)
         {
             int total = facturas.Count;
-            int ok = facturas.Count(f => f.Estado == _Estado.OK);
+            int ok = facturas.Count(f => f.Estado == EstadoFactura.OK);
             int revision = facturas.Count(f => f.Estado ==
-                                     _Estado.Revisar);
-            int errores = facturas.Count(f => f.Estado == _Estado.Error);
+                                     EstadoFactura.Revisar);
+            int errores = facturas.Count(f => f.Estado == EstadoFactura.Error);
             int porOcr = facturas.Count(f => f.ExtractedByOcr);
             decimal totalEuros = facturas
-                .Where(f => f.Estado != _Estado.Error)
+                .Where(f => f.Estado != EstadoFactura.Error)
                 .Sum(f => f.Total);
 
             lblResumen.Text =

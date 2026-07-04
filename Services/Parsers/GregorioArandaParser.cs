@@ -1,5 +1,4 @@
-﻿using CsvHelper;
-using FacturasApp.Models;
+﻿using FacturasApp.Models;
 using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
@@ -9,12 +8,8 @@ namespace FacturasApp.Services.Parsers
         public override string Nombre => "Gregorio Aranda Garcia";
         public override string Nif => "25693621E";
 
-        private static readonly string[] Identificadores =
-            { "25693621E", "fecha de vencimiento", "datos proveedor"};
-
-        public override bool PuedeParsar(string texto) =>
-            Identificadores.All(id =>
-                texto.Contains(id, StringComparison.OrdinalIgnoreCase));
+        protected override string[] Identificadores =>
+            ["25693621E", "fecha de vencimiento", "datos proveedor"];
 
         private static readonly Regex RegexNumero = new(
             @"Número de Factura.*[\n\r]+(?:Fact-)?(\d+)",
@@ -24,9 +19,10 @@ namespace FacturasApp.Services.Parsers
             @"Datos Cliente[\n\r]+(.*)",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly Regex RegexNif = new(
+        private static readonly Regex _regexNif = new(
             @"\b([A-Z]?\d{7,8}[A-Z]?)\b",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        protected override Regex RegexNif => _regexNif;
 
         private static readonly Regex RegexImportes = new(
             @"otal.*?([\d,.]+)[\n\r]*IVA\s*\(([\d]+)%\)",

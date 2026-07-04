@@ -1,47 +1,35 @@
-﻿using CsvHelper;
-using FacturasApp.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using FacturasApp.Models;
 
 namespace FacturasApp.Services
 {
-    public enum _Estado
+    internal static class FacturaEstado
     {
-        Pendiente,
-        OK,
-        Revisar,
-        Duplicada,
-        Error
-    }
-    internal class FacturaEstado
-    {
-        internal static _Estado Determinar(Factura f)
+        internal static EstadoFactura Determinar(Factura f)
         {
             // 1. Verificación del total — si no coincide → Error
             if (!f.TotalesCoinciden)
             {
                 f.MensajeError.Add("Totales extraido y calculado no coinciden");
-                return _Estado.Error;
+                return EstadoFactura.Error;
             }
 
             // 2. Validación de BaseImponible !0
             if (f.BaseImponible == 0)
             {
                 f.MensajeError.Add("Base imponible igual a cero");
-                return _Estado.Revisar;
+                return EstadoFactura.Revisar;
             }
 
             // 3. Validación de NIFs — si no son válidos → Error
             if (!NifValidator.ValidarNif(f.Emisor.NIF))
             {
                 f.MensajeError.Add("NIF del Emisor no válido");
-                return _Estado.Error;
+                return EstadoFactura.Error;
             }
             if (!NifValidator.ValidarNif(f.Receptor.NIF))
             {
                 f.MensajeError.Add("NIF del Cliente no válido");
-                return _Estado.Error;
+                return EstadoFactura.Error;
             }
 
             // 4.Campos obligatorios — si falta alguno → RevisiónManual
@@ -57,7 +45,7 @@ namespace FacturasApp.Services
             if (!camposObligatoriosOk)
             {
                 f.MensajeError.Add("Falta uno o más campos obligatorios");
-                return _Estado.Revisar;
+                return EstadoFactura.Revisar;
             }
 
             // Nombre del cliente (receptor) muy largo — si >40 caracteres → RevisiónManual
@@ -67,9 +55,9 @@ namespace FacturasApp.Services
                 f.Receptor.Nombre = f.Receptor.Nombre.Substring(0, 40);
 
                 f.MensajeError.Add("Nombre del cliente truncado a 40 caracteres");
-                return _Estado.Revisar;
+                return EstadoFactura.Revisar;
             }
-            return _Estado.OK;
+            return EstadoFactura.OK;
         }
     }
 }

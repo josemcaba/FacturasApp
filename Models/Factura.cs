@@ -1,13 +1,11 @@
-﻿using FacturasApp.Services;
-
-namespace FacturasApp.Models
+﻿namespace FacturasApp.Models
 {
     public class Factura
     {
         public string NumeroFactura { get; set; } = string.Empty;
         public DateTime? Fecha { get; set; }
-        public Proveedor Emisor { get; set; } = new Proveedor();
-        public Cliente Receptor { get; set; } = new Cliente();
+        public Empresa Emisor { get; set; } = new Proveedor();
+        public Empresa Receptor { get; set; } = new Cliente();
         public string Concepto { get; set; } = string.Empty; // Código contable
         public decimal BaseImponible { get; set; }
         public decimal PorcentajeIVA { get; set; } = 0m;
@@ -37,7 +35,7 @@ namespace FacturasApp.Models
         // ── Metadatos ────────────────────────────────────────────────────────
         public string RutaArchivo { get; set; } = string.Empty;
         public bool ExtractedByOcr { get; set; }
-        public _Estado Estado { get; set; } = _Estado.Pendiente;
+        public EstadoFactura Estado { get; set; } = EstadoFactura.Pendiente;
         public List<string> MensajeError { get; set; } = new();
     }
 }

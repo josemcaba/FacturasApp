@@ -62,7 +62,7 @@ namespace FacturasApp.Services
                     // Si una fila falla la registramos y continuamos
                     facturas.Add(new Factura
                     {
-                        Estado = _Estado.Error,
+                        Estado = EstadoFactura.Error,
                         MensajeError = new List<string> { $"Error en fila {fila}: {ex.Message}" }
                     });
                 }

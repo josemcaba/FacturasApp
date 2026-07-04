@@ -32,24 +32,6 @@ namespace FacturasApp.Services
             return textoTotal.ToString().Trim();
         }
 
-        // Integración con plantillas zonales
-        public string ExtraerTextoConOcrInteligente(
-            string rutaPdf, string nombreEmisor)
-        {
-            var plantillaService = new PlantillaOcrService();
-            var plantilla = plantillaService.ObtenerPorEmisor(nombreEmisor);
 
-            if (plantilla == null || plantilla.Zonas.Count == 0)
-                return ExtraerTextoConOcr(rutaPdf);
-
-            var zonalExtractor = new OcrZonalExtractor(_tessDataPath);
-            var textosPorCampo = zonalExtractor.ExtraerZonas(rutaPdf, plantilla);
-
-            var sb = new System.Text.StringBuilder();
-            foreach (var kvp in textosPorCampo)
-                sb.AppendLine($"[{kvp.Key}]: {kvp.Value}");
-
-            return sb.ToString();
-        }
     }
 }

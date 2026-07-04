@@ -14,8 +14,8 @@ namespace FacturasApp.Services
         {
             using var workbook = new XLWorkbook();
 
-            var correctas = facturas.Where(f => f.Estado == _Estado.OK).ToList();
-            var incorrectas = facturas.Where(f => f.Estado != _Estado.OK).ToList();
+            var correctas = facturas.Where(f => f.Estado == EstadoFactura.OK).ToList();
+            var incorrectas = facturas.Where(f => f.Estado != EstadoFactura.OK).ToList();
 
             CrearHojaIngresos(workbook, correctas, "Ingresos Correctos");
             CrearHojaIngresos(workbook, incorrectas, "Ingresos Pendientes");
@@ -27,8 +27,8 @@ namespace FacturasApp.Services
         {
             using var workbook = new XLWorkbook();
 
-            var correctas = facturas.Where(f => f.Estado == _Estado.OK).ToList();
-            var incorrectas = facturas.Where(f => f.Estado != _Estado.OK).ToList();
+            var correctas = facturas.Where(f => f.Estado == EstadoFactura.OK).ToList();
+            var incorrectas = facturas.Where(f => f.Estado != EstadoFactura.OK).ToList();
 
             CrearHojaGastos(workbook, correctas, "Gastos Correctos");
             CrearHojaGastos(workbook, incorrectas, "Gastos Pendientes");
@@ -135,7 +135,7 @@ namespace FacturasApp.Services
                 AplicarFormatosIngresoGasto(hoja, fila);
 
                 // Color según estado solo en la hoja de pendientes
-                if (f.Estado != _Estado.OK)
+                if (f.Estado != EstadoFactura.OK)
                     AplicarColorEstado(hoja, fila, columnasLength, f.Estado);
             }
         }
@@ -155,12 +155,12 @@ namespace FacturasApp.Services
         }
 
         private void AplicarColorEstado(IXLWorksheet hoja,
-            int fila, int numColumnas, _Estado estado)
+            int fila, int numColumnas, EstadoFactura estado)
         {
             var color = estado switch
             {
-                _Estado.Revisar => XLColor.FromHtml("#FFF2CC"),
-                _Estado.Error => XLColor.FromHtml("#FCE4D6"),
+                EstadoFactura.Revisar => XLColor.FromHtml("#FFF2CC"),
+                EstadoFactura.Error => XLColor.FromHtml("#FCE4D6"),
                 _ => XLColor.White
             };
 
