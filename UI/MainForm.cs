@@ -16,6 +16,8 @@ namespace FacturasApp.UI
 
             InitializeComponent();
 
+            this.Text = $"Gestión de Facturas V{Application.ProductVersion}";
+
             // Make these controls adapt to the window width
             dgvFacturas.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             progressBar.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
