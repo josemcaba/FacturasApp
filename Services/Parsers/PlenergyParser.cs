@@ -33,7 +33,7 @@ namespace FacturasApp.Services.Parsers
             RegexOptions.Compiled);
 
         private static readonly Regex RegexImportes = new(
-            @"Importe\sTOTAL[\r\n]+([\d,.]+)\s+(\d+)%\s+([\d,.]+)\s+[\d,.]+\s+€\s+([\d,.]+)\s+€",
+            @"Importe\s+TOTAL[\r\n]+([\d,.]+)\s+(\d+)\s*%\s+([\d,.]+)\s+[\d,.]+\s*€\s+([\d,.]+)\s*€",
             RegexOptions.Compiled);
 
         public override Factura Parsear(string texto, string rutaArchivo, bool viaOcr)
