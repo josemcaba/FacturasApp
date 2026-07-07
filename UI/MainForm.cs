@@ -16,7 +16,7 @@ namespace FacturasApp.UI
 
             InitializeComponent();
 
-            this.Text = $"Gestión de Facturas V{Application.ProductVersion}";
+            this.Text = $"Gestión de Facturas V{Application.ProductVersion.Split('+')[0]}";
 
             // Make these controls adapt to the window width
             dgvFacturas.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -272,7 +272,7 @@ namespace FacturasApp.UI
         private void ConfigurarComboEstado()
         {
             cmbFiltroEstado.Items.AddRange(
-                new object[] { "Todos", "OK", "Revisar", "Error" });
+                new object[] { "Todos", "Pendiente", "OK", "Revisar", "Duplicada", "Error" });
             cmbFiltroEstado.SelectedIndex = 0;
         }
 

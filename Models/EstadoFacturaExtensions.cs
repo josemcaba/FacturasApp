@@ -8,6 +8,7 @@ namespace FacturasApp.Models
         {
             EstadoFactura.OK => "✔ Correcto",
             EstadoFactura.Revisar => "⚠ Revisar",
+            EstadoFactura.Duplicada => "⚠ Duplicada",
             EstadoFactura.Error => "✖ Error",
             _ => "Pendiente"
         };
@@ -16,7 +17,8 @@ namespace FacturasApp.Models
         {
             EstadoFactura.OK => Color.FromArgb(226, 239, 218),
             EstadoFactura.Revisar => Color.FromArgb(255, 242, 204),
-            EstadoFactura.Error => Color.FromArgb(255, 228, 214),
+            EstadoFactura.Duplicada => Color.FromArgb(230, 230, 250),
+            EstadoFactura.Error => Color.FromArgb(252, 228, 214),
             _ => Color.White
         };
     }

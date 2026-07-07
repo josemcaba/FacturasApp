@@ -157,15 +157,8 @@ namespace FacturasApp.Services
         private void AplicarColorEstado(IXLWorksheet hoja,
             int fila, int numColumnas, EstadoFactura estado)
         {
-            var color = estado switch
-            {
-                EstadoFactura.Revisar => XLColor.FromHtml("#FFF2CC"),
-                EstadoFactura.Error => XLColor.FromHtml("#FCE4D6"),
-                _ => XLColor.White
-            };
-
             hoja.Range(fila, 1, fila, numColumnas)
-                .Style.Fill.BackgroundColor = color;
+                .Style.Fill.BackgroundColor = XLColor.FromColor(estado.ToColor());
         }
     }
 }
