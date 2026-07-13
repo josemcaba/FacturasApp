@@ -13,10 +13,13 @@ namespace FacturasApp.UI
         private readonly ParserFactory _parserFactory = new();
 
         // ── Estado ────────────────────────────────────────────────────────────
-        private Bitmap? _imagenPagina;
         private string _rutaPdf = string.Empty;
         private string _nombreEmisor = string.Empty;
         private PlantillaOcr _plantilla = new();
+
+        // Multi-página
+        private readonly List<Bitmap> _imagenPaginas = new();
+        private int _paginaActual = 0; // 0-based índice interno
 
         private bool _dibujando = false;
         private Point _puntoInicio;
@@ -25,29 +28,25 @@ namespace FacturasApp.UI
 
         public DefinirPlantillaForm()
         {
-            InitializeComponent(); // ← llama al del Designer
+            InitializeComponent();
 
-            // 🔒 Bloquear UI de edición en producción
             if (!EnvironmentService.EsDesarrollo())
             {
                 btnGuardar.Hide();
-
-                // Mostrar indicador de modo de producción
-                Text = "FacturasApp - 🔒 Modo Lectura (Cliente)";
+                Text = "FacturasApp - Modo Lectura (Cliente)";
             }
             else
             {
-                Text = "FacturasApp - ✏️ Modo Edición (Desarrollo)";
+                Text = "FacturasApp - Modo Edición (Desarrollo)";
             }
 
-            // Poblamos el ComboBox de emisores con los parsers disponibles
             var emisoresDisponibles = _parserFactory.ParsersDisponibles.ToList();
             cmbEmisor.Items.AddRange(emisoresDisponibles.Cast<object>().ToArray());
             if (cmbEmisor.Items.Count > 0)
                 cmbEmisor.SelectedIndex = 0;
 
-            // Evento para mostrar texto cuando se selecciona una zona
             lstZonas.SelectedIndexChanged += LstZonas_SelectedIndexChanged;
+            tabPaginas.SelectedIndexChanged += TabPaginas_SelectedIndexChanged;
         }
 
         // ── Carga del PDF ─────────────────────────────────────────────────────
@@ -67,24 +66,28 @@ namespace FacturasApp.UI
             if (string.IsNullOrEmpty(cmbEmisor.Text))
                 cmbEmisor.Text = Path.GetFileNameWithoutExtension(_rutaPdf);
 
-            _imagenPagina?.Dispose();
-            _imagenPagina = _ocrExtractor.RenderizarPagina(_rutaPdf, 0);
+            // Limpiar estado anterior
+            LimpiarPaginas();
 
-            if (_imagenPagina == null)
+            // Renderizar todas las páginas
+            var bitmaps = _ocrExtractor.RenderizarPaginas(_rutaPdf);
+            if (bitmaps.Count == 0)
             {
                 MessageBox.Show("No se pudo renderizar el PDF.",
                     "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            picFactura.Image = _imagenPagina;
+            _imagenPaginas.AddRange(bitmaps);
+
+            // Crear pestañas
+            CrearPestanas();
 
             _nombreEmisor = cmbEmisor.Text.Trim();
             var existente = _plantillaService.ObtenerPorEmisor(_nombreEmisor);
             if (existente != null)
             {
                 _plantilla = existente;
-                ActualizarListaZonas();
                 MessageBox.Show(
                     $"Se ha cargado la plantilla existente para '{_nombreEmisor}'",
                     "Plantilla cargada",
@@ -95,14 +98,71 @@ namespace FacturasApp.UI
                 _plantilla = new PlantillaOcr { Emisor = _nombreEmisor };
             }
 
+            // Seleccionar primera pestaña
+            if (tabPaginas.TabCount > 0)
+                tabPaginas.SelectedIndex = 0;
+
+            MostrarPaginaActual();
+        }
+
+        // ── Gestión de pestañas y páginas ────────────────────────────────────
+
+        private void LimpiarPaginas()
+        {
+            tabPaginas.TabPages.Clear();
+            foreach (var img in _imagenPaginas)
+                img.Dispose();
+            _imagenPaginas.Clear();
+            _paginaActual = 0;
+            picFactura.Image = null;
+            lblPaginas.Text = string.Empty;
+        }
+
+        private void CrearPestanas()
+        {
+            for (int i = 0; i < _imagenPaginas.Count; i++)
+            {
+                var tab = new TabPage($"Página {i + 1}");
+                tab.Tag = i;
+                tabPaginas.TabPages.Add(tab);
+            }
+
+            ActualizarLabelPaginas();
+        }
+
+        private void TabPaginas_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            if (tabPaginas.SelectedIndex < 0) return;
+            _paginaActual = tabPaginas.SelectedIndex;
+            MostrarPaginaActual();
+        }
+
+        private void MostrarPaginaActual()
+        {
+            if (_paginaActual < 0 || _paginaActual >= _imagenPaginas.Count) return;
+
+            picFactura.Image?.Dispose();
+            picFactura.Image = _imagenPaginas[_paginaActual];
+            _rectanguloActivo = false;
+
+            ActualizarLabelPaginas();
+            ActualizarListaZonas();
             picFactura.Invalidate();
+        }
+
+        private void ActualizarLabelPaginas()
+        {
+            if (_imagenPaginas.Count > 0)
+                lblPaginas.Text = $"Página {_paginaActual + 1} de {_imagenPaginas.Count}";
+            else
+                lblPaginas.Text = string.Empty;
         }
 
         // ── Dibujo de rectángulos ─────────────────────────────────────────────
 
         private void PicFactura_MouseDown(object? sender, MouseEventArgs e)
         {
-            if (_imagenPagina == null) return;
+            if (_imagenPaginas.Count == 0) return;
             if (e.Button != MouseButtons.Left) return;
 
             _dibujando = true;
@@ -135,14 +195,17 @@ namespace FacturasApp.UI
 
             var zonaOcr = ConvertirARectanglePorcentual(rect);
 
-            // ← Generar nombre secuencial de zona: Zona1, Zona2, Zona3, etc.
-            int numeroZona = _plantilla.Zonas.Count + 1;
-            zonaOcr.Campo = $"Zona{numeroZona}";
+            // Asignar número de página actual (1-based)
+            zonaOcr.NumPagina = _paginaActual + 1;
+
+            // Generar nombre secuencial de zona por página
+            int numZonaEnPagina = _plantilla.Zonas
+                .Count(z => z.NumPagina == zonaOcr.NumPagina) + 1;
+            zonaOcr.Campo = $"P{_paginaActual + 1}_Z{numZonaEnPagina}";
 
             _plantilla.Zonas.Add(zonaOcr);
             ActualizarListaZonas();
 
-            // ← Extraer y mostrar el texto OCR de la zona creada
             MostrarTextoZona(zonaOcr);
 
             _rectanguloActivo = false;
@@ -151,12 +214,15 @@ namespace FacturasApp.UI
 
         private void PicFactura_Paint(object? sender, PaintEventArgs e)
         {
-            if (_imagenPagina == null) return;
+            if (_imagenPaginas.Count == 0) return;
 
             var g = e.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
 
-            foreach (var zona in _plantilla.Zonas)
+            int numPaginaActual = _paginaActual + 1; // 1-based
+
+            // Solo dibujar zonas de la página actual
+            foreach (var zona in _plantilla.Zonas.Where(z => z.NumPagina == numPaginaActual))
             {
                 var rect = ConvertirAPixelesPictureBox(zona);
                 using var pen = new Pen(Color.FromArgb(46, 117, 182), 2);
@@ -221,15 +287,15 @@ namespace FacturasApp.UI
 
         private Rectangle CalcularAreaImagenEnPictureBox()
         {
-            if (_imagenPagina == null)
+            if (picFactura.Image == null)
                 return new Rectangle(0, 0, picFactura.Width, picFactura.Height);
 
-            float escalaX = (float)picFactura.Width / _imagenPagina.Width;
-            float escalaY = (float)picFactura.Height / _imagenPagina.Height;
+            float escalaX = (float)picFactura.Width / picFactura.Image.Width;
+            float escalaY = (float)picFactura.Height / picFactura.Image.Height;
             float escala = Math.Min(escalaX, escalaY);
 
-            int anchoReal = (int)(_imagenPagina.Width * escala);
-            int altoReal = (int)(_imagenPagina.Height * escala);
+            int anchoReal = (int)(picFactura.Image.Width * escala);
+            int altoReal = (int)(picFactura.Image.Height * escala);
             int offsetX = (picFactura.Width - anchoReal) / 2;
             int offsetY = (picFactura.Height - altoReal) / 2;
 
@@ -241,11 +307,22 @@ namespace FacturasApp.UI
         private void ActualizarListaZonas()
         {
             lstZonas.Items.Clear();
-            foreach (var zona in _plantilla.Zonas)
+            int numPaginaActual = _paginaActual + 1;
+
+            // Mostrar solo zonas de la página actual
+            foreach (var zona in _plantilla.Zonas.Where(z => z.NumPagina == numPaginaActual))
+            {
                 lstZonas.Items.Add(
                     $"{zona.Campo}  " +
                     $"[X:{zona.X:F1}% Y:{zona.Y:F1}% " +
                     $"W:{zona.Ancho:F1}% H:{zona.Alto:F1}%]");
+            }
+
+            // Actualizar lblZonas con conteo por página
+            int totalZonas = _plantilla.Zonas.Count;
+            int zonasEnPagina = _plantilla.Zonas.Count(z => z.NumPagina == numPaginaActual);
+            lblZonas.Text = $"Zonas definidas (Página {numPaginaActual}): {zonasEnPagina}" +
+                            (totalZonas > zonasEnPagina ? $" / {totalZonas} total" : "");
         }
 
         private void LstZonas_SelectedIndexChanged(object? sender, EventArgs e)
@@ -257,8 +334,17 @@ namespace FacturasApp.UI
                 return;
             }
 
-            var zonaSeleccionada = _plantilla.Zonas[lstZonas.SelectedIndex];
-            MostrarTextoZona(zonaSeleccionada);
+            // Mapear índice del ListBox al índice real en la lista filtrada
+            int numPaginaActual = _paginaActual + 1;
+            var zonasPagina = _plantilla.Zonas
+                .Where(z => z.NumPagina == numPaginaActual)
+                .ToList();
+
+            if (lstZonas.SelectedIndex < zonasPagina.Count)
+            {
+                var zonaSeleccionada = zonasPagina[lstZonas.SelectedIndex];
+                MostrarTextoZona(zonaSeleccionada);
+            }
         }
 
         private void MostrarTextoZona(ZonaOcr zona)
@@ -276,26 +362,23 @@ namespace FacturasApp.UI
                 txtTexto.ForeColor = Color.DarkGray;
                 Application.DoEvents();
 
-                // Extraer texto con información del método utilizado
                 var resultado = _ocrExtractor.ExtraerTextoZonalConMetadata(_rutaPdf, zona);
 
-                // Mostrar indicador visual y descripción
                 string prefijo = resultado.ObtenerPrefijo();
                 string descripcion = resultado.ObtenerDescripcion();
                 string contenido = resultado.EstaVacia ? "(Sin texto detectado)" : resultado.Texto.Replace("\n", "\r\n");
 
-                // Mostrar en el cuadro de texto
-                txtTexto.Text = $"{prefijo} [{descripcion}]\r\n{new string('-', 40)}\r\n{contenido}";
+                txtTexto.Text = $"{prefijo} [{descripcion}] - Página {zona.NumPagina}\r\n" +
+                                $"{new string('-', 40)}\r\n{contenido}";
 
-                // Cambiar color del indicador según el método
                 txtTexto.ForeColor = resultado.ObtenerColor();
 
                 System.Diagnostics.Debug.WriteLine(
-                    $"Método: {descripcion}, Vacía: {resultado.EstaVacia}, Longitud: {resultado.Texto.Length}");
+                    $"Método: {descripcion}, Página: {zona.NumPagina}, Vacía: {resultado.EstaVacia}, Longitud: {resultado.Texto.Length}");
             }
             catch (Exception ex)
             {
-                txtTexto.Text = $"❌ Error: {ex.Message}";
+                txtTexto.Text = $"Error: {ex.Message}";
                 txtTexto.ForeColor = Color.Red;
             }
         }
@@ -303,10 +386,29 @@ namespace FacturasApp.UI
         private void BtnEliminarZona_Click(object? sender, EventArgs e)
         {
             if (lstZonas.SelectedIndex < 0) return;
-            _plantilla.Zonas.RemoveAt(lstZonas.SelectedIndex);
-            // ← Renumerar las zonas restantes para mantener consistencia
-            for (int i = 0; i < _plantilla.Zonas.Count; i++)
-                _plantilla.Zonas[i].Campo = $"Zona{i + 1}";
+
+            int numPaginaActual = _paginaActual + 1;
+            var zonasPagina = _plantilla.Zonas
+                .Where(z => z.NumPagina == numPaginaActual)
+                .ToList();
+
+            if (lstZonas.SelectedIndex >= zonasPagina.Count) return;
+
+            var zonaAEliminar = zonasPagina[lstZonas.SelectedIndex];
+            int indiceReal = _plantilla.Zonas.IndexOf(zonaAEliminar);
+            if (indiceReal >= 0)
+            {
+                _plantilla.Zonas.RemoveAt(indiceReal);
+
+                // Renumerar solo zonas de la misma página
+                int contador = 1;
+                foreach (var z in _plantilla.Zonas.Where(z => z.NumPagina == numPaginaActual))
+                {
+                    z.Campo = $"P{numPaginaActual}_Z{contador}";
+                    contador++;
+                }
+            }
+
             ActualizarListaZonas();
             txtTexto.Text = string.Empty;
             txtTexto.ForeColor = Color.Black;
@@ -340,23 +442,26 @@ namespace FacturasApp.UI
                 _plantilla.Emisor = _nombreEmisor;
                 _plantillaService.GuardarPlantilla(_plantilla);
 
+                int paginasConZonas = _plantilla.Zonas.Select(z => z.NumPagina).Distinct().Count();
+
                 MessageBox.Show(
                     $"Plantilla guardada correctamente para '{_nombreEmisor}'.\n" +
-                    $"Zonas definidas: {_plantilla.Zonas.Count}",
+                    $"Zonas definidas: {_plantilla.Zonas.Count} " +
+                    $"en {paginasConZonas} página(s)",
                     "Plantilla guardada",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (InvalidOperationException ex)
             {
                 MessageBox.Show(
-                    $"❌ Operación bloqueada\n\n{ex.Message}",
+                    $"Operación bloqueada\n\n{ex.Message}",
                     "Acceso denegado",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"❌ Error guardando plantilla:\n\n{ex.Message}",
+                    $"Error guardando plantilla:\n\n{ex.Message}",
                     "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -364,7 +469,7 @@ namespace FacturasApp.UI
 
         private void btnCerrar_Click(object sender, EventArgs e)
         {
-            _imagenPagina?.Dispose();
+            LimpiarPaginas();
             base.Close();
         }
     }

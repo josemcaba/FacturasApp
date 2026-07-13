@@ -39,6 +39,7 @@ namespace FacturasApp.Services.Parsers
                 new InstantByteParser(),
                 new PetroprixParser(),
                 new SewanParser(),
+                new VerisureParser(),
             ];
         }
 

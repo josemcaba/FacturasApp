@@ -53,7 +53,7 @@ namespace FacturasApp.Services
             }
         }
 
-        protected List<Bitmap> RenderizarPaginas(string rutaPdf)
+        public List<Bitmap> RenderizarPaginas(string rutaPdf)
         {
             var resultado = new List<Bitmap>();
 

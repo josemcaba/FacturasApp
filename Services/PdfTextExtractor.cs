@@ -94,10 +94,21 @@ namespace FacturasApp.Services
             var resultado = new Dictionary<string, string>();
 
             using var documento = PdfDocument.Open(rutaPdf);
-            var pagina = documento.GetPages().First();
 
-            double paginaWidth = pagina.Width;
-            double paginaHeight = pagina.Height;
+            // Precachear páginas necesarias por número de página (1-based)
+            var paginasRequeridas = plantilla.Zonas
+                .Select(z => z.NumPagina)
+                .Distinct()
+                .ToList();
+
+            var cachePaginas = new Dictionary<int, PdfPigPage>();
+            foreach (int numPagina in paginasRequeridas)
+            {
+                var pagina = documento.GetPages()
+                    .FirstOrDefault(p => p.Number == numPagina);
+                if (pagina != null)
+                    cachePaginas[numPagina] = pagina;
+            }
 
             string? textoCompleto = null;
             bool necesitaRespaldo = plantilla.Zonas.Any(z => !string.IsNullOrEmpty(z.RegexRespaldo));
@@ -106,6 +117,15 @@ namespace FacturasApp.Services
             {
                 try
                 {
+                    if (!cachePaginas.TryGetValue(zona.NumPagina, out var pagina))
+                    {
+                        resultado[zona.Campo] = string.Empty;
+                        continue;
+                    }
+
+                    double paginaWidth = pagina.Width;
+                    double paginaHeight = pagina.Height;
+
                     var rect = ConvertirZonaAPdfRectangle(zona, paginaWidth, paginaHeight);
 
                     // Extraer texto de la zona respetando el layout original
@@ -143,7 +163,10 @@ namespace FacturasApp.Services
             try
             {
                 using var documento = PdfDocument.Open(rutaPdf);
-                var pagina = documento.GetPages().First();
+                var pagina = documento.GetPages()
+                    .FirstOrDefault(p => p.Number == zona.NumPagina);
+
+                if (pagina == null) return null;
 
                 var rect = ConvertirZonaAPdfRectangle(zona, pagina.Width, pagina.Height);
                 return ExtraerTextoLayoutDesdeArea(pagina, rect);

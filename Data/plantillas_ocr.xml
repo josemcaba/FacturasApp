@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PlantillasOcr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Plantilla Emisor="FACCSA: Frigorif. And. Conservas Carne">
-    <Zona Campo="Zona1" X="25.183016105417277" Y="2.5853154084798344" Ancho="51.68374816983895" Alto="6.308169596690797" Regex="">
+    <Zona Pagina="1" Campo="Zona1" X="25.183016105417277" Y="2.5853154084798344" Ancho="51.68374816983895" Alto="6.308169596690797" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -15,7 +15,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona2" X="3.953147877013177" Y="10.961737331954497" Ancho="26.061493411420205" Alto="13.340227507755948" Regex="">
+    <Zona Pagina="1" Campo="Zona2" X="3.953147877013177" Y="10.961737331954497" Ancho="26.061493411420205" Alto="13.340227507755948" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -29,7 +29,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona3" X="59.443631039531475" Y="11.06514994829369" Ancho="32.650073206442165" Alto="12.719751809720787" Regex="">
+    <Zona Pagina="1" Campo="Zona3" X="59.443631039531475" Y="11.06514994829369" Ancho="32.650073206442165" Alto="12.719751809720787" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -43,7 +43,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona4" X="65.30014641288433" Y="74.04343329886245" Ancho="30.30746705710102" Alto="12.82316442605998" Regex="">
+    <Zona Pagina="1" Campo="Zona4" X="65.30014641288433" Y="74.04343329886245" Ancho="30.30746705710102" Alto="12.82316442605998" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -62,7 +62,7 @@
     <TipoCoordenada>Normalizadas</TipoCoordenada>
   </Plantilla>
   <Plantilla Emisor="Gregorio Aranda Garcia">
-    <Zona Campo="Zona1" X="47.38095238095238" Y="18.54974704890388" Ancho="48.333333333333336" Alto="15.851602023608768" Regex="">
+    <Zona Pagina="1" Campo="Zona1" X="47.38095238095238" Y="18.54974704890388" Ancho="48.333333333333336" Alto="15.851602023608768" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -76,7 +76,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona2" X="4.0476190476190474" Y="18.54974704890388" Ancho="43.333333333333336" Alto="23.102866779089375" Regex="">
+    <Zona Pagina="1" Campo="Zona2" X="4.0476190476190474" Y="18.54974704890388" Ancho="43.333333333333336" Alto="23.102866779089375" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -90,7 +90,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona3" X="59.76190476190476" Y="44.51939291736931" Ancho="35.23809523809524" Alto="51.433389544688026" Regex="">
+    <Zona Pagina="1" Campo="Zona3" X="59.76190476190476" Y="44.51939291736931" Ancho="35.23809523809524" Alto="51.433389544688026" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -109,7 +109,7 @@
     <TipoCoordenada>Normalizadas</TipoCoordenada>
   </Plantilla>
   <Plantilla Emisor="Leroy Merlin España, S.L.U.">
-    <Zona Campo="Zona1" X="1.903367496339678" Y="88.31437435367114" Ancho="96.63250366032212" Alto="10.237849017580144" Regex="">
+    <Zona Pagina="1" Campo="Zona1" X="1.903367496339678" Y="88.31437435367114" Ancho="96.63250366032212" Alto="10.237849017580144" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -123,7 +123,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona2" X="23.2796486090776" Y="1.2409513960703205" Ancho="49.194729136163986" Alto="6.8252326783867625" Regex="">
+    <Zona Pagina="1" Campo="Zona2" X="23.2796486090776" Y="1.2409513960703205" Ancho="49.194729136163986" Alto="6.8252326783867625" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -137,7 +137,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona3" X="55.05124450951684" Y="11.789038262668045" Ancho="36.896046852122986" Alto="10.031023784901757" Regex="">
+    <Zona Pagina="1" Campo="Zona3" X="55.05124450951684" Y="11.789038262668045" Ancho="36.896046852122986" Alto="10.031023784901757" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -151,7 +151,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona4" X="4.685212298682284" Y="21.199586349534645" Ancho="30.89311859443631" Alto="8.376421923474664" Regex="">
+    <Zona Pagina="1" Campo="Zona4" X="4.685212298682284" Y="21.199586349534645" Ancho="30.89311859443631" Alto="8.376421923474664" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -165,7 +165,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona5" X="44.07027818448023" Y="29.576008273009307" Ancho="53.879941434846266" Alto="59.66907962771458" Regex="">
+    <Zona Pagina="1" Campo="Zona5" X="44.07027818448023" Y="29.576008273009307" Ancho="53.879941434846266" Alto="59.66907962771458" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -179,7 +179,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona6" X="5.124450951683748" Y="37.849017580144775" Ancho="37.48169838945827" Alto="50.0517063081696" Regex="">
+    <Zona Pagina="1" Campo="Zona6" X="5.124450951683748" Y="37.849017580144775" Ancho="37.48169838945827" Alto="50.0517063081696" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -198,7 +198,7 @@
     <TipoCoordenada>Normalizadas</TipoCoordenada>
   </Plantilla>
   <Plantilla Emisor="Sarigabo, S.L.">
-    <Zona Campo="Zona1" X="5.966587112171838" Y="16.666666666666664" Ancho="44.39140811455847" Alto="9.25925925925926" Regex="">
+    <Zona Pagina="1" Campo="Zona1" X="5.966587112171838" Y="16.666666666666664" Ancho="44.39140811455847" Alto="9.25925925925926" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -217,7 +217,7 @@
     <TipoCoordenada>Normalizadas</TipoCoordenada>
   </Plantilla>
   <Plantilla Emisor="INVERSIONES CERRO EL PLOMO S.L.">
-    <Zona Campo="Zona1" X="3.579952267303103" Y="4.040404040404041" Ancho="42.004773269689736" Alto="14.309764309764308" Regex="">
+    <Zona Pagina="1" Campo="Zona1" X="3.579952267303103" Y="4.040404040404041" Ancho="42.004773269689736" Alto="14.309764309764308" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -231,7 +231,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona2" X="52.2673031026253" Y="15.488215488215488" Ancho="44.868735083532215" Alto="9.932659932659933" Regex="">
+    <Zona Pagina="1" Campo="Zona2" X="52.2673031026253" Y="15.488215488215488" Ancho="44.868735083532215" Alto="9.932659932659933" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -245,7 +245,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona3" X="3.1026252983293556" Y="18.855218855218855" Ancho="47.01670644391408" Alto="7.07070707070707" Regex="">
+    <Zona Pagina="1" Campo="Zona3" X="3.1026252983293556" Y="18.855218855218855" Ancho="47.01670644391408" Alto="7.07070707070707" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -259,7 +259,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona4" X="2.863961813842482" Y="65.31986531986533" Ancho="95.4653937947494" Alto="8.585858585858585" Regex="">
+    <Zona Pagina="1" Campo="Zona4" X="2.863961813842482" Y="65.31986531986533" Ancho="95.4653937947494" Alto="8.585858585858585" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -273,7 +273,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona5" X="57.51789976133651" Y="78.28282828282829" Ancho="40.81145584725537" Alto="5.218855218855219" Regex="">
+    <Zona Pagina="1" Campo="Zona5" X="57.51789976133651" Y="78.28282828282829" Ancho="40.81145584725537" Alto="5.218855218855219" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -292,7 +292,7 @@
     <TipoCoordenada>Normalizadas</TipoCoordenada>
   </Plantilla>
   <Plantilla Emisor="TELEFÓNICA SOLUCIONES I y C ESPAÑA SAU">
-    <Zona Campo="Zona1" X="5.417276720351391" Y="11.995863495346432" Ancho="39.0922401171303" Alto="5.791106514994829" Regex="">
+    <Zona Pagina="1" Campo="Zona1" X="5.417276720351391" Y="11.995863495346432" Ancho="39.0922401171303" Alto="5.791106514994829" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -306,7 +306,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona2" X="47.43777452415813" Y="11.995863495346432" Ancho="49.926793557833086" Alto="13.133402275077561" Regex="">
+    <Zona Pagina="1" Campo="Zona2" X="47.43777452415813" Y="11.995863495346432" Ancho="49.926793557833086" Alto="13.133402275077561" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -320,7 +320,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona3" X="49.194729136163986" Y="67.42502585315408" Ancho="48.16983894582723" Alto="11.478800413650465" Regex="">
+    <Zona Pagina="1" Campo="Zona3" X="49.194729136163986" Y="67.42502585315408" Ancho="48.16983894582723" Alto="11.478800413650465" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -339,7 +339,7 @@
     <TipoCoordenada>Normalizadas</TipoCoordenada>
   </Plantilla>
   <Plantilla Emisor="COMUNICACIONES Y SOLUCIONES CLOUD, S.L.">
-    <Zona Campo="Zona1" X="48.90190336749634" Y="13.133402275077561" Ancho="47.43777452415813" Alto="13.340227507755948" Regex="">
+    <Zona Pagina="1" Campo="Zona1" X="48.90190336749634" Y="13.133402275077561" Ancho="47.43777452415813" Alto="13.340227507755948" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -353,7 +353,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona2" X="2.635431918008785" Y="27.507755946225437" Ancho="59.29721815519766" Alto="4.3433298862461225" Regex="">
+    <Zona Pagina="1" Campo="Zona2" X="2.635431918008785" Y="27.507755946225437" Ancho="59.29721815519766" Alto="4.3433298862461225" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -367,7 +367,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona3" X="21.08345534407028" Y="82.52326783867632" Ancho="74.81698389458272" Alto="5.067218200620475" Regex="">
+    <Zona Pagina="1" Campo="Zona3" X="21.08345534407028" Y="82.52326783867632" Ancho="74.81698389458272" Alto="5.067218200620475" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -386,7 +386,7 @@
     <TipoCoordenada>Normalizadas</TipoCoordenada>
   </Plantilla>
   <Plantilla Emisor="INSTANT BYTE, S.L.">
-    <Zona Campo="Zona1" X="8.638360175695462" Y="19.33815925542916" Ancho="40.11713030746706" Alto="4.239917269906929" Regex="">
+    <Zona Pagina="1" Campo="Zona1" X="8.638360175695462" Y="19.33815925542916" Ancho="40.11713030746706" Alto="4.239917269906929" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -400,7 +400,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona2" X="52.56222547584187" Y="19.441571871768357" Ancho="43.63103953147877" Alto="12.20268872802482" Regex="">
+    <Zona Pagina="1" Campo="Zona2" X="52.56222547584187" Y="19.441571871768357" Ancho="43.63103953147877" Alto="12.20268872802482" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -414,7 +414,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona3" X="62.079062957540266" Y="77.04239917269908" Ancho="34.55344070278185" Alto="11.995863495346432" Regex="">
+    <Zona Pagina="1" Campo="Zona3" X="62.079062957540266" Y="77.04239917269908" Ancho="34.55344070278185" Alto="11.995863495346432" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -433,7 +433,7 @@
     <TipoCoordenada>Normalizadas</TipoCoordenada>
   </Plantilla>
   <Plantilla Emisor="PETROPRIX ENERGIA S.L.">
-    <Zona Campo="Zona1" X="6.002928257686676" Y="6.8252326783867625" Ancho="42.75256222547584" Alto="5.894519131334023" Regex="">
+    <Zona Pagina="1" Campo="Zona1" X="6.002928257686676" Y="6.8252326783867625" Ancho="42.75256222547584" Alto="5.894519131334023" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -447,7 +447,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona2" X="49.194729136163986" Y="12.616339193381593" Ancho="43.92386530014642" Alto="11.168562564632884" Regex="">
+    <Zona Pagina="1" Campo="Zona2" X="49.194729136163986" Y="12.616339193381593" Ancho="43.92386530014642" Alto="11.168562564632884" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
@@ -461,7 +461,7 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="Zona3" X="6.002928257686676" Y="71.04446742502584" Ancho="87.84773060029283" Alto="7.34229576008273" Regex="">
+    <Zona Pagina="1" Campo="Zona3" X="6.002928257686676" Y="71.04446742502584" Ancho="87.84773060029283" Alto="7.34229576008273" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>

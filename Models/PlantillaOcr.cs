@@ -38,6 +38,10 @@ namespace FacturasApp.Models
         [XmlAttribute("Campo")]
         public string Campo { get; set; } = string.Empty;
 
+        // Número de página a la que pertenece esta zona (1-based)
+        [XmlAttribute("Pagina")]
+        public int NumPagina { get; set; } = 1;
+
         // Coordenadas en porcentaje sobre el tamaño de la página
         // Así funcionan con cualquier resolución de escaneo
         [XmlAttribute("X")]

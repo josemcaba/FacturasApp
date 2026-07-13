@@ -27,45 +27,75 @@ namespace FacturasApp.Services
                 return _pdfTextExtractor.ExtraerZonasTexto(rutaPdf, plantilla);
             }
 
-            // ❌ Fallback a OCR
+            // ❌ Fallback a OCR — agrupar zonas por página
             using var engine = CrearEngine();
-            using var paginaBitmap = RenderizarPagina(rutaPdf, 0);
-
-            if (paginaBitmap == null) return resultado;
-
             ConfigurarParametrosTesseract(engine);
 
-            // Texto completo para respaldo (solo si alguna zona tiene RegexRespaldo)
-            string? textoCompleto = null;
-            bool necesitaRespaldo = plantilla.Zonas.Any(z => !string.IsNullOrEmpty(z.RegexRespaldo));
+            // Precachear páginas necesarias (una sola renderización por página)
+            var paginasRequeridas = plantilla.Zonas
+                .Select(z => z.NumPagina)
+                .Distinct()
+                .OrderBy(n => n)
+                .ToList();
 
-            foreach (var zona in plantilla.Zonas)
+            var cachePaginas = new Dictionary<int, Bitmap>();
+            foreach (int numPagina in paginasRequeridas)
             {
-                try
+                int indicePagina = numPagina - 1; // Convertir 1-based a 0-based
+                var paginaBitmap = RenderizarPagina(rutaPdf, indicePagina);
+                if (paginaBitmap != null)
+                    cachePaginas[numPagina] = paginaBitmap;
+            }
+
+            try
+            {
+                // Texto completo por página para respaldo (solo si alguna zona tiene RegexRespaldo)
+                var textosCompletosPorPagina = new Dictionary<int, string?>();
+                bool necesitaRespaldo = plantilla.Zonas.Any(z => !string.IsNullOrEmpty(z.RegexRespaldo));
+
+                foreach (var zona in plantilla.Zonas)
                 {
-                    var rect = zona.ToRectangle(paginaBitmap.Width, paginaBitmap.Height);
-
-                    using var zonaImagen = RecortarZona(paginaBitmap, rect);
-                    if (zonaImagen == null) continue;
-
-                    string textoDirecto = AplicarOcr(engine, zonaImagen).Trim();
-
-                    // Respaldo con regex si es necesario
-                    if (string.IsNullOrEmpty(textoDirecto) && !string.IsNullOrEmpty(zona.RegexRespaldo))
+                    try
                     {
-                        if (necesitaRespaldo && textoCompleto == null)
+                        if (!cachePaginas.TryGetValue(zona.NumPagina, out var paginaBitmap))
                         {
-                            textoCompleto = AplicarOcr(engine, paginaBitmap);
+                            resultado[zona.Campo] = string.Empty;
+                            continue;
                         }
-                        textoDirecto = zona.ExtraerConRespaldo(textoDirecto, textoCompleto);
-                    }
 
-                    resultado[zona.Campo] = textoDirecto;
+                        var rect = zona.ToRectangle(paginaBitmap.Width, paginaBitmap.Height);
+
+                        using var zonaImagen = RecortarZona(paginaBitmap, rect);
+                        if (zonaImagen == null)
+                        {
+                            resultado[zona.Campo] = string.Empty;
+                            continue;
+                        }
+
+                        string textoDirecto = AplicarOcr(engine, zonaImagen).Trim();
+
+                        // Respaldo con regex si es necesario
+                        if (string.IsNullOrEmpty(textoDirecto) && !string.IsNullOrEmpty(zona.RegexRespaldo))
+                        {
+                            if (necesitaRespaldo && !textosCompletosPorPagina.ContainsKey(zona.NumPagina))
+                            {
+                                textosCompletosPorPagina[zona.NumPagina] = AplicarOcr(engine, paginaBitmap);
+                            }
+                            textoDirecto = zona.ExtraerConRespaldo(textoDirecto, textosCompletosPorPagina[zona.NumPagina]);
+                        }
+
+                        resultado[zona.Campo] = textoDirecto;
+                    }
+                    catch
+                    {
+                        resultado[zona.Campo] = string.Empty;
+                    }
                 }
-                catch
-                {
-                    resultado[zona.Campo] = string.Empty;
-                }
+            }
+            finally
+            {
+                foreach (var bitmap in cachePaginas.Values)
+                    bitmap.Dispose();
             }
 
             return resultado;
@@ -81,6 +111,8 @@ namespace FacturasApp.Services
         {
             if (zona == null)
                 return new ResultadoExtraccionTexto(string.Empty, ResultadoExtraccionTexto.MetodoExtraccion.Ocr, estaVacia: true);
+
+            int indicePagina = zona.NumPagina - 1; // Convertir 1-based a 0-based
 
             // 🔍 Verificar si el PDF tiene texto seleccionable
             bool esSeleccionable = _pdfTextExtractor.EsSeleccionable(rutaPdf);
@@ -100,7 +132,7 @@ namespace FacturasApp.Services
 
             // ❌ Fallback a OCR
             using var engine = CrearEngine();
-            using var paginaBitmap = RenderizarPagina(rutaPdf, 0);
+            using var paginaBitmap = RenderizarPagina(rutaPdf, indicePagina);
 
             if (paginaBitmap == null)
                 return new ResultadoExtraccionTexto(string.Empty, ResultadoExtraccionTexto.MetodoExtraccion.Ocr, estaVacia: true);
