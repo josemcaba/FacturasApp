@@ -30,6 +30,7 @@ namespace FacturasApp.Services.Parsers
                 new PescaderiaSalvadorParser(),
                 new InversionesCerroPlomoParser(),
                 new AmazonAwsParser(),
+                new BixpeParser(),
             ];
         }
 
