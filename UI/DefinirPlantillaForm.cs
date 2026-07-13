@@ -16,6 +16,7 @@ namespace FacturasApp.UI
         private string _rutaPdf = string.Empty;
         private string _nombreEmisor = string.Empty;
         private PlantillaOcr _plantilla = new();
+        private readonly HashSet<string> _emisoresConPlantilla = new(StringComparer.OrdinalIgnoreCase);
 
         // Multi-página
         private readonly List<Bitmap> _imagenPaginas = new();
@@ -33,6 +34,7 @@ namespace FacturasApp.UI
             if (!EnvironmentService.EsDesarrollo())
             {
                 btnGuardar.Hide();
+                btnEliminarPlantilla.Hide();
                 Text = "FacturasApp - Modo Lectura (Cliente)";
             }
             else
@@ -45,8 +47,13 @@ namespace FacturasApp.UI
             if (cmbEmisor.Items.Count > 0)
                 cmbEmisor.SelectedIndex = 0;
 
+            // Cargar emisores que tienen plantilla definida
+            foreach (var emisor in _plantillaService.ObtenerEmisoresConPlantilla())
+                _emisoresConPlantilla.Add(emisor);
+
             lstZonas.SelectedIndexChanged += LstZonas_SelectedIndexChanged;
             tabPaginas.SelectedIndexChanged += TabPaginas_SelectedIndexChanged;
+            cmbEmisor.DrawItem += CmbEmisor_DrawItem;
         }
 
         // ── Carga del PDF ─────────────────────────────────────────────────────
@@ -135,6 +142,25 @@ namespace FacturasApp.UI
             if (tabPaginas.SelectedIndex < 0) return;
             _paginaActual = tabPaginas.SelectedIndex;
             MostrarPaginaActual();
+        }
+
+        private void CmbEmisor_DrawItem(object? sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+
+            e.DrawBackground();
+
+            string texto = cmbEmisor.Items[e.Index]?.ToString() ?? string.Empty;
+            bool tienePlantilla = _emisoresConPlantilla.Contains(texto);
+
+            Font baseFont = cmbEmisor.Font ?? this.Font;
+            using var font = new Font(baseFont, tienePlantilla ? FontStyle.Bold : FontStyle.Regular);
+            using var brush = new SolidBrush(e.ForeColor);
+
+            Rectangle bounds = e.Bounds;
+            Font itemFont = e.Font ?? this.Font;
+            int y = bounds.Y + (bounds.Height - itemFont.Height) / 2;
+            e.Graphics.DrawString(texto, font, brush, bounds.X + 3, y);
         }
 
         private void MostrarPaginaActual()
@@ -471,6 +497,62 @@ namespace FacturasApp.UI
         {
             LimpiarPaginas();
             base.Close();
+        }
+
+        private void BtnEliminarPlantilla_Click(object? sender, EventArgs e)
+        {
+            _nombreEmisor = cmbEmisor.Text.Trim();
+
+            if (string.IsNullOrEmpty(_nombreEmisor))
+            {
+                MessageBox.Show("Selecciona un emisor primero.",
+                    "Campo requerido",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var existente = _plantillaService.ObtenerPorEmisor(_nombreEmisor);
+            if (existente == null)
+            {
+                MessageBox.Show($"No existe plantilla para '{_nombreEmisor}'.",
+                    "Sin plantilla",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var resultado = MessageBox.Show(
+                $"¿Eliminar la plantilla completa del emisor?\n\n" +
+                $"\"{_nombreEmisor}\"\n\n" +
+                $"Se eliminarán {existente.Zonas.Count} zona(s) definida(s).",
+                "Confirmar eliminación",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button2);
+
+            if (resultado != DialogResult.Yes) return;
+
+            try
+            {
+                _plantillaService.EliminarPlantilla(_nombreEmisor);
+                _plantilla = new PlantillaOcr { Emisor = _nombreEmisor };
+
+                LimpiarPaginas();
+                ActualizarListaZonas();
+                txtTexto.Text = string.Empty;
+                txtTexto.ForeColor = Color.Black;
+
+                MessageBox.Show(
+                    $"Plantilla de '{_nombreEmisor}' eliminada correctamente.",
+                    "Plantilla eliminada",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Error eliminando plantilla:\n\n{ex.Message}",
+                    "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

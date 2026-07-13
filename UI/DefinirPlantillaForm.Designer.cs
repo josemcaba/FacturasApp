@@ -23,6 +23,7 @@ namespace FacturasApp.UI
             btnEliminarZona = new Button();
             btnGuardar = new Button();
             btnCerrar = new Button();
+            btnEliminarPlantilla = new Button();
             lblEmisor = new Label();
             cmbEmisor = new ComboBox();
             lblZonas = new Label();
@@ -123,6 +124,20 @@ namespace FacturasApp.UI
             btnCerrar.Text = "Cerrar";
             btnCerrar.Click += btnCerrar_Click;
             //
+            // btnEliminarPlantilla
+            //
+            btnEliminarPlantilla.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            btnEliminarPlantilla.BackColor = Color.FromArgb(200, 50, 50);
+            btnEliminarPlantilla.FlatStyle = FlatStyle.Flat;
+            btnEliminarPlantilla.ForeColor = Color.White;
+            btnEliminarPlantilla.Location = new Point(173, 572);
+            btnEliminarPlantilla.Name = "btnEliminarPlantilla";
+            btnEliminarPlantilla.Size = new Size(155, 34);
+            btnEliminarPlantilla.TabIndex = 16;
+            btnEliminarPlantilla.Text = "Eliminar plantilla";
+            btnEliminarPlantilla.UseVisualStyleBackColor = false;
+            btnEliminarPlantilla.Click += BtnEliminarPlantilla_Click;
+            //
             // lblEmisor
             //
             lblEmisor.AutoSize = true;
@@ -134,8 +149,10 @@ namespace FacturasApp.UI
             //
             // cmbEmisor
             //
+            cmbEmisor.DrawMode = DrawMode.OwnerDrawFixed;
             cmbEmisor.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbEmisor.FormattingEnabled = true;
+            cmbEmisor.ItemHeight = 24;
             cmbEmisor.Location = new Point(12, 35);
             cmbEmisor.Name = "cmbEmisor";
             cmbEmisor.Size = new Size(430, 28);
@@ -178,6 +195,7 @@ namespace FacturasApp.UI
             Controls.Add(btnEliminarZona);
             Controls.Add(btnGuardar);
             Controls.Add(btnCerrar);
+            Controls.Add(btnEliminarPlantilla);
             Controls.Add(picFactura);
             Font = new Font("Segoe UI", 9F);
             MinimumSize = new Size(898, 665);
@@ -198,6 +216,7 @@ namespace FacturasApp.UI
         private Button btnEliminarZona;
         private Button btnGuardar;
         private Button btnCerrar;
+        private Button btnEliminarPlantilla;
         private Label lblEmisor;
         private ComboBox cmbEmisor;
         private Label lblZonas;
