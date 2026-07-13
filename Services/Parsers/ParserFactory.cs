@@ -28,6 +28,7 @@ namespace FacturasApp.Services.Parsers
                 new IgnacioIbanezParser(),
                 new PescaderiaMarengoParser(),
                 new PescaderiaSalvadorParser(),
+                new InversionesCerroPlomoParser(),
             ];
         }
 
