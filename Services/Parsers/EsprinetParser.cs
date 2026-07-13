@@ -13,7 +13,7 @@ namespace FacturasApp.Services.Parsers
             ["B84443985", "Esprinet"];
 
         protected override Regex RegexFecha { get; } = new(
-            @"COMERCIAL / SALES REP\s+(\d{2}/\d{2}/\d{2})",
+            @"COMERCIAL / SALES REP\s+(\d{1,2}/\d{2}/\d{2})",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexNumero = new(
