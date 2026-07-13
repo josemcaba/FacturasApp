@@ -51,3 +51,4 @@ ClosedXML (Excel), CsvHelper, PdfPig (PDF text), PDFtoImage, Tesseract (OCR)
 - `Proveedor` y `Cliente` son subclases vacías de `Empresa` (solo por claridad semántica)
 - El enum `EstadoFactura` está en `Models/` (no en Services/)
 - Para agregar un nuevo parser: heredar de `BaseParser`, declarar `Nombre`, `Nif`, `Identificadores`, y sobreescribir `Parsear()`
+- Las variable `Nombre` y `Nif` ya contienen los correspondientes valores del proveedor (no es necesarios extraerlos del texto)

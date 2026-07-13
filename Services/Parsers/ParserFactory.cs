@@ -31,6 +31,14 @@ namespace FacturasApp.Services.Parsers
                 new InversionesCerroPlomoParser(),
                 new AmazonAwsParser(),
                 new BixpeParser(),
+                new EsprinetParser(),
+                new EurocabosParser(),
+                new FobosParser(),
+                new HostaliaParser(),
+                new ComunicacionesCloudParser(),
+                new InstantByteParser(),
+                new PetroprixParser(),
+                new SewanParser(),
             ];
         }
 
