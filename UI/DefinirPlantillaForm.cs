@@ -54,6 +54,10 @@ namespace FacturasApp.UI
             lstZonas.SelectedIndexChanged += LstZonas_SelectedIndexChanged;
             tabPaginas.SelectedIndexChanged += TabPaginas_SelectedIndexChanged;
             cmbEmisor.DrawItem += CmbEmisor_DrawItem;
+            cmbEmisor.SelectedIndexChanged += CmbEmisor_SelectedIndexChanged;
+
+            // Cargar plantilla del emisor seleccionado al iniciar
+            CargarPlantillaEmisor();
         }
 
         // ── Carga del PDF ─────────────────────────────────────────────────────
@@ -89,21 +93,6 @@ namespace FacturasApp.UI
 
             // Crear pestañas
             CrearPestanas();
-
-            _nombreEmisor = cmbEmisor.Text.Trim();
-            var existente = _plantillaService.ObtenerPorEmisor(_nombreEmisor);
-            if (existente != null)
-            {
-                _plantilla = existente;
-                MessageBox.Show(
-                    $"Se ha cargado la plantilla existente para '{_nombreEmisor}'",
-                    "Plantilla cargada",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            else
-            {
-                _plantilla = new PlantillaOcr { Emisor = _nombreEmisor };
-            }
 
             // Seleccionar primera pestaña
             if (tabPaginas.TabCount > 0)
@@ -163,11 +152,27 @@ namespace FacturasApp.UI
             e.Graphics.DrawString(texto, font, brush, bounds.X + 3, y);
         }
 
+        private void CmbEmisor_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            CargarPlantillaEmisor();
+        }
+
+        private void CargarPlantillaEmisor()
+        {
+            _nombreEmisor = cmbEmisor.Text.Trim();
+            if (string.IsNullOrEmpty(_nombreEmisor)) return;
+
+            var existente = _plantillaService.ObtenerPorEmisor(_nombreEmisor);
+            _plantilla = existente ?? new PlantillaOcr { Emisor = _nombreEmisor };
+
+            ActualizarListaZonas();
+            picFactura.Invalidate();
+        }
+
         private void MostrarPaginaActual()
         {
             if (_paginaActual < 0 || _paginaActual >= _imagenPaginas.Count) return;
 
-            picFactura.Image?.Dispose();
             picFactura.Image = _imagenPaginas[_paginaActual];
             _rectanguloActivo = false;
 

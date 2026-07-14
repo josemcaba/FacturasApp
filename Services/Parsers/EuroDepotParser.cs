@@ -3,25 +3,24 @@ using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
-    public class InstantByteParser : BaseParser
+    public class EuroDepotParser: BaseParser
     {
-        public override string Nombre => "INSTANT BYTE, S.L.";
-        public override string Nif => "B83680082";
+        public override string Nombre => "EURO DEPOT ESPAÑA S.A.U.";
+        public override string Nif => "A62018064";
 
         protected override string[] Identificadores =>
-            ["palacios", "instantbyte.com"];
-
+            ["brico", "depot"];
 
         private static readonly Regex RegexNumero = new(
-            @"Factura:\s+(\S+)",
+            @"N.\s+factura\s+FT\s+(\S+)",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexReceptorNombre = new(
-            @"Cliente .*[\r\n]+(.+)",
-            RegexOptions.Compiled | RegexOptions.Multiline);
+            @"Dirección de factura[\r\n]+(.+)",
+            RegexOptions.Compiled);
 
         private static readonly Regex RegexImportes = new(
-            @"([\d,.]+)[\r\n]+([\d,.]+)[\r\n]+0,00[\r\n]+([\d,.]+)",
+            @"Total\s+.*?([\d,.]+)\s+([\d,.]+)\s+[\d,.]+\s+([\d,.]+)",
             RegexOptions.Compiled);
 
         public override Factura Parsear(string texto, string rutaArchivo, bool viaOcr)
@@ -30,13 +29,12 @@ namespace FacturasApp.Services.Parsers
 
             factura.NumeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
             factura.Fecha = ExtraerFecha(texto);
-            factura.Receptor.Nombre = ExtraerGrupo(RegexReceptorNombre, texto, 1);
+            factura.Receptor.Nombre = ExtraerGrupo(RegexReceptorNombre, texto, 1).ToUpper();
             factura.Receptor.NIF = ExtraerNif(texto);
             factura.BaseImponible = ExtraerDecimal(RegexImportes, texto, 1);
             factura.PorcentajeIVA = 21m;
             factura.CuotaIVA = ExtraerDecimal(RegexImportes, texto, 2);
             factura.Total = ExtraerDecimal(RegexImportes, texto, 3);
-
             factura.Estado = FacturaEstado.Determinar(factura);
 
             return factura;

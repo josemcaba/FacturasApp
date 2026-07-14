@@ -36,7 +36,7 @@ namespace FacturasApp.Services.Parsers
         /// Puede ser sobrescrita si se necesita un patrón específico.
         /// </summary>
         protected virtual Regex RegexFecha { get; } = new(
-            @"\b(\d{1,2}[\/\.-](?:\d{1,2}|\D{3})[\/\.-]\d{2,4})\b",
+            @"\b(\d{1,4}[\/\.-](?:\d{1,2}|\D{3})[\/\.-]\d{2,4})\b",
             RegexOptions.Compiled);
 
         /// <summary>
@@ -206,15 +206,23 @@ namespace FacturasApp.Services.Parsers
             }
 
             Regex RegexFechaFormateada = new(
-                @"\b(\d{1,2})[\/\.-]((?:\d{1,2}|\D{3}))[\/\.-](\d{2,4})\b",
+                @"\b(\d{1,4})[\/\.-]((?:\d{1,2}|\D{3}))[\/\.-](\d{1,4})\b",
                 RegexOptions.Compiled);
 
             m = RegexFechaFormateada.Matches(m[0].Value);
             if (m.Count != 1)
                 return null;
 
+            string g1 = m[0].Groups[1].Value;
+            string g2 = m[0].Groups[2].Value;
+            string g3 = m[0].Groups[3].Value;
+
+            string fechaParseo = g3.Length == 4
+                ? $"{g3}/{g2}/{g1}"
+                : $"{g1}/{g2}/{g3}";
+
             return DateTime.TryParse(
-                $"{m[0].Groups[1].Value}/{m[0].Groups[2].Value}/{m[0].Groups[3].Value}",
+                fechaParseo,
                 new CultureInfo("es-ES"),
                 DateTimeStyles.None, out var f) ? f : null;
         }

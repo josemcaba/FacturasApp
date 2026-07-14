@@ -40,6 +40,12 @@ namespace FacturasApp.Services.Parsers
                 new PetroprixParser(),
                 new SewanParser(),
                 new VerisureParser(),
+                new RangnyValenciaParser(),
+                new EuroDepotParser(),
+                new JuanLucasParser(),
+                new CathedralSwParser(),
+                new FasaworldParser(),
+                new EnergiaXxiParser(),
             ];
         }
 
