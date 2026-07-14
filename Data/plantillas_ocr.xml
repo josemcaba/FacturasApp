@@ -780,7 +780,129 @@
         <PaddingAutoRecorte>5</PaddingAutoRecorte>
       </Preprocesamiento>
     </Zona>
-    <Zona Campo="P2_Z1" Pagina="2" X="3.9334341906202726" Y="13.58288770053476" Ancho="93.94856278366112" Alto="84.1711229946524" Regex="">
+    <Zona Campo="P2_Z1" Pagina="2" X="3.6308623298033282" Y="37.64705882352941" Ancho="94.70499243570349" Alto="8.342245989304812" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <AnchoReferencia>1000</AnchoReferencia>
+    <AltoReferencia>1000</AltoReferencia>
+    <TipoCoordenada>Normalizadas</TipoCoordenada>
+  </Plantilla>
+  <Plantilla Emisor="TD SYNNEX SPAIN, S.L.U.">
+    <Zona Campo="P1_Z1" Pagina="1" X="5.606060606060606" Y="2.7807486631016043" Ancho="44.24242424242424" Alto="8.663101604278074" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="P1_Z2" Pagina="1" X="5.757575757575758" Y="17.860962566844922" Ancho="38.78787878787879" Alto="8.235294117647058" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="P1_Z3" Pagina="1" X="5.757575757575758" Y="29.62566844919786" Ancho="44.54545454545455" Alto="6.951871657754011" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="P1_Z4" Pagina="1" X="6.212121212121212" Y="46.31016042780748" Ancho="89.39393939393939" Alto="23.101604278074866" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <AnchoReferencia>1000</AnchoReferencia>
+    <AltoReferencia>1000</AltoReferencia>
+    <TipoCoordenada>Normalizadas</TipoCoordenada>
+  </Plantilla>
+  <Plantilla Emisor="AUTOMOTOR PREMIUM, S.L.">
+    <Zona Campo="P1_Z1" Pagina="1" X="65.80937972768533" Y="17.326203208556148" Ancho="23.751891074130103" Alto="10.37433155080214" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="P1_Z2" Pagina="1" X="7.564296520423601" Y="14.331550802139038" Ancho="22.390317700453856" Alto="8.55614973262032" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="P1_Z3" Pagina="1" X="7.2617246596066565" Y="26.09625668449198" Ancho="24.659606656580937" Alto="2.6737967914438503" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="P1_Z4" Pagina="1" X="55.06807866868382" Y="80.53475935828877" Ancho="44.175491679273826" Alto="5.240641711229946" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>

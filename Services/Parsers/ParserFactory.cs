@@ -1,4 +1,5 @@
-﻿using FacturasApp.Models;
+﻿using DocumentFormat.OpenXml.Bibliography;
+using FacturasApp.Models;
 
 namespace FacturasApp.Services.Parsers
 {
@@ -47,6 +48,9 @@ namespace FacturasApp.Services.Parsers
                 new FasaworldParser(),
                 new EnergiaXxiParser(),
                 new CocinArteParser(),
+                new TdSynnexParser(),
+                new AutomotorPremiumParser(),
+                new RyanairDacParser(),
             ];
         }
 
