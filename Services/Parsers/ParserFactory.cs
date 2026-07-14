@@ -46,6 +46,7 @@ namespace FacturasApp.Services.Parsers
                 new CathedralSwParser(),
                 new FasaworldParser(),
                 new EnergiaXxiParser(),
+                new CocinArteParser(),
             ];
         }
 
