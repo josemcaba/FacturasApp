@@ -36,7 +36,7 @@ namespace FacturasApp.Services.Parsers
         /// Puede ser sobrescrita si se necesita un patrón específico.
         /// </summary>
         protected virtual Regex RegexFecha { get; } = new(
-            @"\b(\d{1,4}[\/\.-](?:\d{1,2}|\D{3})[\/\.-]\d{2,4})\b",
+            @"\b(\d{1,4}\s*[\/\.-]\s*(?:\d{1,2}|\D{3})\s*[\/\.-]\s*\d{1,4})\b",
             RegexOptions.Compiled);
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace FacturasApp.Services.Parsers
         /// Puede ser sobrescrita si se necesita un patrón específico.
         /// </summary>
         protected virtual Regex RegexNif { get; } = new(
-            @"\b(?:ES|)((?:\d{8}(?:-|)[A-Z]|[A-Z](?:-|)\d{8}))\b",
+            @"\b(?:ES|)((?:(?:[A-Z]|\d)\d{7}(?:-|)[A-Z]|[A-Z](?:-|)\d{8}))\b",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         // ── Helpers de extracción ────────────────────────────────────────────
@@ -153,11 +153,17 @@ namespace FacturasApp.Services.Parsers
                          .Trim()
                          .ToUpper();
 
+                // Tomamos solo los primeros 9 caracteres, que es la longitud estándar de un NIF
+                if (nif.Length > 9)
+                    nif = nif.Substring(0, 9);
+
                 // Ignoramos el NIF del emisor
                 if (nif.Equals(nifEmisor, StringComparison.OrdinalIgnoreCase))
                     continue;
 
-                return nif; // Primer NIF que no es el del emisor
+                // Comprobamos si el NIF es válido usando la clase NifValidator
+                if (NifValidator.ValidarNif(nif))
+                    return nif; // Primer NIF válido que no es el del emisor
             }
 
             return string.Empty;
@@ -176,6 +182,7 @@ namespace FacturasApp.Services.Parsers
             string v = valor.Trim()
                 .Replace("€", "")
                 .Replace("%", "")
+                .Replace(" ", "")
                 .Trim();
 
             if (v.Contains(',') && v.Contains('.'))
@@ -206,7 +213,7 @@ namespace FacturasApp.Services.Parsers
             }
 
             Regex RegexFechaFormateada = new(
-                @"\b(\d{1,4})[\/\.-]((?:\d{1,2}|\D{3}))[\/\.-](\d{1,4})\b",
+                @"\b(\d{1,4})\s*[\/\.-]\s*((?:\d{1,2}|\D{3}))\s*[\/\.-]\s*(\d{1,4})\b",
                 RegexOptions.Compiled);
 
             m = RegexFechaFormateada.Matches(m[0].Value);

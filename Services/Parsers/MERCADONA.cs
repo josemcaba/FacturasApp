@@ -10,26 +10,17 @@ namespace FacturasApp.Services.Parsers
 
         protected override string[] Identificadores =>
             ["mercadona s.a.", "a-46103834"];
-
+        
         private static readonly Regex RegexNumero = new(
             @"N.\s*Factura:\s*(.*?)\s+",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            RegexOptions.Compiled);
 
         private static readonly Regex RegexNombre = new(
             @"Razón Social: (.*)",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        private static readonly Regex _regexNif = new(
-            @"NIF: ([A-Z]?\d{7,8}[A-Z]?)\s",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        protected override Regex RegexNif => _regexNif;
+            RegexOptions.Compiled);
 
         protected override Regex RegexFecha { get; } = new(
             @"\bFecha\sFactura:\s*(.*?)[\s\n\r]+",
-            RegexOptions.Compiled);
-
-        private static readonly Regex RegexLineaIva = new(
-            @"(\d+)% ([\d,]+) ([\d,.]+) ([\d,.]+)\r",
             RegexOptions.Compiled);
 
         // ── Parsear devuelve solo la primera línea de IVA (compatibilidad) ──
@@ -37,6 +28,10 @@ namespace FacturasApp.Services.Parsers
         {
             return ParsearMultiple(texto, rutaArchivo, viaOcr).First();
         }
+
+        private static readonly Regex RegexLineaIva = new(
+            @"(\d+)% ([\d,]+) ([\d,.]+) ([\d,.]+)\r",
+            RegexOptions.Compiled);
 
         public override List<Factura> ParsearMultiple(
             string texto, string rutaArchivo, bool viaOcr)

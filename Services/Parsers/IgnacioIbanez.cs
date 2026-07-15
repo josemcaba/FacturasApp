@@ -12,24 +12,24 @@ namespace FacturasApp.Services.Parsers
             ["SERVINFOTEC", "33.360.360-X"];
 
         private static readonly Regex RegexNumero = new(
-            @"Número\s+Fecha[\s\n\r]+([^\s]+)",
+            @"Número\s+([^\s]+)",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexNombre = new(
-            @"952\s*27\s*30\s*91[\s\n\r]+(.+)",
+            @"CLIENTE[\n\r]+(.+)",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex _regexNif = new(
-            @"\b(.+)[\r\n]+\d{6}\b",
+            @"(.{9,14})",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
         protected override Regex RegexNif => _regexNif;
 
         private static readonly Regex RegexImportes = new(
-            @"TOTAL[\n\r]+.*?%[\n\r\s]*(.+?)\s(.+?)\s(.+?)\s(.+?)\s(.+?)[\n\r\s]",
+            @"([\d.,]+)\s+([\d.,]+)\s+([\d.,]+)\s+[\d.,]+\s+[\d.,]+",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexTotal = new(
-            @"\s(.+?)\s+Euros",
+            @"TOTAL[\r\n]+([\d.,]+)",
             RegexOptions.Compiled);
 
         public override Factura Parsear(string texto, string rutaArchivo, bool viaOcr)
@@ -45,9 +45,10 @@ namespace FacturasApp.Services.Parsers
             factura.NumeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
             factura.Fecha = ExtraerFecha(RegexFecha, texto);
             factura.Receptor.Nombre = ExtraerGrupo(RegexNombre, texto, 1);
-            factura.Receptor.NIF = ExtraerNif(RegexNif, texto, Nif);
+            factura.Receptor.NIF = ExtraerNif(texto);
             factura.BaseImponible = ExtraerDecimal(RegexImportes, texto, 1);
             factura.PorcentajeIVA = ExtraerDecimal(RegexImportes, texto, 2);
+            factura.CuotaIVA = ExtraerDecimal(RegexImportes, texto, 3);
             factura.Total = ExtraerDecimal(RegexTotal, texto, 1);
             factura.Estado = FacturaEstado.Determinar(factura);
             

@@ -920,4 +920,140 @@
     <AltoReferencia>1000</AltoReferencia>
     <TipoCoordenada>Normalizadas</TipoCoordenada>
   </Plantilla>
+  <Plantilla Emisor="Ignacio Ibañez Pacheco">
+    <Zona Campo="P1_Z1" Pagina="1" X="49.016641452344935" Y="5.454545454545454" Ancho="46.89863842662632" Alto="17.11229946524064" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="P1_Z2" Pagina="1" X="3.7821482602118004" Y="18.609625668449198" Ancho="44.175491679273826" Alto="3.9572192513368987" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="P1_Z3" Pagina="1" X="22.239031770045386" Y="80.74866310160428" Ancho="50.983358547655065" Alto="5.454545454545454" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="P1_Z4" Pagina="1" X="74.73524962178517" Y="81.17647058823529" Ancho="20.87745839636914" Alto="8.449197860962567" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <AnchoReferencia>1000</AnchoReferencia>
+    <AltoReferencia>1000</AltoReferencia>
+    <TipoCoordenada>Normalizadas</TipoCoordenada>
+  </Plantilla>
+  <Plantilla Emisor="IMPULSO SARIGABO, SLU">
+    <Zona Campo="P1_Z1" Pagina="1" X="50.60606060606061" Y="13.475935828877006" Ancho="43.78787878787879" Alto="14.43850267379679" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="P1_Z2" Pagina="1" X="28.030303030303028" Y="27.27272727272727" Ancho="13.333333333333334" Alto="6.951871657754011" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="P1_Z3" Pagina="1" X="40.75757575757576" Y="27.593582887700535" Ancho="30.757575757575754" Alto="5.240641711229946" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="P1_Z4" Pagina="1" X="51.515151515151516" Y="82.35294117647058" Ancho="46.96969696969697" Alto="4.491978609625669" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="P1_Z5" Pagina="1" X="72.27272727272728" Y="71.33689839572193" Ancho="25.303030303030305" Alto="3.1016042780748663" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <AnchoReferencia>1000</AnchoReferencia>
+    <AltoReferencia>1000</AltoReferencia>
+    <TipoCoordenada>Normalizadas</TipoCoordenada>
+  </Plantilla>
 </PlantillasOcr>

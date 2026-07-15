@@ -51,6 +51,10 @@ namespace FacturasApp.Services.Parsers
                 new TdSynnexParser(),
                 new AutomotorPremiumParser(),
                 new RyanairDacParser(),
+                new NorelisParser(),
+                new EasorParser(),
+                new SimyoParser(),
+                new IonosParser(),
             ];
         }
 
