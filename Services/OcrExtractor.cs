@@ -37,7 +37,7 @@ namespace FacturasApp.Services
             using var engine = CrearEngine();
             ConfigurarParametrosTesseract(engine);
 
-            var bitmap = RenderizarPaginaReducida(rutaPdf, 0, 150);
+            var bitmap = RenderizarPaginaReducida(rutaPdf, 0, 300);
             if (bitmap == null) return string.Empty;
 
             int altoTercio = bitmap.Height / 3;

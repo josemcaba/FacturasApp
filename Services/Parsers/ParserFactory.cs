@@ -19,6 +19,7 @@ namespace FacturasApp.Services.Parsers
                 new CathedralSwParser(),
                 new CocinArteParser(),
                 new ComunicacionesCloudParser(),
+                new CostaSolBalearParser(),
                 new DisgoParser(),
                 new DulceriaParser(),
                 new EasorParser(),
