@@ -8,7 +8,6 @@ namespace FacturasApp.Services.Parsers
     {
         public override string Nombre => "PETROPRIX ENERGIA S.L.";
         public override string Nif => "B23709892";
-        public override string Concepto => "624";
 
         protected override string[] Identificadores =>
             ["B23709892", "PETROPRIX"];
@@ -18,19 +17,19 @@ namespace FacturasApp.Services.Parsers
             RegexOptions.Compiled);
 
         private static readonly Regex RegexNumero = new(
-            @"FACTURA\s+(\d+)",
+            @"FACTURA\s+(.+)",
             RegexOptions.Compiled);
 
         private static readonly Regex RegexReceptorNombre = new(
-            @"CLIENTE[\n\r]+(.+)",
+            @"Nombre:\s+(.+)",
             RegexOptions.Compiled | RegexOptions.Multiline);
 
-        private static readonly Regex RegexReceptorNif = new(
-            @"CIF/NF\s*:\s*(\d{8}[A-Z])",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
         private static readonly Regex RegexImportes = new(
-            @"Factura[\r\n]*([\d.,]+).*?([\d.,]+)\s*.*?([\d.,]+)\s+.*?([\d.,]+)",
+            @"IVA[\r\n]+([\d.,]+).*?([\d.,]+)\s*%.*?([\d.,]+)",
+            RegexOptions.Compiled);
+
+        private static readonly Regex RegexTotal = new(
+            @"Total Factura[\r\n]+([\d.,]+)",
             RegexOptions.Compiled);
 
         private DateTime? ExtraerFechaEspañol(string texto)
@@ -52,20 +51,14 @@ namespace FacturasApp.Services.Parsers
         {
             var factura = CrearFacturaBase(rutaArchivo, viaOcr);
 
+            factura.Concepto = "624";
             factura.NumeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
             factura.Fecha = ExtraerFechaEspañol(texto);
             factura.Receptor.Nombre = ExtraerGrupo(RegexReceptorNombre, texto, 1).Trim();
-            factura.Receptor.NIF = ExtraerGrupo(RegexReceptorNif, texto, 1);
-
-            var mImportes = RegexImportes.Match(texto);
-            if (mImportes.Success)
-            {
-                factura.BaseImponible = ParsearDecimal(mImportes.Groups[1].Value);
-                factura.PorcentajeIVA = ParsearDecimal(mImportes.Groups[2].Value);
-                factura.CuotaIVA = ParsearDecimal(mImportes.Groups[3].Value);
-                factura.Total = ParsearDecimal(mImportes.Groups[4].Value);
-            }
-
+            factura.Receptor.NIF = ExtraerNif(texto);
+            factura.BaseImponible = ExtraerDecimal(RegexImportes, texto, 1);
+            factura.PorcentajeIVA = ExtraerDecimal(RegexImportes, texto, 2);
+            factura.Total = ExtraerDecimal(RegexTotal, texto, 1);
             factura.Estado = FacturaEstado.Determinar(factura);
 
             return factura;

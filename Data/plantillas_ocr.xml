@@ -366,53 +366,6 @@
     <AltoReferencia>1000</AltoReferencia>
     <TipoCoordenada>Normalizadas</TipoCoordenada>
   </Plantilla>
-  <Plantilla Emisor="PETROPRIX ENERGIA S.L.">
-    <Zona Campo="Zona1" Pagina="1" X="6.002928257686676" Y="6.8252326783867625" Ancho="42.75256222547584" Alto="5.894519131334023" Regex="">
-      <Opcional>false</Opcional>
-      <Preprocesamiento>
-        <EscalaGrises>true</EscalaGrises>
-        <Binarizacion>false</Binarizacion>
-        <UmbralBinarizacion>128</UmbralBinarizacion>
-        <Redimensionar>false</Redimensionar>
-        <FactorEscala>2</FactorEscala>
-        <EliminarRuido>true</EliminarRuido>
-        <InvertirColores>false</InvertirColores>
-        <AutoRecortar>false</AutoRecortar>
-        <PaddingAutoRecorte>5</PaddingAutoRecorte>
-      </Preprocesamiento>
-    </Zona>
-    <Zona Campo="Zona2" Pagina="1" X="49.194729136163986" Y="12.616339193381593" Ancho="43.92386530014642" Alto="11.168562564632884" Regex="">
-      <Opcional>false</Opcional>
-      <Preprocesamiento>
-        <EscalaGrises>true</EscalaGrises>
-        <Binarizacion>false</Binarizacion>
-        <UmbralBinarizacion>128</UmbralBinarizacion>
-        <Redimensionar>false</Redimensionar>
-        <FactorEscala>2</FactorEscala>
-        <EliminarRuido>true</EliminarRuido>
-        <InvertirColores>false</InvertirColores>
-        <AutoRecortar>false</AutoRecortar>
-        <PaddingAutoRecorte>5</PaddingAutoRecorte>
-      </Preprocesamiento>
-    </Zona>
-    <Zona Campo="Zona3" Pagina="1" X="6.002928257686676" Y="71.04446742502584" Ancho="87.84773060029283" Alto="7.34229576008273" Regex="">
-      <Opcional>false</Opcional>
-      <Preprocesamiento>
-        <EscalaGrises>true</EscalaGrises>
-        <Binarizacion>false</Binarizacion>
-        <UmbralBinarizacion>128</UmbralBinarizacion>
-        <Redimensionar>false</Redimensionar>
-        <FactorEscala>2</FactorEscala>
-        <EliminarRuido>true</EliminarRuido>
-        <InvertirColores>false</InvertirColores>
-        <AutoRecortar>false</AutoRecortar>
-        <PaddingAutoRecorte>5</PaddingAutoRecorte>
-      </Preprocesamiento>
-    </Zona>
-    <AnchoReferencia>1000</AnchoReferencia>
-    <AltoReferencia>1000</AltoReferencia>
-    <TipoCoordenada>Normalizadas</TipoCoordenada>
-  </Plantilla>
   <Plantilla Emisor="RANGNY VALENCIA S.L.">
     <Zona Campo="P1_Z1" Pagina="1" X="55.57251908396946" Y="18.609625668449198" Ancho="36.79389312977099" Alto="10.16042780748663" Regex="">
       <Opcional>false</Opcional>
@@ -1114,6 +1067,142 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P3_Z2" Pagina="3" X="72.91981845688352" Y="73.2620320855615" Ancho="20.574886535552196" Alto="5.775401069518717" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <AnchoReferencia>1000</AnchoReferencia>
+    <AltoReferencia>1000</AltoReferencia>
+    <TipoCoordenada>Normalizadas</TipoCoordenada>
+  </Plantilla>
+  <Plantilla Emisor="PETROPRIX ENERGIA S.L.">
+    <Zona Campo="P1_Z1" Pagina="1" X="3.0303030303030303" Y="8.235294117647058" Ancho="46.36363636363636" Alto="7.2727272727272725" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="P1_Z2" Pagina="1" X="49.3939393939394" Y="14.545454545454545" Ancho="47.27272727272727" Alto="12.085561497326204" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="P1_Z3" Pagina="1" X="2.878787878787879" Y="81.92513368983957" Ancho="78.03030303030303" Alto="10.053475935828878" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="P1_Z4" Pagina="1" X="80.3030303030303" Y="81.92513368983957" Ancho="16.21212121212121" Alto="10.16042780748663" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <AnchoReferencia>1000</AnchoReferencia>
+    <AltoReferencia>1000</AltoReferencia>
+    <TipoCoordenada>Normalizadas</TipoCoordenada>
+  </Plantilla>
+  <Plantilla Emisor="Dulcería 17, S.L.">
+    <Zona Campo="P1_Z1" Pagina="1" X="48.71406959152799" Y="13.796791443850267" Ancho="30.408472012102873" Alto="12.727272727272727" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="P1_Z2" Pagina="1" X="3.9334341906202726" Y="18.93048128342246" Ancho="15.582450832072617" Alto="7.700534759358289" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="P1_Z3" Pagina="1" X="18.305597579425115" Y="20" Ancho="14.22087745839637" Alto="6.737967914438503" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="P1_Z4" Pagina="1" X="34.039334341906205" Y="81.60427807486631" Ancho="31.77004538577912" Alto="6.417112299465241" Regex="">
+      <Opcional>false</Opcional>
+      <Preprocesamiento>
+        <EscalaGrises>true</EscalaGrises>
+        <Binarizacion>false</Binarizacion>
+        <UmbralBinarizacion>128</UmbralBinarizacion>
+        <Redimensionar>false</Redimensionar>
+        <FactorEscala>2</FactorEscala>
+        <EliminarRuido>true</EliminarRuido>
+        <InvertirColores>false</InvertirColores>
+        <AutoRecortar>false</AutoRecortar>
+        <PaddingAutoRecorte>5</PaddingAutoRecorte>
+      </Preprocesamiento>
+    </Zona>
+    <Zona Campo="P1_Z5" Pagina="1" X="80.48411497730712" Y="81.60427807486631" Ancho="17.851739788199698" Alto="6.096256684491978" Regex="">
       <Opcional>false</Opcional>
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>

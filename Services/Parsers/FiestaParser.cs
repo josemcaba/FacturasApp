@@ -22,7 +22,10 @@ namespace FacturasApp.Services.Parsers
             @"\bFECHA\s+(.*?)\s+FECHA\b",
             RegexOptions.Compiled);
 
-        // TOTAL FACTURA
+        private static readonly Regex RegexLineaIva = new(
+            @"BASE\s+IMPONIBLE\s+EUR\s+(\d+)\s*%\s+([\d.,]+).*?IVA\s*\/\s*IGIC\s+\1\s*%\s+([\d.,]+)",
+            RegexOptions.Compiled | RegexOptions.Singleline);
+
         [GeneratedRegex(@"\bTOTAL EUR ([,\.0-9]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         private static partial Regex RegexTotalFactura();
 
@@ -31,10 +34,6 @@ namespace FacturasApp.Services.Parsers
         {
             return ParsearMultiple(texto, rutaArchivo, viaOcr).First();
         }
-
-        private static readonly Regex RegexLineaIva = new(
-            @"BASE\s+IMPONIBLE\s+EUR\s+(\d+)\s*%\s+([\d.,]+).*?IVA\s*\/\s*IGIC\s+\1\s*%\s+([\d.,]+)",
-            RegexOptions.Compiled | RegexOptions.Singleline);
 
         public override List<Factura> ParsearMultiple(
             string texto, string rutaArchivo, bool viaOcr)

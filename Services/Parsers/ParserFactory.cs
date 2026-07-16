@@ -55,6 +55,7 @@ namespace FacturasApp.Services.Parsers
                 new SewanParser(),
                 new SimyoParser(),
                 new TdSynnexParser(),
+                new TrigoricoParser(),
                 new VerisureParser(),
             ];
         }

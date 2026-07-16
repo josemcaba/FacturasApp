@@ -32,8 +32,7 @@ namespace FacturasApp.UI
             EmisorNif = f.Emisor.NIF;
             ClienteNombre = f.Receptor.Nombre;
             ClienteNif = f.Receptor.NIF;
-            BaseFormateada = f.BaseImponible > 0
-                                ? $"{f.BaseImponible:N2} €" : "0,00 €";
+            BaseFormateada = $"{f.BaseImponible:N2} €";
             PorcentajeIVA = f.PorcentajeIVA;
             CuotaIvaFmt = $"{f.CuotaIVACalculado:N2} €";
             PorcentajeIRPF = f.PorcentajeIRPF;
