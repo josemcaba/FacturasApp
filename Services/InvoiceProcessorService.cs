@@ -91,7 +91,7 @@ namespace FacturasApp.Services
             else
             {
                 // PDF escaneado: OCR rápido solo para identificar emisor
-                textoIdentificacion = _ocrExtractor.ExtraerTextoConOcr(rutaPdf);
+                textoIdentificacion = _ocrExtractor.ExtraerTextoIdentificacion(rutaPdf);
                 parser = _parserFactory.ObtenerParser(textoIdentificacion);
                 nombreEmisor = parser.Nombre;
             }
@@ -274,15 +274,19 @@ namespace FacturasApp.Services
 
                     if (existente != null)
                     {
-                        nueva.Estado = EstadoFactura.Duplicada;
                         nueva.MensajeError ??= new List<string>();
                         nueva.MensajeError.Add($"Factura duplicada. Existe en: {existente.RutaArchivo}");
 
+                        if (nueva.Estado == EstadoFactura.OK)
+                            nueva.Estado = EstadoFactura.Duplicada;
+
                         if (existente.Estado != EstadoFactura.Duplicada)
                         {
-                            existente.Estado = EstadoFactura.Duplicada;
                             existente.MensajeError ??= new List<string>();
                             existente.MensajeError.Add($"Factura duplicada. Otra copia: {nueva.RutaArchivo}");
+
+                            if (existente.Estado == EstadoFactura.OK)
+                                existente.Estado = EstadoFactura.Duplicada;
                         }
 
                         acumuladas.Add(nueva);

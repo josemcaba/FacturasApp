@@ -84,6 +84,24 @@ namespace FacturasApp.Services
             return resultado;
         }
 
+        public Bitmap? RenderizarPaginaReducida(string rutaPdf, int numeroPagina, int dpi)
+        {
+            try
+            {
+                byte[] pdfBytes = File.ReadAllBytes(rutaPdf);
+                using var skBitmap = Conversion.ToImage(
+                    pdfBytes,
+                    page: new Index(numeroPagina),
+                    password: null,
+                    options: new RenderOptions(Dpi: dpi));
+                return ConvertirSkBitmapABitmap(skBitmap);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         // ── Conversiones ──────────────────────────────────────────────────────
 
         protected Bitmap? ConvertirSkBitmapABitmap(SKBitmap skBitmap)

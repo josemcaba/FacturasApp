@@ -2,6 +2,7 @@
 using FacturasApp.Services;
 using FacturasApp.Services.Parsers;
 using System.Drawing.Drawing2D;
+using System.Xml.Serialization;
 
 namespace FacturasApp.UI
 {
@@ -16,6 +17,7 @@ namespace FacturasApp.UI
         private string _rutaPdf = string.Empty;
         private string _nombreEmisor = string.Empty;
         private PlantillaOcr _plantilla = new();
+        private string _plantillaOriginalXml = string.Empty;
         private readonly HashSet<string> _emisoresConPlantilla = new(StringComparer.OrdinalIgnoreCase);
 
         // Multi-página
@@ -133,6 +135,54 @@ namespace FacturasApp.UI
             MostrarPaginaActual();
         }
 
+        // ── Helpers: detección de cambios sin guardar ────────────────────────
+
+        private string SerializarPlantilla(PlantillaOcr plantilla)
+        {
+            using var sw = new StringWriter();
+            var serializer = new XmlSerializer(typeof(PlantillaOcr));
+            serializer.Serialize(sw, plantilla);
+            return sw.ToString();
+        }
+
+        private bool HayCambiosSinGuardar()
+        {
+            string xmlActual = SerializarPlantilla(_plantilla);
+            return xmlActual != _plantillaOriginalXml;
+        }
+
+        private bool ConfirmarSiHayCambiosSinGuardar(string accion)
+        {
+            if (!EnvironmentService.EsDesarrollo()) return true;
+            if (!btnGuardar.Visible) return true;
+            if (!HayCambiosSinGuardar()) return true;
+
+            var resultado = MessageBox.Show(
+                $"La plantilla de '{_nombreEmisor}' tiene cambios sin guardar.\n\n" +
+                $"¿Deseas guardar los cambios antes de {accion}?",
+                "Cambios sin guardar",
+                MessageBoxButtons.YesNoCancel,
+                MessageBoxIcon.Warning);
+
+            if (resultado == DialogResult.Cancel) return false;
+            if (resultado == DialogResult.Yes)
+            {
+                _plantilla.Emisor = _nombreEmisor;
+                _plantillaService.GuardarPlantilla(_plantilla);
+                _plantillaOriginalXml = SerializarPlantilla(_plantilla);
+                ActualizarHashSetEmisores();
+            }
+            return true;
+        }
+
+        private void ActualizarHashSetEmisores()
+        {
+            _emisoresConPlantilla.Clear();
+            foreach (var emisor in _plantillaService.ObtenerEmisoresConPlantilla())
+                _emisoresConPlantilla.Add(emisor);
+            cmbEmisor.Invalidate();
+        }
+
         private void CmbEmisor_DrawItem(object? sender, DrawItemEventArgs e)
         {
             if (e.Index < 0) return;
@@ -154,6 +204,7 @@ namespace FacturasApp.UI
 
         private void CmbEmisor_SelectedIndexChanged(object? sender, EventArgs e)
         {
+            if (!ConfirmarSiHayCambiosSinGuardar("cambiar de emisor")) return;
             CargarPlantillaEmisor();
         }
 
@@ -164,6 +215,7 @@ namespace FacturasApp.UI
 
             var existente = _plantillaService.ObtenerPorEmisor(_nombreEmisor);
             _plantilla = existente ?? new PlantillaOcr { Emisor = _nombreEmisor };
+            _plantillaOriginalXml = SerializarPlantilla(_plantilla);
 
             ActualizarListaZonas();
             picFactura.Invalidate();
@@ -472,6 +524,8 @@ namespace FacturasApp.UI
             {
                 _plantilla.Emisor = _nombreEmisor;
                 _plantillaService.GuardarPlantilla(_plantilla);
+                _plantillaOriginalXml = SerializarPlantilla(_plantilla);
+                ActualizarHashSetEmisores();
 
                 int paginasConZonas = _plantilla.Zonas.Select(z => z.NumPagina).Distinct().Count();
 
@@ -500,6 +554,7 @@ namespace FacturasApp.UI
 
         private void btnCerrar_Click(object sender, EventArgs e)
         {
+            if (!ConfirmarSiHayCambiosSinGuardar("cerrar")) return;
             LimpiarPaginas();
             base.Close();
         }
@@ -525,6 +580,8 @@ namespace FacturasApp.UI
                 return;
             }
 
+            if (!ConfirmarSiHayCambiosSinGuardar("eliminar la plantilla")) return;
+
             var resultado = MessageBox.Show(
                 $"¿Eliminar la plantilla completa del emisor?\n\n" +
                 $"\"{_nombreEmisor}\"\n\n" +
@@ -540,6 +597,8 @@ namespace FacturasApp.UI
             {
                 _plantillaService.EliminarPlantilla(_nombreEmisor);
                 _plantilla = new PlantillaOcr { Emisor = _nombreEmisor };
+                _plantillaOriginalXml = SerializarPlantilla(_plantilla);
+                ActualizarHashSetEmisores();
 
                 LimpiarPaginas();
                 ActualizarListaZonas();
