@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.Bibliography;
-using FacturasApp.Models;
+﻿using FacturasApp.Models;
 
 namespace FacturasApp.Services.Parsers
 {
@@ -7,6 +6,7 @@ namespace FacturasApp.Services.Parsers
     {
         private readonly List<IInvoiceParser> _parsers;
         private readonly GenericParser _genericParser = new();
+        private readonly ProveedorConfigService _configService = new();
 
         public ParserFactory()
         {
@@ -63,11 +63,28 @@ namespace FacturasApp.Services.Parsers
 
         public IInvoiceParser ObtenerParser(string texto)
         {
-            return _parsers.FirstOrDefault(p => p.PuedeParsar(texto))
-                   ?? _genericParser;
+            // 1. Buscar en configuración XML (data-driven)
+            var configProveedor = _configService.ObtenerPorIdentificadores(texto);
+            if (configProveedor != null)
+                return new DataDrivenParser(configProveedor);
+
+            // 2. Fallback a parsers code-behind
+            var parserCode = _parsers.FirstOrDefault(p => p.PuedeParsar(texto));
+            if (parserCode != null)
+                return parserCode;
+
+            // 3. Último recurso: parser genérico
+            return _genericParser;
         }
 
-        public IReadOnlyList<string> ParsersDisponibles =>
-            [.. _parsers.Select(p => p.Nombre)];
+        public IReadOnlyList<string> ParsersDisponibles
+        {
+            get
+            {
+                var nombres = _parsers.Select(p => p.Nombre).ToList();
+                nombres.AddRange(_configService.ObtenerNombresProveedores());
+                return [.. nombres.Distinct().OrderBy(n => n)];
+            }
+        }
     }
 }

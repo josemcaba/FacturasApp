@@ -61,7 +61,7 @@ namespace FacturasApp.Services.Parsers
             return factura;
         }
 
-        protected static string EliminarDuplicadosNoNumericos(string texto)
+        public static string EliminarDuplicadosNoNumericos(string texto)
         {
             if (string.IsNullOrEmpty(texto))
                 return texto;
@@ -91,7 +91,7 @@ namespace FacturasApp.Services.Parsers
             return resultado.ToString();
         }
 
-        protected static string EliminarDuplicadosNumericos(string texto)
+        public static string EliminarDuplicadosNumericos(string texto)
         {
             if (string.IsNullOrEmpty(texto))
                 return texto;

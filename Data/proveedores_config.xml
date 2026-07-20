@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Proveedores>
+  <!--
+    ============================================================
+    Fichero de configuración de proveedores (data-driven)
+    ============================================================
+    Cada Proveedor define cómo extraer los datos de una factura
+    mediante expresiones regulares, sin necesidad de compilar
+    código nuevo.
+  -->
+
+  <!-- ──────────────────────────────────────────────────────── -->
+  <!-- Ejemplo simple: FobosParser                              -->
+  <!-- ──────────────────────────────────────────────────────── -->
+  <Proveedor Nombre="ARNOLD CALLE TELECOM S.L." Nif="B93013761" Concepto="628" ModoExtraccion="OrdenadoPosicion">
+    <Identificadores>
+      <Id>B93013761</Id>
+      <Id>FOBOS</Id>
+      <Id>Telecom</Id>
+    </Identificadores>
+    <Campos>
+      <Campo Nombre="NumeroFactura" Regex="Factura:\s*(.*?)\s" Grupo="1" />
+      <Campo Nombre="Fecha" Regex="Fecha emisión:\s*(\d{2}[\/\-]\d{2}[\/\-]\d{4})" Grupo="1" Formato="dd/MM/yyyy" />
+      <Campo Nombre="ClienteNombre" Regex="Periodo:.*\n(.+)" Grupo="1" />
+      <Campo Nombre="BaseImponible" Regex="Base imponible:\s+([\d,.]+)\s*€" Grupo="1" />
+      <Campo Nombre="PorcentajeIVA" Regex="IVA\s+(\d+)\s*%" Grupo="1" />
+      <Campo Nombre="CuotaIVA" Regex="IVA\s+\d+\s*%\s*:\s*([\d,.]+)\s*€" Grupo="1" />
+      <Campo Nombre="Total" Regex="Importe:\s+([\d,.]+)\s*€" Grupo="1" />
+      <Campo Nombre="ClienteNif" Regex="\b(?:ES|)((?:(?:[A-Z]|\d)\d{7}(?:-|)[A-Z]|[A-Z](?:-|)\d{8}))\b" Grupo="1" />
+    </Campos>
+  </Proveedor>
+
+  <!-- ──────────────────────────────────────────────────────── -->
+  <!-- Multi-IVA: MERCADONA                                     -->
+  <!-- ──────────────────────────────────────────────────────── -->
+  <Proveedor Nombre="MERCADONA, S.A." Nif="A46103834" Concepto="600" ModoExtraccion="OrdenadoPosicion">
+    <Identificadores>
+      <Id>mercadona s.a.</Id>
+      <Id>a-46103834</Id>
+    </Identificadores>
+    <Campos>
+      <Campo Nombre="NumeroFactura" Regex="N.\s*Factura:\s*(.*?)\s+" Grupo="1" />
+      <Campo Nombre="Fecha" Regex="\bFecha\sFactura:\s*(.*?)[\s\n\r]+" Grupo="1" />
+      <Campo Nombre="ClienteNombre" Regex="Raz.n Social: (.*)" Grupo="1" />
+    </Campos>
+    <MultiLineaIva>
+      <Linea Regex="(\d+)% ([\d,]+) ([\d,.]+) ([\d,.]+)\r" Mapa="PorcentajeIVA=1,BaseImponible=2,Total=4" />
+      <ExcluirBaseCero>true</ExcluirBaseCero>
+    </MultiLineaIva>
+  </Proveedor>
+
+  <!-- ──────────────────────────────────────────────────────── -->
+  <!-- Complejo: OscarArias con pre/post procesamiento           -->
+  <!-- ──────────────────────────────────────────────────────── -->
+  <Proveedor Nombre="Oscar Arias Merino" Nif="74890980J" Concepto="600" ModoExtraccion="OrdenadoPosicion">
+    <Identificadores>
+      <Id>oscar arias merino</Id>
+      <Id>74890980-j</Id>
+      <Id>deudor</Id>
+    </Identificadores>
+    <Preprocesamiento>
+      <EliminarDuplicados Tipo="NoNumericos" />
+    </Preprocesamiento>
+    <Campos>
+      <Campo Nombre="NumeroFactura" Regex="(FV[\d]{5})\b" Grupo="1" />
+      <Campo Nombre="ClienteNombre" Regex="CLIENTE[\r\n]+(.+)" Grupo="1" />
+      <Campo Nombre="BaseImponible" Regex="IMPONIBLE\s+([,\.0-9]+)" Grupo="1" />
+      <Campo Nombre="Descuento" Regex="DESCUENTO\s+([-,\.0-9]+)" Grupo="1" Opcional="true" />
+      <Campo Nombre="TotalParcial" Regex="TOTAL\s+PARCIAL\s+([,\.0-9]+)" Grupo="1" Opcional="true" />
+      <Campo Nombre="PorcentajeIVA" Regex="\(([,\.0-9]+)%\)" Grupo="1" DeduplicarNumericos="true" />
+      <Campo Nombre="Total" Regex="TOTAL\s+([,\.0-9]+)" Grupo="1" />
+    </Campos>
+    <Postprocesamiento>
+      <Condicion Campo="BaseImponible" Valor="0" Operador="Igual">
+        <CopiarCampo Origen="TotalParcial" Destino="BaseImponible" />
+      </Condicion>
+      <Condicion Campo="Descuento" Valor="" Operador="Distinto">
+        <SumarCampo Destino="BaseImponible" Origen="Descuento" />
+      </Condicion>
+      <Condicion Campo="PorcentajeIVA" Valor="1.4" Operador="Igual">
+        <MoverCampo Origen="PorcentajeIVA" Destino="PorcentajeRE" />
+        <AsignarValorFijo Campo="PorcentajeIVA" Valor="10" />
+      </Condicion>
+    </Postprocesamiento>
+  </Proveedor>
+
+  <!-- ──────────────────────────────────────────────────────── -->
+  <!-- Con valor fijo: FACCSA (IVA y RE hardcodeados)           -->
+  <!-- ──────────────────────────────────────────────────────── -->
+  <Proveedor Nombre="FACCSA: Frigorif. And. Conservas Carne" Nif="A17001231" Concepto="600" ModoExtraccion="OrdenadoPosicion">
+    <Identificadores>
+      <Id>andaluces</Id>
+      <Id>conservas</Id>
+      <Id>carne</Id>
+    </Identificadores>
+    <Campos>
+      <Campo Nombre="NumeroFactura" Regex="\bFACTURA\s+(.*?)\s+" Grupo="1" />
+      <Campo Nombre="ClienteNombre" Regex="CIF\s+.*?[\s\r\n]+(.*)\s" Grupo="1" />
+      <Campo Nombre="BaseImponible" Regex="ASE\s+IMPONIB\.?\s+([\d.,]+)" Grupo="1" />
+      <Campo Nombre="PorcentajeIVA" ValorFijo="10" />
+      <Campo Nombre="PorcentajeRE" ValorFijo="1.4" />
+      <Campo Nombre="Total" Regex="OTAL\s+FACTURA.*?([\d,.]+)" Grupo="1" />
+      <Campo Nombre="ClienteNif" Regex="CIF\s+(.*?)\s" Grupo="1" />
+    </Campos>
+  </Proveedor>
+</Proveedores>

@@ -444,6 +444,13 @@ namespace FacturasApp.UI
             ventana.ShowDialog(this);
         }
 
+        // Gestión de proveedores (data-driven)
+        private void btnGestionProveedores_Click(object sender, EventArgs e)
+        {
+            using var ventana = new GestionProveedoresForm();
+            ventana.ShowDialog(this);
+        }
+
         private void MostrarExitoExportacion(string rutaArchivo)
         {
             var resultado = MessageBox.Show(
@@ -468,6 +475,7 @@ namespace FacturasApp.UI
             btnSeleccionarCarpeta.Enabled = !procesando;
             btnSeleccionarExcel.Enabled = !procesando;
             btnLimpiarLista.Enabled = !procesando;
+            btnGestionProveedores.Enabled = !procesando;
             btnProcesar.Enabled = !procesando;
             // Nuevos botones de exportación Excel
             btnExportarExcelIngresos.Enabled = !procesando;
