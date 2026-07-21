@@ -35,6 +35,7 @@ namespace FacturasApp.UI
             btnExportarExcelIngresos = new Button();
             btnExportarExcelGastos = new Button();
             btnDefinirZonas = new Button();
+            btnGestionarEmisores = new Button();
             lblFiltro = new Label();
             lblEstadoFiltro = new Label();
             ((System.ComponentModel.ISupportInitialize)dgvFacturas).BeginInit();
@@ -240,6 +241,19 @@ namespace FacturasApp.UI
             btnDefinirZonas.UseVisualStyleBackColor = false;
             btnDefinirZonas.Click += btnDefinirPlantilla_Click;
             // 
+            // btnGestionarEmisores
+            // 
+            btnGestionarEmisores.BackColor = Color.FromArgb(0, 120, 180);
+            btnGestionarEmisores.FlatStyle = FlatStyle.Flat;
+            btnGestionarEmisores.ForeColor = Color.White;
+            btnGestionarEmisores.Location = new Point(600, 12);
+            btnGestionarEmisores.Name = "btnGestionarEmisores";
+            btnGestionarEmisores.Size = new Size(160, 34);
+            btnGestionarEmisores.TabIndex = 21;
+            btnGestionarEmisores.Text = "⚙️ Gestionar Emisores";
+            btnGestionarEmisores.UseVisualStyleBackColor = false;
+            btnGestionarEmisores.Click += btnGestionarEmisores_Click;
+            // 
             // lblFiltro
             // 
             lblFiltro.Location = new Point(0, 0);
@@ -277,6 +291,7 @@ namespace FacturasApp.UI
             Controls.Add(btnExportarExcelIngresos);
             Controls.Add(btnExportarExcelGastos);
             Controls.Add(btnDefinirZonas);
+            Controls.Add(btnGestionarEmisores);
             Font = new Font("Segoe UI", 9F);
             Icon = (Icon)resources.GetObject("$this.Icon");
             MinimumSize = new Size(800, 600);
@@ -297,6 +312,7 @@ namespace FacturasApp.UI
         private Button btnExportarExcelIngresos;
         private Button btnExportarExcelGastos;
         private Button btnDefinirZonas;
+        private Button btnGestionarEmisores;
         private ListBox lstArchivos;
         private TextBox txtRutaExcel;
         private ProgressBar progressBar;

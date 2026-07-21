@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
+    [Obsolete("Usar emisores.xml en su lugar")]
     public partial class DisgoParser : BaseParser
     {
         public override string Nombre => "DISGO, S.A.";

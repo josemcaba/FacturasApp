@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
+    [Obsolete("Usar emisores.xml en su lugar")]
     public class EsprinetParser : BaseParser
     {
         public override string Nombre => "Esprinet Ibérica, S.L.";

@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
+    [Obsolete("Usar emisores.xml en su lugar")]
     public class NorelisParser: BaseParser
     {
         public override string Nombre => "NORELIS ANDREA ESLAVA";

@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
+    [Obsolete("Usar emisores.xml en su lugar")]
     public class TdSynnexParser: BaseParser
     {
         public override string Nombre => "TD SYNNEX SPAIN, S.L.U.";

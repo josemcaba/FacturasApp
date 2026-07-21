@@ -1,0 +1,3009 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Emisores xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <!-- ═══════════════ VERISURE (Securitas Direct) ═══════════════ -->
+  <Emisor id="A26106013">
+    <Nombre>SECURITAS DIRECT ESPAÑA S.A.U.</Nombre>
+    <Nif>A26106013</Nif>
+    <Concepto>600</Concepto>
+    <Identificadores>
+      <Identificador>A26106013</Identificador>
+      <Identificador>securitas</Identificador>
+      <Identificador>direct</Identificador>
+      <Identificador>españa</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>Nº de factura:\s*(\S+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>Fecha de factura:\s*(.*)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Titular:\s*(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>Subtotal\s+([\d,.]+)</Regex>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>IVA\s+([\d]+)\s*%\s+([\d,.]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>IVA\s+([\d]+)\s*%\s+([\d,.]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>Total factura\s+([\d,.]+)</Regex>
+      </Campo>
+    </Campos>
+  </Emisor>
+
+  <!-- ═══════════════ DISGO (Multi-factura) ═══════════════ -->
+  <Emisor id="A08806994">
+    <Nombre>DISGO, S.A.</Nombre>
+    <Nif>A08806994</Nif>
+    <Concepto>600</Concepto>
+    <Identificadores>
+      <Identificador>disgo</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>Fecha[\r\n\s]+(\S+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>\[P1_Z5]:\s.+[\n\r\s]+(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>\[P1_Z1]:\s+(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+    </Campos>
+    <MultiFactura>
+      <LineaIva>
+        <Regex>[\n\r]+([\d.,]+)\s+([\d.,]+)\s+([\d.,]+)</Regex>
+        <Mapeo>
+          <Asignar Grupo="1" Campo="BaseImponible"/>
+          <Asignar Grupo="2" Campo="PorcentajeIVA"/>
+          <Asignar Grupo="3" Campo="CuotaIVA"/>
+        </Mapeo>
+      </LineaIva>
+      <ValidarSuma>true</ValidarSuma>
+      <FiltrarBaseCero>true</FiltrarBaseCero>
+      <Deduplicar>true</Deduplicar>
+    </MultiFactura>
+      <ZonasOcr>
+      <AnchoReferencia>1000</AnchoReferencia>
+      <AltoReferencia>1000</AltoReferencia>
+      <TipoCoordenada>Normalizadas</TipoCoordenada>
+      <Zonas>
+        <Zona Campo="P1_Z1" Pagina="1" X="45.688350983358546" Y="9.197860962566844" Ancho="43.872919818456886" Alto="14.866310160427807" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P3_Z1" Pagina="3" X="34.79576399394856" Y="72.94117647058823" Ancho="26.626323751891075" Alto="7.807486631016043" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P3_Z2" Pagina="3" X="72.91981845688352" Y="73.2620320855615" Ancho="20.574886535552196" Alto="5.775401069518717" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z2" Pagina="1" X="35.45454545454545" Y="71.76470588235294" Ancho="24.545454545454547" Alto="7.700534759358289" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z3" Pagina="1" X="65.45454545454545" Y="72.19251336898395" Ancho="25.757575757575758" Alto="4.81283422459893" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z4" Pagina="1" X="3.0303030303030303" Y="13.475935828877006" Ancho="22.87878787878788" Alto="9.83957219251337" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z5" Pagina="1" X="14.674735249621785" Y="17.219251336898395" Ancho="10.741301059001513" Alto="4.598930481283422" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+      </Zonas>
+    </ZonasOcr>
+  </Emisor>
+
+  <!-- ═══════════════ TRIGORICO (Rectificativos) ═══════════════ -->
+  <Emisor id="B87438750">
+    <Nombre>TRIGORICO, S.L.U.</Nombre>
+    <Nif>B87438750</Nif>
+    <Concepto>600</Concepto>
+    <Identificadores>
+      <Identificador>reinosa</Identificador>
+      <Identificador>ESB87438750</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>(?:FACTURA|ABONO - RECTIFICATIVO|ABONO)\s+(\S+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>(?:FACTURA|ABONO - RECTIFICATIVO|ABONO)\s+\S+\s+(\S+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>(.*)[\n\r]+R\.M\. de Santander</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>([\d.,]+)\s+([\d.,]+)\s+[\d.,]+\s+[\d.,]+[\n\r]+</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>([\d.,]+)\s+([\d.,]+)\s+[\d.,]+\s+[\d.,]+[\n\r]+</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>Total Factura en Euro\s+([\d.,]+)</Regex>
+      </Campo>
+    </Campos>
+    <PostProcesamiento>
+      <Regla nombre="Rectificativo">
+        <Condicion TextoContiene="ABONO"/>
+        <Accion tipo="MultiplicarPor" Campo="BaseImponible" Valor="-1"/>
+        <Accion tipo="MultiplicarPor" Campo="Total" Valor="-1"/>
+      </Regla>
+    </PostProcesamiento>
+  </Emisor>
+
+  <!-- ═══════════════ IONOS ═══════════════ -->
+  <Emisor id="B85049435">
+    <Nombre>IONOS Cloud S.L.U.</Nombre>
+    <Nif>B85049435</Nif>
+    <Concepto>629</Concepto>
+    <Identificadores>
+      <Identificador>85049435</Identificador>
+      <Identificador>ionos</Identificador>
+      <Identificador>cloud</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>N.. de factura:\s+(.*)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>Fecha de facturación:\s+(.*)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>(.*)[\n\r]+NIF\/CIF</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>Total \(base imponible\)\s+([\d.,]+)</Regex>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>IVA \(([\d.,]+)\s*%\)\s+([\d.,]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>IVA \(([\d.,]+)\s*%\)\s+([\d.,]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>Total a pagar\s+([\d.,]+)</Regex>
+      </Campo>
+    </Campos>
+  </Emisor>
+
+  <!-- ═══════════════ SEWAN ═══════════════ -->
+  <Emisor id="B73619215">
+    <Nombre>SEWAN ESPAÑA S.L.U.</Nombre>
+    <Nif>B73619215</Nif>
+    <Concepto>600</Concepto>
+    <Identificadores>
+      <Identificador>B73619215</Identificador>
+      <Identificador>SEWAN</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>Factura n°:\s*(\d+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>Fecha:\s*(\d{2})[\/\-](\d{2})[\/\-](\d{4})</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>B73619215[\n\r]+(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>Total factura impuestos no incluidos\s+([\d,.]+)</Regex>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>Total IVA\s+([\d,.]+)%</Regex>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>Total IVA\s+[\d,.]+%\s+([\d,.]+)</Regex>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>Total factura impuestos incluidos\s+([\d,.]+)\s*€</Regex>
+      </Campo>
+    </Campos>
+  </Emisor>
+
+  <!-- ═══════════════ FOBOS (Arnold Valle Telecom) ═══════════════ -->
+  <Emisor id="B93013761">
+    <Nombre>ARNOLD CALLE TELECOM S.L.</Nombre>
+    <Nif>B93013761</Nif>
+    <Concepto>628</Concepto>
+    <Identificadores>
+      <Identificador>B93013761</Identificador>
+      <Identificador>FOBOS</Identificador>
+      <Identificador>Telecom</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>Factura:\s*(.*?)\s</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>Fecha emisión:\s*(\d{2})[\/\-](\d{2})[\/\-](\d{4})</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Periodo:.*\n(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>Base imponible:\s+([\d,.]+)\s*€</Regex>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>IVA\s+(\d+)\s*%</Regex>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>IVA\s+\d+\s*%\s*:\s*([\d,.]+)\s*€</Regex>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>Importe:\s+([\d,.]+)\s*€</Regex>
+      </Campo>
+    </Campos>
+  </Emisor>
+
+  <!-- ═══════════════ NORELIS ═══════════════ -->
+  <Emisor id="Y7080956Y">
+    <Nombre>NORELIS ANDREA ESLAVA</Nombre>
+    <Nif>Y7080956Y</Nif>
+    <Concepto>600</Concepto>
+    <Identificadores>
+      <Identificador>Y7080956Y</Identificador>
+      <Identificador>norelis</Identificador>
+      <Identificador>3876</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>Factura[\n\r]+(.*)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>F\. Emisión:(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Eslava\s+(.*)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>Base\s+(?:imponible|exenta)\s+([\d.,]+)</Regex>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>IVA\s+([\d.,]+)\s*%.*?[\d.,]+.*?([\d.,]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>IVA\s+([\d.,]+)\s*%.*?[\d.,]+.*?([\d.,]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>Total:\s+([\d.,]+)</Regex>
+      </Campo>
+    </Campos>
+  </Emisor>
+
+  <!-- ═══════════════ EASOR ═══════════════ -->
+  <Emisor id="B24830515">
+    <Nombre>EASOR SOFTWARE SOLUTIONS S.L.</Nombre>
+    <Nif>B24830515</Nif>
+    <Concepto>629</Concepto>
+    <Identificadores>
+      <Identificador>B24830515</Identificador>
+      <Identificador>easor</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>Factura[\n\r]+(.*)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha" />
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>SOFTWARE SOLUTIONS SL\s+(.*)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>Base\s+(?:imponible|exenta)\s+([\d.,]+)</Regex>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>IVA\s+([\d.,]+)\s*%.*?[\d.,]+.*?([\d.,]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>IVA\s+([\d.,]+)\s*%.*?[\d.,]+.*?([\d.,]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>Total:\s+([\d.,]+)</Regex>
+      </Campo>
+    </Campos>
+  </Emisor>
+
+  <!-- ═══════════════ BIXPE (Abbanza Research) ═══════════════ -->
+  <Emisor id="B84596113">
+    <Nombre>Abbanza Research INT S.L.</Nombre>
+    <Nif>B84596113</Nif>
+    <Concepto>600</Concepto>
+    <Identificadores>
+      <Identificador>B-84596113</Identificador>
+      <Identificador>Abbanza Research INT</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>N.*\s*de\s*factura\s+(.+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>Fecha de la factura\s+(.+)</Regex>
+        <FormatosFecha>
+          <Formato>d MMMM yyyy</Formato>
+          <Formato>d MMM yyyy</Formato>
+        </FormatosFecha>
+        <Cultura>es-ES</Cultura>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>^([^\n(]+)\s+\(\d+\)\s+Fecha</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>Subtotal\s+([\d,.]+)</Regex>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>IVA\s+\((\d+)%\)</Regex>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>IVA\s+\(\d+%\)\s+([\d,.]+)</Regex>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>Total\s+([\d,.]+)€</Regex>
+      </Campo>
+    </Campos>
+  </Emisor>
+
+  <!-- ═══════════════ COMUNICACIONES CLOUD ═══════════════ -->
+  <Emisor id="B56255862">
+    <Nombre>COMUNICACIONES Y SOLUCIONES CLOUD, S.L.</Nombre>
+    <Nif>B56255862</Nif>
+    <Concepto>600</Concepto>
+    <Identificadores>
+      <Identificador>B56255862</Identificador>
+      <Identificador>CLOUD</Identificador>
+      <Identificador>iberikatelecom</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>FACTURA\s+.*\n*(\S+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha" />
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Cliente:\s*\n(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>EUROS[\r\n]*([\d,.]+).*?([\d,.]+).*?([\d,.]+).*?[\r\n]*([\d,.]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>EUROS[\r\n]*([\d,.]+).*?([\d,.]+).*?([\d,.]+).*?[\r\n]*([\d,.]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>EUROS[\r\n]*([\d,.]+).*?([\d,.]+).*?([\d,.]+).*?[\r\n]*([\d,.]+)</Regex>
+        <Grupo>3</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>EUROS[\r\n]*([\d,.]+).*?([\d,.]+).*?([\d,.]+).*?[\r\n]*([\d,.]+)</Regex>
+        <Grupo>4</Grupo>
+      </Campo>
+    </Campos>
+      <ZonasOcr>
+      <AnchoReferencia>1000</AnchoReferencia>
+      <AltoReferencia>1000</AltoReferencia>
+      <TipoCoordenada>Normalizadas</TipoCoordenada>
+      <Zonas>
+        <Zona Campo="Zona1" Pagina="1" X="48.90190336749634" Y="13.133402275077561" Ancho="47.43777452415813" Alto="13.340227507755948" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="Zona2" Pagina="1" X="2.635431918008785" Y="27.507755946225437" Ancho="59.29721815519766" Alto="4.3433298862461225" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="Zona3" Pagina="1" X="21.08345534407028" Y="82.52326783867632" Ancho="74.81698389458272" Alto="5.067218200620475" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+      </Zonas>
+    </ZonasOcr>
+  </Emisor>
+
+  <!-- ═══════════════ SIMYO ═══════════════ -->
+  <Emisor id="B85057974">
+    <Nombre>Orange España Virtual S.L.U.</Nombre>
+    <Nif>B85057974</Nif>
+    <Concepto>628</Concepto>
+    <Identificadores>
+      <Identificador>simyo.es</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>MI FACTURA N.\s+(.*)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>Fecha de emisión:\s+(.*)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Nombre titular:\s+(.*)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>Base imponible\s+([\d.,]+)</Regex>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>IVA\s+([\d.,]+)\s*%\s+([\d.,]+)[\S\n\s]+?([\d.,]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>IVA\s+([\d.,]+)\s*%\s+([\d.,]+)[\S\n\s]+?([\d.,]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>IVA\s+([\d.,]+)\s*%\s+([\d.,]+)[\S\n\s]+?([\d.,]+)</Regex>
+        <Grupo>3</Grupo>
+      </Campo>
+    </Campos>
+  </Emisor>
+
+  <!-- ═══════════════ HOSTALIA (Telefónica) ═══════════════ -->
+  <Emisor id="A78053147">
+    <Nombre>TELEFÓNICA SOLUCIONES I y C ESPAÑA SAU</Nombre>
+    <Nif>A78053147</Nif>
+    <Concepto>600</Concepto>
+    <Identificadores>
+      <Identificador>A78053147</Identificador>
+      <Identificador>hostalia</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>Nº Factura:\s*(\S+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha" />
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>DATOS FISCALES.*\n(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>Importe Neto\s+([\d,.]+)\s*.*\nIVA\s+(\d+)\s*%\s+([\d,.]+)\s*.*\nTOTAL FACTURA\s+([\d,.]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>Importe Neto\s+([\d,.]+)\s*.*\nIVA\s+(\d+)\s*%\s+([\d,.]+)\s*.*\nTOTAL FACTURA\s+([\d,.]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>Importe Neto\s+([\d,.]+)\s*.*\nIVA\s+(\d+)\s*%\s+([\d,.]+)\s*.*\nTOTAL FACTURA\s+([\d,.]+)</Regex>
+        <Grupo>3</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>Importe Neto\s+([\d,.]+)\s*.*\nIVA\s+(\d+)\s*%\s+([\d,.]+)\s*.*\nTOTAL FACTURA\s+([\d,.]+)</Regex>
+        <Grupo>4</Grupo>
+      </Campo>
+    </Campos>
+      <ZonasOcr>
+      <AnchoReferencia>1000</AnchoReferencia>
+      <AltoReferencia>1000</AltoReferencia>
+      <TipoCoordenada>Normalizadas</TipoCoordenada>
+      <Zonas>
+        <Zona Campo="Zona1" Pagina="1" X="5.417276720351391" Y="11.995863495346432" Ancho="39.0922401171303" Alto="5.791106514994829" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="Zona2" Pagina="1" X="47.43777452415813" Y="11.995863495346432" Ancho="49.926793557833086" Alto="13.133402275077561" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="Zona3" Pagina="1" X="49.194729136163986" Y="67.42502585315408" Ancho="48.16983894582723" Alto="11.478800413650465" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+      </Zonas>
+    </ZonasOcr>
+  </Emisor>
+
+  <!-- ═══════════════ ENERGIA XXI ═══════════════ -->
+  <Emisor id="B82846825">
+    <Nombre>ENERGIA XXI COMERCIALIZADORA S.L.U.</Nombre>
+    <Nif>B82846825</Nif>
+    <Concepto>600</Concepto>
+    <Identificadores>
+      <Identificador>B82846825</Identificador>
+      <Identificador>comercializadora</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>N.factura:\s+(\S+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>emitida el\s+(.+)</Regex>
+        <FormatosFecha>
+          <Formato>d 'de' MMMM 'de' yyyy</Formato>
+          <Formato>d 'de' MMM 'de' yyyy</Formato>
+        </FormatosFecha>
+        <Cultura>es-ES</Cultura>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Titular del contrato:\s+(.+)?NIF</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>IVA normal:\s+([\d,.]+)\s*%\s+s\/\s+([\d,.]+)\s+.+?\s+(.+)?€</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>IVA normal:\s+([\d,.]+)\s*%\s+s\/\s+([\d,.]+)\s+.+?\s+(.+)?€</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>IVA normal:\s+([\d,.]+)\s*%\s+s\/\s+([\d,.]+)\s+.+?\s+(.+)?€</Regex>
+        <Grupo>3</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>TOTAL IMPORTE FACTURA\s+([\d,.]+)</Regex>
+      </Campo>
+    </Campos>
+      <ZonasOcr>
+      <AnchoReferencia>1000</AnchoReferencia>
+      <AltoReferencia>1000</AltoReferencia>
+      <TipoCoordenada>Normalizadas</TipoCoordenada>
+      <Zonas>
+        <Zona Campo="P1_Z1" Pagina="1" X="40.09077155824508" Y="2.2459893048128343" Ancho="58.09379727685325" Alto="9.090909090909092" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z2" Pagina="1" X="4.53857791225416" Y="28.342245989304814" Ancho="93.64599092284418" Alto="8.128342245989305" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P2_Z1" Pagina="2" X="3.6308623298033282" Y="37.64705882352941" Ancho="94.70499243570349" Alto="8.342245989304812" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+      </Zonas>
+    </ZonasOcr>
+  </Emisor>
+
+  <!-- ═══════════════ FASAWORLD ═══════════════ -->
+  <Emisor id="B64713662">
+    <Nombre>FASAWORLD S.L.</Nombre>
+    <Nif>B64713662</Nif>
+    <Concepto>600</Concepto>
+    <Identificadores>
+      <Identificador>B64713662</Identificador>
+      <Identificador>fasaworld.com</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>Fecha[\n\r]+(\S+)\s+(\S+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha" />
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Cliente:[\n\r]+(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>FACTURA[\n\r]+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)[\n\r]+([\d,.]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>FACTURA[\n\r]+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)[\n\r]+([\d,.]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>FACTURA[\n\r]+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)[\n\r]+([\d,.]+)</Regex>
+        <Grupo>3</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>FACTURA[\n\r]+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)[\n\r]+([\d,.]+)</Regex>
+        <Grupo>4</Grupo>
+      </Campo>
+    </Campos>
+      <ZonasOcr>
+      <AnchoReferencia>1000</AnchoReferencia>
+      <AltoReferencia>1000</AltoReferencia>
+      <TipoCoordenada>Normalizadas</TipoCoordenada>
+      <Zonas>
+        <Zona Campo="P1_Z1" Pagina="1" X="48.71406959152799" Y="9.62566844919786" Ancho="43.872919818456886" Alto="12.085561497326204" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z2" Pagina="1" X="1.9667170953101363" Y="16.470588235294116" Ancho="27.83661119515885" Alto="4.27807486631016" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z3" Pagina="1" X="35.55219364599092" Y="61.49732620320856" Ancho="57.337367624810895" Alto="6.737967914438503" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+      </Zonas>
+    </ZonasOcr>
+  </Emisor>
+
+  <!-- ═══════════════ JUAN LUCAS ═══════════════ -->
+  <Emisor id="B93666816">
+    <Nombre>ACTIVA JUAN LUCAS S.L.</Nombre>
+    <Nif>B93666816</Nif>
+    <Concepto>600</Concepto>
+    <Identificadores>
+      <Identificador>B93666816</Identificador>
+      <Identificador>juan</Identificador>
+      <Identificador>lucas</Identificador>
+      <Identificador>www.juanlucas.com</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>FACTURA[\n\r]+(.+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha" />
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>\[P1_Z1]:\s+(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>BASE % IVA[\n\r]+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>BASE % IVA[\n\r]+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>BASE % IVA[\n\r]+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)</Regex>
+        <Grupo>3</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>TOTAL FRA[\n\r]+([\d,.]+)</Regex>
+      </Campo>
+    </Campos>
+      <ZonasOcr>
+      <AnchoReferencia>1000</AnchoReferencia>
+      <AltoReferencia>1000</AltoReferencia>
+      <TipoCoordenada>Normalizadas</TipoCoordenada>
+      <Zonas>
+        <Zona Campo="P1_Z1" Pagina="1" X="59.90922844175491" Y="1.4973262032085561" Ancho="36.30862329803328" Alto="17.005347593582886" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z2" Pagina="1" X="15.617128463476071" Y="20.99644128113879" Ancho="19.64735516372796" Alto="7.829181494661921" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z3" Pagina="1" X="4.282115869017632" Y="20.818505338078293" Ancho="65.99496221662469" Alto="7.829181494661921" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z4" Pagina="1" X="39.54659949622166" Y="63.16725978647687" Ancho="29.47103274559194" Alto="7.11743772241993" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z5" Pagina="1" X="79.84886649874056" Y="63.16725978647687" Ancho="16.3727959697733" Alto="12.277580071174377" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+      </Zonas>
+    </ZonasOcr>
+  </Emisor>
+
+  <!-- ═══════════════ EURO DEPOT ═══════════════ -->
+  <Emisor id="A62018064">
+    <Nombre>EURO DEPOT ESPAÑA S.A.U.</Nombre>
+    <Nif>A62018064</Nif>
+    <Concepto>600</Concepto>
+    <Identificadores>
+      <Identificador>brico</Identificador>
+      <Identificador>depot</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>N.\s+factura\s+FT\s+(\S+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha" />
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Dirección de factura[\r\n]+(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>Total\s+.*?([\d,.]+)\s+([\d,.]+)\s+[\d,.]+\s+([\d,.]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal" valorFijo="21"/>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>Total\s+.*?([\d,.]+)\s+([\d,.]+)\s+[\d,.]+\s+([\d,.]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>Total\s+.*?([\d,.]+)\s+([\d,.]+)\s+[\d,.]+\s+([\d,.]+)</Regex>
+        <Grupo>3</Grupo>
+      </Campo>
+    </Campos>
+      <ZonasOcr>
+      <AnchoReferencia>1000</AnchoReferencia>
+      <AltoReferencia>1000</AltoReferencia>
+      <TipoCoordenada>Normalizadas</TipoCoordenada>
+      <Zonas>
+        <Zona Campo="P1_Z1" Pagina="1" X="1.3636363636363635" Y="19.037433155080212" Ancho="37.42424242424243" Alto="4.81283422459893" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z2" Pagina="1" X="52.87878787878788" Y="29.946524064171122" Ancho="24.545454545454547" Alto="9.83957219251337" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P2_Z1" Pagina="2" X="46.21212121212121" Y="64.06417112299465" Ancho="51.36363636363637" Alto="12.406417112299465" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+      </Zonas>
+    </ZonasOcr>
+  </Emisor>
+
+  <!-- ═══════════════ INSTANT BYTE ═══════════════ -->
+  <Emisor id="B83680082">
+    <Nombre>INSTANT BYTE, S.L.</Nombre>
+    <Nif>B83680082</Nif>
+    <Concepto>600</Concepto>
+    <Identificadores>
+      <Identificador>palacios</Identificador>
+      <Identificador>instantbyte.com</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>Factura:\s+(\S+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha" />
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Cliente .*[\r\n]+(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>([\d,.]+)[\r\n]+([\d,.]+)[\r\n]+0,00[\r\n]+([\d,.]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal" valorFijo="21"/>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>([\d,.]+)[\r\n]+([\d,.]+)[\r\n]+0,00[\r\n]+([\d,.]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>([\d,.]+)[\r\n]+([\d,.]+)[\r\n]+0,00[\r\n]+([\d,.]+)</Regex>
+        <Grupo>3</Grupo>
+      </Campo>
+    </Campos>
+      <ZonasOcr>
+      <AnchoReferencia>1000</AnchoReferencia>
+      <AltoReferencia>1000</AltoReferencia>
+      <TipoCoordenada>Normalizadas</TipoCoordenada>
+      <Zonas>
+        <Zona Campo="P1_Z1" Pagina="1" X="7.5566750629722925" Y="18.505338078291814" Ancho="41.05793450881612" Alto="4.804270462633451" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z2" Pagina="1" X="52.39294710327456" Y="15.836298932384341" Ancho="43.8287153652393" Alto="15.658362989323843" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z3" Pagina="1" X="80.10075566750629" Y="72.41992882562278" Ancho="18.387909319899247" Alto="19.395017793594306" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+      </Zonas>
+    </ZonasOcr>
+  </Emisor>
+
+  <!-- ═══════════════ COSTA DEL SOL BALEAR ═══════════════ -->
+  <Emisor id="B92062603">
+    <Nombre>COSTA DEL SOL BALEAR, S.L.</Nombre>
+    <Nif>B92062603</Nif>
+    <Concepto>600</Concepto>
+    <Identificadores>
+      <Identificador>costasol</Identificador>
+      <Identificador>balear</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>DOCUMENTO[\n\r]+(.*)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>FECHA[\n\r]+(.*)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>\[P1_Z1]:\s+(.*)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>DOCUMENTO[\n\r]+[-\d.,]+\s+([-\d.,]+)\s+([-\d.,]+)\s+[-\d.,]+\s+([-\d.,]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>DOCUMENTO[\n\r]+[-\d.,]+\s+([-\d.,]+)\s+([-\d.,]+)\s+[-\d.,]+\s+([-\d.,]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>DOCUMENTO[\n\r]+[-\d.,]+\s+([-\d.,]+)\s+([-\d.,]+)\s+[-\d.,]+\s+([-\d.,]+)</Regex>
+        <Grupo>3</Grupo>
+      </Campo>
+    </Campos>
+      <ZonasOcr>
+      <AnchoReferencia>1000</AnchoReferencia>
+      <AltoReferencia>1000</AltoReferencia>
+      <TipoCoordenada>Normalizadas</TipoCoordenada>
+      <Zonas>
+        <Zona Campo="P1_Z1" Pagina="1" X="56.515151515151516" Y="6.8449197860962565" Ancho="33.63636363636363" Alto="10.588235294117647" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z2" Pagina="1" X="23.939393939393938" Y="25.026737967914436" Ancho="13.030303030303031" Alto="4.81283422459893" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z3" Pagina="1" X="37.72727272727273" Y="25.026737967914436" Ancho="11.666666666666666" Alto="4.705882352941177" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P2_Z1" Pagina="2" X="1.8181818181818181" Y="85.02673796791443" Ancho="96.51515151515152" Alto="5.026737967914439" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z4" Pagina="1" X="2.272727272727273" Y="84.91978609625669" Ancho="95.60606060606061" Alto="5.454545454545454" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+      </Zonas>
+    </ZonasOcr>
+  </Emisor>
+
+  <!-- ═══════════════ RYANAIR ═══════════════ -->
+  <Emisor id="W0071513F">
+    <Nombre>RYANAIR DAC</Nombre>
+    <Nif>W0071513F</Nif>
+    <Concepto>600</Concepto>
+    <Identificadores>
+      <Identificador>ESW0071513F</Identificador>
+      <Identificador>ryanair</Identificador>
+      <Identificador>spain</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>Factura n.:\s+(.*)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>Fecha de emisión:\s*([\d\/]+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Tipo de pago:.+[\n\r]+(.*)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>Tarifa\s+([\d.,]+)\s+([\d.,]+)%\s+([\d.,]+)\s+([\d.,]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>Tarifa\s+([\d.,]+)\s+([\d.,]+)%\s+([\d.,]+)\s+([\d.,]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>Tarifa\s+([\d.,]+)\s+([\d.,]+)%\s+([\d.,]+)\s+([\d.,]+)</Regex>
+        <Grupo>3</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>Tarifa\s+([\d.,]+)\s+([\d.,]+)%\s+([\d.,]+)\s+([\d.,]+)</Regex>
+        <Grupo>4</Grupo>
+      </Campo>
+    </Campos>
+  </Emisor>
+
+  <!-- ═══════════════ EUROCABOS ═══════════════ -->
+  <Emisor id="B92188812">
+    <Nombre>Eurocabos Sur S.L.</Nombre>
+    <Nif>B92188812</Nif>
+    <Concepto>600</Concepto>
+    <Identificadores>
+      <Identificador>B92188812</Identificador>
+      <Identificador>Eurocabos Sur</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>NÚMERO:\s*(\S+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>FECHA:\s*(\d{2})[\/\-](\d{2})[\/\-](\d{4})</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Dirección:\s*\n(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>Importe neto.*\n([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>Importe neto.*\n([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)</Regex>
+        <Grupo>3</Grupo>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>Importe neto.*\n([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)</Regex>
+        <Grupo>4</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>TOTAL\s+\(EUR\):\s+([\d,.]+)</Regex>
+      </Campo>
+    </Campos>
+  </Emisor>
+
+  <!-- ═══════════════ PETROPRIX ═══════════════ -->
+  <Emisor id="B23709892">
+    <Nombre>PETROPRIX ENERGIA S.L.</Nombre>
+    <Nif>B23709892</Nif>
+    <Concepto>624</Concepto>
+    <Identificadores>
+      <Identificador>B23709892</Identificador>
+      <Identificador>PETROPRIX</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>FACTURA\s+(.+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>Fecha:\s*(.+)</Regex>
+        <FormatosFecha>
+          <Formato>d 'de' MMMM 'de' yyyy</Formato>
+          <Formato>d 'de' MMM 'de' yyyy</Formato>
+        </FormatosFecha>
+        <Cultura>es-ES</Cultura>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Nombre:\s+(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>IVA[\r\n]+([\d.,]+).*?([\d.,]+)\s*%.*?([\d.,]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>IVA[\r\n]+([\d.,]+).*?([\d.,]+)\s*%.*?([\d.,]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>Total Factura[\r\n]+([\d.,]+)</Regex>
+      </Campo>
+    </Campos>
+      <ZonasOcr>
+      <AnchoReferencia>1000</AnchoReferencia>
+      <AltoReferencia>1000</AltoReferencia>
+      <TipoCoordenada>Normalizadas</TipoCoordenada>
+      <Zonas>
+        <Zona Campo="P1_Z1" Pagina="1" X="3.0303030303030303" Y="8.235294117647058" Ancho="46.36363636363636" Alto="7.2727272727272725" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z2" Pagina="1" X="49.3939393939394" Y="14.545454545454545" Ancho="47.27272727272727" Alto="12.085561497326204" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z3" Pagina="1" X="2.878787878787879" Y="81.92513368983957" Ancho="78.03030303030303" Alto="10.053475935828878" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z4" Pagina="1" X="80.3030303030303" Y="81.92513368983957" Ancho="16.21212121212121" Alto="10.16042780748663" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+      </Zonas>
+    </ZonasOcr>
+  </Emisor>
+
+<!-- ═══════════════ PESCADERÍA SALVADOR ═══════════════ -->
+  <Emisor id="25041071M">
+    <Nombre>Pescadería Salvador</Nombre>
+    <Nif>25041071M</Nif>
+    <Identificadores>
+      <Identificador>Salvador</Identificador>
+      <Identificador>25041071-M</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>Nº factura\s*(.+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>Fecha\s+de\s+factura:\s*(.*)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Pescadería\s+Salvador\s+(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif">
+        <Regex>\b25041071-M\s+(.+)\b</Regex>
+      </Campo>
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>Base\s+(.+?)\s+IVA\s+.+?\s+Total\s+(.+?)\s+</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Fijo">
+        <ValorFijo>10</ValorFijo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>\s+IVA\s+.+?\s+Total\s+(.+?)\s+</Regex>
+      </Campo>
+    </Campos>
+  </Emisor>
+
+  <!-- ═══════════════ MONCAYO ═══════════════ -->
+  <Emisor id="25042336M">
+    <Nombre>ROSA MARIA MONCAYO</Nombre>
+    <Nif>25042336M</Nif>
+    <Concepto>629</Concepto>
+    <Identificadores>
+      <Identificador>rosa maria moncayo</Identificador>
+      <Identificador>25042336m</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>No\.fact\.:\s+(\d+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>Fecha:\s+(.*)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Nombre:\s+(.*)\s+Fecha</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif">
+        <Regex>CIF\s+:\s+(.+)\b</Regex>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>BASE IMPONIBLE.+IVA\s+(\d+)%.+[\r\n]+([\d,.]+)\s+</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>BASE IMPONIBLE.+IVA\s+(\d+)%.+[\r\n]+([\d,.]+)\s+</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>BASE IMPONIBLE.+IVA\s+(\d+)%.+[\r\n]+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)</Regex>
+        <Grupo>4</Grupo>
+      </Campo>
+    </Campos>
+  </Emisor>
+
+  <!-- ═══════════════ GREGORIO ARANDA ═══════════════ -->
+  <Emisor id="25693621E">
+    <Nombre>Gregorio Aranda Garcia</Nombre>
+    <Nif>25693621E</Nif>
+    <Identificadores>
+      <Identificador>25693621E</Identificador>
+      <Identificador>fecha de vencimiento</Identificador>
+      <Identificador>datos proveedor</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>Número de Factura.*[\n\r]+(?:Fact-)?(\d+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>\bFacturación[\s\r\n]+(.*?)\s</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Datos Cliente[\n\r]+(.*)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif">
+        <Regex>\b([A-Z]?\d{7,8}[A-Z]?)\b</Regex>
+      </Campo>
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>otal.*?([\d,.]+)[\n\r]*IVA\s*\(([\d]+)%\)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>otal.*?([\d,.]+)[\n\r]*IVA\s*\(([\d]+)%\)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>Envío[\s\n\r]+(?:[\d,.\s\n\r]*)Total\s+([\d.,]+)</Regex>
+      </Campo>
+    </Campos>
+      <ZonasOcr>
+      <AnchoReferencia>1000</AnchoReferencia>
+      <AltoReferencia>1000</AltoReferencia>
+      <TipoCoordenada>Normalizadas</TipoCoordenada>
+      <Zonas>
+        <Zona Campo="Zona1" Pagina="1" X="47.38095238095238" Y="18.54974704890388" Ancho="48.333333333333336" Alto="15.851602023608768" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="Zona2" Pagina="1" X="4.0476190476190474" Y="18.54974704890388" Ancho="43.333333333333336" Alto="23.102866779089375" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="Zona3" Pagina="1" X="59.76190476190476" Y="44.51939291736931" Ancho="35.23809523809524" Alto="51.433389544688026" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+      </Zonas>
+    </ZonasOcr>
+  </Emisor>
+
+  <!-- ═══════════════ ANDRÉS CAZALLA ═══════════════ -->
+  <Emisor id="26236236K">
+    <Nombre>Andrés Cazalla Medina</Nombre>
+    <Nif>26236236K</Nif>
+    <Identificadores>
+      <Identificador>andres cazalla medina</Identificador>
+      <Identificador>calle newton, 20</Identificador>
+      <Identificador>semirueda</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>FACTURA\s+(20[\d]{5})\s+</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>\bFACTURA\s.*?\s(.*)\b</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Calle Newton, 20 (.*)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif">
+        <Regex>\b([A-Z]?\d{7,8}[A-Z]?)\s+\d*\s*semirueda</Regex>
+      </Campo>
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>([\d,.]+)\s[\d,.]+\s.*\n([\d,]+)\s([\d,]+)\s[\d,]+\s([\d,.]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>([\d,.]+)\s[\d,.]+\s.*\n([\d,]+)\s([\d,]+)\s[\d,]+\s([\d,.]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIRPF" tipo="Decimal">
+        <Regex>([\d,.]+)\s[\d,.]+\s.*\n([\d,]+)\s([\d,]+)\s[\d,]+\s([\d,.]+)</Regex>
+        <Grupo>3</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>([\d,.]+)\s[\d,.]+\s.*\n([\d,]+)\s([\d,]+)\s[\d,]+\s([\d,.]+)</Regex>
+        <Grupo>4</Grupo>
+      </Campo>
+    </Campos>
+    <PostProcesamiento>
+      <Regla nombre="IRPF a Concepto 720">
+        <Condicion Campo="PorcentajeIRPF" Operador="Igual" Valor="19"/>
+        <Accion tipo="SetValor" Campo="Concepto" Valor="720"/>
+      </Regla>
+    </PostProcesamiento>
+  </Emisor>
+
+  <!-- ═══════════════ IGNACIO IBAÑEZ ═══════════════ -->
+  <Emisor id="33360360X">
+    <Nombre>Ignacio Ibañez Pacheco</Nombre>
+    <Nif>33360360X</Nif>
+    <Identificadores>
+      <Identificador>SERVINFOTEC</Identificador>
+      <Identificador>33.360.360-X</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>Número\s+([^\s]+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha" />
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>CLIENTE[\n\r]+(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>([\d.,]+)\s+([\d.,]+)\s+([\d.,]+)\s+[\d.,]+\s+[\d.,]+</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>([\d.,]+)\s+([\d.,]+)\s+([\d.,]+)\s+[\d.,]+\s+[\d.,]+</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>([\d.,]+)\s+([\d.,]+)\s+([\d.,]+)\s+[\d.,]+\s+[\d.,]+</Regex>
+        <Grupo>3</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>TOTAL[\r\n]+([\d.,]+)</Regex>
+      </Campo>
+    </Campos>
+      <ZonasOcr>
+      <AnchoReferencia>1000</AnchoReferencia>
+      <AltoReferencia>1000</AltoReferencia>
+      <TipoCoordenada>Normalizadas</TipoCoordenada>
+      <Zonas>
+        <Zona Campo="P1_Z1" Pagina="1" X="49.016641452344935" Y="5.454545454545454" Ancho="46.89863842662632" Alto="17.11229946524064" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z2" Pagina="1" X="3.7821482602118004" Y="18.609625668449198" Ancho="44.175491679273826" Alto="3.9572192513368987" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z3" Pagina="1" X="22.239031770045386" Y="80.74866310160428" Ancho="50.983358547655065" Alto="5.454545454545454" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z4" Pagina="1" X="74.73524962178517" Y="81.17647058823529" Ancho="20.87745839636914" Alto="8.449197860962567" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+      </Zonas>
+    </ZonasOcr>
+  </Emisor>
+
+  <!-- ═══════════════ COCINARTE ═══════════════ -->
+  <Emisor id="33367623M">
+    <Nombre>PEDRO RODRIGUEZ GONZALEZ</Nombre>
+    <Nif>33367623M</Nif>
+    <Identificadores>
+      <Identificador>33.367.623-M</Identificador>
+      <Identificador>cocinarte</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>FACTURA N.\s*(\S+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>Málaga,\s+(.+)</Regex>
+        <FormatosFecha>
+          <Formato>d 'de' MMMM 'de' yyyy</Formato>
+          <Formato>d 'de' MMM 'de' yyyy</Formato>
+        </FormatosFecha>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Cliente:\s+(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif">
+        <Regex>\b(\d{2}\.\d{3}\.\d{3}-[A-Z])\b</Regex>
+      </Campo>
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>BASE IMPONIBLE:\s+([\d,.]+)</Regex>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>IVA \(([\d,.]+)%\):\s+([\d,.]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>IVA \(([\d,.]+)%\):\s+([\d,.]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>TOTAL FACTURA:\s+([\d,.]+)</Regex>
+      </Campo>
+    </Campos>
+  </Emisor>
+
+  <!-- ═══════════════ PESCADERÍA MARENGO ═══════════════ -->
+  <Emisor id="33384986A">
+    <Nombre>Pescadería Marengo</Nombre>
+    <Nif>33384986A</Nif>
+    <Identificadores>
+      <Identificador>Marengo</Identificador>
+      <Identificador>33384986-A</Identificador>
+    </Identificadores>
+    <PreProcesamiento>
+      <Reemplazar busco="," por="" />
+    </PreProcesamiento>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>Nº factura\s*(.+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>Fecha\s+de\s+factura:\s*(.*)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Pescadería\s+Marengo\s+(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif">
+        <Regex>\b33384986-A\s+(.+)\b</Regex>
+      </Campo>
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>Base\s+(.+?)\s+IVA\s+.+?\s+Total\s+(.+?)\s+</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Fijo">
+        <ValorFijo>10</ValorFijo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>Base\s+(.+?)\s+IVA\s+.+?\s+Total\s+(.+?)\s+</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+    </Campos>
+  </Emisor>
+
+  <!-- ═══════════════ GRÚAS JUANDI ═══════════════ -->
+  <Emisor id="74858498F">
+    <Nombre>JUAN DIEGO CUENCA GONZALEZ</Nombre>
+    <Nif>74858498F</Nif>
+    <Concepto>629</Concepto>
+    <Identificadores>
+      <Identificador>gruas juandi</Identificador>
+      <Identificador>74858498</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>No\.fact\.:\s+(\d+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>Fecha:\s+(.*)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Nombre:\s+(.*)\s+Fecha</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif">
+        <Regex>CIF\s+:\s+(.+)\b</Regex>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>BASE IMPONIBLE.+IVA\s+(\d+)%.+[\r\n]+([\d,.]+)\s+</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>BASE IMPONIBLE.+IVA\s+(\d+)%.+[\r\n]+([\d,.]+)\s+</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>BASE IMPONIBLE.+IVA\s+(\d+)%.+[\r\n]+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)</Regex>
+        <Grupo>4</Grupo>
+      </Campo>
+    </Campos>
+  </Emisor>
+
+  <!-- ═══════════════ OSCAR ARIAS ═══════════════ -->
+  <Emisor id="74890980J">
+    <Nombre>Oscar Arias Merino</Nombre>
+    <Nif>74890980J</Nif>
+    <Identificadores>
+      <Identificador>oscar arias merino</Identificador>
+      <Identificador>74890980-j</Identificador>
+      <Identificador>deudor</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>(FV[\d]{5})\b</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha" />
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>CLIENTE[\r\n]+(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>IMPONIBLE\s+([,\.0-9]+)</Regex>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>\(([ ,\.0-9]+)%\)</Regex>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>TOTAL\s+([,\.0-9]+)</Regex>
+      </Campo>
+    </Campos>
+    <PostProcesamiento>
+      <Regla nombre="RE 1.4%">
+        <Condicion Campo="PorcentajeIVA" Operador="Igual" Valor="1.4"/>
+        <Accion tipo="SetValor" Campo="PorcentajeRE" Valor="1.4"/>
+        <Accion tipo="SetValor" Campo="PorcentajeIVA" Valor="10"/>
+      </Regla>
+    </PostProcesamiento>
+  </Emisor>
+
+  <!-- ═══════════════ FACCSA ═══════════════ -->
+  <Emisor id="A17001231">
+    <Nombre>FACCSA: Frigorif. And. Conservas Carne</Nombre>
+    <Nif>A17001231</Nif>
+    <Identificadores>
+      <Identificador>andaluces</Identificador>
+      <Identificador>conservas</Identificador>
+      <Identificador>carne</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>\bFACTURA\s+(.*?)\s+</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha" />
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>CIF\s+.*?[\s\r\n]+(.*)\s</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif">
+        <Regex>CIF\s+(.*?)\s</Regex>
+      </Campo>
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>ASE\s+IMPONIB\.?\s+([\d.,]+)</Regex>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Fijo">
+        <ValorFijo>10</ValorFijo>
+      </Campo>
+      <Campo nombre="PorcentajeRE" tipo="Fijo">
+        <ValorFijo>1.4</ValorFijo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>OTAL\s+FACTURA.*?([\d,.]+)</Regex>
+      </Campo>
+    </Campos>
+      <ZonasOcr>
+      <AnchoReferencia>1000</AnchoReferencia>
+      <AltoReferencia>1000</AltoReferencia>
+      <TipoCoordenada>Normalizadas</TipoCoordenada>
+      <Zonas>
+        <Zona Campo="Zona1" Pagina="1" X="25.183016105417277" Y="2.5853154084798344" Ancho="51.68374816983895" Alto="6.308169596690797" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="Zona2" Pagina="1" X="3.953147877013177" Y="10.961737331954497" Ancho="26.061493411420205" Alto="13.340227507755948" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="Zona3" Pagina="1" X="59.443631039531475" Y="11.06514994829369" Ancho="32.650073206442165" Alto="12.719751809720787" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="Zona4" Pagina="1" X="65.30014641288433" Y="74.04343329886245" Ancho="30.30746705710102" Alto="12.82316442605998" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+      </Zonas>
+    </ZonasOcr>
+  </Emisor>
+
+  <!-- ═══════════════ EMASA ═══════════════ -->
+  <Emisor id="A29185519">
+    <Nombre>Empresa Municipal Aguas de Málaga S.A.</Nombre>
+    <Nif>A29185519</Nif>
+    <Concepto>628</Concepto>
+    <Identificadores>
+      <Identificador>emasa</Identificador>
+      <Identificador>plaza general torrijos</Identificador>
+      <Identificador>agua</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>FACTURA:\s*(\S+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>\bFECHA\sDE\sEMISIÓN:\s(.*?)\s</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>www\.emasa\.es\r*\n*(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>\(Ley 9/2010\) ([\d,]+) €\r\n+IVA \(B\.I\. ([\d,]+)\) (\d+)% ([\d,]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>\(Ley 9/2010\) ([\d,]+) €\r\n+IVA \(B\.I\. ([\d,]+)\) (\d+)% ([\d,]+)</Regex>
+        <Grupo>3</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>TOTAL FACTURA ([\d,]+) €</Regex>
+      </Campo>
+    </Campos>
+    <PostProcesamiento>
+      <Regla nombre="Sumar BaseImponible al Total">
+        <Accion tipo="SumarCampo" Campo="Total" CampoFuente="BaseImponible"/>
+      </Regla>
+    </PostProcesamiento>
+  </Emisor>
+
+  <!-- ═══════════════ MERCADONA ═══════════════ -->
+  <Emisor id="A46103834">
+    <Nombre>MERCADONA, S.A.</Nombre>
+    <Nif>A46103834</Nif>
+    <Identificadores>
+      <Identificador>mercadona s.a.</Identificador>
+      <Identificador>a-46103834</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>N.\s*Factura:\s*(.*?)\s+</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>\bFecha\sFactura:\s*(.*?)[\s\n\r]+</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Razón Social: (.*)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+    </Campos>
+    <MultiFactura>
+      <LineaIva>
+        <Regex>(\d+)% ([\d,]+) ([\d,.]+) ([\d,.]+)\r</Regex>
+        <Mapeo>
+          <Asignar Grupo="1" Campo="PorcentajeIVA"/>
+          <Asignar Grupo="2" Campo="BaseImponible"/>
+          <Asignar Grupo="3" Campo="CuotaIVA"/>
+          <Asignar Grupo="4" Campo="Total"/>
+        </Mapeo>
+      </LineaIva>
+    </MultiFactura>
+  </Emisor>
+
+  <!-- ═══════════════ LIDL ═══════════════ -->
+  <Emisor id="A60195278">
+    <Nombre>LIDL SUPERMERCADOS S.A.U.</Nombre>
+    <Nif>A60195278</Nif>
+    <Identificadores>
+      <Identificador>lidl supermercados</Identificador>
+      <Identificador>factura</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>Nº Factura:\s([\d]+)\b</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>\bFecha\sFactura:\s+(.*?)\s</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>\b(.*)\b\sFecha\sTique</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif">
+        <Regex>Barcelona[\r\n]+([A-Z]?\d{7,8}[A-Z]?)\b</Regex>
+      </Campo>
+    </Campos>
+    <MultiFactura>
+      <LineaIva>
+        <Regex>Tipo\sIVA\s(\d{1,2},00)\s([\d.,]+)\s[\d., ]+\s([\d.,]+)</Regex>
+        <Mapeo>
+          <Asignar Grupo="1" Campo="PorcentajeIVA"/>
+          <Asignar Grupo="2" Campo="BaseImponible"/>
+          <Asignar Grupo="3" Campo="Total"/>
+        </Mapeo>
+      </LineaIva>
+    </MultiFactura>
+  </Emisor>
+
+  <!-- ═══════════════ DULCERÍA ═══════════════ -->
+  <Emisor id="B11425964">
+    <Nombre>Dulcería 17, S.L.</Nombre>
+    <Nif>B11425964</Nif>
+    <Identificadores>
+      <Identificador>40.0015231</Identificador>
+      <Identificador>40.080372</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>Número[\n\r]+(.+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha" />
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>\[P1_Z1]:\s*(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif">
+        <Regex>([\d]{2}\.[\d]{3}\.[\d]{3}-.)</Regex>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>TOTAL EURO.*[\n\r]*([-\d.,]+)</Regex>
+      </Campo>
+    </Campos>
+    <MultiFactura>
+      <LineaIva>
+        <Regex>([-\d.,]+)\s+([\d.,]+)\s*%\s+([-\d.,]+)</Regex>
+        <Mapeo>
+          <Asignar Grupo="1" Campo="BaseImponible"/>
+          <Asignar Grupo="2" Campo="PorcentajeIVA"/>
+          <Asignar Grupo="3" Campo="CuotaIVA"/>
+        </Mapeo>
+      </LineaIva>
+      <ValidarSuma>true</ValidarSuma>
+      <FiltrarBaseCero>true</FiltrarBaseCero>
+      <Deduplicar>true</Deduplicar>
+    </MultiFactura>
+      <ZonasOcr>
+      <AnchoReferencia>1000</AnchoReferencia>
+      <AltoReferencia>1000</AltoReferencia>
+      <TipoCoordenada>Normalizadas</TipoCoordenada>
+      <Zonas>
+        <Zona Campo="P1_Z1" Pagina="1" X="48.71406959152799" Y="13.796791443850267" Ancho="30.408472012102873" Alto="12.727272727272727" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z2" Pagina="1" X="3.9334341906202726" Y="18.93048128342246" Ancho="15.582450832072617" Alto="7.700534759358289" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z3" Pagina="1" X="18.305597579425115" Y="20" Ancho="14.22087745839637" Alto="6.737967914438503" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z4" Pagina="1" X="34.039334341906205" Y="81.60427807486631" Ancho="31.77004538577912" Alto="6.417112299465241" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z5" Pagina="1" X="80.48411497730712" Y="81.60427807486631" Ancho="17.851739788199698" Alto="6.096256684491978" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+      </Zonas>
+    </ZonasOcr>
+  </Emisor>
+
+  <!-- ═══════════════ CATHEDRAL SOFTWARE ═══════════════ -->
+  <Emisor id="B16505364">
+    <Nombre>CATHEDRAL SOFTWARE S.L.</Nombre>
+    <Nif>B16505364</Nif>
+    <Identificadores>
+      <Identificador>B16505364</Identificador>
+      <Identificador>cathedral</Identificador>
+      <Identificador>binissalem</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>Nº FACTURA[\n\r]+(.+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha" />
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>\[P1_Z1]:\s+(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>bruto\s+([\d,.]+)[\n\r]+([\d,.]+)%\s+([\d,.]+)[\n\r]+([\d,.]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>bruto\s+([\d,.]+)[\n\r]+([\d,.]+)%\s+([\d,.]+)[\n\r]+([\d,.]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>bruto\s+([\d,.]+)[\n\r]+([\d,.]+)%\s+([\d,.]+)[\n\r]+([\d,.]+)</Regex>
+        <Grupo>3</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>bruto\s+([\d,.]+)[\n\r]+([\d,.]+)%\s+([\d,.]+)[\n\r]+([\d,.]+)</Regex>
+        <Grupo>4</Grupo>
+      </Campo>
+    </Campos>
+      <ZonasOcr>
+      <AnchoReferencia>1000</AnchoReferencia>
+      <AltoReferencia>1000</AltoReferencia>
+      <TipoCoordenada>Normalizadas</TipoCoordenada>
+      <Zonas>
+        <Zona Campo="P1_Z1" Pagina="1" X="4.030226700251889" Y="2.6690391459074734" Ancho="49.87405541561713" Alto="14.768683274021353" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z2" Pagina="1" X="54.311649016641454" Y="12.941176470588237" Ancho="17.851739788199698" Alto="4.705882352941177" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z3" Pagina="1" X="71.25567322239031" Y="12.834224598930483" Ancho="21.6338880484115" Alto="4.705882352941177" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z4" Pagina="1" X="70.65052950075643" Y="68.87700534759358" Ancho="22.844175491679273" Alto="12.513368983957218" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+      </Zonas>
+    </ZonasOcr>
+  </Emisor>
+
+  <!-- ═══════════════ SARIGABO ═══════════════ -->
+  <Emisor id="B25880733">
+    <Nombre>IMPULSO SARIGABO, SLU</Nombre>
+    <Nif>B25880733</Nif>
+    <ModoExtraccion>Simple</ModoExtraccion>
+    <Identificadores>
+      <Identificador>sarigabo</Identificador>
+      <Identificador>B25880733</Identificador>
+    </Identificadores>
+    <PreProcesamiento>
+      <Reemplazar busco="74890980." por="74890980J" regex="true" />
+    </PreProcesamiento>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>\s(FVR\d+)\s</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha" />
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>([A-ZÁÉÍÓÚÜÑ ]+)\s*(?:\r?\n\s*)+\s*Cliente\b</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>\b\bTotal .mporte[^\d]+(.*)</Regex>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Fijo">
+        <ValorFijo>10</ValorFijo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>\bTota.\s+Factura\s+(.+)</Regex>
+      </Campo>
+    </Campos>
+      <ZonasOcr>
+      <AnchoReferencia>1000</AnchoReferencia>
+      <AltoReferencia>1000</AltoReferencia>
+      <TipoCoordenada>Normalizadas</TipoCoordenada>
+      <Zonas>
+        <Zona Campo="P1_Z1" Pagina="1" X="50.60606060606061" Y="13.475935828877006" Ancho="43.78787878787879" Alto="14.43850267379679" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z2" Pagina="1" X="28.030303030303028" Y="27.27272727272727" Ancho="13.333333333333334" Alto="6.951871657754011" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z3" Pagina="1" X="40.75757575757576" Y="27.593582887700535" Ancho="30.757575757575754" Alto="5.240641711229946" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z4" Pagina="1" X="51.515151515151516" Y="82.35294117647058" Ancho="46.96969696969697" Alto="4.491978609625669" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z5" Pagina="1" X="72.27272727272728" Y="71.33689839572193" Ancho="25.303030303030305" Alto="3.1016042780748663" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+      </Zonas>
+    </ZonasOcr>
+  </Emisor>
+
+  <!-- ═══════════════ TD SYNNEX ═══════════════ -->
+  <Emisor id="B58728585">
+    <Nombre>TD SYNNEX SPAIN, S.L.U.</Nombre>
+    <Nif>B58728585</Nif>
+    <Identificadores>
+      <Identificador>ESB58728585</Identificador>
+      <Identificador>td</Identificador>
+      <Identificador>synnex</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>N. de factura[\n\r]+\d+\s+[0-9.]+\s+(\d+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>N. de factura[\n\r]+\d+\s+([0-9.]+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Empresa[\n\r]+(.*)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>Importe IVA\s+([\d,.]+)\s*%\s+([\d,.]+).+?([\d,.]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>Importe IVA\s+([\d,.]+)\s*%\s+([\d,.]+).+?([\d,.]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>Importe IVA\s+([\d,.]+)\s*%\s+([\d,.]+).+?([\d,.]+)</Regex>
+        <Grupo>3</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>Total a pagar\s+([\d,.]+)</Regex>
+      </Campo>
+    </Campos>
+      <ZonasOcr>
+      <AnchoReferencia>1000</AnchoReferencia>
+      <AltoReferencia>1000</AltoReferencia>
+      <TipoCoordenada>Normalizadas</TipoCoordenada>
+      <Zonas>
+        <Zona Campo="P1_Z1" Pagina="1" X="5.606060606060606" Y="2.7807486631016043" Ancho="44.24242424242424" Alto="8.663101604278074" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z2" Pagina="1" X="5.757575757575758" Y="17.860962566844922" Ancho="38.78787878787879" Alto="8.235294117647058" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z3" Pagina="1" X="5.757575757575758" Y="29.62566844919786" Ancho="44.54545454545455" Alto="6.951871657754011" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z4" Pagina="1" X="6.212121212121212" Y="46.31016042780748" Ancho="89.39393939393939" Alto="23.101604278074866" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+      </Zonas>
+    </ZonasOcr>
+  </Emisor>
+
+  <!-- ═══════════════ ESPRINET ═══════════════ -->
+  <Emisor id="B84443985">
+    <Nombre>Esprinet Ibérica, S.L.</Nombre>
+    <Nif>B84443985</Nif>
+    <Identificadores>
+      <Identificador>B84443985</Identificador>
+      <Identificador>Esprinet</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>COMERCIAL / SALES REP.*?(V\d+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>COMERCIAL / SALES REP\s+(\d{1,2}/\d{2}/\d{2})</Regex>
+        <FormatosFecha>
+          <Formato>dd/MM/yy</Formato>
+          <Formato>d/M/yy</Formato>
+        </FormatosFecha>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>FACTURADO A.*\n(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>Iva\s+(\d+)\s*%\s+([\d,.]+)\s+[\d,.]+\s+([\d,.]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>Iva\s+(\d+)\s*%\s+([\d,.]+)\s+[\d,.]+\s+([\d,.]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>Iva\s+(\d+)\s*%\s+([\d,.]+)\s+[\d,.]+\s+([\d,.]+)</Regex>
+        <Grupo>3</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>TOTAL INVOICE\s+EUR\s+([\d,.]+)</Regex>
+      </Campo>
+    </Campos>
+  </Emisor>
+
+  <!-- ═══════════════ ONA CORP ═══════════════ -->
+  <Emisor id="B85002764">
+    <Nombre>ONA CORP, S.L.U.</Nombre>
+    <Nif>B85002764</Nif>
+    <ModoExtraccion>LayoutAnalysis</ModoExtraccion>
+    <Identificadores>
+      <Identificador>ona corp</Identificador>
+      <Identificador>ESB85002764</Identificador>
+      <Identificador>+34915079385</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>FACTURA(?:| RECTIFICATIVA)[\r\n]+(.+)[\r\n]+FECHA</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>\bFECHA[\s\n\r]+(.*?)[\s\n\r]+N</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Dirección de Facturación[\r\n]+.*[\r\n]+(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif">
+        <Regex>España[\r\n]+(.+)[\r\n]+Dirección</Regex>
+      </Campo>
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>Base Imponible ([\d,.]+)€[\r\n]+IVA Total \((\d+)%\) [\d,.]+€[\r\n]+TOTAL FACTURA ([\d,.]+)€</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>Base Imponible ([\d,.]+)€[\r\n]+IVA Total \((\d+)%\) [\d,.]+€[\r\n]+TOTAL FACTURA ([\d,.]+)€</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>Base Imponible ([\d,.]+)€[\r\n]+IVA Total \((\d+)%\) [\d,.]+€[\r\n]+TOTAL FACTURA ([\d,.]+)€</Regex>
+        <Grupo>3</Grupo>
+      </Campo>
+    </Campos>
+  </Emisor>
+
+  <!-- ═══════════════ FIESTA COLOMBINA ═══════════════ -->
+  <Emisor id="B85905412">
+    <Nombre>Fiesta Colombina, S.L.U.</Nombre>
+    <Nif>B85905412</Nif>
+    <Identificadores>
+      <Identificador>fiesta colombina s.l.u</Identificador>
+      <Identificador>n.i.f.:b85905412</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>FACTURA:\s+(\d+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>\bFECHA\s+(.*?)\s+FECHA\b</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>NOMBRE:\s+(.+?\s+.+?\s+.+?)\s+</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>\bTOTAL EUR ([,\.0-9]+)</Regex>
+      </Campo>
+    </Campos>
+    <MultiFactura>
+      <LineaIva>
+        <Regex>BASE\s+IMPONIBLE\s+EUR\s+(\d+)\s*%\s+([\d.,]+).*?IVA\s*/\s*IGIC\s+\1\s*%\s+([\d.,]+)</Regex>
+        <Mapeo>
+          <Asignar Grupo="1" Campo="PorcentajeIVA"/>
+          <Asignar Grupo="2" Campo="BaseImponible"/>
+          <Asignar Grupo="3" Campo="CuotaIVA"/>
+        </Mapeo>
+      </LineaIva>
+      <ValidarSuma>true</ValidarSuma>
+      <FiltrarBaseCero>true</FiltrarBaseCero>
+      <Deduplicar>true</Deduplicar>
+    </MultiFactura>
+  </Emisor>
+
+  <!-- ═══════════════ AUTOMOTOR PREMIUM ═══════════════ -->
+  <Emisor id="B93036515">
+    <Nombre>AUTOMOTOR PREMIUM, S.L.</Nombre>
+    <Nif>B93036515</Nif>
+    <Identificadores>
+      <Identificador>B93036515</Identificador>
+      <Identificador>automotor</Identificador>
+      <Identificador>premium</Identificador>
+      <Identificador>bmw</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>FACTURA[\n\r]+(.*)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha" />
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>\[P1_Z2]:\s+(.*)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>BASE IMPONIBLE\s+([\d.,]+)</Regex>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>IVA\s+([\d.,]+)\s*%\s+([\d.,]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>IVA\s+([\d.,]+)\s*%\s+([\d.,]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>TOTAL FACTURA\s+([\d.,]+)</Regex>
+      </Campo>
+    </Campos>
+      <ZonasOcr>
+      <AnchoReferencia>1000</AnchoReferencia>
+      <AltoReferencia>1000</AltoReferencia>
+      <TipoCoordenada>Normalizadas</TipoCoordenada>
+      <Zonas>
+        <Zona Campo="P1_Z1" Pagina="1" X="65.80937972768533" Y="17.326203208556148" Ancho="23.751891074130103" Alto="10.37433155080214" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z2" Pagina="1" X="7.564296520423601" Y="14.331550802139038" Ancho="22.390317700453856" Alto="8.55614973262032" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z3" Pagina="1" X="7.2617246596066565" Y="26.09625668449198" Ancho="24.659606656580937" Alto="2.6737967914438503" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z4" Pagina="1" X="55.06807866868382" Y="80.53475935828877" Ancho="44.175491679273826" Alto="5.240641711229946" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+      </Zonas>
+    </ZonasOcr>
+  </Emisor>
+
+  <!-- ═══════════════ PLENERGY ═══════════════ -->
+  <Emisor id="B93275394">
+    <Nombre>PLENERGY GRUPO, S.L.</Nombre>
+    <Nif>B93275394</Nif>
+    <Concepto>624</Concepto>
+    <ModoExtraccion>LayoutAnalysis</ModoExtraccion>
+    <Identificadores>
+      <Identificador>PLENERGY GRUPO</Identificador>
+      <Identificador>B93275394</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>Nº FACTURA:\s+(.+)\b</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>\bFECHA:\s*(.*?)[\s\n\r]+CLIENTE</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>(.*)[\r\n]+</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif">
+        <Regex>Málaga[\r\n]+(.+)[\r\n]+PLENERGY</Regex>
+      </Campo>
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>Importe\s+TOTAL[\r\n]+([\d,.]+)\s+(\d+)\s*%\s+([\d,.]+)\s+[\d,.]+\s*€\s+([\d,.]+)\s*€</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>Importe\s+TOTAL[\r\n]+([\d,.]+)\s+(\d+)\s*%\s+([\d,.]+)\s+[\d,.]+\s*€\s+([\d,.]+)\s*€</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>Importe\s+TOTAL[\r\n]+([\d,.]+)\s+(\d+)\s*%\s+([\d,.]+)\s+[\d,.]+\s*€\s+([\d,.]+)\s*€</Regex>
+        <Grupo>4</Grupo>
+      </Campo>
+    </Campos>
+  </Emisor>
+
+  <!-- ═══════════════ INVERSIONES CERRO PLOMO ═══════════════ -->
+  <Emisor id="B93538783">
+    <Nombre>INVERSIONES CERRO EL PLOMO S.L.</Nombre>
+    <Nif>B93538783</Nif>
+    <Concepto>625</Concepto>
+    <Identificadores>
+      <Identificador>B93538783</Identificador>
+      <Identificador>INVERSIONES CERRO EL PLOMO</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>^(\d{6})\s+\d{2}/\d{2}/\d{4}</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha" />
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>\[Zona2]:\s*(.*)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>BASE IMPONIBLE.*[\r\n]+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>BASE IMPONIBLE.*[\r\n]+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>BASE IMPONIBLE.*[\r\n]+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)</Regex>
+        <Grupo>3</Grupo>
+      </Campo>
+      <Campo nombre="PorcentajeIRPF" tipo="Decimal">
+        <Regex>BASE IMPONIBLE.*[\r\n]+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)</Regex>
+        <Grupo>4</Grupo>
+      </Campo>
+      <Campo nombre="CuotaIRPF" tipo="Decimal">
+        <Regex>BASE IMPONIBLE.*[\r\n]+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)</Regex>
+        <Grupo>5</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>TOTAL\s+FACTURA\s*:\s*([\d,.]+)</Regex>
+      </Campo>
+    </Campos>
+      <ZonasOcr>
+      <AnchoReferencia>1000</AnchoReferencia>
+      <AltoReferencia>1000</AltoReferencia>
+      <TipoCoordenada>Normalizadas</TipoCoordenada>
+      <Zonas>
+        <Zona Campo="Zona1" Pagina="1" X="3.579952267303103" Y="4.040404040404041" Ancho="42.004773269689736" Alto="14.309764309764308" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="Zona2" Pagina="1" X="52.2673031026253" Y="15.488215488215488" Ancho="44.868735083532215" Alto="9.932659932659933" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="Zona3" Pagina="1" X="3.1026252983293556" Y="18.855218855218855" Ancho="47.01670644391408" Alto="7.07070707070707" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="Zona4" Pagina="1" X="2.863961813842482" Y="65.31986531986533" Ancho="95.4653937947494" Alto="8.585858585858585" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="Zona5" Pagina="1" X="57.51789976133651" Y="78.28282828282829" Ancho="40.81145584725537" Alto="5.218855218855219" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+      </Zonas>
+    </ZonasOcr>
+  </Emisor>
+
+  <!-- ═══════════════ RANGNY VALENCIA ═══════════════ -->
+  <Emisor id="B96972955">
+    <Nombre>RANGNY VALENCIA S.L.</Nombre>
+    <Nif>B96972955</Nif>
+    <Identificadores>
+      <Identificador>B96972955</Identificador>
+      <Identificador>rangny</Identificador>
+      <Identificador>valencia</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>Numero[\n\r]+FACTURA[\n\r]+(\S+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha" />
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>\[P1_Z1]:\s*(.+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif" />
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)</Regex>
+        <Grupo>1</Grupo>
+      </Campo>
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)</Regex>
+        <Grupo>2</Grupo>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)</Regex>
+        <Grupo>3</Grupo>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)</Regex>
+        <Grupo>4</Grupo>
+      </Campo>
+    </Campos>
+      <ZonasOcr>
+      <AnchoReferencia>1000</AnchoReferencia>
+      <AltoReferencia>1000</AltoReferencia>
+      <TipoCoordenada>Normalizadas</TipoCoordenada>
+      <Zonas>
+        <Zona Campo="P1_Z1" Pagina="1" X="55.57251908396946" Y="18.609625668449198" Ancho="36.79389312977099" Alto="10.16042780748663" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z2" Pagina="1" X="7.938931297709924" Y="29.732620320855613" Ancho="12.061068702290076" Alto="5.133689839572193" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z3" Pagina="1" X="20.610687022900763" Y="29.732620320855613" Ancho="13.129770992366414" Alto="5.240641711229946" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+        <Zona Campo="P1_Z4" Pagina="1" X="4.122137404580153" Y="77.96791443850267" Ancho="67.32824427480915" Alto="5.775401069518717" Regex="">
+          <Preprocesamiento>
+            <EscalaGrises>true</EscalaGrises>
+            <Binarizacion>false</Binarizacion>
+            <UmbralBinarizacion>128</UmbralBinarizacion>
+            <Redimensionar>false</Redimensionar>
+            <FactorEscala>2</FactorEscala>
+            <EliminarRuido>true</EliminarRuido>
+            <InvertirColores>false</InvertirColores>
+            <AutoRecortar>false</AutoRecortar>
+            <PaddingAutoRecorte>5</PaddingAutoRecorte>
+          </Preprocesamiento>
+          <Opcional>false</Opcional>
+        </Zona>
+      </Zonas>
+    </ZonasOcr>
+  </Emisor>
+
+  <!-- ═══════════════ AMAZON WEB SERVICES ═══════════════ -->
+  <Emisor id="W0185696B">
+    <Nombre>AMAZON WEB SERVICES EMEA SARL, ESPAÑA</Nombre>
+    <Nif>W0185696B</Nif>
+    <Identificadores>
+      <Identificador>W0185696B</Identificador>
+      <Identificador>AMAZON WEB SERVICES</Identificador>
+    </Identificadores>
+    <Campos>
+      <Campo nombre="NumeroFactura" tipo="Texto">
+        <Regex>VAT Invoice Number:\s+(.+)</Regex>
+      </Campo>
+      <Campo nombre="Fecha" tipo="Fecha">
+        <Regex>VAT Invoice Date:\s+(\w+ \d{1,2}, \d{4})</Regex>
+        <Cultura>en-US</Cultura>
+        <FormatosFecha>
+          <Formato>MMMM d, yyyy</Formato>
+          <Formato>MMM d, yyyy</Formato>
+        </FormatosFecha>
+      </Campo>
+      <Campo nombre="ReceptorNombre" tipo="Texto">
+        <Regex>Address:[^\n]*\n([^\n]+)</Regex>
+      </Campo>
+      <Campo nombre="ReceptorNif" tipo="Nif">
+        <Regex>Tax Registration Number:\s+ES(\d{8}[A-Z])</Regex>
+      </Campo>
+      <Campo nombre="BaseImponible" tipo="Decimal">
+        <Regex>Net Charges.*EUR\s+([\d,.]+)</Regex>
+      </Campo>
+      <Campo nombre="PorcentajeIVA" tipo="Decimal">
+        <Regex>VAT\s+-\s+(\d+)%</Regex>
+      </Campo>
+      <Campo nombre="CuotaIVA" tipo="Decimal">
+        <Regex>VAT\s+-\s+\d+%\s+EUR\s+([\d,.]+)</Regex>
+      </Campo>
+      <Campo nombre="Total" tipo="Decimal">
+        <Regex>TOTAL AMOUNT EUR\s+([\d,.]+)</Regex>
+      </Campo>
+    </Campos>
+  </Emisor>
+
+</Emisores>

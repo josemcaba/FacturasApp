@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
+    [Obsolete("Usar emisores.xml en su lugar")]
     public class EasorParser: BaseParser
     {
         public override string Nombre => "EASOR SOFTWARE SOLUTIONS S.L.";

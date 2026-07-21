@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
+    [Obsolete("Usar emisores.xml en su lugar")]
     public class EMASA : BaseParser
     {
         public override string Nombre => "Empresa Municipal Aguas de Málaga S.A.";

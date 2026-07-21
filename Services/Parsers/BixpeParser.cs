@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
+    [Obsolete("Usar emisores.xml en su lugar")]
     public class BixpeParser : BaseParser
     {
         public override string Nombre => "Abbanza Research INT S.L.";

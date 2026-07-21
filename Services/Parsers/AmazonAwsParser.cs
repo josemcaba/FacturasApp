@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
+    [Obsolete("Usar emisores.xml en su lugar")]
     public class AmazonAwsParser : BaseParser
     {
         public override string Nombre => "AMAZON WEB SERVICES EMEA SARL, ESPAÑA";

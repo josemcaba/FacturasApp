@@ -10,7 +10,7 @@
 		<ApplicationIcon>Assets/app-icon.ico</ApplicationIcon>
 		
 		<!-- Versionado -->
-		<Version>2.2</Version>
+		<Version>3.0</Version>
 		<AssemblyVersion>1.0.0.0</AssemblyVersion>
 		<FileVersion>1.0.0.0</FileVersion>
 		
@@ -22,14 +22,18 @@
 
 	<ItemGroup>
 		<None Remove="Data\plantillas_ocr.xml" />
+		<None Remove="Data\emisores.xml" />
 		<None Remove="tessdata\eng.traineddata" />
 		<None Remove="tessdata\spa.traineddata" />
 	</ItemGroup>
 
-	<!-- Archivo de plantillas: incrustado en el ensamblado -->
+	<!-- Archivos incrustados en el ensamblado -->
 	<ItemGroup>
 		<EmbeddedResource Include="Data\plantillas_ocr.xml">
 			<LogicalName>FacturasApp.Data.plantillas_ocr.xml</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Data\emisores.xml">
+			<LogicalName>FacturasApp.Data.emisores.xml</LogicalName>
 		</EmbeddedResource>
 		
 		<!-- Archivos de Tesseract (copiados normalmente) -->

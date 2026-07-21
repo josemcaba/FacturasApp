@@ -444,6 +444,13 @@ namespace FacturasApp.UI
             ventana.ShowDialog(this);
         }
 
+        // Gestionar emisores XML (CRUD + Tester)
+        private void btnGestionarEmisores_Click(object sender, EventArgs e)
+        {
+            using var ventana = new GestionEmisoresForm();
+            ventana.ShowDialog(this);
+        }
+
         private void MostrarExitoExportacion(string rutaArchivo)
         {
             var resultado = MessageBox.Show(

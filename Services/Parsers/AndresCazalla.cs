@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
+    [Obsolete("Usar emisores.xml en su lugar")]
     public partial class AndresCazalla : BaseParser
     {
         public override string Nombre => "Andrés Cazalla Medina";

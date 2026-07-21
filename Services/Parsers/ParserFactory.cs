@@ -3,6 +3,7 @@ using FacturasApp.Models;
 
 namespace FacturasApp.Services.Parsers
 {
+#pragma warning disable CS0618 // Parsers C# marcados como Obsolete intencionalmente (fallback)
     public class ParserFactory
     {
         private readonly List<IInvoiceParser> _parsers;
@@ -70,4 +71,5 @@ namespace FacturasApp.Services.Parsers
         public IReadOnlyList<string> ParsersDisponibles =>
             [.. _parsers.Select(p => p.Nombre)];
     }
+#pragma warning restore CS0618
 }

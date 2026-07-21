@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
+    [Obsolete("Usar emisores.xml en su lugar")]
     public partial class FiestaParser : BaseParser
     {
         public override string Nombre => "Fiesta Colombina, S.L.U.";

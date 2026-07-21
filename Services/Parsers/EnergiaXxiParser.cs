@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
+    [Obsolete("Usar emisores.xml en su lugar")]
     public class EnergiaXxiParser: BaseParser
     {
         public override string Nombre => "ENERGIA XXI COMERCIALIZADORA S.L.U.";

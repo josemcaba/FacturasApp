@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace FacturasApp.Services.Parsers
 {
+    [Obsolete("Usar emisores.xml en su lugar")]
     public class TrigoricoParser: BaseParser
     {
         public override string Nombre => "TRIGORICO, S.L.U.";
