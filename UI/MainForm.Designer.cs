@@ -34,7 +34,6 @@ namespace FacturasApp.UI
             lblResumen = new Label();
             btnExportarExcelIngresos = new Button();
             btnExportarExcelGastos = new Button();
-            btnDefinirZonas = new Button();
             btnGestionProveedores = new Button();
             lblFiltro = new Label();
             lblEstadoFiltro = new Label();
@@ -228,19 +227,6 @@ namespace FacturasApp.UI
             btnExportarExcelGastos.UseVisualStyleBackColor = false;
             btnExportarExcelGastos.Click += btnExportarExcelGastos_Click;
             // 
-            // btnDefinirZonas
-            // 
-            btnDefinirZonas.BackColor = Color.DarkGray;
-            btnDefinirZonas.FlatStyle = FlatStyle.Flat;
-            btnDefinirZonas.ForeColor = Color.White;
-            btnDefinirZonas.Location = new Point(450, 12);
-            btnDefinirZonas.Name = "btnDefinirZonas";
-            btnDefinirZonas.Size = new Size(140, 34);
-            btnDefinirZonas.TabIndex = 20;
-            btnDefinirZonas.Text = "🔲 Zonas OCR";
-            btnDefinirZonas.UseVisualStyleBackColor = false;
-            btnDefinirZonas.Click += btnDefinirPlantilla_Click;
-            // 
             // btnGestionProveedores
             // 
             btnGestionProveedores.BackColor = Color.DarkSlateGray;
@@ -290,7 +276,6 @@ namespace FacturasApp.UI
             Controls.Add(lblResumen);
             Controls.Add(btnExportarExcelIngresos);
             Controls.Add(btnExportarExcelGastos);
-            Controls.Add(btnDefinirZonas);
             Controls.Add(btnGestionProveedores);
             Font = new Font("Segoe UI", 9F);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -311,7 +296,6 @@ namespace FacturasApp.UI
         private Button btnProcesar;
         private Button btnExportarExcelIngresos;
         private Button btnExportarExcelGastos;
-        private Button btnDefinirZonas;
         private Button btnGestionProveedores;
         private ListBox lstArchivos;
         private TextBox txtRutaExcel;

@@ -450,6 +450,15 @@ namespace FacturasApp.UI
             }
         }
 
+        // ── Zonas OCR ─────────────────────────────────────────────────
+
+        private void BtnZonasOcr_Click(object? sender, EventArgs e)
+        {
+            var emisor = txtNombre.Text.Trim();
+            using var ventana = new DefinirPlantillaForm(emisor);
+            ventana.ShowDialog(this);
+        }
+
         // ── Tests ─────────────────────────────────────────────────────
 
         private void BtnTestRegex_Click(object? sender, EventArgs e)

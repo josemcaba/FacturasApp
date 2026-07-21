@@ -70,6 +70,7 @@ namespace FacturasApp.UI
             colParametro = new DataGridViewTextBoxColumn();
             btnTestRegex = new Button();
             btnTestIdent = new Button();
+            btnZonasOcr = new Button();
             btnGuardar = new Button();
             btnCancelar = new Button();
             flowBottom = new FlowLayoutPanel();
@@ -324,28 +325,28 @@ namespace FacturasApp.UI
             colCampo.HeaderText = "Campo";
             colCampo.Items.AddRange(new object[] { "NumeroFactura", "Fecha", "ClienteNombre", "ClienteNif", "BaseImponible", "PorcentajeIVA", "CuotaIVA", "PorcentajeIRPF", "CuotaIRPF", "PorcentajeRE", "CuotaRE", "Total", "Descuento", "TotalParcial" });
             colCampo.MinimumWidth = 6;
-            colCampo.Name = "colCampo";
+            colCampo.Name = "Campo";
             colCampo.Width = 125;
             // 
             // colRegex
             // 
             colRegex.HeaderText = "Regex";
             colRegex.MinimumWidth = 6;
-            colRegex.Name = "colRegex";
+            colRegex.Name = "Regex";
             colRegex.Width = 200;
             // 
             // colGrupo
             // 
             colGrupo.HeaderText = "Grupo";
             colGrupo.MinimumWidth = 6;
-            colGrupo.Name = "colGrupo";
+            colGrupo.Name = "Grupo";
             colGrupo.Width = 50;
             // 
             // colValorFijo
             // 
             colValorFijo.HeaderText = "Valor Fijo";
             colValorFijo.MinimumWidth = 6;
-            colValorFijo.Name = "colValorFijo";
+            colValorFijo.Name = "ValorFijo";
             colValorFijo.Width = 125;
             // 
             // colCultura
@@ -354,14 +355,14 @@ namespace FacturasApp.UI
             colCultura.HeaderText = "Cultura";
             colCultura.Items.AddRange(new object[] { "es-ES", "en-US", "en-GB", "de-DE", "fr-FR", "it-IT", "pt-PT" });
             colCultura.MinimumWidth = 6;
-            colCultura.Name = "colCultura";
+            colCultura.Name = "Cultura";
             colCultura.Width = 90;
             // 
             // colFormato
             // 
             colFormato.HeaderText = "Formato";
             colFormato.MinimumWidth = 6;
-            colFormato.Name = "colFormato";
+            colFormato.Name = "Formato";
             colFormato.Width = 90;
             // 
             // colOpcional
@@ -369,7 +370,7 @@ namespace FacturasApp.UI
             colOpcional.FlatStyle = FlatStyle.Flat;
             colOpcional.HeaderText = "Opcional";
             colOpcional.MinimumWidth = 6;
-            colOpcional.Name = "colOpcional";
+            colOpcional.Name = "Opcional";
             colOpcional.Resizable = DataGridViewTriState.True;
             colOpcional.SortMode = DataGridViewColumnSortMode.Automatic;
             colOpcional.Width = 60;
@@ -425,21 +426,21 @@ namespace FacturasApp.UI
             colPreTipo.HeaderText = "Tipo";
             colPreTipo.Items.AddRange(new object[] { "Reemplazar", "EliminarDuplicados" });
             colPreTipo.MinimumWidth = 6;
-            colPreTipo.Name = "colPreTipo";
+            colPreTipo.Name = "Tipo";
             colPreTipo.Width = 130;
             // 
             // colPrePattern
             // 
             colPrePattern.HeaderText = "Pattern";
             colPrePattern.MinimumWidth = 6;
-            colPrePattern.Name = "colPrePattern";
+            colPrePattern.Name = "Pattern";
             colPrePattern.Width = 200;
             // 
             // colPreReemplazo
             // 
             colPreReemplazo.HeaderText = "Reemplazo";
             colPreReemplazo.MinimumWidth = 6;
-            colPreReemplazo.Name = "colPreReemplazo";
+            colPreReemplazo.Name = "Reemplazo";
             colPreReemplazo.Width = 200;
             // 
             // chkMultiIva
@@ -571,14 +572,14 @@ namespace FacturasApp.UI
             colAccion.HeaderText = "Acción";
             colAccion.Items.AddRange(new object[] { "Condicion", "Mover", "Asignar", "Copiar", "Sumar" });
             colAccion.MinimumWidth = 6;
-            colAccion.Name = "colAccion";
+            colAccion.Name = "Accion";
             colAccion.Width = 70;
             // 
             // colCondCampo
             // 
             colCondCampo.HeaderText = "Campo";
             colCondCampo.MinimumWidth = 6;
-            colCondCampo.Name = "colCondCampo";
+            colCondCampo.Name = "Campo";
             colCondCampo.Width = 70;
             // 
             // colOperador
@@ -587,21 +588,21 @@ namespace FacturasApp.UI
             colOperador.HeaderText = "Operador";
             colOperador.Items.AddRange(new object[] { "Igual", "Distinto", "MayorQue", "MenorQue", "MayorOIgual", "MenorOIgual" });
             colOperador.MinimumWidth = 6;
-            colOperador.Name = "colOperador";
+            colOperador.Name = "Operador";
             colOperador.Width = 80;
             // 
             // colCondValor
             // 
             colCondValor.HeaderText = "Valor";
             colCondValor.MinimumWidth = 6;
-            colCondValor.Name = "colCondValor";
+            colCondValor.Name = "Valor";
             colCondValor.Width = 80;
             // 
             // colParametro
             // 
             colParametro.HeaderText = "Parámetro extra";
             colParametro.MinimumWidth = 6;
-            colParametro.Name = "colParametro";
+            colParametro.Name = "Parametro";
             colParametro.Width = 80;
             // 
             // btnTestRegex
@@ -629,6 +630,19 @@ namespace FacturasApp.UI
             btnTestIdent.Text = "🔍 Probar Identificación";
             btnTestIdent.UseVisualStyleBackColor = false;
             btnTestIdent.Click += BtnTestIdent_Click;
+            // 
+            // btnZonasOcr
+            // 
+            btnZonasOcr.BackColor = Color.DarkSlateGray;
+            btnZonasOcr.FlatStyle = FlatStyle.Flat;
+            btnZonasOcr.ForeColor = Color.White;
+            btnZonasOcr.Location = new Point(856, 8);
+            btnZonasOcr.Name = "btnZonasOcr";
+            btnZonasOcr.Size = new Size(140, 34);
+            btnZonasOcr.TabIndex = 4;
+            btnZonasOcr.Text = "🔲 Zonas OCR";
+            btnZonasOcr.UseVisualStyleBackColor = false;
+            btnZonasOcr.Click += BtnZonasOcr_Click;
             // 
             // btnGuardar
             // 
@@ -662,6 +676,7 @@ namespace FacturasApp.UI
             flowBottom.Controls.Add(btnCancelar);
             flowBottom.Controls.Add(btnGuardar);
             flowBottom.Controls.Add(btnTestIdent);
+            flowBottom.Controls.Add(btnZonasOcr);
             flowBottom.Controls.Add(btnTestRegex);
             flowBottom.Dock = DockStyle.Bottom;
             flowBottom.FlowDirection = FlowDirection.RightToLeft;
@@ -719,7 +734,7 @@ namespace FacturasApp.UI
 
         private DataGridView dgvCondiciones;
 
-        private Button btnTestRegex, btnTestIdent, btnGuardar, btnCancelar;
+        private Button btnTestRegex, btnTestIdent, btnZonasOcr, btnGuardar, btnCancelar;
 
         private void BtnCancelar_Click(object sender, EventArgs e)
         {

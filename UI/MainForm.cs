@@ -437,13 +437,6 @@ namespace FacturasApp.UI
             }
         }
 
-        // Definir plantilla OCR para un emisor específico
-        private void btnDefinirPlantilla_Click(object sender, EventArgs e)
-        {
-            using var ventana = new DefinirPlantillaForm();
-            ventana.ShowDialog(this);
-        }
-
         // Gestión de proveedores (data-driven)
         private void btnGestionProveedores_Click(object sender, EventArgs e)
         {

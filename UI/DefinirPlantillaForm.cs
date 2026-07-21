@@ -62,6 +62,19 @@ namespace FacturasApp.UI
             CargarPlantillaEmisor();
         }
 
+        public DefinirPlantillaForm(string? emisorInicial) : this()
+        {
+            if (string.IsNullOrEmpty(emisorInicial)) return;
+            for (int i = 0; i < cmbEmisor.Items.Count; i++)
+            {
+                if (string.Equals(cmbEmisor.Items[i]?.ToString(), emisorInicial, StringComparison.OrdinalIgnoreCase))
+                {
+                    cmbEmisor.SelectedIndex = i;
+                    break;
+                }
+            }
+        }
+
         // ── Carga del PDF ─────────────────────────────────────────────────────
 
         private void BtnCargarPdf_Click(object? sender, EventArgs e)
