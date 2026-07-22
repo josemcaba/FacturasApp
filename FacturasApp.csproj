@@ -31,6 +31,9 @@
 		<EmbeddedResource Include="Data\plantillas_ocr.xml">
 			<LogicalName>FacturasApp.Data.plantillas_ocr.xml</LogicalName>
 		</EmbeddedResource>
+		<EmbeddedResource Include="Data\Emisores\*.xml">
+			<LogicalName>FacturasApp.Data.Emisores.%(Filename)%(Extension)</LogicalName>
+		</EmbeddedResource>
 		
 		<!-- Archivos de Tesseract (copiados normalmente) -->
 		<Content Include="tessdata\eng.traineddata">

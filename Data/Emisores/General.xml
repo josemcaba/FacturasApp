@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Nif>General</Nif>
+  <Nombre>Parser Genérico</Nombre>
+  <Identificadores />
+  <ModoExtraccion>OrdenadoPosicion</ModoExtraccion>
+  <Concepto>600</Concepto>
+  <CulturaFecha>es-ES</CulturaFecha>
+  <Campos>
+    <!-- El GenericParser siempre hace match -->
+    <!-- No tiene Identificadores porque PuedeParsar() => true -->
+
+    <Campo Nombre="NumeroFactura">
+      <Regex>(?:factura|fra\.?|nº|n[uú]mero)[:\s#]*([A-Z0-9][-A-Z0-9/\\]{2,20})</Regex>
+      <Grupo>1</Grupo>
+    </Campo>
+
+    <Campo Nombre="Fecha">
+      <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
+    </Campo>
+
+    <!-- Emisor.NIF se extrae con la regex NIF genérica.
+         Como Nif='General', no hay NIF que saltar. -->
+    <Campo Nombre="EmisorNif">
+      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+    </Campo>
+
+    <!-- Receptor.NIF se extrae igual (misma lógica que GenericParser) -->
+    <Campo Nombre="ReceptorNif">
+      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+    </Campo>
+
+    <Campo Nombre="BaseImponible">
+      <Regex>(?:base\s+imponible|subtotal|base)[:\s]*([\d.,]+)</Regex>
+      <Grupo>1</Grupo>
+    </Campo>
+
+    <Campo Nombre="PorcentajeIVA">
+      <Regex>IVA\s*(\d{1,2})\s*%</Regex>
+      <Grupo>1</Grupo>
+    </Campo>
+
+    <Campo Nombre="Total">
+      <Regex>(?:total\s+factura|total\s+a\s+pagar|importe\s+total|total)[:\s]*([\d.,]+)</Regex>
+      <Grupo>1</Grupo>
+    </Campo>
+  </Campos>
+</Emisor>
