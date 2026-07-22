@@ -34,7 +34,6 @@ namespace FacturasApp.UI
             lblResumen = new Label();
             btnExportarExcelIngresos = new Button();
             btnExportarExcelGastos = new Button();
-            btnDefinirZonas = new Button();
             btnGestionarEmisores = new Button();
             lblFiltro = new Label();
             lblEstadoFiltro = new Label();
@@ -83,7 +82,7 @@ namespace FacturasApp.UI
             // btnLimpiarLista
             // 
             btnLimpiarLista.FlatStyle = FlatStyle.Flat;
-            btnLimpiarLista.Location = new Point(596, 12);
+            btnLimpiarLista.Location = new Point(450, 12);
             btnLimpiarLista.Name = "btnLimpiarLista";
             btnLimpiarLista.Size = new Size(140, 34);
             btnLimpiarLista.TabIndex = 3;
@@ -228,25 +227,13 @@ namespace FacturasApp.UI
             btnExportarExcelGastos.UseVisualStyleBackColor = false;
             btnExportarExcelGastos.Click += btnExportarExcelGastos_Click;
             // 
-            // btnDefinirZonas
-            // 
-            btnDefinirZonas.BackColor = Color.DarkGray;
-            btnDefinirZonas.FlatStyle = FlatStyle.Flat;
-            btnDefinirZonas.ForeColor = Color.White;
-            btnDefinirZonas.Location = new Point(450, 12);
-            btnDefinirZonas.Name = "btnDefinirZonas";
-            btnDefinirZonas.Size = new Size(140, 34);
-            btnDefinirZonas.TabIndex = 20;
-            btnDefinirZonas.Text = "🔲 Zonas OCR";
-            btnDefinirZonas.UseVisualStyleBackColor = false;
-            btnDefinirZonas.Click += btnDefinirPlantilla_Click;
-            // 
             // btnGestionarEmisores
             // 
+            btnGestionarEmisores.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnGestionarEmisores.BackColor = Color.FromArgb(0, 120, 180);
             btnGestionarEmisores.FlatStyle = FlatStyle.Flat;
             btnGestionarEmisores.ForeColor = Color.White;
-            btnGestionarEmisores.Location = new Point(600, 12);
+            btnGestionarEmisores.Location = new Point(812, 12);
             btnGestionarEmisores.Name = "btnGestionarEmisores";
             btnGestionarEmisores.Size = new Size(160, 34);
             btnGestionarEmisores.TabIndex = 21;
@@ -290,11 +277,10 @@ namespace FacturasApp.UI
             Controls.Add(lblResumen);
             Controls.Add(btnExportarExcelIngresos);
             Controls.Add(btnExportarExcelGastos);
-            Controls.Add(btnDefinirZonas);
             Controls.Add(btnGestionarEmisores);
             Font = new Font("Segoe UI", 9F);
             Icon = (Icon)resources.GetObject("$this.Icon");
-            MinimumSize = new Size(800, 600);
+            MinimumSize = new Size(1000, 650);
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Gestión de Facturas";
@@ -311,7 +297,6 @@ namespace FacturasApp.UI
         private Button btnProcesar;
         private Button btnExportarExcelIngresos;
         private Button btnExportarExcelGastos;
-        private Button btnDefinirZonas;
         private Button btnGestionarEmisores;
         private ListBox lstArchivos;
         private TextBox txtRutaExcel;

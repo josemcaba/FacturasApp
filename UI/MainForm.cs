@@ -437,13 +437,6 @@ namespace FacturasApp.UI
             }
         }
 
-        // Definir plantilla OCR para un emisor específico
-        private void btnDefinirPlantilla_Click(object sender, EventArgs e)
-        {
-            using var ventana = new DefinirPlantillaForm();
-            ventana.ShowDialog(this);
-        }
-
         // Gestionar emisores XML (CRUD + Tester)
         private void btnGestionarEmisores_Click(object sender, EventArgs e)
         {

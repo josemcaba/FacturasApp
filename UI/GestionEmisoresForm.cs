@@ -1,5 +1,6 @@
 using FacturasApp.Models;
 using FacturasApp.Services;
+using System.Drawing.Drawing2D;
 
 namespace FacturasApp.UI
 {
@@ -16,59 +17,21 @@ namespace FacturasApp.UI
         private List<ReglaPostProcesamiento> _reglasEditando = new();
         private List<ZonaOcrDefinicion> _zonasEditando = new();
 
+        // ── Estado visual zonas OCR ──
+        private readonly OcrZonalExtractor _ocrExtractor = new();
+        private string _rutaPdfZonas = string.Empty;
+        private readonly List<Bitmap> _imagenPaginasZonas = new();
+        private int _paginaActualZonas = 0;
+        private bool _dibujandoZonas = false;
+        private Point _puntoInicioZonas;
+        private Point _puntoActualZonas;
+        private bool _rectanguloActivoZonas = false;
+
         public GestionEmisoresForm()
         {
             InitializeComponent();
-            ConstruirTabDatos();
             CargarEmisores();
-        }
-
-        /// <summary>
-        /// Construye el contenido dinámico del tab "Datos" que el Designer no puede procesar.
-        /// Debe llamarse después de InitializeComponent().
-        /// </summary>
-        private void ConstruirTabDatos()
-        {
-            int y = 12;
-            AddLabel(tabDatos, "ID (clave interna):", ref y);
-            txtId = AddTextBox(tabDatos, ref y, true);
-            y += 8;
-
-            AddLabel(tabDatos, "Nombre del emisor:", ref y);
-            txtNombre = AddTextBox(tabDatos, ref y);
-            y += 8;
-
-            AddLabel(tabDatos, "NIF (clave única):", ref y);
-            txtNif = AddTextBox(tabDatos, ref y);
-            y += 8;
-
-            AddLabel(tabDatos, "Concepto contable:", ref y);
-            txtConcepto = AddTextBox(tabDatos, ref y, false, 80);
-            y += 8;
-
-            AddLabel(tabDatos, "Identificadores (uno por línea):", ref y);
-            txtIdentificadores = new TextBox
-            {
-                Location = new Point(12, y),
-                Width = 400,
-                Height = 80,
-                Multiline = true,
-                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
-            };
-            tabDatos.Controls.Add(txtIdentificadores);
-            y += 88;
-
-            AddLabel(tabDatos, "Modo de extracción:", ref y);
-            cmbModoExtraccion = new ComboBox
-            {
-                Location = new Point(12, y),
-                Width = 200,
-                DropDownStyle = ComboBoxStyle.DropDownList
-            };
-            cmbModoExtraccion.Items.AddRange(new object[]
-                { "OrdenadoPosicion", "Simple", "LayoutAnalysis" });
-            cmbModoExtraccion.SelectedIndex = 0;
-            tabDatos.Controls.Add(cmbModoExtraccion);
+            panelZonasIzq.Resize += (s, e) => AjustarPicFacturaZonas();
         }
 
         // ── Carga de datos ───────────────────────────────────────────────────
@@ -172,7 +135,7 @@ namespace FacturasApp.UI
             CargarReglasEnGrid();
 
             // Zonas
-            CargarZonasEnGrid();
+            ActualizarZonas();
 
             lblEstado.Text = $"Emisor: {emisor.Nombre} (NIF: {emisor.Nif})";
             tabsEditor.Enabled = true;
@@ -206,11 +169,10 @@ namespace FacturasApp.UI
 
             CargarCamposEnGrid();
             CargarReglasEnGrid();
-            CargarZonasEnGrid();
+            ActualizarZonas();
 
             lblEstado.Text = "Nuevo emisor (sin guardar)";
             tabsEditor.Enabled = true;
-            tabsEditor.SelectedTab = tabDatos;
             txtNombre.Focus();
         }
 
@@ -245,7 +207,6 @@ namespace FacturasApp.UI
             {
                 MessageBox.Show("El NIF es obligatorio y actúa como clave única.",
                     "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tabsEditor.SelectedTab = tabDatos;
                 txtNif.Focus();
                 return;
             }
@@ -254,7 +215,6 @@ namespace FacturasApp.UI
             {
                 MessageBox.Show("El nombre del emisor es obligatorio.",
                     "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tabsEditor.SelectedTab = tabDatos;
                 txtNombre.Focus();
                 return;
             }
@@ -268,7 +228,6 @@ namespace FacturasApp.UI
                     MessageBox.Show(
                         $"Ya existe un emisor con el NIF '{nifNuevo}'.\nEl NIF es la clave única.",
                         "NIF duplicado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    tabsEditor.SelectedTab = tabDatos;
                     txtNif.Focus();
                     return;
                 }
@@ -319,27 +278,27 @@ namespace FacturasApp.UI
 
         private void CargarCamposEnGrid()
         {
-            dgvCampos.Rows.Clear();
+            dgvCamposPruebas.Rows.Clear();
             foreach (var campo in _camposEditando)
             {
-                dgvCampos.Rows.Add(campo.Nombre, campo.Tipo, campo.Regex ?? "",
+                dgvCamposPruebas.Rows.Add(campo.Nombre, campo.Tipo, campo.Regex ?? "",
                     campo.Grupo, campo.ValorFijo ?? "");
             }
         }
 
-        private void BtnAgregarCampo_Click(object? sender, EventArgs e)
+        private void BtnAgregarCampoPruebas_Click(object? sender, EventArgs e)
         {
             var nuevo = new CampoExtraccion { Nombre = "CampoNuevo", Tipo = "Texto" };
             _camposEditando.Add(nuevo);
-            dgvCampos.Rows.Add(nuevo.Nombre, nuevo.Tipo, "", 1, "");
+            dgvCamposPruebas.Rows.Add(nuevo.Nombre, nuevo.Tipo, "", 1, "");
         }
 
-        private void BtnEliminarCampo_Click(object? sender, EventArgs e)
+        private void BtnEliminarCampoPruebas_Click(object? sender, EventArgs e)
         {
-            if (dgvCampos.CurrentRow?.Index is int idx && idx >= 0 && idx < _camposEditando.Count)
+            if (dgvCamposPruebas.CurrentRow?.Index is int idx && idx >= 0 && idx < _camposEditando.Count)
             {
                 _camposEditando.RemoveAt(idx);
-                dgvCampos.Rows.RemoveAt(idx);
+                dgvCamposPruebas.Rows.RemoveAt(idx);
             }
         }
 
@@ -347,7 +306,7 @@ namespace FacturasApp.UI
 
         private void CargarReglasEnGrid()
         {
-            dgvReglas.Rows.Clear();
+            dgvReglasPruebas.Rows.Clear();
             foreach (var regla in _reglasEditando)
             {
                 string condicion = regla.Condicion != null
@@ -359,11 +318,11 @@ namespace FacturasApp.UI
                 string acciones = string.Join("; ",
                     regla.Acciones.Select(a => $"{a.Tipo}({a.Campo}, {a.Valor})"));
 
-                dgvReglas.Rows.Add(regla.Nombre, condicion, acciones);
+                dgvReglasPruebas.Rows.Add(regla.Nombre, condicion, acciones);
             }
         }
 
-        private void BtnAgregarRegla_Click(object? sender, EventArgs e)
+        private void BtnAgregarReglaPruebas_Click(object? sender, EventArgs e)
         {
             var nueva = new ReglaPostProcesamiento
             {
@@ -375,9 +334,9 @@ namespace FacturasApp.UI
             CargarReglasEnGrid();
         }
 
-        private void BtnEliminarRegla_Click(object? sender, EventArgs e)
+        private void BtnEliminarReglaPruebas_Click(object? sender, EventArgs e)
         {
-            if (dgvReglas.CurrentRow?.Index is int idx && idx >= 0 && idx < _reglasEditando.Count)
+            if (dgvReglasPruebas.CurrentRow?.Index is int idx && idx >= 0 && idx < _reglasEditando.Count)
             {
                 _reglasEditando.RemoveAt(idx);
                 CargarReglasEnGrid();
@@ -386,76 +345,386 @@ namespace FacturasApp.UI
 
         // ── Zonas OCR ────────────────────────────────────────────────────────
 
-        private void CargarZonasEnGrid()
+        private void ActualizarZonas()
         {
-            dgvZonas.Rows.Clear();
-            foreach (var zona in _zonasEditando)
-            {
-                dgvZonas.Rows.Add(zona.Campo, zona.Pagina,
-                    zona.X, zona.Y, zona.Ancho, zona.Alto);
-            }
+            ActualizarListaZonasPagina();
+            picFacturaZonas?.Invalidate();
         }
 
-        private void BtnAgregarZona_Click(object? sender, EventArgs e)
+        private void BtnEliminarZonaLista_Click(object? sender, EventArgs e)
         {
-            var nueva = new ZonaOcrDefinicion
-            {
-                Campo = $"P1_Z{_zonasEditando.Count + 1}",
-                Pagina = 1
-            };
-            _zonasEditando.Add(nueva);
-            CargarZonasEnGrid();
+            if (lstZonasPagina.SelectedIndex < 0) return;
+
+            int numPag = _paginaActualZonas + 1;
+            var zonasPagina = _zonasEditando
+                .Where(z => z.Pagina == numPag)
+                .ToList();
+
+            if (lstZonasPagina.SelectedIndex >= zonasPagina.Count) return;
+
+            var zonaAEliminar = zonasPagina[lstZonasPagina.SelectedIndex];
+            _zonasEditando.Remove(zonaAEliminar);
+            ActualizarZonas();
         }
 
-        private void BtnEliminarZona_Click(object? sender, EventArgs e)
-        {
-            if (dgvZonas.CurrentRow?.Index is int idx && idx >= 0 && idx < _zonasEditando.Count)
-            {
-                _zonasEditando.RemoveAt(idx);
-                CargarZonasEnGrid();
-            }
-        }
+        // ── Visual PDF zonas OCR ──────────────────────────────────────────────
 
-        // ── Tester ───────────────────────────────────────────────────────────
-
-        private void BtnSeleccionarPdf_Click(object? sender, EventArgs e)
+        private void BtnCargarPdfZonas_Click(object? sender, EventArgs e)
         {
             using var dialogo = new OpenFileDialog
             {
-                Title = "Seleccionar PDF de prueba",
+                Title = "Seleccionar PDF de muestra",
                 Filter = "Archivos PDF (*.pdf)|*.pdf"
             };
 
-            if (dialogo.ShowDialog() == DialogResult.OK)
+            if (dialogo.ShowDialog() != DialogResult.OK) return;
+
+            _rutaPdfZonas = dialogo.FileName;
+            LimpiarPaginasZonas();
+
+            var bitmaps = _ocrExtractor.RenderizarPaginas(_rutaPdfZonas);
+            if (bitmaps.Count == 0)
             {
-                txtRutaPdf.Text = dialogo.FileName;
+                MessageBox.Show("No se pudo renderizar el PDF.",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            _imagenPaginasZonas.AddRange(bitmaps);
+
+            tabPaginasZonas.TabPages.Clear();
+            for (int i = 0; i < _imagenPaginasZonas.Count; i++)
+            {
+                var tab = new TabPage($"Página {i + 1}");
+                tab.Tag = i;
+                tabPaginasZonas.TabPages.Add(tab);
+            }
+
+            _paginaActualZonas = 0;
+            if (tabPaginasZonas.TabCount > 0)
+                tabPaginasZonas.SelectedIndex = 0;
+
+            MostrarPaginaZonasActual();
+            AjustarPicFacturaZonas();
+        }
+
+        private void TabPaginasZonas_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            if (tabPaginasZonas.SelectedIndex < 0) return;
+            _paginaActualZonas = tabPaginasZonas.SelectedIndex;
+            MostrarPaginaZonasActual();
+        }
+
+        private void MostrarPaginaZonasActual()
+        {
+            if (_paginaActualZonas < 0 || _paginaActualZonas >= _imagenPaginasZonas.Count) return;
+
+            picFacturaZonas.Image = _imagenPaginasZonas[_paginaActualZonas];
+            _rectanguloActivoZonas = false;
+
+            int total = _imagenPaginasZonas.Count;
+            lblPaginasZonas.Text = total > 0
+                ? $"Página {_paginaActualZonas + 1} de {total}"
+                : string.Empty;
+
+            ActualizarListaZonasPagina();
+            picFacturaZonas.Invalidate();
+            AjustarPicFacturaZonas();
+        }
+
+        private void ActualizarListaZonasPagina()
+        {
+            lstZonasPagina.Items.Clear();
+            int numPag = _paginaActualZonas + 1;
+
+            foreach (var zona in _zonasEditando.Where(z => z.Pagina == numPag))
+            {
+                lstZonasPagina.Items.Add(
+                    $"{zona.Campo}  " +
+                    $"[X:{zona.X:F1}% Y:{zona.Y:F1}% " +
+                    $"W:{zona.Ancho:F1}% H:{zona.Alto:F1}%]");
+            }
+
+            int totalZonas = _zonasEditando.Count;
+            int zonasEnPagina = _zonasEditando.Count(z => z.Pagina == numPag);
+            lblZonasPagina.Text = $"Zonas en página {numPag}: {zonasEnPagina}" +
+                                  (totalZonas > zonasEnPagina ? $" / {totalZonas} total" : "");
+        }
+
+        private void LstZonasPagina_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            if (lstZonasPagina.SelectedIndex < 0)
+            {
+                txtTextoZona.Text = string.Empty;
+                return;
+            }
+
+            int numPag = _paginaActualZonas + 1;
+            var zonasPagina = _zonasEditando
+                .Where(z => z.Pagina == numPag)
+                .ToList();
+
+            if (lstZonasPagina.SelectedIndex < zonasPagina.Count)
+            {
+                var zonaSeleccionada = zonasPagina[lstZonasPagina.SelectedIndex];
+                MostrarTextoZona(zonaSeleccionada);
             }
         }
 
-        private void BtnDetectarEmisor_Click(object? sender, EventArgs e)
+        private void MostrarTextoZona(ZonaOcrDefinicion zonaDef)
         {
-            if (string.IsNullOrEmpty(txtRutaPdf.Text) || !File.Exists(txtRutaPdf.Text))
+            if (string.IsNullOrEmpty(_rutaPdfZonas))
             {
-                MessageBox.Show("Selecciona un PDF válido primero.",
+                txtTextoZona.Text = "Carga un PDF primero";
+                return;
+            }
+
+            try
+            {
+                txtTextoZona.Text = "Extrayendo...";
+                Application.DoEvents();
+
+                var zona = new ZonaOcr
+                {
+                    Campo = zonaDef.Campo,
+                    NumPagina = zonaDef.Pagina,
+                    X = zonaDef.X,
+                    Y = zonaDef.Y,
+                    Ancho = zonaDef.Ancho,
+                    Alto = zonaDef.Alto,
+                    RegexPersonalizada = zonaDef.Regex ?? string.Empty,
+                    RegexRespaldo = zonaDef.RegexRespaldo,
+                    Opcional = zonaDef.Opcional
+                };
+
+                var resultado = _ocrExtractor.ExtraerTextoZonalConMetadata(_rutaPdfZonas, zona);
+
+                string prefijo = resultado.ObtenerPrefijo();
+                string descripcion = resultado.ObtenerDescripcion();
+                string contenido = resultado.EstaVacia
+                    ? "(Sin texto detectado)"
+                    : resultado.Texto.Replace("\n", "\r\n");
+
+                txtTextoZona.Text = $"{prefijo} [{descripcion}] - Página {zona.NumPagina}\r\n" +
+                                    $"{new string('-', 40)}\r\n{contenido}";
+
+                txtTextoZona.ForeColor = resultado.ObtenerColor();
+            }
+            catch (Exception ex)
+            {
+                txtTextoZona.Text = $"Error: {ex.Message}";
+                txtTextoZona.ForeColor = Color.Red;
+            }
+        }
+
+        // ── Dibujo de zonas en PictureBox ─────────────────────────────────────
+
+        private void PicFacturaZonas_MouseDown(object? sender, MouseEventArgs e)
+        {
+            if (_imagenPaginasZonas.Count == 0 || e.Button != MouseButtons.Left) return;
+            _dibujandoZonas = true;
+            _rectanguloActivoZonas = false;
+            _puntoInicioZonas = e.Location;
+            _puntoActualZonas = e.Location;
+        }
+
+        private void PicFacturaZonas_MouseMove(object? sender, MouseEventArgs e)
+        {
+            if (!_dibujandoZonas) return;
+            _puntoActualZonas = e.Location;
+            _rectanguloActivoZonas = true;
+            picFacturaZonas.Invalidate();
+        }
+
+        private void PicFacturaZonas_MouseUp(object? sender, MouseEventArgs e)
+        {
+            if (!_dibujandoZonas) return;
+            _dibujandoZonas = false;
+
+            var rect = ObtenerRectanguloNormalizado(_puntoInicioZonas, _puntoActualZonas);
+
+            if (rect.Width < 10 || rect.Height < 10)
+            {
+                _rectanguloActivoZonas = false;
+                picFacturaZonas.Invalidate();
+                return;
+            }
+
+            var zonaOcr = ConvertirARectanglePorcentual(rect);
+            zonaOcr.Pagina = _paginaActualZonas + 1;
+
+            int numZonaEnPagina = _zonasEditando
+                .Count(z => z.Pagina == zonaOcr.Pagina) + 1;
+            zonaOcr.Campo = $"P{zonaOcr.Pagina}_Z{numZonaEnPagina}";
+
+            _zonasEditando.Add(zonaOcr);
+            ActualizarZonas();
+
+            _rectanguloActivoZonas = false;
+        }
+
+        private void PicFacturaZonas_Paint(object? sender, PaintEventArgs e)
+        {
+            if (_imagenPaginasZonas.Count == 0) return;
+
+            var g = e.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+
+            int numPagActual = _paginaActualZonas + 1;
+
+            foreach (var zona in _zonasEditando.Where(z => z.Pagina == numPagActual))
+            {
+                var rect = ConvertirAPixelesPictureBox(zona);
+                using var pen = new Pen(Color.FromArgb(46, 117, 182), 2);
+                using var brush = new SolidBrush(Color.FromArgb(40, 46, 117, 182));
+                g.FillRectangle(brush, rect);
+                g.DrawRectangle(pen, rect);
+
+                using var font = new Font("Segoe UI", 7f, FontStyle.Bold);
+                g.DrawString(zona.Campo, font,
+                    Brushes.DarkBlue, rect.X + 2, rect.Y + 2);
+            }
+
+            if (_rectanguloActivoZonas)
+            {
+                var rect = ObtenerRectanguloNormalizado(_puntoInicioZonas, _puntoActualZonas);
+                using var pen = new Pen(Color.Red, 2) { DashStyle = DashStyle.Dash };
+                using var brush = new SolidBrush(Color.FromArgb(40, 255, 0, 0));
+                g.FillRectangle(brush, rect);
+                g.DrawRectangle(pen, rect);
+            }
+        }
+
+        // ── Coordenadas conversión ────────────────────────────────────────────
+
+        private static Rectangle ObtenerRectanguloNormalizado(Point p1, Point p2)
+        {
+            return new Rectangle(
+                Math.Min(p1.X, p2.X),
+                Math.Min(p1.Y, p2.Y),
+                Math.Abs(p2.X - p1.X),
+                Math.Abs(p2.Y - p1.Y));
+        }
+
+        private ZonaOcrDefinicion ConvertirARectanglePorcentual(Rectangle rectPictureBox)
+        {
+            var areaImagen = CalcularAreaImagenEnPictureBox();
+
+            double xReal = (rectPictureBox.X - areaImagen.X) / (double)areaImagen.Width;
+            double yReal = (rectPictureBox.Y - areaImagen.Y) / (double)areaImagen.Height;
+            double wReal = rectPictureBox.Width / (double)areaImagen.Width;
+            double hReal = rectPictureBox.Height / (double)areaImagen.Height;
+
+            return new ZonaOcrDefinicion
+            {
+                X = Math.Max(0, xReal * 100),
+                Y = Math.Max(0, yReal * 100),
+                Ancho = Math.Min(100, wReal * 100),
+                Alto = Math.Min(100, hReal * 100)
+            };
+        }
+
+        private Rectangle ConvertirAPixelesPictureBox(ZonaOcrDefinicion zona)
+        {
+            var areaImagen = CalcularAreaImagenEnPictureBox();
+
+            return new Rectangle(
+                (int)(areaImagen.X + zona.X / 100.0 * areaImagen.Width),
+                (int)(areaImagen.Y + zona.Y / 100.0 * areaImagen.Height),
+                (int)(zona.Ancho / 100.0 * areaImagen.Width),
+                (int)(zona.Alto / 100.0 * areaImagen.Height));
+        }
+
+        private Rectangle CalcularAreaImagenEnPictureBox()
+        {
+            if (picFacturaZonas.Image == null)
+                return new Rectangle(0, 0, picFacturaZonas.Width, picFacturaZonas.Height);
+
+            float escalaX = (float)picFacturaZonas.Width / picFacturaZonas.Image.Width;
+            float escalaY = (float)picFacturaZonas.Height / picFacturaZonas.Image.Height;
+            float escala = Math.Min(escalaX, escalaY);
+
+            int anchoReal = (int)(picFacturaZonas.Image.Width * escala);
+            int altoReal = (int)(picFacturaZonas.Image.Height * escala);
+            int offsetX = (picFacturaZonas.Width - anchoReal) / 2;
+            int offsetY = (picFacturaZonas.Height - altoReal) / 2;
+
+            return new Rectangle(offsetX, offsetY, anchoReal, altoReal);
+        }
+
+        private void AjustarPicFacturaZonas()
+        {
+            const double proporcion = 0.7071;
+            int headerH = 88;
+            int anchoDisp = panelZonasIzq.ClientSize.Width;
+            int altoDisp = panelZonasIzq.ClientSize.Height;
+            if (anchoDisp < 10 || altoDisp < 10) return;
+
+            int altoImg = altoDisp - headerH;
+            int anchoImg = (int)(altoImg * proporcion);
+
+            if (anchoImg > anchoDisp)
+            {
+                anchoImg = anchoDisp;
+                altoImg = (int)(anchoDisp / proporcion);
+                if (altoImg + headerH > altoDisp)
+                    altoImg = altoDisp - headerH;
+            }
+
+            panelPdfContainer.Size = new Size(anchoImg, altoImg + headerH);
+            panelPdfContainer.Location = new Point(0, 0);
+        }
+
+        private void LimpiarPaginasZonas()
+        {
+            tabPaginasZonas.TabPages.Clear();
+            foreach (var img in _imagenPaginasZonas)
+                img.Dispose();
+            _imagenPaginasZonas.Clear();
+            _paginaActualZonas = 0;
+            picFacturaZonas.Image = null;
+            lblPaginasZonas.Text = string.Empty;
+        }
+
+        // ── Tester (integrado en tabPruebas) ─────────────────────────────────
+
+        private string ExtraerTextoPdfCargado()
+        {
+            if (string.IsNullOrEmpty(_rutaPdfZonas) || !File.Exists(_rutaPdfZonas))
+                return string.Empty;
+
+            var textExtractor = new PdfTextExtractor();
+            string? texto = textExtractor.ExtraerTextoSeleccionable(
+                _rutaPdfZonas, PdfTextExtractor.ModoExtraccion.OrdenadoPosicion);
+
+            if (texto == null)
+            {
+                var ocr = new OcrExtractor();
+                texto = ocr.ExtraerTextoConOcr(_rutaPdfZonas);
+            }
+
+            return texto ?? string.Empty;
+        }
+
+        private void BtnDetectarEmisorPruebas_Click(object? sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(_rutaPdfZonas) || !File.Exists(_rutaPdfZonas))
+            {
+                MessageBox.Show("Carga un PDF en la zona de previsualización primero.",
                     "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
             try
             {
-                var textExtractor = new PdfTextExtractor();
-                string? texto = textExtractor.ExtraerTextoSeleccionable(
-                    txtRutaPdf.Text, PdfTextExtractor.ModoExtraccion.OrdenadoPosicion);
-
-                if (texto == null)
+                string texto = ExtraerTextoPdfCargado();
+                if (string.IsNullOrEmpty(texto))
                 {
-                    var ocr = new OcrExtractor();
-                    texto = ocr.ExtraerTextoConOcr(txtRutaPdf.Text);
+                    MessageBox.Show("No se pudo extraer texto del PDF.",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
                 }
 
-                txtTextoExtraido.Text = texto?.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", Environment.NewLine);
-
-                // Buscar emisor que matchee
                 var todosLosEmisores = _emisorService.ObtenerTodos();
                 var emisorDetectado = todosLosEmisores.FirstOrDefault(e =>
                     e.Identificadores.All(id =>
@@ -463,7 +732,6 @@ namespace FacturasApp.UI
 
                 if (emisorDetectado != null)
                 {
-                    // Seleccionar en la lista
                     for (int i = 0; i < lstEmisores.Items.Count; i++)
                     {
                         if (lstEmisores.Items[i] is EmisorListItem item &&
@@ -490,7 +758,7 @@ namespace FacturasApp.UI
             }
         }
 
-        private void BtnProbarExtraccion_Click(object? sender, EventArgs e)
+        private void BtnProbarExtraccionPruebas_Click(object? sender, EventArgs e)
         {
             if (_emisorActual == null)
             {
@@ -499,17 +767,25 @@ namespace FacturasApp.UI
                 return;
             }
 
-            if (string.IsNullOrEmpty(txtTextoExtraido.Text))
+            if (string.IsNullOrEmpty(_rutaPdfZonas) || !File.Exists(_rutaPdfZonas))
             {
-                MessageBox.Show("Primero carga un PDF y extrae su texto (botón Detectar Emisor).",
+                MessageBox.Show("Carga un PDF en la zona de previsualización primero.",
                     "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
             try
             {
+                string texto = ExtraerTextoPdfCargado();
+                if (string.IsNullOrEmpty(texto))
+                {
+                    MessageBox.Show("No se pudo extraer texto del PDF.",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
                 var resultado = _fieldExtractor.ExtraerCamposParaTest(
-                    _emisorActual, txtTextoExtraido.Text);
+                    _emisorActual, texto);
 
                 dgvResultados.Rows.Clear();
 

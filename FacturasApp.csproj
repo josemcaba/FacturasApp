@@ -56,9 +56,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Compile Update="FacturasApp\UI\DefinirPlantillaForm.cs">
-			<SubType>Form</SubType>
-		</Compile>
 		<Compile Update="FacturasApp\UI\DetalleFacturaForm.cs">
 			<SubType>Form</SubType>
 		</Compile>
