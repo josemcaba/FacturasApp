@@ -9,7 +9,6 @@ namespace FacturasApp.Services.Parsers
     {
         public abstract string Nombre { get; }
         public abstract string Nif { get; }
-        public virtual string Concepto => "600"; // Código contable por defecto
         public abstract Factura Parsear(string texto, string rutaArchivo, bool viaOcr);
 
         public virtual PdfTextExtractor.ModoExtraccion ModoExtraccion =>

@@ -7,7 +7,6 @@ namespace FacturasApp.Services.Parsers
     {
         public override string Nombre => "INVERSIONES CERRO EL PLOMO S.L.";
         public override string Nif => "B93538783";
-        public override string Concepto => "625";
 
         protected override string[] Identificadores =>
             ["B93538783", "INVERSIONES CERRO EL PLOMO"];
@@ -31,7 +30,7 @@ namespace FacturasApp.Services.Parsers
         public override Factura Parsear(string texto, string rutaArchivo, bool viaOcr)
         {
             var factura = CrearFacturaBase(rutaArchivo, viaOcr);
-            factura.Concepto = Concepto;
+            factura.ConceptoGasto = "625";
 
             factura.NumeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
             factura.Fecha = ExtraerFecha(texto);

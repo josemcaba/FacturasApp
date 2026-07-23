@@ -6,7 +6,8 @@
         public DateTime? Fecha { get; set; }
         public Empresa Emisor { get; set; } = new Proveedor();
         public Empresa Receptor { get; set; } = new Cliente();
-        public string Concepto { get; set; } = string.Empty; // Código contable
+        public string ConceptoIngreso { get; set; } = "700"; // Código contable por defecto
+        public string ConceptoGasto { get; set; } = "600"; // Código contable por defecto
         public decimal BaseImponible { get; set; }
         public decimal PorcentajeIVA { get; set; } = 0m;
         public decimal CuotaIVA { get; set; }
@@ -18,11 +19,11 @@
             MidpointRounding.AwayFromZero);
         public decimal PorcentajeRE { get; set; } = 0m;
         public decimal CuotaRE { get; set; }
+        public decimal CuotaRECalculado => Math.Round(BaseImponible * (PorcentajeRE / 100m), 2,
+            MidpointRounding.AwayFromZero);
         public decimal Total { get; set; }
         public decimal TotalCalculado =>
             BaseImponible + CuotaIVACalculado - CuotaIRPFCalculado + CuotaRECalculado;
-        public decimal CuotaRECalculado => Math.Round(BaseImponible * (PorcentajeRE / 100m), 2,
-            MidpointRounding.AwayFromZero);
         public decimal DiferenciaTotal =>
             Math.Abs(Total - TotalCalculado);
 

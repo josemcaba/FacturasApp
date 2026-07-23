@@ -4,7 +4,8 @@
   <Nombre>Parser Genérico</Nombre>
   <Identificadores />
   <ModoExtraccion>OrdenadoPosicion</ModoExtraccion>
-  <Concepto>600</Concepto>
+  <ConceptoIngreso>700</ConceptoIngreso>
+  <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
   <Campos>
     <Campo Nombre="NumeroFactura">

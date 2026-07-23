@@ -22,9 +22,6 @@ public class ConfigurableParserEngine : BaseParser
     public override string Nombre => _config.Nombre;
     public override string Nif => _config.Nif;
 
-    public override string Concepto =>
-        string.IsNullOrEmpty(_config.Concepto) ? "600" : _config.Concepto;
-
     public override PdfTextExtractor.ModoExtraccion ModoExtraccion =>
         Enum.TryParse<PdfTextExtractor.ModoExtraccion>(_config.ModoExtraccion,
             ignoreCase: true, out var modo)
@@ -58,7 +55,8 @@ public class ConfigurableParserEngine : BaseParser
     private Factura ParsearUnica(string texto, string rutaArchivo, bool viaOcr)
     {
         var factura = CrearFacturaBase(rutaArchivo, viaOcr);
-        factura.Concepto = Concepto;
+        factura.ConceptoGasto = string.IsNullOrEmpty(_config.ConceptoGasto) ? "600" : _config.ConceptoGasto;
+        factura.ConceptoIngreso = string.IsNullOrEmpty(_config.ConceptoIngreso) ? "700" : _config.ConceptoIngreso;
 
         var camposSuma = new List<CampoConfig>();
 
@@ -93,7 +91,8 @@ public class ConfigurableParserEngine : BaseParser
         foreach (Match match in matches)
         {
             var factura = CrearFacturaBase(rutaArchivo, viaOcr);
-            factura.Concepto = Concepto;
+            factura.ConceptoGasto = string.IsNullOrEmpty(_config.ConceptoGasto) ? "600" : _config.ConceptoGasto;
+            factura.ConceptoIngreso = string.IsNullOrEmpty(_config.ConceptoIngreso) ? "700" : _config.ConceptoIngreso;
 
             var esCampoLinea = new HashSet<string>(
                 _config.MultiLineaIVA!.MapeoCampos
@@ -238,8 +237,12 @@ public class ConfigurableParserEngine : BaseParser
                 factura.Emisor.NIF = valorTexto;
                 break;
 
-            case "Concepto":
-                factura.Concepto = valorTexto;
+            case "ConceptoIngreso":
+                factura.ConceptoIngreso = valorTexto;
+                break;
+
+            case "ConceptoGasto":
+                factura.ConceptoGasto = valorTexto;
                 break;
         }
     }

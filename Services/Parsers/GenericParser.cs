@@ -42,8 +42,6 @@ namespace FacturasApp.Services.Parsers
                 Total = ExtraerDecimal(RegexTotal(), texto, 1)
             };
 
-            factura.Estado = FacturaEstado.Determinar(factura);
-
             return factura;
         }
     }

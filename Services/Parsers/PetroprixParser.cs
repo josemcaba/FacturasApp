@@ -51,7 +51,7 @@ namespace FacturasApp.Services.Parsers
         {
             var factura = CrearFacturaBase(rutaArchivo, viaOcr);
 
-            factura.Concepto = "624";
+            factura.ConceptoGasto = "624";
             factura.NumeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
             factura.Fecha = ExtraerFechaEspañol(texto);
             factura.Receptor.Nombre = ExtraerGrupo(RegexReceptorNombre, texto, 1).Trim();

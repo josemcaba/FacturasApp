@@ -7,7 +7,6 @@ namespace FacturasApp.Services.Parsers
     {
         public override string Nombre => "Empresa Municipal Aguas de Málaga S.A.";
         public override string Nif => "A29185519";
-        public override string Concepto => "628"; // Suministro de agua 628 (G15)
 
         protected override string[] Identificadores =>
             ["emasa", "plaza general torrijos", "agua"];
@@ -45,7 +44,7 @@ namespace FacturasApp.Services.Parsers
             // Datos de cabecera comunes a todas las subfacturas
             string emisorNIF = Nif;
             string emisorNombre = Nombre;
-            string conceptoFactura = Concepto;
+            string conceptoGasto = "628";
             string numeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
             DateTime? fecha = ExtraerFecha(RegexFecha, texto);
             string receptorNombre = ExtraerGrupo(RegexNombre, texto, 1);
@@ -58,7 +57,7 @@ namespace FacturasApp.Services.Parsers
                 ExtractedByOcr = viaOcr,
                 NumeroFactura = numeroFactura,
                 Fecha = fecha,
-                Concepto = conceptoFactura,
+                ConceptoGasto = conceptoGasto,
                 Emisor = new Proveedor
                 { Nombre = emisorNombre, NIF = emisorNIF },
                 Receptor = new Cliente
@@ -76,7 +75,7 @@ namespace FacturasApp.Services.Parsers
                 ExtractedByOcr = viaOcr,
                 NumeroFactura = numeroFactura,
                 Fecha = fecha,
-                Concepto = conceptoFactura,
+                ConceptoGasto = conceptoGasto,
                 Emisor = new Proveedor
                 { Nombre = emisorNombre, NIF = emisorNIF },
                 Receptor = new Cliente

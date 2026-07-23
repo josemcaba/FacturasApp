@@ -30,7 +30,6 @@ partial class GestionEmisoresForm
         tabs = new TabControl();
         tabGeneral = new TabPage();
         lblGeneralNombre = new Label();
-        btnGuardar = new Button();
         txtNombre = new TextBox();
         lblGeneralNif = new Label();
         txtNif = new TextBox();
@@ -43,8 +42,10 @@ partial class GestionEmisoresForm
         cmbModoExtraccion = new ComboBox();
         lblGeneralCultura = new Label();
         cmbCulturaFecha = new ComboBox();
-        lblGeneralConcepto = new Label();
-        txtConcepto = new TextBox();
+        lblGeneralConceptoIngreso = new Label();
+        txtConceptoIngreso = new TextBox();
+        lblGeneralConceptoGasto = new Label();
+        txtConceptoGasto = new TextBox();
         tabCampos = new TabPage();
         lblCamposLista = new Label();
         lstCampos = new ListBox();
@@ -105,6 +106,7 @@ partial class GestionEmisoresForm
         lblRegexResultados = new Label();
         dgvRegexMatches = new DataGridView();
         btnRegexApplyToField = new Button();
+        btnGuardar = new Button();
         panelIzquierdo.SuspendLayout();
         tabs.SuspendLayout();
         tabGeneral.SuspendLayout();
@@ -225,8 +227,10 @@ partial class GestionEmisoresForm
         tabGeneral.Controls.Add(cmbModoExtraccion);
         tabGeneral.Controls.Add(lblGeneralCultura);
         tabGeneral.Controls.Add(cmbCulturaFecha);
-        tabGeneral.Controls.Add(lblGeneralConcepto);
-        tabGeneral.Controls.Add(txtConcepto);
+        tabGeneral.Controls.Add(lblGeneralConceptoIngreso);
+        tabGeneral.Controls.Add(txtConceptoIngreso);
+        tabGeneral.Controls.Add(lblGeneralConceptoGasto);
+        tabGeneral.Controls.Add(txtConceptoGasto);
         tabGeneral.Location = new Point(4, 29);
         tabGeneral.Name = "tabGeneral";
         tabGeneral.Size = new Size(815, 517);
@@ -241,20 +245,6 @@ partial class GestionEmisoresForm
         lblGeneralNombre.Size = new Size(141, 20);
         lblGeneralNombre.TabIndex = 0;
         lblGeneralNombre.Text = "Nombre del emisor:";
-        // 
-        // btnGuardar
-        // 
-        btnGuardar.BackColor = Color.FromArgb(46, 117, 182);
-        btnGuardar.FlatStyle = FlatStyle.Flat;
-        btnGuardar.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-        btnGuardar.ForeColor = Color.White;
-        btnGuardar.Location = new Point(337, 556);
-        btnGuardar.Name = "btnGuardar";
-        btnGuardar.Size = new Size(90, 34);
-        btnGuardar.TabIndex = 1;
-        btnGuardar.Text = "💾 Guardar";
-        btnGuardar.UseVisualStyleBackColor = false;
-        btnGuardar.Click += BtnGuardar_Click;
         // 
         // txtNombre
         // 
@@ -292,22 +282,22 @@ partial class GestionEmisoresForm
         // 
         // lstIdentificadores
         // 
-        lstIdentificadores.Location = new Point(16, 142);
+        lstIdentificadores.Location = new Point(16, 177);
         lstIdentificadores.Name = "lstIdentificadores";
         lstIdentificadores.Size = new Size(400, 84);
         lstIdentificadores.TabIndex = 5;
         // 
         // txtNuevoId
         // 
-        txtNuevoId.Location = new Point(16, 248);
+        txtNuevoId.Location = new Point(16, 143);
         txtNuevoId.Name = "txtNuevoId";
-        txtNuevoId.Size = new Size(300, 27);
+        txtNuevoId.Size = new Size(316, 27);
         txtNuevoId.TabIndex = 6;
         // 
         // btnAddId
         // 
         btnAddId.FlatStyle = FlatStyle.Flat;
-        btnAddId.Location = new Point(322, 248);
+        btnAddId.Location = new Point(338, 141);
         btnAddId.Name = "btnAddId";
         btnAddId.Size = new Size(36, 30);
         btnAddId.TabIndex = 7;
@@ -318,7 +308,7 @@ partial class GestionEmisoresForm
         // btnRemoveId
         // 
         btnRemoveId.FlatStyle = FlatStyle.Flat;
-        btnRemoveId.Location = new Point(362, 248);
+        btnRemoveId.Location = new Point(380, 141);
         btnRemoveId.Name = "btnRemoveId";
         btnRemoveId.Size = new Size(36, 30);
         btnRemoveId.TabIndex = 8;
@@ -348,7 +338,7 @@ partial class GestionEmisoresForm
         // lblGeneralCultura
         // 
         lblGeneralCultura.AutoSize = true;
-        lblGeneralCultura.Location = new Point(16, 336);
+        lblGeneralCultura.Location = new Point(257, 281);
         lblGeneralCultura.Name = "lblGeneralCultura";
         lblGeneralCultura.Size = new Size(139, 20);
         lblGeneralCultura.TabIndex = 11;
@@ -358,28 +348,45 @@ partial class GestionEmisoresForm
         // 
         cmbCulturaFecha.DropDownStyle = ComboBoxStyle.DropDownList;
         cmbCulturaFecha.Items.AddRange(new object[] { "es-ES", "en-US", "de-DE", "fr-FR", "it-IT", "pt-PT" });
-        cmbCulturaFecha.Location = new Point(16, 358);
+        cmbCulturaFecha.Location = new Point(257, 304);
         cmbCulturaFecha.Name = "cmbCulturaFecha";
-        cmbCulturaFecha.Size = new Size(200, 28);
+        cmbCulturaFecha.Size = new Size(159, 28);
         cmbCulturaFecha.TabIndex = 12;
         cmbCulturaFecha.SelectedIndexChanged += ControlModificado;
         // 
-        // lblGeneralConcepto
+        // lblGeneralConceptoIngreso
         // 
-        lblGeneralConcepto.AutoSize = true;
-        lblGeneralConcepto.Location = new Point(16, 390);
-        lblGeneralConcepto.Name = "lblGeneralConcepto";
-        lblGeneralConcepto.Size = new Size(138, 20);
-        lblGeneralConcepto.TabIndex = 13;
-        lblGeneralConcepto.Text = "Concepto contable:";
+        lblGeneralConceptoIngreso.AutoSize = true;
+        lblGeneralConceptoIngreso.Location = new Point(16, 355);
+        lblGeneralConceptoIngreso.Name = "lblGeneralConceptoIngreso";
+        lblGeneralConceptoIngreso.Size = new Size(129, 20);
+        lblGeneralConceptoIngreso.TabIndex = 13;
+        lblGeneralConceptoIngreso.Text = "Concepto ingreso:";
         // 
-        // txtConcepto
+        // txtConceptoIngreso
         // 
-        txtConcepto.Location = new Point(16, 412);
-        txtConcepto.Name = "txtConcepto";
-        txtConcepto.Size = new Size(80, 27);
-        txtConcepto.TabIndex = 14;
-        txtConcepto.TextChanged += ControlModificado;
+        txtConceptoIngreso.Location = new Point(16, 378);
+        txtConceptoIngreso.Name = "txtConceptoIngreso";
+        txtConceptoIngreso.Size = new Size(129, 27);
+        txtConceptoIngreso.TabIndex = 14;
+        txtConceptoIngreso.TextChanged += ControlModificado;
+        // 
+        // lblGeneralConceptoGasto
+        // 
+        lblGeneralConceptoGasto.AutoSize = true;
+        lblGeneralConceptoGasto.Location = new Point(167, 355);
+        lblGeneralConceptoGasto.Name = "lblGeneralConceptoGasto";
+        lblGeneralConceptoGasto.Size = new Size(117, 20);
+        lblGeneralConceptoGasto.TabIndex = 15;
+        lblGeneralConceptoGasto.Text = "Concepto gasto:";
+        // 
+        // txtConceptoGasto
+        // 
+        txtConceptoGasto.Location = new Point(167, 378);
+        txtConceptoGasto.Name = "txtConceptoGasto";
+        txtConceptoGasto.Size = new Size(129, 27);
+        txtConceptoGasto.TabIndex = 16;
+        txtConceptoGasto.TextChanged += ControlModificado;
         // 
         // tabCampos
         // 
@@ -444,7 +451,7 @@ partial class GestionEmisoresForm
         // 
         // cmbCampoNombre
         // 
-        cmbCampoNombre.Items.AddRange(new object[] { "NumeroFactura", "Fecha", "BaseImponible", "PorcentajeIVA", "CuotaIVA", "Total", "ReceptorNombre", "ReceptorNif", "EmisorNif", "PorcentajeIRPF", "CuotaIRPF", "PorcentajeRE", "CuotaRE", "Concepto" });
+        cmbCampoNombre.Items.AddRange(new object[] { "NumeroFactura", "Fecha", "BaseImponible", "PorcentajeIVA", "CuotaIVA", "Total", "ReceptorNombre", "ReceptorNif", "EmisorNif", "PorcentajeIRPF", "CuotaIRPF", "PorcentajeRE", "CuotaRE", "ConceptoIngreso", "ConceptoGasto" });
         cmbCampoNombre.Location = new Point(120, 9);
         cmbCampoNombre.Name = "cmbCampoNombre";
         cmbCampoNombre.Size = new Size(250, 28);
@@ -960,6 +967,20 @@ partial class GestionEmisoresForm
         btnRegexApplyToField.UseVisualStyleBackColor = false;
         btnRegexApplyToField.Click += BtnRegexApplyToField_Click;
         // 
+        // btnGuardar
+        // 
+        btnGuardar.BackColor = Color.FromArgb(46, 117, 182);
+        btnGuardar.FlatStyle = FlatStyle.Flat;
+        btnGuardar.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+        btnGuardar.ForeColor = Color.White;
+        btnGuardar.Location = new Point(337, 556);
+        btnGuardar.Name = "btnGuardar";
+        btnGuardar.Size = new Size(90, 34);
+        btnGuardar.TabIndex = 1;
+        btnGuardar.Text = "💾 Guardar";
+        btnGuardar.UseVisualStyleBackColor = false;
+        btnGuardar.Click += BtnGuardar_Click;
+        // 
         // GestionEmisoresForm
         // 
         ClientSize = new Size(1140, 606);
@@ -1012,8 +1033,10 @@ partial class GestionEmisoresForm
     private ComboBox cmbModoExtraccion;
     private Label lblGeneralCultura;
     private ComboBox cmbCulturaFecha;
-    private Label lblGeneralConcepto;
-    private TextBox txtConcepto;
+    private Label lblGeneralConceptoIngreso;
+    private TextBox txtConceptoIngreso;
+    private Label lblGeneralConceptoGasto;
+    private TextBox txtConceptoGasto;
     private TabPage tabCampos;
     private Label lblCamposLista;
     private ListBox lstCampos;

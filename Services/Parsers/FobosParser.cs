@@ -7,7 +7,6 @@ namespace FacturasApp.Services.Parsers
     {
         public override string Nombre => "ARNOLD CALLE TELECOM S.L.";
         public override string Nif => "B93013761";
-        public override string Concepto => "628"; 
 
         protected override string[] Identificadores =>
             ["B93013761", "FOBOS", "Telecom"];
@@ -46,6 +45,7 @@ namespace FacturasApp.Services.Parsers
 
             factura.NumeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
             factura.Fecha = ExtraerFecha(texto);
+            factura.ConceptoGasto = "628";
             factura.Receptor.Nombre = ExtraerGrupo(RegexReceptorNombre, texto, 1).Trim();
             factura.Receptor.NIF = ExtraerNif(texto);
             factura.BaseImponible = ExtraerDecimal(RegexBaseImponible, texto, 1);

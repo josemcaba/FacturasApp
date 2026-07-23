@@ -7,7 +7,6 @@ namespace FacturasApp.Services.Parsers
     {
         public override string Nombre => "PLENERGY GRUPO, S.L.";
         public override string Nif => "B93275394";
-        public override string Concepto => "624";
 
         protected override string[] Identificadores =>
             ["PLENERGY GRUPO", "B93275394"];
@@ -46,7 +45,7 @@ namespace FacturasApp.Services.Parsers
 
             factura.Emisor.NIF = Nif;
             factura.Emisor.Nombre = Nombre;
-            factura.Concepto = Concepto;
+            factura.ConceptoGasto = "624";
             factura.NumeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
             factura.Fecha = ExtraerFecha(RegexFecha, texto);
             factura.Receptor.Nombre = ExtraerGrupo(RegexNombre, texto, 1);

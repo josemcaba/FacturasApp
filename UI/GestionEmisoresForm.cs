@@ -117,7 +117,8 @@ public partial class GestionEmisoresForm : Form
             lstIdentificadores.Items.Add(id);
         cmbModoExtraccion.SelectedItem = config.ModoExtraccion;
         cmbCulturaFecha.SelectedItem = config.CulturaFecha;
-        txtConcepto.Text = config.Concepto;
+        txtConceptoIngreso.Text = config.ConceptoIngreso;
+        txtConceptoGasto.Text = config.ConceptoGasto;
 
         lstCampos.Items.Clear();
         foreach (var c in config.Campos)
@@ -149,7 +150,8 @@ public partial class GestionEmisoresForm : Form
         _emisorActual.Identificadores = lstIdentificadores.Items.Cast<string>().ToList();
         _emisorActual.ModoExtraccion = cmbModoExtraccion.SelectedItem?.ToString() ?? "OrdenadoPosicion";
         _emisorActual.CulturaFecha = cmbCulturaFecha.SelectedItem?.ToString() ?? "es-ES";
-        _emisorActual.Concepto = txtConcepto.Text.Trim();
+        _emisorActual.ConceptoIngreso = txtConceptoIngreso.Text.Trim();
+        _emisorActual.ConceptoGasto = txtConceptoGasto.Text.Trim();
     }
 
     // ── CRUD ───────────────────────────────────────────────────────────────────
@@ -162,7 +164,8 @@ public partial class GestionEmisoresForm : Form
             Nombre = "Nuevo Emisor",
             ModoExtraccion = "OrdenadoPosicion",
             CulturaFecha = "es-ES",
-            Concepto = "600"
+            ConceptoIngreso = "700",
+            ConceptoGasto = "600"
         };
         _configuracion.Guardar(nuevo);
         CargarEmisores();
@@ -202,7 +205,8 @@ public partial class GestionEmisoresForm : Form
             Nombre = _emisorActual.Nombre + " (Copia)",
             Identificadores = new List<string>(_emisorActual.Identificadores),
             ModoExtraccion = _emisorActual.ModoExtraccion,
-            Concepto = _emisorActual.Concepto,
+            ConceptoIngreso = _emisorActual.ConceptoIngreso,
+            ConceptoGasto = _emisorActual.ConceptoGasto,
             CulturaFecha = _emisorActual.CulturaFecha,
             Campos = _emisorActual.Campos.Select(CopiarCampo).ToList(),
             MultiLineaIVA = _emisorActual.MultiLineaIVA != null ? new MultiLineaIVAConfig

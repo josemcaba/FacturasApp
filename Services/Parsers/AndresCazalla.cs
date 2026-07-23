@@ -52,7 +52,7 @@ namespace FacturasApp.Services.Parsers
             factura.PorcentajeIVA = ExtraerDecimal(RegexImportes, texto, 2);
             factura.PorcentajeIRPF = ExtraerDecimal(RegexImportes, texto, 3);
             if (factura.PorcentajeIRPF == 19)
-                factura.Concepto = "720";
+                factura.ConceptoIngreso = "720";
             factura.Total = ExtraerDecimal(RegexImportes, texto, 4);
             factura.Estado = FacturaEstado.Determinar(factura);
 

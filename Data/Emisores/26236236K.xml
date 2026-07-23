@@ -6,7 +6,8 @@
     <Id>semirrueda</Id>
   </Identificadores>
   <ModoExtraccion>OrdenadoPosicion</ModoExtraccion>
-  <Concepto>700</Concepto>
+  <ConceptoIngreso>700</ConceptoIngreso>
+  <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
   <Campos />
   <PostProcesamiento />
