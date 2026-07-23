@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Nif>26236236K</Nif>
+  <Nombre>ANDRES CAZALLA MEDINA</Nombre>
+  <Identificadores>
+    <Id>semirrueda</Id>
+  </Identificadores>
+  <ModoExtraccion>OrdenadoPosicion</ModoExtraccion>
+  <Concepto>700</Concepto>
+  <CulturaFecha>es-ES</CulturaFecha>
+  <Campos />
+  <PostProcesamiento />
+  <ZonasOcr />
+</Emisor>

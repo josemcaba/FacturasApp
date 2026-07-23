@@ -1,0 +1,1077 @@
+namespace FacturasApp.UI;
+
+partial class GestionEmisoresForm
+{
+    private System.ComponentModel.IContainer components = null;
+
+    private System.Windows.Forms.ListBox lstEmisores;
+    private System.Windows.Forms.TextBox txtBuscarEmisor;
+    private System.Windows.Forms.Button btnNuevo;
+    private System.Windows.Forms.Button btnEliminar;
+    private System.Windows.Forms.Button btnClonar;
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing && (components != null))
+            components.Dispose();
+        base.Dispose(disposing);
+    }
+
+    private void InitializeComponent()
+    {
+        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GestionEmisoresForm));
+        panelIzquierdo = new Panel();
+        lblTitulo = new Label();
+        txtBuscarEmisor = new TextBox();
+        lstEmisores = new ListBox();
+        btnNuevo = new Button();
+        btnEliminar = new Button();
+        btnClonar = new Button();
+        tabs = new TabControl();
+        tabGeneral = new TabPage();
+        lblGeneralNombre = new Label();
+        btnGuardar = new Button();
+        txtNombre = new TextBox();
+        lblGeneralNif = new Label();
+        txtNif = new TextBox();
+        lblGeneralIds = new Label();
+        lstIdentificadores = new ListBox();
+        txtNuevoId = new TextBox();
+        btnAddId = new Button();
+        btnRemoveId = new Button();
+        lblGeneralModo = new Label();
+        cmbModoExtraccion = new ComboBox();
+        lblGeneralCultura = new Label();
+        cmbCulturaFecha = new ComboBox();
+        lblGeneralConcepto = new Label();
+        txtConcepto = new TextBox();
+        tabCampos = new TabPage();
+        lblCamposLista = new Label();
+        lstCampos = new ListBox();
+        panelDetalle = new Panel();
+        lblCampoNombre = new Label();
+        cmbCampoNombre = new ComboBox();
+        lblCampoTipo = new Label();
+        cmbCampoTipo = new ComboBox();
+        lblCampoRegex = new Label();
+        txtCampoRegex = new TextBox();
+        lblCampoGrupo = new Label();
+        txtCampoGrupo = new TextBox();
+        lblCampoValorFijo = new Label();
+        txtCampoValorFijo = new TextBox();
+        lblCampoFormato = new Label();
+        txtCampoFormatoFecha = new TextBox();
+        lblCampoSuma = new Label();
+        txtCampoCamposSuma = new TextBox();
+        btnCampoAdd = new Button();
+        btnCampoRemove = new Button();
+        tabMultiIVA = new TabPage();
+        chkMultiIVA = new CheckBox();
+        lblMultiIVARegex = new Label();
+        txtMultiIVARegex = new TextBox();
+        lblMultiIVAMapeo = new Label();
+        dgvMultiIVAMapeo = new DataGridView();
+        dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
+        dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
+        tabPostProc = new TabPage();
+        lblPostProcReglas = new Label();
+        lstPostProc = new ListBox();
+        lblPostProcTipo = new Label();
+        cmbPostProcTipo = new ComboBox();
+        lblPostProcCond = new Label();
+        txtPostProcCondicion = new TextBox();
+        lblPostProcCampos = new Label();
+        txtPostProcCampos = new TextBox();
+        btnPostProcAdd = new Button();
+        btnPostProcRemove = new Button();
+        tabZonas = new TabPage();
+        lblZonasTitulo = new Label();
+        dgvZonas = new DataGridView();
+        dataGridViewTextBoxColumn3 = new DataGridViewTextBoxColumn();
+        dataGridViewTextBoxColumn4 = new DataGridViewTextBoxColumn();
+        dataGridViewTextBoxColumn5 = new DataGridViewTextBoxColumn();
+        dataGridViewTextBoxColumn6 = new DataGridViewTextBoxColumn();
+        dataGridViewTextBoxColumn7 = new DataGridViewTextBoxColumn();
+        dataGridViewTextBoxColumn8 = new DataGridViewTextBoxColumn();
+        dataGridViewTextBoxColumn9 = new DataGridViewTextBoxColumn();
+        dataGridViewTextBoxColumn10 = new DataGridViewTextBoxColumn();
+        btnAbrirEditorVisual = new Button();
+        tabRegex = new TabPage();
+        lblRegexTexto = new Label();
+        txtRegexSource = new TextBox();
+        lblRegexPattern = new Label();
+        txtRegexPattern = new TextBox();
+        lblRegexMatchCount = new Label();
+        lblRegexResultados = new Label();
+        dgvRegexMatches = new DataGridView();
+        btnRegexApplyToField = new Button();
+        panelIzquierdo.SuspendLayout();
+        tabs.SuspendLayout();
+        tabGeneral.SuspendLayout();
+        tabCampos.SuspendLayout();
+        panelDetalle.SuspendLayout();
+        tabMultiIVA.SuspendLayout();
+        ((System.ComponentModel.ISupportInitialize)dgvMultiIVAMapeo).BeginInit();
+        tabPostProc.SuspendLayout();
+        tabZonas.SuspendLayout();
+        ((System.ComponentModel.ISupportInitialize)dgvZonas).BeginInit();
+        tabRegex.SuspendLayout();
+        ((System.ComponentModel.ISupportInitialize)dgvRegexMatches).BeginInit();
+        SuspendLayout();
+        // 
+        // panelIzquierdo
+        // 
+        panelIzquierdo.Controls.Add(lblTitulo);
+        panelIzquierdo.Controls.Add(txtBuscarEmisor);
+        panelIzquierdo.Controls.Add(lstEmisores);
+        panelIzquierdo.Controls.Add(btnNuevo);
+        panelIzquierdo.Controls.Add(btnEliminar);
+        panelIzquierdo.Controls.Add(btnClonar);
+        panelIzquierdo.Dock = DockStyle.Left;
+        panelIzquierdo.Location = new Point(0, 0);
+        panelIzquierdo.Name = "panelIzquierdo";
+        panelIzquierdo.Padding = new Padding(8);
+        panelIzquierdo.Size = new Size(317, 606);
+        panelIzquierdo.TabIndex = 1;
+        // 
+        // lblTitulo
+        // 
+        lblTitulo.AutoSize = true;
+        lblTitulo.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+        lblTitulo.Location = new Point(8, 8);
+        lblTitulo.Name = "lblTitulo";
+        lblTitulo.Size = new Size(90, 25);
+        lblTitulo.TabIndex = 0;
+        lblTitulo.Text = "Emisores";
+        // 
+        // txtBuscarEmisor
+        // 
+        txtBuscarEmisor.Location = new Point(8, 34);
+        txtBuscarEmisor.Name = "txtBuscarEmisor";
+        txtBuscarEmisor.PlaceholderText = "Buscar por nombre o NIF...";
+        txtBuscarEmisor.Size = new Size(297, 27);
+        txtBuscarEmisor.TabIndex = 1;
+        txtBuscarEmisor.TextChanged += TxtBuscarEmisor_TextChanged;
+        // 
+        // lstEmisores
+        // 
+        lstEmisores.DisplayMember = "DisplayText";
+        lstEmisores.Location = new Point(8, 66);
+        lstEmisores.Name = "lstEmisores";
+        lstEmisores.Size = new Size(297, 484);
+        lstEmisores.TabIndex = 2;
+        lstEmisores.SelectedIndexChanged += LstEmisores_SelectedIndexChanged;
+        // 
+        // btnNuevo
+        // 
+        btnNuevo.FlatStyle = FlatStyle.Flat;
+        btnNuevo.Location = new Point(8, 556);
+        btnNuevo.Name = "btnNuevo";
+        btnNuevo.Size = new Size(95, 30);
+        btnNuevo.TabIndex = 3;
+        btnNuevo.Text = "+ Nuevo";
+        btnNuevo.UseVisualStyleBackColor = true;
+        btnNuevo.Click += BtnNuevo_Click;
+        // 
+        // btnEliminar
+        // 
+        btnEliminar.FlatStyle = FlatStyle.Flat;
+        btnEliminar.Location = new Point(109, 556);
+        btnEliminar.Name = "btnEliminar";
+        btnEliminar.Size = new Size(95, 30);
+        btnEliminar.TabIndex = 4;
+        btnEliminar.Text = "− Eliminar";
+        btnEliminar.UseVisualStyleBackColor = true;
+        btnEliminar.Click += BtnEliminar_Click;
+        // 
+        // btnClonar
+        // 
+        btnClonar.FlatStyle = FlatStyle.Flat;
+        btnClonar.Location = new Point(210, 556);
+        btnClonar.Name = "btnClonar";
+        btnClonar.Size = new Size(95, 30);
+        btnClonar.TabIndex = 5;
+        btnClonar.Text = "◎ Clonar";
+        btnClonar.UseVisualStyleBackColor = true;
+        btnClonar.Click += BtnClonar_Click;
+        // 
+        // tabs
+        // 
+        tabs.Controls.Add(tabGeneral);
+        tabs.Controls.Add(tabCampos);
+        tabs.Controls.Add(tabMultiIVA);
+        tabs.Controls.Add(tabPostProc);
+        tabs.Controls.Add(tabZonas);
+        tabs.Controls.Add(tabRegex);
+        tabs.Dock = DockStyle.Top;
+        tabs.Location = new Point(317, 0);
+        tabs.Name = "tabs";
+        tabs.SelectedIndex = 0;
+        tabs.Size = new Size(823, 550);
+        tabs.TabIndex = 0;
+        // 
+        // tabGeneral
+        // 
+        tabGeneral.Controls.Add(lblGeneralNombre);
+        tabGeneral.Controls.Add(txtNombre);
+        tabGeneral.Controls.Add(lblGeneralNif);
+        tabGeneral.Controls.Add(txtNif);
+        tabGeneral.Controls.Add(lblGeneralIds);
+        tabGeneral.Controls.Add(lstIdentificadores);
+        tabGeneral.Controls.Add(txtNuevoId);
+        tabGeneral.Controls.Add(btnAddId);
+        tabGeneral.Controls.Add(btnRemoveId);
+        tabGeneral.Controls.Add(lblGeneralModo);
+        tabGeneral.Controls.Add(cmbModoExtraccion);
+        tabGeneral.Controls.Add(lblGeneralCultura);
+        tabGeneral.Controls.Add(cmbCulturaFecha);
+        tabGeneral.Controls.Add(lblGeneralConcepto);
+        tabGeneral.Controls.Add(txtConcepto);
+        tabGeneral.Location = new Point(4, 29);
+        tabGeneral.Name = "tabGeneral";
+        tabGeneral.Size = new Size(815, 517);
+        tabGeneral.TabIndex = 0;
+        tabGeneral.Text = "General";
+        // 
+        // lblGeneralNombre
+        // 
+        lblGeneralNombre.AutoSize = true;
+        lblGeneralNombre.Location = new Point(16, 16);
+        lblGeneralNombre.Name = "lblGeneralNombre";
+        lblGeneralNombre.Size = new Size(141, 20);
+        lblGeneralNombre.TabIndex = 0;
+        lblGeneralNombre.Text = "Nombre del emisor:";
+        // 
+        // btnGuardar
+        // 
+        btnGuardar.BackColor = Color.FromArgb(46, 117, 182);
+        btnGuardar.FlatStyle = FlatStyle.Flat;
+        btnGuardar.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+        btnGuardar.ForeColor = Color.White;
+        btnGuardar.Location = new Point(337, 556);
+        btnGuardar.Name = "btnGuardar";
+        btnGuardar.Size = new Size(90, 34);
+        btnGuardar.TabIndex = 1;
+        btnGuardar.Text = "💾 Guardar";
+        btnGuardar.UseVisualStyleBackColor = false;
+        btnGuardar.Click += BtnGuardar_Click;
+        // 
+        // txtNombre
+        // 
+        txtNombre.Location = new Point(16, 38);
+        txtNombre.Name = "txtNombre";
+        txtNombre.Size = new Size(400, 27);
+        txtNombre.TabIndex = 1;
+        txtNombre.TextChanged += ControlModificado;
+        // 
+        // lblGeneralNif
+        // 
+        lblGeneralNif.AutoSize = true;
+        lblGeneralNif.Location = new Point(16, 68);
+        lblGeneralNif.Name = "lblGeneralNif";
+        lblGeneralNif.Size = new Size(268, 20);
+        lblGeneralNif.TabIndex = 2;
+        lblGeneralNif.Text = "NIF (clave única = nombre del archivo):";
+        // 
+        // txtNif
+        // 
+        txtNif.Location = new Point(16, 90);
+        txtNif.Name = "txtNif";
+        txtNif.Size = new Size(200, 27);
+        txtNif.TabIndex = 3;
+        txtNif.TextChanged += ControlModificado;
+        // 
+        // lblGeneralIds
+        // 
+        lblGeneralIds.AutoSize = true;
+        lblGeneralIds.Location = new Point(16, 120);
+        lblGeneralIds.Name = "lblGeneralIds";
+        lblGeneralIds.Size = new Size(323, 20);
+        lblGeneralIds.TabIndex = 4;
+        lblGeneralIds.Text = "Identificadores (textos para detectar el emisor):";
+        // 
+        // lstIdentificadores
+        // 
+        lstIdentificadores.Location = new Point(16, 142);
+        lstIdentificadores.Name = "lstIdentificadores";
+        lstIdentificadores.Size = new Size(400, 84);
+        lstIdentificadores.TabIndex = 5;
+        // 
+        // txtNuevoId
+        // 
+        txtNuevoId.Location = new Point(16, 248);
+        txtNuevoId.Name = "txtNuevoId";
+        txtNuevoId.Size = new Size(300, 27);
+        txtNuevoId.TabIndex = 6;
+        // 
+        // btnAddId
+        // 
+        btnAddId.FlatStyle = FlatStyle.Flat;
+        btnAddId.Location = new Point(322, 248);
+        btnAddId.Name = "btnAddId";
+        btnAddId.Size = new Size(36, 30);
+        btnAddId.TabIndex = 7;
+        btnAddId.Text = "+";
+        btnAddId.UseVisualStyleBackColor = true;
+        btnAddId.Click += BtnAddId_Click;
+        // 
+        // btnRemoveId
+        // 
+        btnRemoveId.FlatStyle = FlatStyle.Flat;
+        btnRemoveId.Location = new Point(362, 248);
+        btnRemoveId.Name = "btnRemoveId";
+        btnRemoveId.Size = new Size(36, 30);
+        btnRemoveId.TabIndex = 8;
+        btnRemoveId.Text = "−";
+        btnRemoveId.UseVisualStyleBackColor = true;
+        btnRemoveId.Click += BtnRemoveId_Click;
+        // 
+        // lblGeneralModo
+        // 
+        lblGeneralModo.AutoSize = true;
+        lblGeneralModo.Location = new Point(16, 282);
+        lblGeneralModo.Name = "lblGeneralModo";
+        lblGeneralModo.Size = new Size(204, 20);
+        lblGeneralModo.TabIndex = 9;
+        lblGeneralModo.Text = "Modo de extracción de texto:";
+        // 
+        // cmbModoExtraccion
+        // 
+        cmbModoExtraccion.DropDownStyle = ComboBoxStyle.DropDownList;
+        cmbModoExtraccion.Items.AddRange(new object[] { "Simple", "OrdenadoPosicion", "LayoutAnalysis" });
+        cmbModoExtraccion.Location = new Point(16, 304);
+        cmbModoExtraccion.Name = "cmbModoExtraccion";
+        cmbModoExtraccion.Size = new Size(200, 28);
+        cmbModoExtraccion.TabIndex = 10;
+        cmbModoExtraccion.SelectedIndexChanged += ControlModificado;
+        // 
+        // lblGeneralCultura
+        // 
+        lblGeneralCultura.AutoSize = true;
+        lblGeneralCultura.Location = new Point(16, 336);
+        lblGeneralCultura.Name = "lblGeneralCultura";
+        lblGeneralCultura.Size = new Size(139, 20);
+        lblGeneralCultura.TabIndex = 11;
+        lblGeneralCultura.Text = "Cultura para fechas:";
+        // 
+        // cmbCulturaFecha
+        // 
+        cmbCulturaFecha.DropDownStyle = ComboBoxStyle.DropDownList;
+        cmbCulturaFecha.Items.AddRange(new object[] { "es-ES", "en-US", "de-DE", "fr-FR", "it-IT", "pt-PT" });
+        cmbCulturaFecha.Location = new Point(16, 358);
+        cmbCulturaFecha.Name = "cmbCulturaFecha";
+        cmbCulturaFecha.Size = new Size(200, 28);
+        cmbCulturaFecha.TabIndex = 12;
+        cmbCulturaFecha.SelectedIndexChanged += ControlModificado;
+        // 
+        // lblGeneralConcepto
+        // 
+        lblGeneralConcepto.AutoSize = true;
+        lblGeneralConcepto.Location = new Point(16, 390);
+        lblGeneralConcepto.Name = "lblGeneralConcepto";
+        lblGeneralConcepto.Size = new Size(138, 20);
+        lblGeneralConcepto.TabIndex = 13;
+        lblGeneralConcepto.Text = "Concepto contable:";
+        // 
+        // txtConcepto
+        // 
+        txtConcepto.Location = new Point(16, 412);
+        txtConcepto.Name = "txtConcepto";
+        txtConcepto.Size = new Size(80, 27);
+        txtConcepto.TabIndex = 14;
+        txtConcepto.TextChanged += ControlModificado;
+        // 
+        // tabCampos
+        // 
+        tabCampos.Controls.Add(lblCamposLista);
+        tabCampos.Controls.Add(lstCampos);
+        tabCampos.Controls.Add(panelDetalle);
+        tabCampos.Controls.Add(btnCampoAdd);
+        tabCampos.Controls.Add(btnCampoRemove);
+        tabCampos.Location = new Point(4, 29);
+        tabCampos.Name = "tabCampos";
+        tabCampos.Size = new Size(815, 517);
+        tabCampos.TabIndex = 1;
+        tabCampos.Text = "Campos";
+        // 
+        // lblCamposLista
+        // 
+        lblCamposLista.AutoSize = true;
+        lblCamposLista.Location = new Point(16, 16);
+        lblCamposLista.Name = "lblCamposLista";
+        lblCamposLista.Size = new Size(132, 20);
+        lblCamposLista.TabIndex = 0;
+        lblCamposLista.Text = "Campos definidos:";
+        // 
+        // lstCampos
+        // 
+        lstCampos.Location = new Point(16, 38);
+        lstCampos.Name = "lstCampos";
+        lstCampos.Size = new Size(200, 324);
+        lstCampos.TabIndex = 1;
+        lstCampos.SelectedIndexChanged += LstCampos_SelectedIndexChanged;
+        // 
+        // panelDetalle
+        // 
+        panelDetalle.BorderStyle = BorderStyle.FixedSingle;
+        panelDetalle.Controls.Add(lblCampoNombre);
+        panelDetalle.Controls.Add(cmbCampoNombre);
+        panelDetalle.Controls.Add(lblCampoTipo);
+        panelDetalle.Controls.Add(cmbCampoTipo);
+        panelDetalle.Controls.Add(lblCampoRegex);
+        panelDetalle.Controls.Add(txtCampoRegex);
+        panelDetalle.Controls.Add(lblCampoGrupo);
+        panelDetalle.Controls.Add(txtCampoGrupo);
+        panelDetalle.Controls.Add(lblCampoValorFijo);
+        panelDetalle.Controls.Add(txtCampoValorFijo);
+        panelDetalle.Controls.Add(lblCampoFormato);
+        panelDetalle.Controls.Add(txtCampoFormatoFecha);
+        panelDetalle.Controls.Add(lblCampoSuma);
+        panelDetalle.Controls.Add(txtCampoCamposSuma);
+        panelDetalle.Location = new Point(230, 16);
+        panelDetalle.Name = "panelDetalle";
+        panelDetalle.Size = new Size(400, 360);
+        panelDetalle.TabIndex = 2;
+        // 
+        // lblCampoNombre
+        // 
+        lblCampoNombre.AutoSize = true;
+        lblCampoNombre.Location = new Point(12, 12);
+        lblCampoNombre.Name = "lblCampoNombre";
+        lblCampoNombre.Size = new Size(67, 20);
+        lblCampoNombre.TabIndex = 0;
+        lblCampoNombre.Text = "Nombre:";
+        // 
+        // cmbCampoNombre
+        // 
+        cmbCampoNombre.Items.AddRange(new object[] { "NumeroFactura", "Fecha", "BaseImponible", "PorcentajeIVA", "CuotaIVA", "Total", "ReceptorNombre", "ReceptorNif", "EmisorNif", "PorcentajeIRPF", "CuotaIRPF", "PorcentajeRE", "CuotaRE", "Concepto" });
+        cmbCampoNombre.Location = new Point(120, 9);
+        cmbCampoNombre.Name = "cmbCampoNombre";
+        cmbCampoNombre.Size = new Size(250, 28);
+        cmbCampoNombre.TabIndex = 1;
+        cmbCampoNombre.SelectedIndexChanged += CmbCampoNombre_SelectedIndexChanged;
+        // 
+        // lblCampoTipo
+        // 
+        lblCampoTipo.AutoSize = true;
+        lblCampoTipo.Location = new Point(12, 42);
+        lblCampoTipo.Name = "lblCampoTipo";
+        lblCampoTipo.Size = new Size(135, 20);
+        lblCampoTipo.TabIndex = 2;
+        lblCampoTipo.Text = "Tipo de extracción:";
+        // 
+        // cmbCampoTipo
+        // 
+        cmbCampoTipo.DropDownStyle = ComboBoxStyle.DropDownList;
+        cmbCampoTipo.Items.AddRange(new object[] { "Regex", "ValorFijo", "Suma", "RegexFechaGeneral", "RegexNifGeneral" });
+        cmbCampoTipo.Location = new Point(120, 39);
+        cmbCampoTipo.Name = "cmbCampoTipo";
+        cmbCampoTipo.Size = new Size(250, 28);
+        cmbCampoTipo.TabIndex = 3;
+        cmbCampoTipo.SelectedIndexChanged += ControlModificado;
+        // 
+        // lblCampoRegex
+        // 
+        lblCampoRegex.AutoSize = true;
+        lblCampoRegex.Location = new Point(12, 72);
+        lblCampoRegex.Name = "lblCampoRegex";
+        lblCampoRegex.Size = new Size(53, 20);
+        lblCampoRegex.TabIndex = 4;
+        lblCampoRegex.Text = "Regex:";
+        // 
+        // txtCampoRegex
+        // 
+        txtCampoRegex.Location = new Point(120, 69);
+        txtCampoRegex.Name = "txtCampoRegex";
+        txtCampoRegex.Size = new Size(250, 27);
+        txtCampoRegex.TabIndex = 5;
+        txtCampoRegex.TextChanged += ControlModificado;
+        // 
+        // lblCampoGrupo
+        // 
+        lblCampoGrupo.AutoSize = true;
+        lblCampoGrupo.Location = new Point(12, 102);
+        lblCampoGrupo.Name = "lblCampoGrupo";
+        lblCampoGrupo.Size = new Size(53, 20);
+        lblCampoGrupo.TabIndex = 6;
+        lblCampoGrupo.Text = "Grupo:";
+        // 
+        // txtCampoGrupo
+        // 
+        txtCampoGrupo.Location = new Point(120, 99);
+        txtCampoGrupo.Name = "txtCampoGrupo";
+        txtCampoGrupo.Size = new Size(50, 27);
+        txtCampoGrupo.TabIndex = 7;
+        txtCampoGrupo.Text = "1";
+        txtCampoGrupo.TextChanged += ControlModificado;
+        // 
+        // lblCampoValorFijo
+        // 
+        lblCampoValorFijo.AutoSize = true;
+        lblCampoValorFijo.Location = new Point(12, 132);
+        lblCampoValorFijo.Name = "lblCampoValorFijo";
+        lblCampoValorFijo.Size = new Size(72, 20);
+        lblCampoValorFijo.TabIndex = 8;
+        lblCampoValorFijo.Text = "Valor fijo:";
+        // 
+        // txtCampoValorFijo
+        // 
+        txtCampoValorFijo.Location = new Point(120, 129);
+        txtCampoValorFijo.Name = "txtCampoValorFijo";
+        txtCampoValorFijo.Size = new Size(250, 27);
+        txtCampoValorFijo.TabIndex = 9;
+        txtCampoValorFijo.TextChanged += ControlModificado;
+        // 
+        // lblCampoFormato
+        // 
+        lblCampoFormato.AutoSize = true;
+        lblCampoFormato.Location = new Point(12, 162);
+        lblCampoFormato.Name = "lblCampoFormato";
+        lblCampoFormato.Size = new Size(108, 20);
+        lblCampoFormato.TabIndex = 10;
+        lblCampoFormato.Text = "Formato fecha:";
+        // 
+        // txtCampoFormatoFecha
+        // 
+        txtCampoFormatoFecha.Location = new Point(120, 159);
+        txtCampoFormatoFecha.Name = "txtCampoFormatoFecha";
+        txtCampoFormatoFecha.PlaceholderText = "dd/MM/yyyy (opcional)";
+        txtCampoFormatoFecha.Size = new Size(250, 27);
+        txtCampoFormatoFecha.TabIndex = 11;
+        txtCampoFormatoFecha.TextChanged += ControlModificado;
+        // 
+        // lblCampoSuma
+        // 
+        lblCampoSuma.AutoSize = true;
+        lblCampoSuma.Location = new Point(12, 192);
+        lblCampoSuma.Name = "lblCampoSuma";
+        lblCampoSuma.Size = new Size(156, 20);
+        lblCampoSuma.TabIndex = 12;
+        lblCampoSuma.Text = "Campos suma (coma):";
+        // 
+        // txtCampoCamposSuma
+        // 
+        txtCampoCamposSuma.Location = new Point(120, 189);
+        txtCampoCamposSuma.Name = "txtCampoCamposSuma";
+        txtCampoCamposSuma.PlaceholderText = "BaseImponible,CuotaIVA";
+        txtCampoCamposSuma.Size = new Size(250, 27);
+        txtCampoCamposSuma.TabIndex = 13;
+        txtCampoCamposSuma.TextChanged += ControlModificado;
+        // 
+        // btnCampoAdd
+        // 
+        btnCampoAdd.FlatStyle = FlatStyle.Flat;
+        btnCampoAdd.Location = new Point(16, 390);
+        btnCampoAdd.Name = "btnCampoAdd";
+        btnCampoAdd.Size = new Size(100, 30);
+        btnCampoAdd.TabIndex = 3;
+        btnCampoAdd.Text = "+ Añadir";
+        btnCampoAdd.UseVisualStyleBackColor = true;
+        btnCampoAdd.Click += BtnCampoAdd_Click;
+        // 
+        // btnCampoRemove
+        // 
+        btnCampoRemove.FlatStyle = FlatStyle.Flat;
+        btnCampoRemove.Location = new Point(126, 390);
+        btnCampoRemove.Name = "btnCampoRemove";
+        btnCampoRemove.Size = new Size(100, 30);
+        btnCampoRemove.TabIndex = 4;
+        btnCampoRemove.Text = "− Quitar";
+        btnCampoRemove.UseVisualStyleBackColor = true;
+        btnCampoRemove.Click += BtnCampoRemove_Click;
+        // 
+        // tabMultiIVA
+        // 
+        tabMultiIVA.Controls.Add(chkMultiIVA);
+        tabMultiIVA.Controls.Add(lblMultiIVARegex);
+        tabMultiIVA.Controls.Add(txtMultiIVARegex);
+        tabMultiIVA.Controls.Add(lblMultiIVAMapeo);
+        tabMultiIVA.Controls.Add(dgvMultiIVAMapeo);
+        tabMultiIVA.Location = new Point(4, 29);
+        tabMultiIVA.Name = "tabMultiIVA";
+        tabMultiIVA.Size = new Size(815, 517);
+        tabMultiIVA.TabIndex = 2;
+        tabMultiIVA.Text = "Multi-IVA";
+        // 
+        // chkMultiIVA
+        // 
+        chkMultiIVA.AutoSize = true;
+        chkMultiIVA.Location = new Point(16, 16);
+        chkMultiIVA.Name = "chkMultiIVA";
+        chkMultiIVA.Size = new Size(416, 24);
+        chkMultiIVA.TabIndex = 0;
+        chkMultiIVA.Text = "Habilitar modo multifactura (una Factura por línea de IVA)";
+        chkMultiIVA.CheckedChanged += ControlModificado;
+        // 
+        // lblMultiIVARegex
+        // 
+        lblMultiIVARegex.AutoSize = true;
+        lblMultiIVARegex.Location = new Point(16, 48);
+        lblMultiIVARegex.Name = "lblMultiIVARegex";
+        lblMultiIVARegex.Size = new Size(294, 20);
+        lblMultiIVARegex.TabIndex = 1;
+        lblMultiIVARegex.Text = "Regex de línea (cada match = una Factura):";
+        // 
+        // txtMultiIVARegex
+        // 
+        txtMultiIVARegex.Location = new Point(16, 72);
+        txtMultiIVARegex.Multiline = true;
+        txtMultiIVARegex.Name = "txtMultiIVARegex";
+        txtMultiIVARegex.Size = new Size(600, 60);
+        txtMultiIVARegex.TabIndex = 2;
+        txtMultiIVARegex.TextChanged += ControlModificado;
+        // 
+        // lblMultiIVAMapeo
+        // 
+        lblMultiIVAMapeo.AutoSize = true;
+        lblMultiIVAMapeo.Location = new Point(16, 140);
+        lblMultiIVAMapeo.Name = "lblMultiIVAMapeo";
+        lblMultiIVAMapeo.Size = new Size(198, 20);
+        lblMultiIVAMapeo.TabIndex = 3;
+        lblMultiIVAMapeo.Text = "Mapeo de grupos a campos:";
+        // 
+        // dgvMultiIVAMapeo
+        // 
+        dgvMultiIVAMapeo.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        dgvMultiIVAMapeo.ColumnHeadersHeight = 29;
+        dgvMultiIVAMapeo.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2 });
+        dgvMultiIVAMapeo.Location = new Point(16, 164);
+        dgvMultiIVAMapeo.Name = "dgvMultiIVAMapeo";
+        dgvMultiIVAMapeo.RowHeadersWidth = 51;
+        dgvMultiIVAMapeo.Size = new Size(500, 200);
+        dgvMultiIVAMapeo.TabIndex = 4;
+        dgvMultiIVAMapeo.CellValueChanged += DgvCellValueChanged;
+        dgvMultiIVAMapeo.UserAddedRow += DgvUserAddedRow;
+        dgvMultiIVAMapeo.UserDeletedRow += DgvUserDeletedRow;
+        // 
+        // dataGridViewTextBoxColumn1
+        // 
+        dataGridViewTextBoxColumn1.HeaderText = "Campo";
+        dataGridViewTextBoxColumn1.MinimumWidth = 6;
+        dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+        // 
+        // dataGridViewTextBoxColumn2
+        // 
+        dataGridViewTextBoxColumn2.HeaderText = "Grupo";
+        dataGridViewTextBoxColumn2.MinimumWidth = 6;
+        dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+        // 
+        // tabPostProc
+        // 
+        tabPostProc.Controls.Add(lblPostProcReglas);
+        tabPostProc.Controls.Add(lstPostProc);
+        tabPostProc.Controls.Add(lblPostProcTipo);
+        tabPostProc.Controls.Add(cmbPostProcTipo);
+        tabPostProc.Controls.Add(lblPostProcCond);
+        tabPostProc.Controls.Add(txtPostProcCondicion);
+        tabPostProc.Controls.Add(lblPostProcCampos);
+        tabPostProc.Controls.Add(txtPostProcCampos);
+        tabPostProc.Controls.Add(btnPostProcAdd);
+        tabPostProc.Controls.Add(btnPostProcRemove);
+        tabPostProc.Location = new Point(4, 29);
+        tabPostProc.Name = "tabPostProc";
+        tabPostProc.Size = new Size(815, 517);
+        tabPostProc.TabIndex = 3;
+        tabPostProc.Text = "Post-Procesamiento";
+        // 
+        // lblPostProcReglas
+        // 
+        lblPostProcReglas.AutoSize = true;
+        lblPostProcReglas.Location = new Point(16, 16);
+        lblPostProcReglas.Name = "lblPostProcReglas";
+        lblPostProcReglas.Size = new Size(56, 20);
+        lblPostProcReglas.TabIndex = 0;
+        lblPostProcReglas.Text = "Reglas:";
+        // 
+        // lstPostProc
+        // 
+        lstPostProc.Location = new Point(16, 38);
+        lstPostProc.Name = "lstPostProc";
+        lstPostProc.Size = new Size(220, 184);
+        lstPostProc.TabIndex = 1;
+        lstPostProc.SelectedIndexChanged += LstPostProc_SelectedIndexChanged;
+        // 
+        // lblPostProcTipo
+        // 
+        lblPostProcTipo.AutoSize = true;
+        lblPostProcTipo.Location = new Point(250, 16);
+        lblPostProcTipo.Name = "lblPostProcTipo";
+        lblPostProcTipo.Size = new Size(42, 20);
+        lblPostProcTipo.TabIndex = 2;
+        lblPostProcTipo.Text = "Tipo:";
+        // 
+        // cmbPostProcTipo
+        // 
+        cmbPostProcTipo.DropDownStyle = ComboBoxStyle.DropDownList;
+        cmbPostProcTipo.Items.AddRange(new object[] { "InvertirSigno", "Mayusculas" });
+        cmbPostProcTipo.Location = new Point(320, 13);
+        cmbPostProcTipo.Name = "cmbPostProcTipo";
+        cmbPostProcTipo.Size = new Size(200, 28);
+        cmbPostProcTipo.TabIndex = 3;
+        cmbPostProcTipo.SelectedIndexChanged += ControlModificado;
+        // 
+        // lblPostProcCond
+        // 
+        lblPostProcCond.AutoSize = true;
+        lblPostProcCond.Location = new Point(250, 46);
+        lblPostProcCond.Name = "lblPostProcCond";
+        lblPostProcCond.Size = new Size(197, 20);
+        lblPostProcCond.TabIndex = 4;
+        lblPostProcCond.Text = "Condición (texto en factura):";
+        // 
+        // txtPostProcCondicion
+        // 
+        txtPostProcCondicion.Location = new Point(320, 43);
+        txtPostProcCondicion.Name = "txtPostProcCondicion";
+        txtPostProcCondicion.PlaceholderText = "Ej: ABONO (dejar vacío = siempre)";
+        txtPostProcCondicion.Size = new Size(250, 27);
+        txtPostProcCondicion.TabIndex = 5;
+        txtPostProcCondicion.TextChanged += ControlModificado;
+        // 
+        // lblPostProcCampos
+        // 
+        lblPostProcCampos.AutoSize = true;
+        lblPostProcCampos.Location = new Point(250, 76);
+        lblPostProcCampos.Name = "lblPostProcCampos";
+        lblPostProcCampos.Size = new Size(186, 20);
+        lblPostProcCampos.TabIndex = 6;
+        lblPostProcCampos.Text = "Campos afectados (coma):";
+        // 
+        // txtPostProcCampos
+        // 
+        txtPostProcCampos.Location = new Point(320, 73);
+        txtPostProcCampos.Name = "txtPostProcCampos";
+        txtPostProcCampos.PlaceholderText = "BaseImponible,Total";
+        txtPostProcCampos.Size = new Size(250, 27);
+        txtPostProcCampos.TabIndex = 7;
+        txtPostProcCampos.TextChanged += ControlModificado;
+        // 
+        // btnPostProcAdd
+        // 
+        btnPostProcAdd.FlatStyle = FlatStyle.Flat;
+        btnPostProcAdd.Location = new Point(16, 250);
+        btnPostProcAdd.Name = "btnPostProcAdd";
+        btnPostProcAdd.Size = new Size(120, 30);
+        btnPostProcAdd.TabIndex = 8;
+        btnPostProcAdd.Text = "+ Añadir Regla";
+        btnPostProcAdd.UseVisualStyleBackColor = true;
+        btnPostProcAdd.Click += BtnPostProcAdd_Click;
+        // 
+        // btnPostProcRemove
+        // 
+        btnPostProcRemove.FlatStyle = FlatStyle.Flat;
+        btnPostProcRemove.Location = new Point(146, 250);
+        btnPostProcRemove.Name = "btnPostProcRemove";
+        btnPostProcRemove.Size = new Size(100, 30);
+        btnPostProcRemove.TabIndex = 9;
+        btnPostProcRemove.Text = "− Quitar";
+        btnPostProcRemove.UseVisualStyleBackColor = true;
+        btnPostProcRemove.Click += BtnPostProcRemove_Click;
+        // 
+        // tabZonas
+        // 
+        tabZonas.Controls.Add(lblZonasTitulo);
+        tabZonas.Controls.Add(dgvZonas);
+        tabZonas.Controls.Add(btnAbrirEditorVisual);
+        tabZonas.Location = new Point(4, 29);
+        tabZonas.Name = "tabZonas";
+        tabZonas.Size = new Size(815, 517);
+        tabZonas.TabIndex = 4;
+        tabZonas.Text = "Zonas OCR";
+        // 
+        // lblZonasTitulo
+        // 
+        lblZonasTitulo.AutoSize = true;
+        lblZonasTitulo.Location = new Point(16, 16);
+        lblZonasTitulo.Name = "lblZonasTitulo";
+        lblZonasTitulo.Size = new Size(126, 20);
+        lblZonasTitulo.TabIndex = 0;
+        lblZonasTitulo.Text = "Zonas del emisor:";
+        // 
+        // dgvZonas
+        // 
+        dgvZonas.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        dgvZonas.ColumnHeadersHeight = 29;
+        dgvZonas.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn3, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5, dataGridViewTextBoxColumn6, dataGridViewTextBoxColumn7, dataGridViewTextBoxColumn8, dataGridViewTextBoxColumn9, dataGridViewTextBoxColumn10 });
+        dgvZonas.Location = new Point(16, 38);
+        dgvZonas.Name = "dgvZonas";
+        dgvZonas.RowHeadersWidth = 51;
+        dgvZonas.Size = new Size(716, 260);
+        dgvZonas.TabIndex = 1;
+        dgvZonas.CellValueChanged += DgvCellValueChanged;
+        dgvZonas.UserAddedRow += DgvUserAddedRow;
+        dgvZonas.UserDeletedRow += DgvUserDeletedRow;
+        // 
+        // dataGridViewTextBoxColumn3
+        // 
+        dataGridViewTextBoxColumn3.HeaderText = "Campo";
+        dataGridViewTextBoxColumn3.MinimumWidth = 6;
+        dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+        // 
+        // dataGridViewTextBoxColumn4
+        // 
+        dataGridViewTextBoxColumn4.HeaderText = "Pág";
+        dataGridViewTextBoxColumn4.MinimumWidth = 6;
+        dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+        // 
+        // dataGridViewTextBoxColumn5
+        // 
+        dataGridViewTextBoxColumn5.HeaderText = "X%";
+        dataGridViewTextBoxColumn5.MinimumWidth = 6;
+        dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+        // 
+        // dataGridViewTextBoxColumn6
+        // 
+        dataGridViewTextBoxColumn6.HeaderText = "Y%";
+        dataGridViewTextBoxColumn6.MinimumWidth = 6;
+        dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
+        // 
+        // dataGridViewTextBoxColumn7
+        // 
+        dataGridViewTextBoxColumn7.HeaderText = "Ancho%";
+        dataGridViewTextBoxColumn7.MinimumWidth = 6;
+        dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
+        // 
+        // dataGridViewTextBoxColumn8
+        // 
+        dataGridViewTextBoxColumn8.HeaderText = "Alto%";
+        dataGridViewTextBoxColumn8.MinimumWidth = 6;
+        dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
+        // 
+        // dataGridViewTextBoxColumn9
+        // 
+        dataGridViewTextBoxColumn9.HeaderText = "RegexRespaldo";
+        dataGridViewTextBoxColumn9.MinimumWidth = 6;
+        dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
+        // 
+        // dataGridViewTextBoxColumn10
+        // 
+        dataGridViewTextBoxColumn10.HeaderText = "Opcional";
+        dataGridViewTextBoxColumn10.MinimumWidth = 6;
+        dataGridViewTextBoxColumn10.Name = "dataGridViewTextBoxColumn10";
+        // 
+        // btnAbrirEditorVisual
+        // 
+        btnAbrirEditorVisual.BackColor = Color.DarkGray;
+        btnAbrirEditorVisual.FlatStyle = FlatStyle.Flat;
+        btnAbrirEditorVisual.ForeColor = Color.White;
+        btnAbrirEditorVisual.Location = new Point(16, 310);
+        btnAbrirEditorVisual.Name = "btnAbrirEditorVisual";
+        btnAbrirEditorVisual.Size = new Size(220, 34);
+        btnAbrirEditorVisual.TabIndex = 2;
+        btnAbrirEditorVisual.Text = "🔲 Abrir Editor Visual de Zonas";
+        btnAbrirEditorVisual.UseVisualStyleBackColor = false;
+        btnAbrirEditorVisual.Click += BtnAbrirEditorVisual_Click;
+        // 
+        // tabRegex
+        // 
+        tabRegex.Controls.Add(lblRegexTexto);
+        tabRegex.Controls.Add(txtRegexSource);
+        tabRegex.Controls.Add(lblRegexPattern);
+        tabRegex.Controls.Add(txtRegexPattern);
+        tabRegex.Controls.Add(lblRegexMatchCount);
+        tabRegex.Controls.Add(lblRegexResultados);
+        tabRegex.Controls.Add(dgvRegexMatches);
+        tabRegex.Controls.Add(btnRegexApplyToField);
+        tabRegex.Location = new Point(4, 29);
+        tabRegex.Name = "tabRegex";
+        tabRegex.Size = new Size(815, 517);
+        tabRegex.TabIndex = 5;
+        tabRegex.Text = "Probar Regex";
+        // 
+        // lblRegexTexto
+        // 
+        lblRegexTexto.AutoSize = true;
+        lblRegexTexto.Location = new Point(16, 16);
+        lblRegexTexto.Name = "lblRegexTexto";
+        lblRegexTexto.Size = new Size(324, 20);
+        lblRegexTexto.TabIndex = 0;
+        lblRegexTexto.Text = "Texto de prueba (pégalo o extraído de un PDF):";
+        // 
+        // txtRegexSource
+        // 
+        txtRegexSource.Font = new Font("Consolas", 9F);
+        txtRegexSource.Location = new Point(16, 38);
+        txtRegexSource.Multiline = true;
+        txtRegexSource.Name = "txtRegexSource";
+        txtRegexSource.ScrollBars = ScrollBars.Vertical;
+        txtRegexSource.Size = new Size(716, 200);
+        txtRegexSource.TabIndex = 1;
+        txtRegexSource.TextChanged += EjecutarRegex;
+        // 
+        // lblRegexPattern
+        // 
+        lblRegexPattern.AutoSize = true;
+        lblRegexPattern.Location = new Point(16, 248);
+        lblRegexPattern.Name = "lblRegexPattern";
+        lblRegexPattern.Size = new Size(127, 20);
+        lblRegexPattern.TabIndex = 2;
+        lblRegexPattern.Text = "Expresión regular:";
+        // 
+        // txtRegexPattern
+        // 
+        txtRegexPattern.Font = new Font("Consolas", 10F);
+        txtRegexPattern.Location = new Point(16, 270);
+        txtRegexPattern.Name = "txtRegexPattern";
+        txtRegexPattern.Size = new Size(600, 27);
+        txtRegexPattern.TabIndex = 3;
+        txtRegexPattern.TextChanged += EjecutarRegex;
+        // 
+        // lblRegexMatchCount
+        // 
+        lblRegexMatchCount.AutoSize = true;
+        lblRegexMatchCount.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+        lblRegexMatchCount.Location = new Point(630, 273);
+        lblRegexMatchCount.Name = "lblRegexMatchCount";
+        lblRegexMatchCount.Size = new Size(0, 20);
+        lblRegexMatchCount.TabIndex = 4;
+        // 
+        // lblRegexResultados
+        // 
+        lblRegexResultados.AutoSize = true;
+        lblRegexResultados.Location = new Point(16, 304);
+        lblRegexResultados.Name = "lblRegexResultados";
+        lblRegexResultados.Size = new Size(289, 20);
+        lblRegexResultados.TabIndex = 5;
+        lblRegexResultados.Text = "Resultados (matches y grupos de captura):";
+        // 
+        // dgvRegexMatches
+        // 
+        dgvRegexMatches.AllowUserToAddRows = false;
+        dgvRegexMatches.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        dgvRegexMatches.ColumnHeadersHeight = 29;
+        dgvRegexMatches.Location = new Point(16, 326);
+        dgvRegexMatches.Name = "dgvRegexMatches";
+        dgvRegexMatches.ReadOnly = true;
+        dgvRegexMatches.RowHeadersWidth = 51;
+        dgvRegexMatches.Size = new Size(716, 110);
+        dgvRegexMatches.TabIndex = 6;
+        // 
+        // btnRegexApplyToField
+        // 
+        btnRegexApplyToField.BackColor = Color.FromArgb(46, 117, 182);
+        btnRegexApplyToField.FlatStyle = FlatStyle.Flat;
+        btnRegexApplyToField.ForeColor = Color.White;
+        btnRegexApplyToField.Location = new Point(16, 456);
+        btnRegexApplyToField.Name = "btnRegexApplyToField";
+        btnRegexApplyToField.Size = new Size(280, 34);
+        btnRegexApplyToField.TabIndex = 7;
+        btnRegexApplyToField.Text = "← Asignar regex al campo seleccionado";
+        btnRegexApplyToField.UseVisualStyleBackColor = false;
+        btnRegexApplyToField.Click += BtnRegexApplyToField_Click;
+        // 
+        // GestionEmisoresForm
+        // 
+        ClientSize = new Size(1140, 606);
+        Controls.Add(tabs);
+        Controls.Add(btnGuardar);
+        Controls.Add(panelIzquierdo);
+        Icon = (Icon)resources.GetObject("$this.Icon");
+        MinimizeBox = false;
+        Name = "GestionEmisoresForm";
+        StartPosition = FormStartPosition.CenterParent;
+        Text = "Gestionar Emisores";
+        panelIzquierdo.ResumeLayout(false);
+        panelIzquierdo.PerformLayout();
+        tabs.ResumeLayout(false);
+        tabGeneral.ResumeLayout(false);
+        tabGeneral.PerformLayout();
+        tabCampos.ResumeLayout(false);
+        tabCampos.PerformLayout();
+        panelDetalle.ResumeLayout(false);
+        panelDetalle.PerformLayout();
+        tabMultiIVA.ResumeLayout(false);
+        tabMultiIVA.PerformLayout();
+        ((System.ComponentModel.ISupportInitialize)dgvMultiIVAMapeo).EndInit();
+        tabPostProc.ResumeLayout(false);
+        tabPostProc.PerformLayout();
+        tabZonas.ResumeLayout(false);
+        tabZonas.PerformLayout();
+        ((System.ComponentModel.ISupportInitialize)dgvZonas).EndInit();
+        tabRegex.ResumeLayout(false);
+        tabRegex.PerformLayout();
+        ((System.ComponentModel.ISupportInitialize)dgvRegexMatches).EndInit();
+        ResumeLayout(false);
+    }
+
+    private Panel panelIzquierdo;
+    private Label lblTitulo;
+    private TabControl tabs;
+    private TabPage tabGeneral;
+    private Label lblGeneralNombre;
+    private Button btnGuardar;
+    private TextBox txtNombre;
+    private Label lblGeneralNif;
+    private TextBox txtNif;
+    private Label lblGeneralIds;
+    private ListBox lstIdentificadores;
+    private TextBox txtNuevoId;
+    private Button btnAddId;
+    private Button btnRemoveId;
+    private Label lblGeneralModo;
+    private ComboBox cmbModoExtraccion;
+    private Label lblGeneralCultura;
+    private ComboBox cmbCulturaFecha;
+    private Label lblGeneralConcepto;
+    private TextBox txtConcepto;
+    private TabPage tabCampos;
+    private Label lblCamposLista;
+    private ListBox lstCampos;
+    private Panel panelDetalle;
+    private Label lblCampoNombre;
+    private ComboBox cmbCampoNombre;
+    private Label lblCampoTipo;
+    private ComboBox cmbCampoTipo;
+    private Label lblCampoRegex;
+    private TextBox txtCampoRegex;
+    private Label lblCampoGrupo;
+    private TextBox txtCampoGrupo;
+    private Label lblCampoValorFijo;
+    private TextBox txtCampoValorFijo;
+    private Label lblCampoFormato;
+    private TextBox txtCampoFormatoFecha;
+    private Label lblCampoSuma;
+    private TextBox txtCampoCamposSuma;
+    private Button btnCampoAdd;
+    private Button btnCampoRemove;
+    private TabPage tabMultiIVA;
+    private CheckBox chkMultiIVA;
+    private Label lblMultiIVARegex;
+    private TextBox txtMultiIVARegex;
+    private Label lblMultiIVAMapeo;
+    private DataGridView dgvMultiIVAMapeo;
+    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+    private TabPage tabPostProc;
+    private Label lblPostProcReglas;
+    private ListBox lstPostProc;
+    private Label lblPostProcTipo;
+    private ComboBox cmbPostProcTipo;
+    private Label lblPostProcCond;
+    private TextBox txtPostProcCondicion;
+    private Label lblPostProcCampos;
+    private TextBox txtPostProcCampos;
+    private Button btnPostProcAdd;
+    private Button btnPostProcRemove;
+    private TabPage tabZonas;
+    private Label lblZonasTitulo;
+    private DataGridView dgvZonas;
+    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
+    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
+    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
+    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
+    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
+    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
+    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
+    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn10;
+    private Button btnAbrirEditorVisual;
+    private TabPage tabRegex;
+    private Label lblRegexTexto;
+    private TextBox txtRegexSource;
+    private Label lblRegexPattern;
+    private TextBox txtRegexPattern;
+    private Label lblRegexMatchCount;
+    private Label lblRegexResultados;
+    private DataGridView dgvRegexMatches;
+    private Button btnRegexApplyToField;
+}

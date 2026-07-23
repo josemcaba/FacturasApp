@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using FacturasApp.Models;
 using FacturasApp.Services;
 
@@ -5,6 +6,9 @@ namespace FacturasApp.UI
 {
     public partial class MainForm : Form
     {
+        public static Icon DefaultIcon { get; } =
+            (Icon)new ComponentResourceManager(typeof(MainForm)).GetObject("$this.Icon")!;
+
         private readonly InvoiceProcessorService _procesador;
         private readonly ExportService _exportador = new();
         private List<Factura> _facturas = new();
@@ -444,6 +448,13 @@ namespace FacturasApp.UI
             ventana.ShowDialog(this);
         }
 
+        // Gestionar emisores (CRUD XML)
+        private void btnGestionEmisores_Click(object sender, EventArgs e)
+        {
+            using var form = new GestionEmisoresForm();
+            form.ShowDialog(this);
+        }
+
         private void MostrarExitoExportacion(string rutaArchivo)
         {
             var resultado = MessageBox.Show(
@@ -472,6 +483,8 @@ namespace FacturasApp.UI
             // Nuevos botones de exportación Excel
             btnExportarExcelIngresos.Enabled = !procesando;
             btnExportarExcelGastos.Enabled = !procesando;
+            btnGestionEmisores.Enabled = !procesando;
+            btnDefinirZonas.Enabled = !procesando;
             progressBar.Visible = procesando;
             lblPorcentaje.Visible = procesando;
         }

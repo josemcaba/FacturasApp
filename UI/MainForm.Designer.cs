@@ -240,6 +240,20 @@ namespace FacturasApp.UI
             btnDefinirZonas.UseVisualStyleBackColor = false;
             btnDefinirZonas.Click += btnDefinirPlantilla_Click;
             // 
+            // btnGestionEmisores
+            // 
+            btnGestionEmisores = new Button();
+            btnGestionEmisores.BackColor = Color.DarkOrange;
+            btnGestionEmisores.FlatStyle = FlatStyle.Flat;
+            btnGestionEmisores.ForeColor = Color.White;
+            btnGestionEmisores.Location = new Point(742, 12);
+            btnGestionEmisores.Name = "btnGestionEmisores";
+            btnGestionEmisores.Size = new Size(140, 34);
+            btnGestionEmisores.TabIndex = 21;
+            btnGestionEmisores.Text = "⚙ Emisores";
+            btnGestionEmisores.UseVisualStyleBackColor = false;
+            btnGestionEmisores.Click += btnGestionEmisores_Click;
+            // 
             // lblFiltro
             // 
             lblFiltro.Location = new Point(0, 0);
@@ -277,6 +291,7 @@ namespace FacturasApp.UI
             Controls.Add(btnExportarExcelIngresos);
             Controls.Add(btnExportarExcelGastos);
             Controls.Add(btnDefinirZonas);
+            Controls.Add(btnGestionEmisores);
             Font = new Font("Segoe UI", 9F);
             Icon = (Icon)resources.GetObject("$this.Icon");
             MinimumSize = new Size(800, 600);
@@ -297,6 +312,7 @@ namespace FacturasApp.UI
         private Button btnExportarExcelIngresos;
         private Button btnExportarExcelGastos;
         private Button btnDefinirZonas;
+        private Button btnGestionEmisores;
         private ListBox lstArchivos;
         private TextBox txtRutaExcel;
         private ProgressBar progressBar;
