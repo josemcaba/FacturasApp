@@ -1,6 +1,8 @@
 using System.Text.RegularExpressions;
 using FacturasApp.Models.EmisoresConfig;
 using FacturasApp.Services;
+using PDFtoImage;
+using SkiaSharp;
 
 namespace FacturasApp.UI;
 
@@ -10,10 +12,15 @@ public partial class GestionEmisoresForm : Form
     private EmisorConfig? _emisorActual;
     private bool _modificado;
     private bool _cargando;
+    private readonly List<Bitmap> _imagenPaginas = new();
+    private int _paginaActual;
+    private string? _rutaPdf;
 
     public GestionEmisoresForm()
     {
         InitializeComponent();
+        panelCentral.Resize += PanelCentral_Resize;
+        PanelCentral_Resize(null, EventArgs.Empty);
         CargarEmisores();
         FormClosing += (_, args) =>
         {
@@ -21,8 +28,9 @@ public partial class GestionEmisoresForm : Form
             {
                 var r = MessageBox.Show("Hay cambios sin guardar. ¿Salir sin guardar?",
                     "Cambios no guardados", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (r != DialogResult.Yes) args.Cancel = true;
+                if (r != DialogResult.Yes) { args.Cancel = true; return; }
             }
+            LimpiarPaginas();
         };
     }
 
@@ -71,6 +79,144 @@ public partial class GestionEmisoresForm : Form
         tabs.SelectedIndex = 1;
         if (lstCampos.SelectedItem is CampoConfig campo)
             txtCampoRegex.Text = txtRegexPattern.Text;
+    }
+
+    private bool _ajustando;
+
+    private void PanelCentral_Resize(object? sender, EventArgs e)
+    {
+        if (_ajustando) return;
+        _ajustando = true;
+
+        var panel = panelCentral;
+        int panelH = panel.ClientSize.Height;
+        int topY = btnCargarPdfMuestra.Bottom + 8;
+        if (tabPaginas.Visible)
+            topY = tabPaginas.Bottom + 8;
+        int availH = panelH - topY - 8;
+
+        if (availH >= 10)
+        {
+            const double a4 = 0.707071;
+            picFactura.Height = availH;
+            picFactura.Width = (int)(availH * a4);
+
+            panelCentral.Width = picFactura.Width + 16;
+
+            picFactura.Left = 8;
+            picFactura.Top = topY;
+
+            btnCargarPdfMuestra.Left = 8;
+            btnCargarPdfMuestra.Width = picFactura.Width;
+
+            tabPaginas.Left = 8;
+            tabPaginas.Width = picFactura.Width;
+        }
+
+        _ajustando = false;
+    }
+
+    private void BtnCargarPdfMuestra_Click(object? sender, EventArgs e)
+    {
+        using var dialogo = new OpenFileDialog
+        {
+            Title = "Seleccionar PDF de muestra",
+            Filter = "Archivos PDF (*.pdf)|*.pdf"
+        };
+        if (dialogo.ShowDialog() != DialogResult.OK) return;
+
+        LimpiarPaginas();
+        _rutaPdf = dialogo.FileName;
+
+        byte[] pdfBytes;
+        try { pdfBytes = File.ReadAllBytes(_rutaPdf); }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error al leer PDF:\n{ex.Message}",
+                "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+
+        int numPaginas;
+        try { numPaginas = Conversion.GetPageCount(pdfBytes); }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error al contar páginas:\n{ex.Message}",
+                "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+
+        for (int i = 0; i < numPaginas; i++)
+        {
+            SKBitmap skBitmap;
+            try
+            {
+                skBitmap = Conversion.ToImage(
+                    pdfBytes,
+                    page: new Index(i),
+                    password: null,
+                    options: new RenderOptions(Dpi: 300));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al renderizar página {i + 1}:\n{ex.Message}",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            using (skBitmap)
+            {
+                using var skImage = SKImage.FromBitmap(skBitmap);
+                using var skData = skImage.Encode(SKEncodedImageFormat.Png, 100);
+                using var ms = new MemoryStream(skData.ToArray());
+                _imagenPaginas.Add(new Bitmap(ms));
+            }
+        }
+
+        CrearPestanas();
+
+        if (tabPaginas.TabCount > 0)
+            tabPaginas.SelectedIndex = 0;
+        tabPaginas.Visible = true;
+        PanelCentral_Resize(null, EventArgs.Empty);
+
+        MostrarPaginaActual();
+    }
+
+    private void TabPaginas_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+        if (tabPaginas.SelectedIndex < 0) return;
+        _paginaActual = tabPaginas.SelectedIndex;
+        MostrarPaginaActual();
+    }
+
+    private void CrearPestanas()
+    {
+        for (int i = 0; i < _imagenPaginas.Count; i++)
+        {
+            var tab = new TabPage($"Página {i + 1}");
+            tab.Tag = i;
+            tabPaginas.TabPages.Add(tab);
+        }
+    }
+
+    private void MostrarPaginaActual()
+    {
+        if (_paginaActual < 0 || _paginaActual >= _imagenPaginas.Count) return;
+        picFactura.Image = _imagenPaginas[_paginaActual];
+        picFactura.Invalidate();
+    }
+
+    private void LimpiarPaginas()
+    {
+        tabPaginas.TabPages.Clear();
+        foreach (var img in _imagenPaginas)
+            img.Dispose();
+        _imagenPaginas.Clear();
+        _paginaActual = 0;
+        _rutaPdf = null;
+        picFactura.Image = null;
+        tabPaginas.Visible = false;
     }
 
     private void DgvCellValueChanged(object? sender, DataGridViewCellEventArgs e) => MarcarModificado();

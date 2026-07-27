@@ -11,5 +11,10 @@
   <CulturaFecha>es-ES</CulturaFecha>
   <Campos />
   <PostProcesamiento />
-  <ZonasOcr />
+  <ZonasOcr>
+    <Zona Campo="Z1" Pagina="1" X="49.4" Y="3.2" Ancho="41.6" Alto="5.3">
+      <RegexRespaldo />
+      <Opcional>false</Opcional>
+    </Zona>
+  </ZonasOcr>
 </Emisor>

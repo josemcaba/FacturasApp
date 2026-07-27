@@ -44,6 +44,18 @@ partial class GestionEmisoresForm
         txtConceptoIngreso = new TextBox();
         lblGeneralConceptoGasto = new Label();
         txtConceptoGasto = new TextBox();
+        tabZonas = new TabPage();
+        lblZonasTitulo = new Label();
+        dgvZonas = new DataGridView();
+        dataGridViewTextBoxColumn3 = new DataGridViewTextBoxColumn();
+        dataGridViewTextBoxColumn4 = new DataGridViewTextBoxColumn();
+        dataGridViewTextBoxColumn5 = new DataGridViewTextBoxColumn();
+        dataGridViewTextBoxColumn6 = new DataGridViewTextBoxColumn();
+        dataGridViewTextBoxColumn7 = new DataGridViewTextBoxColumn();
+        dataGridViewTextBoxColumn8 = new DataGridViewTextBoxColumn();
+        dataGridViewTextBoxColumn9 = new DataGridViewTextBoxColumn();
+        dataGridViewTextBoxColumn10 = new DataGridViewTextBoxColumn();
+        btnAbrirEditorVisual = new Button();
         tabCampos = new TabPage();
         lblCamposLista = new Label();
         lstCampos = new ListBox();
@@ -83,18 +95,6 @@ partial class GestionEmisoresForm
         txtPostProcCampos = new TextBox();
         btnPostProcAdd = new Button();
         btnPostProcRemove = new Button();
-        tabZonas = new TabPage();
-        lblZonasTitulo = new Label();
-        dgvZonas = new DataGridView();
-        dataGridViewTextBoxColumn3 = new DataGridViewTextBoxColumn();
-        dataGridViewTextBoxColumn4 = new DataGridViewTextBoxColumn();
-        dataGridViewTextBoxColumn5 = new DataGridViewTextBoxColumn();
-        dataGridViewTextBoxColumn6 = new DataGridViewTextBoxColumn();
-        dataGridViewTextBoxColumn7 = new DataGridViewTextBoxColumn();
-        dataGridViewTextBoxColumn8 = new DataGridViewTextBoxColumn();
-        dataGridViewTextBoxColumn9 = new DataGridViewTextBoxColumn();
-        dataGridViewTextBoxColumn10 = new DataGridViewTextBoxColumn();
-        btnAbrirEditorVisual = new Button();
         tabRegex = new TabPage();
         lblRegexTexto = new Label();
         txtRegexSource = new TextBox();
@@ -105,21 +105,26 @@ partial class GestionEmisoresForm
         dgvRegexMatches = new DataGridView();
         btnRegexApplyToField = new Button();
         btnGuardar = new Button();
+        btnCargarPdfMuestra = new Button();
+        tabPaginas = new TabControl();
+        picFactura = new PictureBox();
         panelDerecho = new Panel();
         panelCentral = new Panel();
         panelIzquierdo.SuspendLayout();
         tabs.SuspendLayout();
         tabGeneral.SuspendLayout();
+        tabZonas.SuspendLayout();
+        ((System.ComponentModel.ISupportInitialize)dgvZonas).BeginInit();
         tabCampos.SuspendLayout();
         panelDetalle.SuspendLayout();
         tabMultiIVA.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)dgvMultiIVAMapeo).BeginInit();
         tabPostProc.SuspendLayout();
-        tabZonas.SuspendLayout();
-        ((System.ComponentModel.ISupportInitialize)dgvZonas).BeginInit();
         tabRegex.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)dgvRegexMatches).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)picFactura).BeginInit();
         panelDerecho.SuspendLayout();
+        panelCentral.SuspendLayout();
         SuspendLayout();
         // 
         // lstEmisores
@@ -160,9 +165,9 @@ partial class GestionEmisoresForm
         // 
         // btnEliminar
         // 
-        btnEliminar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+        btnEliminar.Anchor = AnchorStyles.Bottom;
         btnEliminar.FlatStyle = FlatStyle.Flat;
-        btnEliminar.Location = new Point(120, 559);
+        btnEliminar.Location = new Point(121, 562);
         btnEliminar.Name = "btnEliminar";
         btnEliminar.Size = new Size(104, 30);
         btnEliminar.TabIndex = 4;
@@ -172,9 +177,9 @@ partial class GestionEmisoresForm
         // 
         // btnClonar
         // 
-        btnClonar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+        btnClonar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
         btnClonar.FlatStyle = FlatStyle.Flat;
-        btnClonar.Location = new Point(229, 559);
+        btnClonar.Location = new Point(231, 562);
         btnClonar.Name = "btnClonar";
         btnClonar.Size = new Size(104, 30);
         btnClonar.TabIndex = 5;
@@ -186,7 +191,7 @@ partial class GestionEmisoresForm
         // 
         btnNuevo.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
         btnNuevo.FlatStyle = FlatStyle.Flat;
-        btnNuevo.Location = new Point(11, 559);
+        btnNuevo.Location = new Point(11, 562);
         btnNuevo.Name = "btnNuevo";
         btnNuevo.Size = new Size(104, 30);
         btnNuevo.TabIndex = 3;
@@ -196,17 +201,17 @@ partial class GestionEmisoresForm
         // 
         // tabs
         // 
-        tabs.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+        tabs.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         tabs.Controls.Add(tabGeneral);
+        tabs.Controls.Add(tabZonas);
         tabs.Controls.Add(tabCampos);
         tabs.Controls.Add(tabMultiIVA);
         tabs.Controls.Add(tabPostProc);
-        tabs.Controls.Add(tabZonas);
         tabs.Controls.Add(tabRegex);
-        tabs.Location = new Point(105, 3);
+        tabs.Location = new Point(0, 0);
         tabs.Name = "tabs";
         tabs.SelectedIndex = 0;
-        tabs.Size = new Size(447, 480);
+        tabs.Size = new Size(744, 547);
         tabs.TabIndex = 0;
         // 
         // tabGeneral
@@ -230,7 +235,7 @@ partial class GestionEmisoresForm
         tabGeneral.Controls.Add(txtConceptoGasto);
         tabGeneral.Location = new Point(4, 29);
         tabGeneral.Name = "tabGeneral";
-        tabGeneral.Size = new Size(439, 447);
+        tabGeneral.Size = new Size(736, 514);
         tabGeneral.TabIndex = 0;
         tabGeneral.Text = "General";
         // 
@@ -385,6 +390,101 @@ partial class GestionEmisoresForm
         txtConceptoGasto.TabIndex = 16;
         txtConceptoGasto.TextChanged += ControlModificado;
         // 
+        // tabZonas
+        // 
+        tabZonas.Controls.Add(lblZonasTitulo);
+        tabZonas.Controls.Add(dgvZonas);
+        tabZonas.Controls.Add(btnAbrirEditorVisual);
+        tabZonas.Location = new Point(4, 29);
+        tabZonas.Name = "tabZonas";
+        tabZonas.Size = new Size(686, 514);
+        tabZonas.TabIndex = 4;
+        tabZonas.Text = "Zonas OCR";
+        // 
+        // lblZonasTitulo
+        // 
+        lblZonasTitulo.AutoSize = true;
+        lblZonasTitulo.Location = new Point(16, 16);
+        lblZonasTitulo.Name = "lblZonasTitulo";
+        lblZonasTitulo.Size = new Size(126, 20);
+        lblZonasTitulo.TabIndex = 0;
+        lblZonasTitulo.Text = "Zonas del emisor:";
+        // 
+        // dgvZonas
+        // 
+        dgvZonas.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        dgvZonas.ColumnHeadersHeight = 29;
+        dgvZonas.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn3, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5, dataGridViewTextBoxColumn6, dataGridViewTextBoxColumn7, dataGridViewTextBoxColumn8, dataGridViewTextBoxColumn9, dataGridViewTextBoxColumn10 });
+        dgvZonas.Location = new Point(16, 38);
+        dgvZonas.Name = "dgvZonas";
+        dgvZonas.RowHeadersWidth = 51;
+        dgvZonas.Size = new Size(716, 260);
+        dgvZonas.TabIndex = 1;
+        dgvZonas.CellValueChanged += DgvCellValueChanged;
+        dgvZonas.UserAddedRow += DgvUserAddedRow;
+        dgvZonas.UserDeletedRow += DgvUserDeletedRow;
+        // 
+        // dataGridViewTextBoxColumn3
+        // 
+        dataGridViewTextBoxColumn3.HeaderText = "Campo";
+        dataGridViewTextBoxColumn3.MinimumWidth = 6;
+        dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+        // 
+        // dataGridViewTextBoxColumn4
+        // 
+        dataGridViewTextBoxColumn4.HeaderText = "Pág";
+        dataGridViewTextBoxColumn4.MinimumWidth = 6;
+        dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+        // 
+        // dataGridViewTextBoxColumn5
+        // 
+        dataGridViewTextBoxColumn5.HeaderText = "X%";
+        dataGridViewTextBoxColumn5.MinimumWidth = 6;
+        dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+        // 
+        // dataGridViewTextBoxColumn6
+        // 
+        dataGridViewTextBoxColumn6.HeaderText = "Y%";
+        dataGridViewTextBoxColumn6.MinimumWidth = 6;
+        dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
+        // 
+        // dataGridViewTextBoxColumn7
+        // 
+        dataGridViewTextBoxColumn7.HeaderText = "Ancho%";
+        dataGridViewTextBoxColumn7.MinimumWidth = 6;
+        dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
+        // 
+        // dataGridViewTextBoxColumn8
+        // 
+        dataGridViewTextBoxColumn8.HeaderText = "Alto%";
+        dataGridViewTextBoxColumn8.MinimumWidth = 6;
+        dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
+        // 
+        // dataGridViewTextBoxColumn9
+        // 
+        dataGridViewTextBoxColumn9.HeaderText = "RegexRespaldo";
+        dataGridViewTextBoxColumn9.MinimumWidth = 6;
+        dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
+        // 
+        // dataGridViewTextBoxColumn10
+        // 
+        dataGridViewTextBoxColumn10.HeaderText = "Opcional";
+        dataGridViewTextBoxColumn10.MinimumWidth = 6;
+        dataGridViewTextBoxColumn10.Name = "dataGridViewTextBoxColumn10";
+        // 
+        // btnAbrirEditorVisual
+        // 
+        btnAbrirEditorVisual.BackColor = Color.DarkGray;
+        btnAbrirEditorVisual.FlatStyle = FlatStyle.Flat;
+        btnAbrirEditorVisual.ForeColor = Color.White;
+        btnAbrirEditorVisual.Location = new Point(16, 310);
+        btnAbrirEditorVisual.Name = "btnAbrirEditorVisual";
+        btnAbrirEditorVisual.Size = new Size(220, 34);
+        btnAbrirEditorVisual.TabIndex = 2;
+        btnAbrirEditorVisual.Text = "🔲 Abrir Editor Visual de Zonas";
+        btnAbrirEditorVisual.UseVisualStyleBackColor = false;
+        btnAbrirEditorVisual.Click += BtnAbrirEditorVisual_Click;
+        // 
         // tabCampos
         // 
         tabCampos.Controls.Add(lblCamposLista);
@@ -394,7 +494,7 @@ partial class GestionEmisoresForm
         tabCampos.Controls.Add(btnCampoRemove);
         tabCampos.Location = new Point(4, 29);
         tabCampos.Name = "tabCampos";
-        tabCampos.Size = new Size(145, 481);
+        tabCampos.Size = new Size(686, 514);
         tabCampos.TabIndex = 1;
         tabCampos.Text = "Campos";
         // 
@@ -412,7 +512,7 @@ partial class GestionEmisoresForm
         lstCampos.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         lstCampos.Location = new Point(3, 38);
         lstCampos.Name = "lstCampos";
-        lstCampos.Size = new Size(0, 444);
+        lstCampos.Size = new Size(208, 444);
         lstCampos.TabIndex = 1;
         lstCampos.SelectedIndexChanged += LstCampos_SelectedIndexChanged;
         // 
@@ -434,7 +534,7 @@ partial class GestionEmisoresForm
         panelDetalle.Controls.Add(txtCampoFormatoFecha);
         panelDetalle.Controls.Add(lblCampoSuma);
         panelDetalle.Controls.Add(txtCampoCamposSuma);
-        panelDetalle.Location = new Point(-324, 16);
+        panelDetalle.Location = new Point(217, 16);
         panelDetalle.Name = "panelDetalle";
         panelDetalle.Size = new Size(466, 502);
         panelDetalle.TabIndex = 2;
@@ -595,7 +695,7 @@ partial class GestionEmisoresForm
         tabMultiIVA.Controls.Add(dgvMultiIVAMapeo);
         tabMultiIVA.Location = new Point(4, 29);
         tabMultiIVA.Name = "tabMultiIVA";
-        tabMultiIVA.Size = new Size(145, 481);
+        tabMultiIVA.Size = new Size(686, 514);
         tabMultiIVA.TabIndex = 2;
         tabMultiIVA.Text = "Multi-IVA";
         // 
@@ -676,7 +776,7 @@ partial class GestionEmisoresForm
         tabPostProc.Controls.Add(btnPostProcRemove);
         tabPostProc.Location = new Point(4, 29);
         tabPostProc.Name = "tabPostProc";
-        tabPostProc.Size = new Size(145, 481);
+        tabPostProc.Size = new Size(686, 514);
         tabPostProc.TabIndex = 3;
         tabPostProc.Text = "Post-Procesamiento";
         // 
@@ -774,101 +874,6 @@ partial class GestionEmisoresForm
         btnPostProcRemove.UseVisualStyleBackColor = true;
         btnPostProcRemove.Click += BtnPostProcRemove_Click;
         // 
-        // tabZonas
-        // 
-        tabZonas.Controls.Add(lblZonasTitulo);
-        tabZonas.Controls.Add(dgvZonas);
-        tabZonas.Controls.Add(btnAbrirEditorVisual);
-        tabZonas.Location = new Point(4, 29);
-        tabZonas.Name = "tabZonas";
-        tabZonas.Size = new Size(145, 481);
-        tabZonas.TabIndex = 4;
-        tabZonas.Text = "Zonas OCR";
-        // 
-        // lblZonasTitulo
-        // 
-        lblZonasTitulo.AutoSize = true;
-        lblZonasTitulo.Location = new Point(16, 16);
-        lblZonasTitulo.Name = "lblZonasTitulo";
-        lblZonasTitulo.Size = new Size(126, 20);
-        lblZonasTitulo.TabIndex = 0;
-        lblZonasTitulo.Text = "Zonas del emisor:";
-        // 
-        // dgvZonas
-        // 
-        dgvZonas.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        dgvZonas.ColumnHeadersHeight = 29;
-        dgvZonas.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn3, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5, dataGridViewTextBoxColumn6, dataGridViewTextBoxColumn7, dataGridViewTextBoxColumn8, dataGridViewTextBoxColumn9, dataGridViewTextBoxColumn10 });
-        dgvZonas.Location = new Point(16, 38);
-        dgvZonas.Name = "dgvZonas";
-        dgvZonas.RowHeadersWidth = 51;
-        dgvZonas.Size = new Size(716, 260);
-        dgvZonas.TabIndex = 1;
-        dgvZonas.CellValueChanged += DgvCellValueChanged;
-        dgvZonas.UserAddedRow += DgvUserAddedRow;
-        dgvZonas.UserDeletedRow += DgvUserDeletedRow;
-        // 
-        // dataGridViewTextBoxColumn3
-        // 
-        dataGridViewTextBoxColumn3.HeaderText = "Campo";
-        dataGridViewTextBoxColumn3.MinimumWidth = 6;
-        dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-        // 
-        // dataGridViewTextBoxColumn4
-        // 
-        dataGridViewTextBoxColumn4.HeaderText = "Pág";
-        dataGridViewTextBoxColumn4.MinimumWidth = 6;
-        dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
-        // 
-        // dataGridViewTextBoxColumn5
-        // 
-        dataGridViewTextBoxColumn5.HeaderText = "X%";
-        dataGridViewTextBoxColumn5.MinimumWidth = 6;
-        dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
-        // 
-        // dataGridViewTextBoxColumn6
-        // 
-        dataGridViewTextBoxColumn6.HeaderText = "Y%";
-        dataGridViewTextBoxColumn6.MinimumWidth = 6;
-        dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
-        // 
-        // dataGridViewTextBoxColumn7
-        // 
-        dataGridViewTextBoxColumn7.HeaderText = "Ancho%";
-        dataGridViewTextBoxColumn7.MinimumWidth = 6;
-        dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
-        // 
-        // dataGridViewTextBoxColumn8
-        // 
-        dataGridViewTextBoxColumn8.HeaderText = "Alto%";
-        dataGridViewTextBoxColumn8.MinimumWidth = 6;
-        dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
-        // 
-        // dataGridViewTextBoxColumn9
-        // 
-        dataGridViewTextBoxColumn9.HeaderText = "RegexRespaldo";
-        dataGridViewTextBoxColumn9.MinimumWidth = 6;
-        dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
-        // 
-        // dataGridViewTextBoxColumn10
-        // 
-        dataGridViewTextBoxColumn10.HeaderText = "Opcional";
-        dataGridViewTextBoxColumn10.MinimumWidth = 6;
-        dataGridViewTextBoxColumn10.Name = "dataGridViewTextBoxColumn10";
-        // 
-        // btnAbrirEditorVisual
-        // 
-        btnAbrirEditorVisual.BackColor = Color.DarkGray;
-        btnAbrirEditorVisual.FlatStyle = FlatStyle.Flat;
-        btnAbrirEditorVisual.ForeColor = Color.White;
-        btnAbrirEditorVisual.Location = new Point(16, 310);
-        btnAbrirEditorVisual.Name = "btnAbrirEditorVisual";
-        btnAbrirEditorVisual.Size = new Size(220, 34);
-        btnAbrirEditorVisual.TabIndex = 2;
-        btnAbrirEditorVisual.Text = "🔲 Abrir Editor Visual de Zonas";
-        btnAbrirEditorVisual.UseVisualStyleBackColor = false;
-        btnAbrirEditorVisual.Click += BtnAbrirEditorVisual_Click;
-        // 
         // tabRegex
         // 
         tabRegex.Controls.Add(lblRegexTexto);
@@ -881,7 +886,7 @@ partial class GestionEmisoresForm
         tabRegex.Controls.Add(btnRegexApplyToField);
         tabRegex.Location = new Point(4, 29);
         tabRegex.Name = "tabRegex";
-        tabRegex.Size = new Size(145, 481);
+        tabRegex.Size = new Size(686, 514);
         tabRegex.TabIndex = 5;
         tabRegex.Text = "Probar Regex";
         // 
@@ -968,11 +973,12 @@ partial class GestionEmisoresForm
         // 
         // btnGuardar
         // 
+        btnGuardar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
         btnGuardar.BackColor = Color.FromArgb(46, 117, 182);
         btnGuardar.FlatStyle = FlatStyle.Flat;
         btnGuardar.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
         btnGuardar.ForeColor = Color.White;
-        btnGuardar.Location = new Point(651, 226);
+        btnGuardar.Location = new Point(637, 555);
         btnGuardar.Name = "btnGuardar";
         btnGuardar.Size = new Size(104, 33);
         btnGuardar.TabIndex = 1;
@@ -980,19 +986,59 @@ partial class GestionEmisoresForm
         btnGuardar.UseVisualStyleBackColor = true;
         btnGuardar.Click += BtnGuardar_Click;
         // 
+        // btnCargarPdfMuestra
+        // 
+        btnCargarPdfMuestra.Anchor = AnchorStyles.Top;
+        btnCargarPdfMuestra.BackColor = Color.FromArgb(46, 117, 182);
+        btnCargarPdfMuestra.FlatStyle = FlatStyle.Flat;
+        btnCargarPdfMuestra.ForeColor = Color.White;
+        btnCargarPdfMuestra.Location = new Point(8, 0);
+        btnCargarPdfMuestra.Name = "btnCargarPdfMuestra";
+        btnCargarPdfMuestra.Size = new Size(223, 32);
+        btnCargarPdfMuestra.TabIndex = 0;
+        btnCargarPdfMuestra.Text = "Cargar PDF de muestra";
+        btnCargarPdfMuestra.UseVisualStyleBackColor = false;
+        btnCargarPdfMuestra.Click += BtnCargarPdfMuestra_Click;
+        // 
+        // tabPaginas
+        // 
+        tabPaginas.Anchor = AnchorStyles.Top;
+        tabPaginas.Location = new Point(8, 35);
+        tabPaginas.Name = "tabPaginas";
+        tabPaginas.SelectedIndex = 0;
+        tabPaginas.Size = new Size(223, 28);
+        tabPaginas.TabIndex = 1;
+        tabPaginas.Visible = false;
+        tabPaginas.SelectedIndexChanged += TabPaginas_SelectedIndexChanged;
+        // 
+        // picFactura
+        // 
+        picFactura.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
+        picFactura.BackColor = Color.LightGray;
+        picFactura.BorderStyle = BorderStyle.FixedSingle;
+        picFactura.Location = new Point(8, 69);
+        picFactura.Name = "picFactura";
+        picFactura.Size = new Size(225, 523);
+        picFactura.SizeMode = PictureBoxSizeMode.Zoom;
+        picFactura.TabIndex = 2;
+        picFactura.TabStop = false;
+        // 
         // panelDerecho
         // 
         panelDerecho.Controls.Add(tabs);
         panelDerecho.Controls.Add(btnGuardar);
-        panelDerecho.Dock = DockStyle.Right;
+        panelDerecho.Dock = DockStyle.Fill;
         panelDerecho.Location = new Point(585, 0);
         panelDerecho.Name = "panelDerecho";
-        panelDerecho.Size = new Size(555, 600);
+        panelDerecho.Size = new Size(762, 600);
         panelDerecho.TabIndex = 6;
         // 
         // panelCentral
         // 
-        panelCentral.Dock = DockStyle.Fill;
+        panelCentral.Controls.Add(btnCargarPdfMuestra);
+        panelCentral.Controls.Add(tabPaginas);
+        panelCentral.Controls.Add(picFactura);
+        panelCentral.Dock = DockStyle.Left;
         panelCentral.Location = new Point(346, 0);
         panelCentral.Name = "panelCentral";
         panelCentral.Size = new Size(239, 600);
@@ -1000,9 +1046,9 @@ partial class GestionEmisoresForm
         // 
         // GestionEmisoresForm
         // 
-        ClientSize = new Size(1140, 600);
-        Controls.Add(panelCentral);
+        ClientSize = new Size(1347, 600);
         Controls.Add(panelDerecho);
+        Controls.Add(panelCentral);
         Controls.Add(panelIzquierdo);
         Icon = (Icon)resources.GetObject("$this.Icon");
         MinimizeBox = false;
@@ -1014,6 +1060,9 @@ partial class GestionEmisoresForm
         tabs.ResumeLayout(false);
         tabGeneral.ResumeLayout(false);
         tabGeneral.PerformLayout();
+        tabZonas.ResumeLayout(false);
+        tabZonas.PerformLayout();
+        ((System.ComponentModel.ISupportInitialize)dgvZonas).EndInit();
         tabCampos.ResumeLayout(false);
         tabCampos.PerformLayout();
         panelDetalle.ResumeLayout(false);
@@ -1023,13 +1072,12 @@ partial class GestionEmisoresForm
         ((System.ComponentModel.ISupportInitialize)dgvMultiIVAMapeo).EndInit();
         tabPostProc.ResumeLayout(false);
         tabPostProc.PerformLayout();
-        tabZonas.ResumeLayout(false);
-        tabZonas.PerformLayout();
-        ((System.ComponentModel.ISupportInitialize)dgvZonas).EndInit();
         tabRegex.ResumeLayout(false);
         tabRegex.PerformLayout();
         ((System.ComponentModel.ISupportInitialize)dgvRegexMatches).EndInit();
+        ((System.ComponentModel.ISupportInitialize)picFactura).EndInit();
         panelDerecho.ResumeLayout(false);
+        panelCentral.ResumeLayout(false);
         ResumeLayout(false);
     }
 
@@ -1117,4 +1165,7 @@ partial class GestionEmisoresForm
     protected Button btnClonar;
     private Panel panelDerecho;
     private Panel panelCentral;
+    private Button btnCargarPdfMuestra;
+    private TabControl tabPaginas;
+    private PictureBox picFactura;
 }
