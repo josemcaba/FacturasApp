@@ -1,4 +1,6 @@
+using System.Drawing.Drawing2D;
 using System.Text.RegularExpressions;
+using FacturasApp.Models;
 using FacturasApp.Models.EmisoresConfig;
 using FacturasApp.Services;
 using PDFtoImage;
@@ -15,6 +17,12 @@ public partial class GestionEmisoresForm : Form
     private readonly List<Bitmap> _imagenPaginas = new();
     private int _paginaActual;
     private string? _rutaPdf;
+    private readonly List<ZonaOcr> _zonasDibujo = new();
+    private bool _dibujando;
+    private Point _puntoInicio;
+    private Point _puntoActual;
+    private bool _rectanguloActivo;
+    private bool _sincronizando;
 
     public GestionEmisoresForm()
     {
@@ -181,6 +189,7 @@ public partial class GestionEmisoresForm : Form
         PanelCentral_Resize(null, EventArgs.Empty);
 
         MostrarPaginaActual();
+        picFactura.Invalidate();
     }
 
     private void TabPaginas_SelectedIndexChanged(object? sender, EventArgs e)
@@ -188,6 +197,176 @@ public partial class GestionEmisoresForm : Form
         if (tabPaginas.SelectedIndex < 0) return;
         _paginaActual = tabPaginas.SelectedIndex;
         MostrarPaginaActual();
+        picFactura.Invalidate();
+    }
+
+    // ── Dibujo de zonas (arrastrar rectángulos sobre picFactura) ────────
+
+    private void PicFactura_Paint(object? sender, PaintEventArgs e)
+    {
+        if (_imagenPaginas.Count == 0) return;
+
+        var g = e.Graphics;
+        g.SmoothingMode = SmoothingMode.AntiAlias;
+
+        int numPaginaActual = _paginaActual + 1;
+
+        foreach (var zona in _zonasDibujo.Where(z => z.NumPagina == numPaginaActual))
+        {
+            var rect = ConvertirAPixelesPictureBox(zona);
+            using var pen = new Pen(Color.FromArgb(46, 117, 182), 2);
+            using var brush = new SolidBrush(Color.FromArgb(40, 46, 117, 182));
+            g.FillRectangle(brush, rect);
+            g.DrawRectangle(pen, rect);
+
+            using var font = new Font("Segoe UI", 7f, FontStyle.Bold);
+            g.DrawString(zona.Campo, font, Brushes.DarkBlue, rect.X + 2, rect.Y + 2);
+        }
+
+        if (_rectanguloActivo)
+        {
+            var rect = ObtenerRectanguloNormalizado(_puntoInicio, _puntoActual);
+            using var pen = new Pen(Color.Red, 2) { DashStyle = DashStyle.Dash };
+            using var brush = new SolidBrush(Color.FromArgb(40, 255, 0, 0));
+            g.FillRectangle(brush, rect);
+            g.DrawRectangle(pen, rect);
+        }
+    }
+
+    private void PicFactura_MouseDown(object? sender, MouseEventArgs e)
+    {
+        if (_imagenPaginas.Count == 0) return;
+        if (e.Button != MouseButtons.Left) return;
+
+        _dibujando = true;
+        _rectanguloActivo = false;
+        _puntoInicio = e.Location;
+        _puntoActual = e.Location;
+    }
+
+    private void PicFactura_MouseMove(object? sender, MouseEventArgs e)
+    {
+        if (!_dibujando) return;
+        _puntoActual = e.Location;
+        _rectanguloActivo = true;
+        picFactura.Invalidate();
+    }
+
+    private void PicFactura_MouseUp(object? sender, MouseEventArgs e)
+    {
+        if (!_dibujando) return;
+        _dibujando = false;
+
+        var rect = ObtenerRectanguloNormalizado(_puntoInicio, _puntoActual);
+
+        if (rect.Width < 10 || rect.Height < 10)
+        {
+            _rectanguloActivo = false;
+            picFactura.Invalidate();
+            return;
+        }
+
+        var zonaOcr = ConvertirARectanglePorcentual(rect);
+        zonaOcr.NumPagina = _paginaActual + 1;
+
+        int numZonaEnPagina = _zonasDibujo.Count(z => z.NumPagina == zonaOcr.NumPagina) + 1;
+        zonaOcr.Campo = $"P{zonaOcr.NumPagina}_Z{numZonaEnPagina}";
+
+        _zonasDibujo.Add(zonaOcr);
+        SincronizarDgvDesdeZonas();
+
+        _rectanguloActivo = false;
+        picFactura.Invalidate();
+    }
+
+    // ── Coordenadas ──────────────────────────────────────────────────
+
+    private Rectangle ObtenerRectanguloNormalizado(Point p1, Point p2)
+    {
+        return new Rectangle(
+            Math.Min(p1.X, p2.X),
+            Math.Min(p1.Y, p2.Y),
+            Math.Abs(p2.X - p1.X),
+            Math.Abs(p2.Y - p1.Y));
+    }
+
+    private ZonaOcr ConvertirARectanglePorcentual(Rectangle rectPictureBox)
+    {
+        var areaImagen = CalcularAreaImagenEnPictureBox();
+
+        double xReal = (rectPictureBox.X - areaImagen.X) / (double)areaImagen.Width;
+        double yReal = (rectPictureBox.Y - areaImagen.Y) / (double)areaImagen.Height;
+        double wReal = rectPictureBox.Width / (double)areaImagen.Width;
+        double hReal = rectPictureBox.Height / (double)areaImagen.Height;
+
+        return new ZonaOcr
+        {
+            X = Math.Max(0, xReal * 100),
+            Y = Math.Max(0, yReal * 100),
+            Ancho = Math.Min(100, wReal * 100),
+            Alto = Math.Min(100, hReal * 100)
+        };
+    }
+
+    private Rectangle ConvertirAPixelesPictureBox(ZonaOcr zona)
+    {
+        var areaImagen = CalcularAreaImagenEnPictureBox();
+
+        return new Rectangle(
+            (int)(areaImagen.X + zona.X / 100.0 * areaImagen.Width),
+            (int)(areaImagen.Y + zona.Y / 100.0 * areaImagen.Height),
+            (int)(zona.Ancho / 100.0 * areaImagen.Width),
+            (int)(zona.Alto / 100.0 * areaImagen.Height));
+    }
+
+    private Rectangle CalcularAreaImagenEnPictureBox()
+    {
+        if (picFactura.Image == null)
+            return new Rectangle(0, 0, picFactura.Width, picFactura.Height);
+
+        float escalaX = (float)picFactura.Width / picFactura.Image.Width;
+        float escalaY = (float)picFactura.Height / picFactura.Image.Height;
+        float escala = Math.Min(escalaX, escalaY);
+
+        int anchoReal = (int)(picFactura.Image.Width * escala);
+        int altoReal = (int)(picFactura.Image.Height * escala);
+        int offsetX = (picFactura.Width - anchoReal) / 2;
+        int offsetY = (picFactura.Height - altoReal) / 2;
+
+        return new Rectangle(offsetX, offsetY, anchoReal, altoReal);
+    }
+
+    // ── Sincronización entre _zonasDibujo y dgvZonas ────────────────
+
+    private void SincronizarDgvDesdeZonas()
+    {
+        _sincronizando = true;
+        dgvZonas.Rows.Clear();
+        foreach (var z in _zonasDibujo)
+            dgvZonas.Rows.Add(z.Campo, z.NumPagina, z.X, z.Y, z.Ancho, z.Alto,
+                z.RegexRespaldo ?? "", z.Opcional);
+        _sincronizando = false;
+        MarcarModificado();
+    }
+
+    private void SincronizarZonasDesdeDgv()
+    {
+        _zonasDibujo.Clear();
+        foreach (DataGridViewRow r in dgvZonas.Rows)
+        {
+            if (r.Cells[0].Value == null) continue;
+            _zonasDibujo.Add(new ZonaOcr
+            {
+                Campo = r.Cells[0].Value?.ToString() ?? "",
+                NumPagina = int.TryParse(r.Cells[1].Value?.ToString(), out var p) ? p : 1,
+                X = double.TryParse(r.Cells[2].Value?.ToString(), out var x) ? x : 0,
+                Y = double.TryParse(r.Cells[3].Value?.ToString(), out var y) ? y : 0,
+                Ancho = double.TryParse(r.Cells[4].Value?.ToString(), out var w) ? w : 0,
+                Alto = double.TryParse(r.Cells[5].Value?.ToString(), out var h) ? h : 0,
+                RegexRespaldo = r.Cells[6].Value?.ToString(),
+                Opcional = r.Cells[7].Value?.ToString() == "True"
+            });
+        }
     }
 
     private void CrearPestanas()
@@ -218,11 +397,23 @@ public partial class GestionEmisoresForm : Form
         picFactura.Image = null;
         tabPaginas.Visible = false;
     }
+    private void DgvCellValueChanged(object? sender, DataGridViewCellEventArgs e)
+    {
+        if (_sincronizando || _cargando) return;
+        MarcarModificado();
+        SincronizarZonasDesdeDgv();
+        picFactura.Invalidate();
+    }
 
-    private void DgvCellValueChanged(object? sender, DataGridViewCellEventArgs e) => MarcarModificado();
     private void DgvUserAddedRow(object? sender, DataGridViewRowEventArgs e) => MarcarModificado();
-    private void DgvUserDeletedRow(object? sender, DataGridViewRowEventArgs e) => MarcarModificado();
 
+    private void DgvUserDeletedRow(object? sender, DataGridViewRowEventArgs e)
+    {
+        if (_sincronizando || _cargando) return;
+        MarcarModificado();
+        SincronizarZonasDesdeDgv();
+        picFactura.Invalidate();
+    }
     // ── CARGA Y SELECCIÓN ──────────────────────────────────────────────────────
 
     private void CargarEmisores()
@@ -286,6 +477,8 @@ public partial class GestionEmisoresForm : Form
             foreach (var z in config.ZonasOcr)
                 dgvZonas.Rows.Add(z.Campo, z.NumPagina, z.X, z.Y, z.Ancho, z.Alto, z.RegexRespaldo ?? "", z.Opcional);
         _cargando = false;
+        SincronizarZonasDesdeDgv();
+        picFactura.Invalidate();
     }
 
     private void SincronizarUIaConfig()

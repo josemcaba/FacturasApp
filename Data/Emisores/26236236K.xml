@@ -12,7 +12,19 @@
   <Campos />
   <PostProcesamiento />
   <ZonasOcr>
-    <Zona Campo="Z1" Pagina="1" X="49.4" Y="3.2" Ancho="41.6" Alto="5.3">
+    <Zona Campo="P1_Z1" Pagina="1" X="49.53416149068323" Y="4.730473047304731" Ancho="39.59627329192546" Alto="3.3003300330033">
+      <RegexRespaldo />
+      <Opcional>false</Opcional>
+    </Zona>
+    <Zona Campo="P1_Z2" Pagina="1" X="48.13664596273292" Y="9.24092409240924" Ancho="40.52795031055901" Alto="9.570957095709572">
+      <RegexRespaldo />
+      <Opcional>false</Opcional>
+    </Zona>
+    <Zona Campo="P1_Z3" Pagina="1" X="26.08695652173913" Y="92.07920792079209" Ancho="34.62732919254658" Alto="4.730473047304731">
+      <RegexRespaldo />
+      <Opcional>false</Opcional>
+    </Zona>
+    <Zona Campo="P1_Z4" Pagina="1" X="61.024844720496894" Y="92.07920792079209" Ancho="16.304347826086957" Alto="4.730473047304731">
       <RegexRespaldo />
       <Opcional>false</Opcional>
     </Zona>

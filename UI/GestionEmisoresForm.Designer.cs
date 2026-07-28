@@ -1016,12 +1016,17 @@ partial class GestionEmisoresForm
         picFactura.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
         picFactura.BackColor = Color.LightGray;
         picFactura.BorderStyle = BorderStyle.FixedSingle;
+        picFactura.Cursor = Cursors.Cross;
         picFactura.Location = new Point(8, 69);
         picFactura.Name = "picFactura";
         picFactura.Size = new Size(225, 523);
         picFactura.SizeMode = PictureBoxSizeMode.Zoom;
         picFactura.TabIndex = 2;
         picFactura.TabStop = false;
+        picFactura.Paint += PicFactura_Paint;
+        picFactura.MouseDown += PicFactura_MouseDown;
+        picFactura.MouseMove += PicFactura_MouseMove;
+        picFactura.MouseUp += PicFactura_MouseUp;
         // 
         // panelDerecho
         // 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Nif>A46103834</Nif>
+  <Nombre>MERCADONA S.A.</Nombre>
+  <Identificadores>
+    <Id>mercadona</Id>
+    <Id>a-46103834</Id>
+    <Id>valencia</Id>
+  </Identificadores>
+  <ModoExtraccion>OrdenadoPosicion</ModoExtraccion>
+  <ConceptoIngreso>700</ConceptoIngreso>
+  <ConceptoGasto>600</ConceptoGasto>
+  <CulturaFecha>es-ES</CulturaFecha>
+  <Campos />
+  <MultiLineaIVA>
+    <Habilitado>true</Habilitado>
+    <RegexLinea />
+    <MapeoCampos />
+  </MultiLineaIVA>
+  <PostProcesamiento />
+  <ZonasOcr />
+</Emisor>
