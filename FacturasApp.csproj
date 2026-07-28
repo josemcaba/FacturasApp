@@ -34,6 +34,9 @@
 		<EmbeddedResource Include="Data\Emisores\*.xml">
 			<LogicalName>FacturasApp.Data.Emisores.%(Filename)%(Extension)</LogicalName>
 		</EmbeddedResource>
+		<Compile Remove="Tests\**" />
+		<EmbeddedResource Remove="Tests\**" />
+		<None Remove="Tests\**" />
 		
 		<!-- Archivos de Tesseract (copiados normalmente) -->
 		<Content Include="tessdata\eng.traineddata">
@@ -70,10 +73,6 @@
 		<EmbeddedResource Update="FacturasApp\UI\MainForm.resx">
 			<SubType>Designer</SubType>
 		</EmbeddedResource>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Tests\" />
 	</ItemGroup>
 
 </Project>

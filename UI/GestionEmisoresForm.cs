@@ -23,6 +23,7 @@ public partial class GestionEmisoresForm : Form
     private Point _puntoActual;
     private bool _rectanguloActivo;
     private bool _sincronizando;
+    private bool _cargandoCampo;
 
     public GestionEmisoresForm()
     {
@@ -74,11 +75,6 @@ public partial class GestionEmisoresForm : Form
             lstIdentificadores.Items.RemoveAt(lstIdentificadores.SelectedIndex);
             MarcarModificado();
         }
-    }
-
-    private void CmbCampoNombre_SelectedIndexChanged(object? sender, EventArgs e)
-    {
-        if (_emisorActual != null) MarcarModificado();
     }
 
     private void BtnRegexApplyToField_Click(object? sender, EventArgs e)
@@ -491,6 +487,10 @@ public partial class GestionEmisoresForm : Form
         _emisorActual.CulturaFecha = cmbCulturaFecha.SelectedItem?.ToString() ?? "es-ES";
         _emisorActual.ConceptoIngreso = txtConceptoIngreso.Text.Trim();
         _emisorActual.ConceptoGasto = txtConceptoGasto.Text.Trim();
+
+        if (lstCampos.SelectedItem is CampoConfig campoActual)
+            ActualizarCampoDesdeDetalle(campoActual);
+        _emisorActual.Campos = lstCampos.Items.Cast<CampoConfig>().ToList();
     }
 
     // ── CRUD ───────────────────────────────────────────────────────────────────
@@ -637,8 +637,34 @@ public partial class GestionEmisoresForm : Form
 
     // ── EVENTOS CAMPOS ─────────────────────────────────────────────────────────
 
+    private void ActualizarCampoDesdeDetalle(CampoConfig campo)
+    {
+        campo.Nombre = cmbCampoNombre.Text.Trim();
+        var tipo = cmbCampoTipo.SelectedItem?.ToString() ?? "Regex";
+        campo.EsSuma = tipo == "Suma";
+        campo.UsarRegexFechaGeneral = tipo == "RegexFechaGeneral";
+        campo.UsarRegexNifGeneral = tipo == "RegexNifGeneral";
+        campo.ValorFijo = tipo == "ValorFijo" ? txtCampoValorFijo.Text.Trim() : null;
+        campo.Regex = tipo == "Regex" ? txtCampoRegex.Text.Trim() : null;
+        campo.Grupo = int.TryParse(txtCampoGrupo.Text, out var g) ? g : 1;
+        campo.FormatoFecha = string.IsNullOrWhiteSpace(txtCampoFormatoFecha.Text)
+            ? null : txtCampoFormatoFecha.Text.Trim();
+        campo.CamposSuma = tipo == "Suma" && !string.IsNullOrWhiteSpace(txtCampoCamposSuma.Text)
+            ? txtCampoCamposSuma.Text.Split(',').Select(s => s.Trim()).ToList()
+            : null;
+    }
+
+    private void CampoDetalle_Changed(object? sender, EventArgs e)
+    {
+        if (_cargandoCampo) return;
+        if (lstCampos.SelectedItem is CampoConfig campo)
+            ActualizarCampoDesdeDetalle(campo);
+        MarcarModificado();
+    }
+
     private void LstCampos_SelectedIndexChanged(object? sender, EventArgs e)
     {
+        _cargandoCampo = true;
         if (lstCampos.SelectedItem is CampoConfig campo)
         {
             if (cmbCampoNombre != null) cmbCampoNombre.Text = campo.Nombre;
@@ -653,11 +679,16 @@ public partial class GestionEmisoresForm : Form
             txtCampoFormatoFecha.Text = campo.FormatoFecha ?? "";
             txtCampoCamposSuma.Text = campo.CamposSuma != null ? string.Join(",", campo.CamposSuma) : "";
         }
+        _cargandoCampo = false;
     }
 
     private void BtnCampoAdd_Click(object? sender, EventArgs e)
     {
         if (_emisorActual == null) return;
+
+        if (lstCampos.SelectedItem is CampoConfig campoActual)
+            ActualizarCampoDesdeDetalle(campoActual);
+
         var nombre = cmbCampoNombre?.Text?.Trim();
         if (string.IsNullOrEmpty(nombre))
         {
