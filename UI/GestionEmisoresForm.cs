@@ -24,6 +24,7 @@ public partial class GestionEmisoresForm : Form
     private bool _rectanguloActivo;
     private bool _sincronizando;
     private bool _cargandoCampo;
+    private readonly InvoiceProcessorService _invoiceService = new();
 
     public GestionEmisoresForm()
     {
@@ -186,6 +187,21 @@ public partial class GestionEmisoresForm : Form
 
         MostrarPaginaActual();
         picFactura.Invalidate();
+
+        ExtraerTextoMuestra();
+    }
+
+    private void ExtraerTextoMuestra()
+    {
+        if (string.IsNullOrEmpty(_rutaPdf)) return;
+        try
+        {
+            txtRegexSource.Text = _invoiceService.ExtraerTexto(_rutaPdf);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error al extraer texto de muestra: {ex.Message}");
+        }
     }
 
     private void TabPaginas_SelectedIndexChanged(object? sender, EventArgs e)

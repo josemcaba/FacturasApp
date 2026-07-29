@@ -1,5 +1,5 @@
-﻿using DocumentFormat.OpenXml.Bibliography;
-using FacturasApp.Models;
+﻿using FacturasApp.Models;
+using FacturasApp.Models.EmisoresConfig;
 
 namespace FacturasApp.Services.Parsers
 {
@@ -7,6 +7,7 @@ namespace FacturasApp.Services.Parsers
     {
         private readonly List<IInvoiceParser> _parsers;
         private readonly GenericParser _genericParser = new();
+        private readonly ConfiguracionEmisores _configuracionEmisores = new();
 
         public ParserFactory()
         {
@@ -63,11 +64,44 @@ namespace FacturasApp.Services.Parsers
 
         public IInvoiceParser ObtenerParser(string texto)
         {
-            return _parsers.FirstOrDefault(p => p.PuedeParsar(texto))
-                   ?? _genericParser;
+            var configs = _configuracionEmisores.CargarTodos();
+
+            // 1. XML configs con identificadores → prioridad
+            foreach (var config in configs.Values)
+            {
+                if (config.Identificadores is { Count: > 0 } &&
+                    config.Identificadores.All(id =>
+                        texto.Contains(id, StringComparison.OrdinalIgnoreCase)))
+                {
+                    return new ConfigurableParserEngine(config);
+                }
+            }
+
+            // 2. Hardcoded C# parsers
+            var hardcoded = _parsers.FirstOrDefault(p => p.PuedeParsar(texto));
+            if (hardcoded != null)
+                return hardcoded;
+
+            // 3. Fallback: General.xml (editable por el usuario)
+            if (configs.TryGetValue("General", out var generalConfig))
+                return new ConfigurableParserEngine(generalConfig);
+
+            // 4. Fallback último: GenericParser C#
+            return _genericParser;
         }
 
-        public IReadOnlyList<string> ParsersDisponibles =>
-            [.. _parsers.Select(p => p.Nombre)];
+        public IReadOnlyList<string> ParsersDisponibles
+        {
+            get
+            {
+                var nombres = _parsers.Select(p => p.Nombre).ToList();
+                foreach (var config in _configuracionEmisores.CargarTodos().Values)
+                {
+                    if (!string.IsNullOrEmpty(config.Nombre) && !nombres.Contains(config.Nombre))
+                        nombres.Add(config.Nombre);
+                }
+                return nombres;
+            }
+        }
     }
 }

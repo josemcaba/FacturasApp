@@ -1,4 +1,5 @@
 ﻿using FacturasApp.Models;
+using FacturasApp.Models.EmisoresConfig;
 using FacturasApp.Services.Parsers;
 
 namespace FacturasApp.Services
@@ -58,16 +59,20 @@ namespace FacturasApp.Services
         }
 
         /// <summary>
-        /// Procesa un único PDF usando la estrategia unificada:
-        /// 1. Detecta si tiene texto seleccionable o es escaneado
-        /// 2. Identifica el emisor
-        /// 3. Intenta extracción por zonas (si existe plantilla)
-        /// 4. Fallback a texto completo si no hay plantilla o falló
-        /// 5. Parseo con el parser correspondiente
-        /// 
-        /// Retorna una LISTA de facturas (puede ser múltiples si hay varias líneas de IVA).
+        /// Extrae el texto de un PDF usando el pipeline completo
+        /// (detección, identificación de emisor, extracción zonal, fallback).
+        /// Equivale a los pasos 1-4 de ProcesarUnPdf.
         /// </summary>
-        private List<Factura> ProcesarUnPdf(string rutaPdf)
+        public string ExtraerTexto(string rutaPdf)
+        {
+            var (texto, _, _, _, _) = ExtraerTextoCompleto(rutaPdf);
+            return texto;
+        }
+
+        /// <summary>
+        /// Pasos 1-4 del pipeline: extrae texto completo + metadatos del parser.
+        /// </summary>
+        private (string textoExtraido, IInvoiceParser parser, bool usarOcr, bool extraccionZonalExitosa, bool esPdfSeleccionable) ExtraerTextoCompleto(string rutaPdf)
         {
             // ── PASO 1: Detectar tipo de PDF ──────────────────────────────────
             string? textoRapido = _textExtractor.ExtraerTextoSeleccionable(rutaPdf,
@@ -79,52 +84,42 @@ namespace FacturasApp.Services
             // ── PASO 2: Identificar emisor (con método rápido) ──────────────
             string textoIdentificacion;
             IInvoiceParser parser;
-            string nombreEmisor;
 
             if (esPdfSeleccionable)
             {
-                // PDF nativo: usamos texto rápido para identificar
                 textoIdentificacion = textoRapido!;
                 parser = _parserFactory.ObtenerParser(textoIdentificacion);
-                nombreEmisor = parser.Nombre;
             }
             else
             {
-                // PDF escaneado: OCR rápido solo para identificar emisor
                 textoIdentificacion = _ocrExtractor.ExtraerTextoIdentificacion(rutaPdf);
                 parser = _parserFactory.ObtenerParser(textoIdentificacion);
-                nombreEmisor = parser.Nombre;
             }
+
+            string nombreEmisor = parser.Nombre;
 
             // ── PASO 3: Intentar extracción por zonas (si hay plantilla) ──────
             string textoExtraido = "";
             bool extraccionZonalExitosa = false;
-            PlantillaOcr? plantilla = _plantillaService.ObtenerPorEmisor(nombreEmisor);
+            PlantillaOcr? plantilla = ObtenerPlantilla(parser, nombreEmisor);
 
             if (UsarZonasSiempre && plantilla != null && plantilla.Zonas.Any())
             {
                 if (esPdfSeleccionable)
                 {
-                    // PDF con texto nativo: extracción por coordenadas
                     textoExtraido = ExtraerTextoZonalDesdePdf(rutaPdf, plantilla);
                     extraccionZonalExitosa = !string.IsNullOrEmpty(textoExtraido);
                 }
                 else
                 {
-                    // PDF escaneado: OCR zonal
                     textoExtraido = ExtraerTextoOcrZonalConPlantilla(rutaPdf, plantilla);
                     extraccionZonalExitosa = !string.IsNullOrEmpty(textoExtraido);
                 }
 
-                // Log para debugging (opcional)
                 if (extraccionZonalExitosa)
-                {
                     System.Diagnostics.Debug.WriteLine($"✓ Extracción zonal exitosa para {nombreEmisor}");
-                }
                 else
-                {
                     System.Diagnostics.Debug.WriteLine($"✗ Extracción zonal falló para {nombreEmisor}, usando fallback");
-                }
             }
 
             // ── PASO 4: Fallback a extracción completa si la zonal falló ──────
@@ -132,7 +127,6 @@ namespace FacturasApp.Services
             {
                 if (esPdfSeleccionable)
                 {
-                    // Reextraer con el modo preferido del parser
                     textoExtraido = parser.ModoExtraccion == PdfTextExtractor.ModoExtraccion.Simple
                         ? textoRapido!
                         : _textExtractor.ExtraerTextoSeleccionable(rutaPdf, parser.ModoExtraccion)
@@ -140,21 +134,35 @@ namespace FacturasApp.Services
                 }
                 else
                 {
-                    // OCR completo
                     textoExtraido = _ocrExtractor.ExtraerTextoConOcr(rutaPdf);
                 }
             }
+
+            return (textoExtraido, parser, usarOcr, extraccionZonalExitosa, esPdfSeleccionable);
+        }
+
+        /// <summary>
+        /// Procesa un único PDF usando la estrategia unificada:
+        /// 1. Detecta si tiene texto seleccionable o es escaneado
+        /// 2. Identifica el emisor
+        /// 3. Intenta extracción por zonas (si existe plantilla)
+        /// 4. Fallback a texto completo si no hay plantilla o falló
+        /// 5. Parseo con el parser correspondiente
+        /// 
+        /// Retorna una LISTA de facturas (puede ser múltiples si hay varias líneas de IVA).
+        /// </summary>
+        private List<Factura> ProcesarUnPdf(string rutaPdf)
+        {
+            var (textoExtraido, parser, usarOcr, extraccionZonalExitosa, esPdfSeleccionable) = ExtraerTextoCompleto(rutaPdf);
 
             // ── PASO 5: Parsear el texto extraído ──────────────────────────────
             if (string.IsNullOrEmpty(textoExtraido))
                 throw new InvalidOperationException("No se pudo extraer texto del PDF");
 
-            // ✅ Usar ParsearMultiple para obtener TODAS las facturas
             List<Factura> facturasParseadas = parser is BaseParser baseParser
                 ? baseParser.ParsearMultiple(textoExtraido, rutaPdf, usarOcr)
                 : new List<Factura> { parser.Parsear(textoExtraido, rutaPdf, usarOcr) };
 
-            // Marcar metadata sobre el método de extracción usado
             foreach (var factura in facturasParseadas)
             {
                 if (extraccionZonalExitosa)
@@ -164,7 +172,38 @@ namespace FacturasApp.Services
                 }
             }
 
-            return facturasParseadas;  // ✅ Retorna TODAS las facturas
+            return facturasParseadas;
+        }
+
+        // ── Selección de plantilla de zonas OCR ─────────────────────────────────
+
+        private PlantillaOcr? ObtenerPlantilla(IInvoiceParser parser, string nombreEmisor)
+        {
+            if (parser is ConfigurableParserEngine xmlParser)
+            {
+                var zonas = xmlParser.Config.ZonasOcr;
+                if (zonas == null || zonas.Count == 0)
+                    return null;
+
+                return new PlantillaOcr
+                {
+                    Emisor = nombreEmisor,
+                    Zonas = zonas.Select(z => new ZonaOcr
+                    {
+                        Campo = z.Campo,
+                        NumPagina = z.NumPagina,
+                        X = z.X,
+                        Y = z.Y,
+                        Ancho = z.Ancho,
+                        Alto = z.Alto,
+                        RegexRespaldo = z.RegexRespaldo,
+                        Opcional = z.Opcional,
+                        Preprocesamiento = z.Preprocesamiento ?? new PreprocesamientoOcr()
+                    }).ToList()
+                };
+            }
+
+            return _plantillaService.ObtenerPorEmisor(nombreEmisor);
         }
 
         // ── Extracción zonal para PDFs con texto seleccionable ───────────────────

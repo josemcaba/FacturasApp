@@ -10,6 +10,8 @@ public class ConfigurableParserEngine : BaseParser
     private readonly EmisorConfig _config;
     private readonly Lazy<Regex> _regexMultiLinea;
 
+    public EmisorConfig Config => _config;
+
     public ConfigurableParserEngine(EmisorConfig config)
     {
         _config = config;
