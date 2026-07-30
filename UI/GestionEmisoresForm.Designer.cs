@@ -53,8 +53,6 @@ partial class GestionEmisoresForm
         dataGridViewTextBoxColumn6 = new DataGridViewTextBoxColumn();
         dataGridViewTextBoxColumn7 = new DataGridViewTextBoxColumn();
         dataGridViewTextBoxColumn8 = new DataGridViewTextBoxColumn();
-        dataGridViewTextBoxColumn9 = new DataGridViewTextBoxColumn();
-        dataGridViewTextBoxColumn10 = new DataGridViewTextBoxColumn();
         lblSeparadorZonas = new Label();
         txtZonasSource = new TextBox();
         tabCampos = new TabPage();
@@ -414,7 +412,7 @@ partial class GestionEmisoresForm
         dgvZonas.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         dgvZonas.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         dgvZonas.ColumnHeadersHeight = 29;
-        dgvZonas.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn3, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5, dataGridViewTextBoxColumn6, dataGridViewTextBoxColumn7, dataGridViewTextBoxColumn8, dataGridViewTextBoxColumn9, dataGridViewTextBoxColumn10 });
+        dgvZonas.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn3, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5, dataGridViewTextBoxColumn6, dataGridViewTextBoxColumn7, dataGridViewTextBoxColumn8 });
         dgvZonas.Location = new Point(3, 38);
         dgvZonas.Name = "dgvZonas";
         dgvZonas.RowHeadersWidth = 51;
@@ -459,18 +457,6 @@ partial class GestionEmisoresForm
         dataGridViewTextBoxColumn8.HeaderText = "Alto%";
         dataGridViewTextBoxColumn8.MinimumWidth = 6;
         dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
-        // 
-        // dataGridViewTextBoxColumn9
-        // 
-        dataGridViewTextBoxColumn9.HeaderText = "RegexRespaldo";
-        dataGridViewTextBoxColumn9.MinimumWidth = 6;
-        dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
-        // 
-        // dataGridViewTextBoxColumn10
-        // 
-        dataGridViewTextBoxColumn10.HeaderText = "Opcional";
-        dataGridViewTextBoxColumn10.MinimumWidth = 6;
-        dataGridViewTextBoxColumn10.Name = "dataGridViewTextBoxColumn10";
         // 
         // lblSeparadorZonas
         // 
@@ -1162,8 +1148,6 @@ partial class GestionEmisoresForm
     private DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
     private DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
     private DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
-    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
-    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn10;
     private Label lblSeparadorRegex;
     private TextBox txtRegexSource;
     private Label lblRegexPattern;

@@ -110,9 +110,6 @@ namespace FacturasApp.Services
                     cachePaginas[numPagina] = pagina;
             }
 
-            string? textoCompleto = null;
-            bool necesitaRespaldo = plantilla.Zonas.Any(z => !string.IsNullOrEmpty(z.RegexRespaldo));
-
             foreach (var zona in plantilla.Zonas)
             {
                 try
@@ -128,17 +125,7 @@ namespace FacturasApp.Services
 
                     var rect = ConvertirZonaAPdfRectangle(zona, paginaWidth, paginaHeight);
 
-                    // Extraer texto de la zona respetando el layout original
                     string textoDirecto = ExtraerTextoLayoutDesdeArea(pagina, rect);
-
-                    if (string.IsNullOrEmpty(textoDirecto) && !string.IsNullOrEmpty(zona.RegexRespaldo))
-                    {
-                        if (necesitaRespaldo && textoCompleto == null)
-                        {
-                            textoCompleto = ContentOrderTextExtractor.GetText(pagina);
-                        }
-                        textoDirecto = zona.ExtraerConRespaldo(textoDirecto, textoCompleto);
-                    }
 
                     resultado[zona.Campo] = textoDirecto;
                 }

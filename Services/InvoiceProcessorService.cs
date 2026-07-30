@@ -196,8 +196,6 @@ namespace FacturasApp.Services
                         Y = z.Y,
                         Ancho = z.Ancho,
                         Alto = z.Alto,
-                        RegexRespaldo = z.RegexRespaldo,
-                        Opcional = z.Opcional,
                         Preprocesamiento = z.Preprocesamiento ?? new PreprocesamientoOcr()
                     }).ToList()
                 };

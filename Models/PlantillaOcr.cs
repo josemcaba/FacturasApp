@@ -59,9 +59,6 @@ namespace FacturasApp.Models
         [XmlAttribute("Regex")]
         public string RegexPersonalizada { get; set; } = string.Empty;
 
-        // NUEVAS PROPIEDADES
-        public string? RegexRespaldo { get; set; }
-        public bool Opcional { get; set; } = false;
         public PreprocesamientoOcr Preprocesamiento { get; set; } = new();
 
         // Convierte las coordenadas porcentuales a píxeles
@@ -76,27 +73,5 @@ namespace FacturasApp.Models
         }
 
 
-
-        public string ExtraerConRespaldo(string textoZonaDirecto, string? textoCompleto = null)
-        {
-            if (!string.IsNullOrWhiteSpace(textoZonaDirecto))
-                return textoZonaDirecto.Trim();
-
-            if (Opcional)
-                return string.Empty;
-
-            if (!string.IsNullOrEmpty(RegexRespaldo) && !string.IsNullOrEmpty(textoCompleto))
-            {
-                var match = System.Text.RegularExpressions.Regex.Match(
-                    textoCompleto,
-                    RegexRespaldo,
-                    System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-
-                if (match.Success)
-                    return match.Groups.Count > 1 ? match.Groups[1].Value.Trim() : match.Value.Trim();
-            }
-
-            return string.Empty;
-        }
     }
 }

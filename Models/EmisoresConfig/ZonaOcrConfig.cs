@@ -22,7 +22,5 @@ public class ZonaOcrConfig
     [XmlAttribute("Alto")]
     public double Alto { get; set; }
 
-    public string? RegexRespaldo { get; set; }
-    public bool Opcional { get; set; }
     public PreprocesamientoOcr? Preprocesamiento { get; set; }
 }

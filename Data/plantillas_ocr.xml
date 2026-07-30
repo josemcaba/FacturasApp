@@ -2,7 +2,7 @@
 <PlantillasOcr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Plantilla Emisor="FACCSA: Frigorif. And. Conservas Carne">
     <Zona Campo="Zona1" Pagina="1" X="25.183016105417277" Y="2.5853154084798344" Ancho="51.68374816983895" Alto="6.308169596690797" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -16,7 +16,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="Zona2" Pagina="1" X="3.953147877013177" Y="10.961737331954497" Ancho="26.061493411420205" Alto="13.340227507755948" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -30,7 +30,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="Zona3" Pagina="1" X="59.443631039531475" Y="11.06514994829369" Ancho="32.650073206442165" Alto="12.719751809720787" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -44,7 +44,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="Zona4" Pagina="1" X="65.30014641288433" Y="74.04343329886245" Ancho="30.30746705710102" Alto="12.82316442605998" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -63,7 +63,7 @@
   </Plantilla>
   <Plantilla Emisor="Gregorio Aranda Garcia">
     <Zona Campo="Zona1" Pagina="1" X="47.38095238095238" Y="18.54974704890388" Ancho="48.333333333333336" Alto="15.851602023608768" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -77,7 +77,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="Zona2" Pagina="1" X="4.0476190476190474" Y="18.54974704890388" Ancho="43.333333333333336" Alto="23.102866779089375" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -91,7 +91,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="Zona3" Pagina="1" X="59.76190476190476" Y="44.51939291736931" Ancho="35.23809523809524" Alto="51.433389544688026" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -110,7 +110,7 @@
   </Plantilla>
   <Plantilla Emisor="Leroy Merlin España, S.L.U.">
     <Zona Campo="Zona1" Pagina="1" X="1.903367496339678" Y="88.31437435367114" Ancho="96.63250366032212" Alto="10.237849017580144" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -124,7 +124,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="Zona2" Pagina="1" X="23.2796486090776" Y="1.2409513960703205" Ancho="49.194729136163986" Alto="6.8252326783867625" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -138,7 +138,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="Zona3" Pagina="1" X="55.05124450951684" Y="11.789038262668045" Ancho="36.896046852122986" Alto="10.031023784901757" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -152,7 +152,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="Zona4" Pagina="1" X="4.685212298682284" Y="21.199586349534645" Ancho="30.89311859443631" Alto="8.376421923474664" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -166,7 +166,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="Zona5" Pagina="1" X="44.07027818448023" Y="29.576008273009307" Ancho="53.879941434846266" Alto="59.66907962771458" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -180,7 +180,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="Zona6" Pagina="1" X="5.124450951683748" Y="37.849017580144775" Ancho="37.48169838945827" Alto="50.0517063081696" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -199,7 +199,7 @@
   </Plantilla>
   <Plantilla Emisor="INVERSIONES CERRO EL PLOMO S.L.">
     <Zona Campo="Zona1" Pagina="1" X="3.579952267303103" Y="4.040404040404041" Ancho="42.004773269689736" Alto="14.309764309764308" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -213,7 +213,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="Zona2" Pagina="1" X="52.2673031026253" Y="15.488215488215488" Ancho="44.868735083532215" Alto="9.932659932659933" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -227,7 +227,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="Zona3" Pagina="1" X="3.1026252983293556" Y="18.855218855218855" Ancho="47.01670644391408" Alto="7.07070707070707" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -241,7 +241,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="Zona4" Pagina="1" X="2.863961813842482" Y="65.31986531986533" Ancho="95.4653937947494" Alto="8.585858585858585" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -255,7 +255,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="Zona5" Pagina="1" X="57.51789976133651" Y="78.28282828282829" Ancho="40.81145584725537" Alto="5.218855218855219" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -274,7 +274,7 @@
   </Plantilla>
   <Plantilla Emisor="TELEFÓNICA SOLUCIONES I y C ESPAÑA SAU">
     <Zona Campo="Zona1" Pagina="1" X="5.417276720351391" Y="11.995863495346432" Ancho="39.0922401171303" Alto="5.791106514994829" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -288,7 +288,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="Zona2" Pagina="1" X="47.43777452415813" Y="11.995863495346432" Ancho="49.926793557833086" Alto="13.133402275077561" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -302,7 +302,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="Zona3" Pagina="1" X="49.194729136163986" Y="67.42502585315408" Ancho="48.16983894582723" Alto="11.478800413650465" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -321,7 +321,7 @@
   </Plantilla>
   <Plantilla Emisor="COMUNICACIONES Y SOLUCIONES CLOUD, S.L.">
     <Zona Campo="Zona1" Pagina="1" X="48.90190336749634" Y="13.133402275077561" Ancho="47.43777452415813" Alto="13.340227507755948" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -335,7 +335,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="Zona2" Pagina="1" X="2.635431918008785" Y="27.507755946225437" Ancho="59.29721815519766" Alto="4.3433298862461225" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -349,7 +349,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="Zona3" Pagina="1" X="21.08345534407028" Y="82.52326783867632" Ancho="74.81698389458272" Alto="5.067218200620475" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -368,7 +368,7 @@
   </Plantilla>
   <Plantilla Emisor="RANGNY VALENCIA S.L.">
     <Zona Campo="P1_Z1" Pagina="1" X="55.57251908396946" Y="18.609625668449198" Ancho="36.79389312977099" Alto="10.16042780748663" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -382,7 +382,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z2" Pagina="1" X="7.938931297709924" Y="29.732620320855613" Ancho="12.061068702290076" Alto="5.133689839572193" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -396,7 +396,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z3" Pagina="1" X="20.610687022900763" Y="29.732620320855613" Ancho="13.129770992366414" Alto="5.240641711229946" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -410,7 +410,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z4" Pagina="1" X="4.122137404580153" Y="77.96791443850267" Ancho="67.32824427480915" Alto="5.775401069518717" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -429,7 +429,7 @@
   </Plantilla>
   <Plantilla Emisor="EURO DEPOT ESPAÑA S.A.U.">
     <Zona Campo="P1_Z1" Pagina="1" X="1.3636363636363635" Y="19.037433155080212" Ancho="37.42424242424243" Alto="4.81283422459893" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -443,7 +443,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z2" Pagina="1" X="52.87878787878788" Y="29.946524064171122" Ancho="24.545454545454547" Alto="9.83957219251337" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -457,7 +457,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P2_Z1" Pagina="2" X="46.21212121212121" Y="64.06417112299465" Ancho="51.36363636363637" Alto="12.406417112299465" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -476,7 +476,7 @@
   </Plantilla>
   <Plantilla Emisor="ACTIVA JUAN LUCAS S.L.">
     <Zona Campo="P1_Z1" Pagina="1" X="59.90922844175491" Y="1.4973262032085561" Ancho="36.30862329803328" Alto="17.005347593582886" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -490,7 +490,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z2" Pagina="1" X="15.617128463476071" Y="20.99644128113879" Ancho="19.64735516372796" Alto="7.829181494661921" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -504,7 +504,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z3" Pagina="1" X="4.282115869017632" Y="20.818505338078293" Ancho="65.99496221662469" Alto="7.829181494661921" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -518,7 +518,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z4" Pagina="1" X="39.54659949622166" Y="63.16725978647687" Ancho="29.47103274559194" Alto="7.11743772241993" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -532,7 +532,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z5" Pagina="1" X="79.84886649874056" Y="63.16725978647687" Ancho="16.3727959697733" Alto="12.277580071174377" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -551,7 +551,7 @@
   </Plantilla>
   <Plantilla Emisor="CATHEDRAL SOFTWARE S.L.">
     <Zona Campo="P1_Z1" Pagina="1" X="4.030226700251889" Y="2.6690391459074734" Ancho="49.87405541561713" Alto="14.768683274021353" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -565,7 +565,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z2" Pagina="1" X="54.311649016641454" Y="12.941176470588237" Ancho="17.851739788199698" Alto="4.705882352941177" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -579,7 +579,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z3" Pagina="1" X="71.25567322239031" Y="12.834224598930483" Ancho="21.6338880484115" Alto="4.705882352941177" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -593,7 +593,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z4" Pagina="1" X="70.65052950075643" Y="68.87700534759358" Ancho="22.844175491679273" Alto="12.513368983957218" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -612,7 +612,7 @@
   </Plantilla>
   <Plantilla Emisor="FASAWORLD S.L.">
     <Zona Campo="P1_Z1" Pagina="1" X="48.71406959152799" Y="9.62566844919786" Ancho="43.872919818456886" Alto="12.085561497326204" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -626,7 +626,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z2" Pagina="1" X="1.9667170953101363" Y="16.470588235294116" Ancho="27.83661119515885" Alto="4.27807486631016" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -640,7 +640,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z3" Pagina="1" X="35.55219364599092" Y="61.49732620320856" Ancho="57.337367624810895" Alto="6.737967914438503" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -659,7 +659,7 @@
   </Plantilla>
   <Plantilla Emisor="INSTANT BYTE, S.L.">
     <Zona Campo="P1_Z1" Pagina="1" X="7.5566750629722925" Y="18.505338078291814" Ancho="41.05793450881612" Alto="4.804270462633451" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -673,7 +673,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z2" Pagina="1" X="52.39294710327456" Y="15.836298932384341" Ancho="43.8287153652393" Alto="15.658362989323843" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -687,7 +687,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z3" Pagina="1" X="80.10075566750629" Y="72.41992882562278" Ancho="18.387909319899247" Alto="19.395017793594306" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -706,7 +706,7 @@
   </Plantilla>
   <Plantilla Emisor="ENERGIA XXI COMERCIALIZADORA S.L.U.">
     <Zona Campo="P1_Z1" Pagina="1" X="40.09077155824508" Y="2.2459893048128343" Ancho="58.09379727685325" Alto="9.090909090909092" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -720,7 +720,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z2" Pagina="1" X="4.53857791225416" Y="28.342245989304814" Ancho="93.64599092284418" Alto="8.128342245989305" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -734,7 +734,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P2_Z1" Pagina="2" X="3.6308623298033282" Y="37.64705882352941" Ancho="94.70499243570349" Alto="8.342245989304812" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -753,7 +753,7 @@
   </Plantilla>
   <Plantilla Emisor="TD SYNNEX SPAIN, S.L.U.">
     <Zona Campo="P1_Z1" Pagina="1" X="5.606060606060606" Y="2.7807486631016043" Ancho="44.24242424242424" Alto="8.663101604278074" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -767,7 +767,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z2" Pagina="1" X="5.757575757575758" Y="17.860962566844922" Ancho="38.78787878787879" Alto="8.235294117647058" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -781,7 +781,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z3" Pagina="1" X="5.757575757575758" Y="29.62566844919786" Ancho="44.54545454545455" Alto="6.951871657754011" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -795,7 +795,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z4" Pagina="1" X="6.212121212121212" Y="46.31016042780748" Ancho="89.39393939393939" Alto="23.101604278074866" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -814,7 +814,7 @@
   </Plantilla>
   <Plantilla Emisor="AUTOMOTOR PREMIUM, S.L.">
     <Zona Campo="P1_Z1" Pagina="1" X="65.80937972768533" Y="17.326203208556148" Ancho="23.751891074130103" Alto="10.37433155080214" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -828,7 +828,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z2" Pagina="1" X="7.564296520423601" Y="14.331550802139038" Ancho="22.390317700453856" Alto="8.55614973262032" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -842,7 +842,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z3" Pagina="1" X="7.2617246596066565" Y="26.09625668449198" Ancho="24.659606656580937" Alto="2.6737967914438503" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -856,7 +856,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z4" Pagina="1" X="55.06807866868382" Y="80.53475935828877" Ancho="44.175491679273826" Alto="5.240641711229946" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -875,7 +875,7 @@
   </Plantilla>
   <Plantilla Emisor="Ignacio Ibañez Pacheco">
     <Zona Campo="P1_Z1" Pagina="1" X="49.016641452344935" Y="5.454545454545454" Ancho="46.89863842662632" Alto="17.11229946524064" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -889,7 +889,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z2" Pagina="1" X="3.7821482602118004" Y="18.609625668449198" Ancho="44.175491679273826" Alto="3.9572192513368987" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -903,7 +903,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z3" Pagina="1" X="22.239031770045386" Y="80.74866310160428" Ancho="50.983358547655065" Alto="5.454545454545454" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -917,7 +917,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z4" Pagina="1" X="74.73524962178517" Y="81.17647058823529" Ancho="20.87745839636914" Alto="8.449197860962567" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -936,7 +936,7 @@
   </Plantilla>
   <Plantilla Emisor="IMPULSO SARIGABO, SLU">
     <Zona Campo="P1_Z1" Pagina="1" X="50.60606060606061" Y="13.475935828877006" Ancho="43.78787878787879" Alto="14.43850267379679" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -950,7 +950,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z2" Pagina="1" X="28.030303030303028" Y="27.27272727272727" Ancho="13.333333333333334" Alto="6.951871657754011" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -964,7 +964,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z3" Pagina="1" X="40.75757575757576" Y="27.593582887700535" Ancho="30.757575757575754" Alto="5.240641711229946" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -978,7 +978,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z4" Pagina="1" X="51.515151515151516" Y="82.35294117647058" Ancho="46.96969696969697" Alto="4.491978609625669" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -992,7 +992,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z5" Pagina="1" X="72.27272727272728" Y="71.33689839572193" Ancho="25.303030303030305" Alto="3.1016042780748663" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -1011,7 +1011,7 @@
   </Plantilla>
   <Plantilla Emisor="Dulcería 17, S.L.">
     <Zona Campo="P1_Z1" Pagina="1" X="48.71406959152799" Y="13.796791443850267" Ancho="30.408472012102873" Alto="12.727272727272727" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -1025,7 +1025,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z2" Pagina="1" X="3.9334341906202726" Y="18.93048128342246" Ancho="15.582450832072617" Alto="7.700534759358289" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -1039,7 +1039,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z3" Pagina="1" X="18.305597579425115" Y="20" Ancho="14.22087745839637" Alto="6.737967914438503" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -1053,7 +1053,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z4" Pagina="1" X="34.039334341906205" Y="81.60427807486631" Ancho="31.77004538577912" Alto="6.417112299465241" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -1067,7 +1067,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z5" Pagina="1" X="80.48411497730712" Y="81.60427807486631" Ancho="17.851739788199698" Alto="6.096256684491978" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -1086,7 +1086,7 @@
   </Plantilla>
   <Plantilla Emisor="COSTA DEL SOL BALEAR, S.L.">
     <Zona Campo="P1_Z1" Pagina="1" X="56.515151515151516" Y="6.8449197860962565" Ancho="33.63636363636363" Alto="10.588235294117647" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -1100,7 +1100,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z2" Pagina="1" X="23.939393939393938" Y="25.026737967914436" Ancho="13.030303030303031" Alto="4.81283422459893" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -1114,7 +1114,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z3" Pagina="1" X="37.72727272727273" Y="25.026737967914436" Ancho="11.666666666666666" Alto="4.705882352941177" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -1128,7 +1128,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P2_Z1" Pagina="2" X="1.8181818181818181" Y="85.02673796791443" Ancho="96.51515151515152" Alto="5.026737967914439" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -1142,7 +1142,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z4" Pagina="1" X="2.272727272727273" Y="84.91978609625669" Ancho="95.60606060606061" Alto="5.454545454545454" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -1161,7 +1161,7 @@
   </Plantilla>
   <Plantilla Emisor="DISGO, S.A.">
     <Zona Campo="P1_Z1" Pagina="1" X="45.688350983358546" Y="9.197860962566844" Ancho="43.872919818456886" Alto="14.866310160427807" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -1175,7 +1175,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P3_Z1" Pagina="3" X="34.79576399394856" Y="72.94117647058823" Ancho="26.626323751891075" Alto="7.807486631016043" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -1189,7 +1189,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P3_Z2" Pagina="3" X="72.91981845688352" Y="73.2620320855615" Ancho="20.574886535552196" Alto="5.775401069518717" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -1203,7 +1203,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z2" Pagina="1" X="35.45454545454545" Y="71.76470588235294" Ancho="24.545454545454547" Alto="7.700534759358289" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -1217,7 +1217,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z3" Pagina="1" X="65.45454545454545" Y="72.19251336898395" Ancho="25.757575757575758" Alto="4.81283422459893" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -1231,7 +1231,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z4" Pagina="1" X="3.0303030303030303" Y="13.475935828877006" Ancho="22.87878787878788" Alto="9.83957219251337" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -1245,7 +1245,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z5" Pagina="1" X="14.674735249621785" Y="17.219251336898395" Ancho="10.741301059001513" Alto="4.598930481283422" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -1264,7 +1264,7 @@
   </Plantilla>
   <Plantilla Emisor="PETROPRIX ENERGIA S.L.">
     <Zona Campo="P1_Z1" Pagina="1" X="2.878787878787879" Y="6.417112299465241" Ancho="46.515151515151516" Alto="8.983957219251337" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -1278,7 +1278,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z2" Pagina="1" X="49.3939393939394" Y="12.513368983957218" Ancho="47.42424242424242" Alto="14.117647058823529" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -1292,7 +1292,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z3" Pagina="1" X="3.0303030303030303" Y="70.9090909090909" Ancho="77.87878787878788" Alto="21.283422459893046" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>
@@ -1306,7 +1306,7 @@
       </Preprocesamiento>
     </Zona>
     <Zona Campo="P1_Z4" Pagina="1" X="80.15151515151516" Y="71.01604278074866" Ancho="16.363636363636363" Alto="21.06951871657754" Regex="">
-      <Opcional>false</Opcional>
+
       <Preprocesamiento>
         <EscalaGrises>true</EscalaGrises>
         <Binarizacion>false</Binarizacion>

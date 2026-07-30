@@ -393,8 +393,7 @@ public partial class GestionEmisoresForm : Form
         _sincronizando = true;
         dgvZonas.Rows.Clear();
         foreach (var z in _zonasDibujo)
-            dgvZonas.Rows.Add(z.Campo, z.NumPagina, z.X, z.Y, z.Ancho, z.Alto,
-                z.RegexRespaldo ?? "", z.Opcional);
+            dgvZonas.Rows.Add(z.Campo, z.NumPagina, z.X, z.Y, z.Ancho, z.Alto);
         _sincronizando = false;
         MarcarModificado();
     }
@@ -413,8 +412,6 @@ public partial class GestionEmisoresForm : Form
                 Y = double.TryParse(r.Cells[3].Value?.ToString(), out var y) ? y : 0,
                 Ancho = double.TryParse(r.Cells[4].Value?.ToString(), out var w) ? w : 0,
                 Alto = double.TryParse(r.Cells[5].Value?.ToString(), out var h) ? h : 0,
-                RegexRespaldo = r.Cells[6].Value?.ToString(),
-                Opcional = r.Cells[7].Value?.ToString() == "True"
             });
         }
     }
@@ -527,7 +524,7 @@ public partial class GestionEmisoresForm : Form
         dgvZonas.Rows.Clear();
         if (config.ZonasOcr != null)
             foreach (var z in config.ZonasOcr)
-                dgvZonas.Rows.Add(z.Campo, z.NumPagina, z.X, z.Y, z.Ancho, z.Alto, z.RegexRespaldo ?? "", z.Opcional);
+                dgvZonas.Rows.Add(z.Campo, z.NumPagina, z.X, z.Y, z.Ancho, z.Alto);
         _cargando = false;
         SincronizarZonasDesdeDgv();
         picFactura.Invalidate();
@@ -626,8 +623,7 @@ public partial class GestionEmisoresForm : Form
             ZonasOcr = _emisorActual.ZonasOcr?.Select(z => new ZonaOcrConfig
             {
                 Campo = z.Campo, NumPagina = z.NumPagina,
-                X = z.X, Y = z.Y, Ancho = z.Ancho, Alto = z.Alto,
-                RegexRespaldo = z.RegexRespaldo, Opcional = z.Opcional
+                X = z.X, Y = z.Y, Ancho = z.Ancho, Alto = z.Alto
             }).ToList()
         };
         _configuracion.Guardar(clon);
@@ -673,9 +669,7 @@ public partial class GestionEmisoresForm : Form
                 X = double.TryParse(r.Cells[2].Value?.ToString(), out var x) ? x : 0,
                 Y = double.TryParse(r.Cells[3].Value?.ToString(), out var y) ? y : 0,
                 Ancho = double.TryParse(r.Cells[4].Value?.ToString(), out var w) ? w : 0,
-                Alto = double.TryParse(r.Cells[5].Value?.ToString(), out var h) ? h : 0,
-                RegexRespaldo = r.Cells[6].Value?.ToString(),
-                Opcional = r.Cells[7].Value?.ToString() == "True"
+                Alto = double.TryParse(r.Cells[5].Value?.ToString(), out var h) ? h : 0
             }).ToList();
 
         try

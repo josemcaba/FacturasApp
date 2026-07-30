@@ -49,10 +49,6 @@ namespace FacturasApp.Services
 
             try
             {
-                // Texto completo por página para respaldo (solo si alguna zona tiene RegexRespaldo)
-                var textosCompletosPorPagina = new Dictionary<int, string?>();
-                bool necesitaRespaldo = plantilla.Zonas.Any(z => !string.IsNullOrEmpty(z.RegexRespaldo));
-
                 foreach (var zona in plantilla.Zonas)
                 {
                     try
@@ -73,16 +69,6 @@ namespace FacturasApp.Services
                         }
 
                         string textoDirecto = AplicarOcr(engine, zonaImagen).Trim();
-
-                        // Respaldo con regex si es necesario
-                        if (string.IsNullOrEmpty(textoDirecto) && !string.IsNullOrEmpty(zona.RegexRespaldo))
-                        {
-                            if (necesitaRespaldo && !textosCompletosPorPagina.ContainsKey(zona.NumPagina))
-                            {
-                                textosCompletosPorPagina[zona.NumPagina] = AplicarOcr(engine, paginaBitmap);
-                            }
-                            textoDirecto = zona.ExtraerConRespaldo(textoDirecto, textosCompletosPorPagina[zona.NumPagina]);
-                        }
 
                         resultado[zona.Campo] = textoDirecto;
                     }
