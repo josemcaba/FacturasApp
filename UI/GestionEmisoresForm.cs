@@ -42,8 +42,8 @@ public partial class GestionEmisoresForm : Form
             _sincronizandoTexto = false;
         };
         panelCentral.Resize += PanelCentral_Resize;
-        PanelCentral_Resize(null, EventArgs.Empty);
         CargarEmisores();
+        Load += (_, _) => PanelCentral_Resize(null, EventArgs.Empty);
         FormClosing += (_, args) =>
         {
             if (_modificado)
@@ -106,9 +106,7 @@ public partial class GestionEmisoresForm : Form
 
         var panel = panelCentral;
         int panelH = panel.ClientSize.Height;
-        int topY = btnCargarPdfMuestra.Bottom + 8;
-        if (tabPaginas.Visible)
-            topY = tabPaginas.Bottom + 8;
+        int topY = tabPaginas.Bottom + 8;
         int availH = panelH - topY - 8;
 
         if (availH >= 10)
@@ -193,7 +191,6 @@ public partial class GestionEmisoresForm : Form
 
         if (tabPaginas.TabCount > 0)
             tabPaginas.SelectedIndex = 0;
-        tabPaginas.Visible = true;
         PanelCentral_Resize(null, EventArgs.Empty);
 
         MostrarPaginaActual();
@@ -448,7 +445,7 @@ public partial class GestionEmisoresForm : Form
         _paginaActual = 0;
         _rutaPdf = null;
         picFactura.Image = null;
-        tabPaginas.Visible = false;
+        // tabPaginas remains visible (empty) to reserve layout space
     }
     private void DgvCellValueChanged(object? sender, DataGridViewCellEventArgs e)
     {

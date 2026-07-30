@@ -11,11 +11,54 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <Campos />
+  <Campos>
+    <Campo Nombre="NumeroFactura">
+      <Regex>N. Factura: (\S+)</Regex>
+      <Grupo>1</Grupo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="Fecha">
+      <Regex>Fecha Factura:\s*(\S+)</Regex>
+      <Grupo>1</Grupo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="ReceptorNombre">
+      <Regex>Razón Social: (.+)</Regex>
+      <Grupo>1</Grupo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="ReceptorNif">
+      <Grupo>1</Grupo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="Total">
+      <Regex>Total Factura ([-\d.,]+)</Regex>
+      <Grupo>1</Grupo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+    </Campo>
+  </Campos>
   <MultiLineaIVA>
     <Habilitado>true</Habilitado>
-    <RegexLinea />
-    <MapeoCampos />
+    <RegexLinea>([-\d.,]+)% ([-\d.,]+) ([-\d.,]+) ([-\d.,]+)[\r\n]</RegexLinea>
+    <MapeoCampos>
+      <Mapeo Nombre="PorcentajeIVA" Grupo="1" />
+      <Mapeo Nombre="BaseImponible" Grupo="2" />
+      <Mapeo Nombre="Total" Grupo="4" />
+    </MapeoCampos>
   </MultiLineaIVA>
   <PostProcesamiento />
   <ZonasOcr />

@@ -1004,7 +1004,7 @@ partial class GestionEmisoresForm
         btnCargarPdfMuestra.ForeColor = Color.White;
         btnCargarPdfMuestra.Location = new Point(8, 0);
         btnCargarPdfMuestra.Name = "btnCargarPdfMuestra";
-        btnCargarPdfMuestra.Size = new Size(223, 32);
+        btnCargarPdfMuestra.Size = new Size(225, 32);
         btnCargarPdfMuestra.TabIndex = 0;
         btnCargarPdfMuestra.Text = "Cargar PDF de muestra";
         btnCargarPdfMuestra.UseVisualStyleBackColor = false;
@@ -1016,9 +1016,8 @@ partial class GestionEmisoresForm
         tabPaginas.Location = new Point(8, 35);
         tabPaginas.Name = "tabPaginas";
         tabPaginas.SelectedIndex = 0;
-        tabPaginas.Size = new Size(223, 28);
+        tabPaginas.Size = new Size(225, 28);
         tabPaginas.TabIndex = 1;
-        tabPaginas.Visible = false;
         tabPaginas.SelectedIndexChanged += TabPaginas_SelectedIndexChanged;
         // 
         // picFactura
