@@ -133,7 +133,7 @@ partial class GestionEmisoresForm
         lstEmisores.DisplayMember = "DisplayText";
         lstEmisores.Location = new Point(11, 30);
         lstEmisores.Name = "lstEmisores";
-        lstEmisores.Size = new Size(324, 520);
+        lstEmisores.Size = new Size(324, 620);
         lstEmisores.TabIndex = 2;
         lstEmisores.SelectedIndexChanged += LstEmisores_SelectedIndexChanged;
         // 
@@ -148,7 +148,7 @@ partial class GestionEmisoresForm
         panelIzquierdo.Location = new Point(0, 0);
         panelIzquierdo.Name = "panelIzquierdo";
         panelIzquierdo.Padding = new Padding(8);
-        panelIzquierdo.Size = new Size(346, 600);
+        panelIzquierdo.Size = new Size(346, 711);
         panelIzquierdo.TabIndex = 1;
         // 
         // txtBuscarEmisor
@@ -166,7 +166,7 @@ partial class GestionEmisoresForm
         // 
         btnEliminar.Anchor = AnchorStyles.Bottom;
         btnEliminar.FlatStyle = FlatStyle.Flat;
-        btnEliminar.Location = new Point(121, 562);
+        btnEliminar.Location = new Point(121, 673);
         btnEliminar.Name = "btnEliminar";
         btnEliminar.Size = new Size(104, 30);
         btnEliminar.TabIndex = 4;
@@ -178,7 +178,7 @@ partial class GestionEmisoresForm
         // 
         btnClonar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
         btnClonar.FlatStyle = FlatStyle.Flat;
-        btnClonar.Location = new Point(231, 562);
+        btnClonar.Location = new Point(231, 673);
         btnClonar.Name = "btnClonar";
         btnClonar.Size = new Size(104, 30);
         btnClonar.TabIndex = 5;
@@ -190,7 +190,7 @@ partial class GestionEmisoresForm
         // 
         btnNuevo.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
         btnNuevo.FlatStyle = FlatStyle.Flat;
-        btnNuevo.Location = new Point(11, 562);
+        btnNuevo.Location = new Point(11, 673);
         btnNuevo.Name = "btnNuevo";
         btnNuevo.Size = new Size(104, 30);
         btnNuevo.TabIndex = 3;
@@ -209,7 +209,7 @@ partial class GestionEmisoresForm
         tabs.Location = new Point(0, 0);
         tabs.Name = "tabs";
         tabs.SelectedIndex = 0;
-        tabs.Size = new Size(744, 549);
+        tabs.Size = new Size(744, 660);
         tabs.TabIndex = 0;
         // 
         // tabGeneral
@@ -233,7 +233,7 @@ partial class GestionEmisoresForm
         tabGeneral.Controls.Add(txtConceptoGasto);
         tabGeneral.Location = new Point(4, 29);
         tabGeneral.Name = "tabGeneral";
-        tabGeneral.Size = new Size(736, 516);
+        tabGeneral.Size = new Size(736, 627);
         tabGeneral.TabIndex = 0;
         tabGeneral.Text = "General";
         // 
@@ -347,7 +347,7 @@ partial class GestionEmisoresForm
         // cmbCulturaFecha
         // 
         cmbCulturaFecha.DropDownStyle = ComboBoxStyle.DropDownList;
-        cmbCulturaFecha.Items.AddRange(new object[] { "es-ES", "en-US", "de-DE", "fr-FR", "it-IT", "pt-PT" });
+        cmbCulturaFecha.Items.AddRange(new object[] { "es-ES", "en-US" });
         cmbCulturaFecha.Location = new Point(257, 304);
         cmbCulturaFecha.Name = "cmbCulturaFecha";
         cmbCulturaFecha.Size = new Size(159, 28);
@@ -396,7 +396,7 @@ partial class GestionEmisoresForm
         tabZonas.Controls.Add(txtZonasSource);
         tabZonas.Location = new Point(4, 29);
         tabZonas.Name = "tabZonas";
-        tabZonas.Size = new Size(736, 516);
+        tabZonas.Size = new Size(736, 627);
         tabZonas.TabIndex = 4;
         tabZonas.Text = "Zonas OCR";
         // 
@@ -490,13 +490,12 @@ partial class GestionEmisoresForm
         txtZonasSource.Location = new Point(3, 330);
         txtZonasSource.Multiline = true;
         txtZonasSource.Name = "txtZonasSource";
-        txtZonasSource.Size = new Size(729, 183);
+        txtZonasSource.Size = new Size(729, 294);
         txtZonasSource.TabIndex = 57;
         txtZonasSource.TextChanged += TxtZonasSource_TextChanged;
         // 
         // tabCampos
         // 
-        tabCampos.AutoScroll = true;
         tabCampos.Controls.Add(lblCamposLista);
         tabCampos.Controls.Add(lstCampos);
         tabCampos.Controls.Add(panelDetalle);
@@ -512,7 +511,7 @@ partial class GestionEmisoresForm
         tabCampos.Controls.Add(btnRegexApplyToField);
         tabCampos.Location = new Point(4, 29);
         tabCampos.Name = "tabCampos";
-        tabCampos.Size = new Size(736, 516);
+        tabCampos.Size = new Size(736, 627);
         tabCampos.TabIndex = 1;
         tabCampos.Text = "Campos";
         // 
@@ -554,7 +553,7 @@ partial class GestionEmisoresForm
         panelDetalle.Controls.Add(txtCampoCamposSuma);
         panelDetalle.Location = new Point(215, 38);
         panelDetalle.Name = "panelDetalle";
-        panelDetalle.Size = new Size(506, 280);
+        panelDetalle.Size = new Size(517, 280);
         panelDetalle.TabIndex = 2;
         // 
         // lblCampoNombre
@@ -718,19 +717,20 @@ partial class GestionEmisoresForm
         // 
         // txtRegexSource
         // 
-        txtRegexSource.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        txtRegexSource.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         txtRegexSource.Font = new Font("Consolas", 9F);
         txtRegexSource.Location = new Point(3, 354);
         txtRegexSource.Multiline = true;
         txtRegexSource.Name = "txtRegexSource";
-        txtRegexSource.Size = new Size(718, 158);
+        txtRegexSource.Size = new Size(729, 52);
         txtRegexSource.TabIndex = 51;
         txtRegexSource.TextChanged += EjecutarRegex;
         // 
         // lblRegexPattern
         // 
+        lblRegexPattern.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
         lblRegexPattern.AutoSize = true;
-        lblRegexPattern.Location = new Point(3, 524);
+        lblRegexPattern.Location = new Point(3, 422);
         lblRegexPattern.Name = "lblRegexPattern";
         lblRegexPattern.Size = new Size(127, 20);
         lblRegexPattern.TabIndex = 52;
@@ -738,27 +738,29 @@ partial class GestionEmisoresForm
         // 
         // txtRegexPattern
         // 
-        txtRegexPattern.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        txtRegexPattern.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         txtRegexPattern.Font = new Font("Consolas", 10F);
-        txtRegexPattern.Location = new Point(-1, 547);
+        txtRegexPattern.Location = new Point(3, 445);
         txtRegexPattern.Name = "txtRegexPattern";
-        txtRegexPattern.Size = new Size(596, 27);
+        txtRegexPattern.Size = new Size(607, 27);
         txtRegexPattern.TabIndex = 53;
         txtRegexPattern.TextChanged += EjecutarRegex;
         // 
         // lblRegexMatchCount
         // 
+        lblRegexMatchCount.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
         lblRegexMatchCount.AutoSize = true;
         lblRegexMatchCount.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-        lblRegexMatchCount.Location = new Point(630, 540);
+        lblRegexMatchCount.Location = new Point(298, 485);
         lblRegexMatchCount.Name = "lblRegexMatchCount";
         lblRegexMatchCount.Size = new Size(0, 20);
         lblRegexMatchCount.TabIndex = 54;
         // 
         // lblRegexResultados
         // 
+        lblRegexResultados.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
         lblRegexResultados.AutoSize = true;
-        lblRegexResultados.Location = new Point(16, 572);
+        lblRegexResultados.Location = new Point(3, 485);
         lblRegexResultados.Name = "lblRegexResultados";
         lblRegexResultados.Size = new Size(289, 20);
         lblRegexResultados.TabIndex = 55;
@@ -767,22 +769,23 @@ partial class GestionEmisoresForm
         // dgvRegexMatches
         // 
         dgvRegexMatches.AllowUserToAddRows = false;
+        dgvRegexMatches.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         dgvRegexMatches.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         dgvRegexMatches.ColumnHeadersHeight = 29;
-        dgvRegexMatches.Location = new Point(16, 595);
+        dgvRegexMatches.Location = new Point(3, 508);
         dgvRegexMatches.Name = "dgvRegexMatches";
         dgvRegexMatches.ReadOnly = true;
         dgvRegexMatches.RowHeadersWidth = 51;
-        dgvRegexMatches.Size = new Size(716, 100);
+        dgvRegexMatches.Size = new Size(729, 113);
         dgvRegexMatches.TabIndex = 56;
         // 
         // btnRegexApplyToField
         // 
-        btnRegexApplyToField.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        btnRegexApplyToField.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
         btnRegexApplyToField.BackColor = Color.FromArgb(46, 117, 182);
         btnRegexApplyToField.FlatStyle = FlatStyle.Flat;
         btnRegexApplyToField.ForeColor = Color.White;
-        btnRegexApplyToField.Location = new Point(605, 543);
+        btnRegexApplyToField.Location = new Point(616, 441);
         btnRegexApplyToField.Name = "btnRegexApplyToField";
         btnRegexApplyToField.Size = new Size(116, 34);
         btnRegexApplyToField.TabIndex = 57;
@@ -799,7 +802,7 @@ partial class GestionEmisoresForm
         tabMultiIVA.Controls.Add(dgvMultiIVAMapeo);
         tabMultiIVA.Location = new Point(4, 29);
         tabMultiIVA.Name = "tabMultiIVA";
-        tabMultiIVA.Size = new Size(736, 516);
+        tabMultiIVA.Size = new Size(736, 627);
         tabMultiIVA.TabIndex = 2;
         tabMultiIVA.Text = "Multi-IVA";
         // 
@@ -880,7 +883,7 @@ partial class GestionEmisoresForm
         tabPostProc.Controls.Add(btnPostProcRemove);
         tabPostProc.Location = new Point(4, 29);
         tabPostProc.Name = "tabPostProc";
-        tabPostProc.Size = new Size(736, 516);
+        tabPostProc.Size = new Size(736, 627);
         tabPostProc.TabIndex = 3;
         tabPostProc.Text = "Post-Procesamiento";
         // 
@@ -985,7 +988,7 @@ partial class GestionEmisoresForm
         btnGuardar.FlatStyle = FlatStyle.Flat;
         btnGuardar.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
         btnGuardar.ForeColor = Color.White;
-        btnGuardar.Location = new Point(637, 555);
+        btnGuardar.Location = new Point(637, 666);
         btnGuardar.Name = "btnGuardar";
         btnGuardar.Size = new Size(104, 33);
         btnGuardar.TabIndex = 1;
@@ -1026,7 +1029,7 @@ partial class GestionEmisoresForm
         picFactura.Cursor = Cursors.Cross;
         picFactura.Location = new Point(8, 69);
         picFactura.Name = "picFactura";
-        picFactura.Size = new Size(225, 523);
+        picFactura.Size = new Size(225, 634);
         picFactura.SizeMode = PictureBoxSizeMode.Zoom;
         picFactura.TabIndex = 2;
         picFactura.TabStop = false;
@@ -1042,7 +1045,7 @@ partial class GestionEmisoresForm
         panelDerecho.Dock = DockStyle.Fill;
         panelDerecho.Location = new Point(585, 0);
         panelDerecho.Name = "panelDerecho";
-        panelDerecho.Size = new Size(762, 600);
+        panelDerecho.Size = new Size(762, 711);
         panelDerecho.TabIndex = 6;
         // 
         // panelCentral
@@ -1053,12 +1056,12 @@ partial class GestionEmisoresForm
         panelCentral.Dock = DockStyle.Left;
         panelCentral.Location = new Point(346, 0);
         panelCentral.Name = "panelCentral";
-        panelCentral.Size = new Size(239, 600);
+        panelCentral.Size = new Size(239, 711);
         panelCentral.TabIndex = 2;
         // 
         // GestionEmisoresForm
         // 
-        ClientSize = new Size(1347, 600);
+        ClientSize = new Size(1347, 711);
         Controls.Add(panelDerecho);
         Controls.Add(panelCentral);
         Controls.Add(panelIzquierdo);

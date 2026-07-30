@@ -202,19 +202,6 @@ public partial class GestionEmisoresForm : Form
         ActualizarVistaPreviaZonal();
     }
 
-    private void ExtraerTextoMuestra()
-    {
-        if (string.IsNullOrEmpty(_rutaPdf)) return;
-        try
-        {
-            txtRegexSource.Text = _invoiceService.ExtraerTexto(_rutaPdf);
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error al extraer texto de muestra: {ex.Message}");
-        }
-    }
-
     private void TxtZonasSource_TextChanged(object? sender, EventArgs e)
     {
         if (_sincronizandoTexto) return;
