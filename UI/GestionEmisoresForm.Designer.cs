@@ -55,7 +55,6 @@ partial class GestionEmisoresForm
         dataGridViewTextBoxColumn8 = new DataGridViewTextBoxColumn();
         dataGridViewTextBoxColumn9 = new DataGridViewTextBoxColumn();
         dataGridViewTextBoxColumn10 = new DataGridViewTextBoxColumn();
-        btnAbrirEditorVisual = new Button();
         tabCampos = new TabPage();
         lblCamposLista = new Label();
         lstCampos = new ListBox();
@@ -95,8 +94,7 @@ partial class GestionEmisoresForm
         txtPostProcCampos = new TextBox();
         btnPostProcAdd = new Button();
         btnPostProcRemove = new Button();
-        tabRegex = new TabPage();
-        lblRegexTexto = new Label();
+        lblSeparadorRegex = new Label();
         txtRegexSource = new TextBox();
         lblRegexPattern = new Label();
         txtRegexPattern = new TextBox();
@@ -120,7 +118,6 @@ partial class GestionEmisoresForm
         tabMultiIVA.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)dgvMultiIVAMapeo).BeginInit();
         tabPostProc.SuspendLayout();
-        tabRegex.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)dgvRegexMatches).BeginInit();
         ((System.ComponentModel.ISupportInitialize)picFactura).BeginInit();
         panelDerecho.SuspendLayout();
@@ -207,7 +204,6 @@ partial class GestionEmisoresForm
         tabs.Controls.Add(tabCampos);
         tabs.Controls.Add(tabMultiIVA);
         tabs.Controls.Add(tabPostProc);
-        tabs.Controls.Add(tabRegex);
         tabs.Location = new Point(0, 0);
         tabs.Name = "tabs";
         tabs.SelectedIndex = 0;
@@ -394,7 +390,6 @@ partial class GestionEmisoresForm
         // 
         tabZonas.Controls.Add(lblZonasTitulo);
         tabZonas.Controls.Add(dgvZonas);
-        tabZonas.Controls.Add(btnAbrirEditorVisual);
         tabZonas.Location = new Point(4, 29);
         tabZonas.Name = "tabZonas";
         tabZonas.Size = new Size(736, 507);
@@ -472,26 +467,22 @@ partial class GestionEmisoresForm
         dataGridViewTextBoxColumn10.MinimumWidth = 6;
         dataGridViewTextBoxColumn10.Name = "dataGridViewTextBoxColumn10";
         // 
-        // btnAbrirEditorVisual
-        // 
-        btnAbrirEditorVisual.BackColor = Color.DarkGray;
-        btnAbrirEditorVisual.FlatStyle = FlatStyle.Flat;
-        btnAbrirEditorVisual.ForeColor = Color.White;
-        btnAbrirEditorVisual.Location = new Point(16, 310);
-        btnAbrirEditorVisual.Name = "btnAbrirEditorVisual";
-        btnAbrirEditorVisual.Size = new Size(220, 34);
-        btnAbrirEditorVisual.TabIndex = 2;
-        btnAbrirEditorVisual.Text = "🔲 Abrir Editor Visual de Zonas";
-        btnAbrirEditorVisual.UseVisualStyleBackColor = false;
-        btnAbrirEditorVisual.Click += BtnAbrirEditorVisual_Click;
-        // 
         // tabCampos
         // 
+        tabCampos.AutoScroll = true;
         tabCampos.Controls.Add(lblCamposLista);
         tabCampos.Controls.Add(lstCampos);
         tabCampos.Controls.Add(panelDetalle);
         tabCampos.Controls.Add(btnCampoAdd);
         tabCampos.Controls.Add(btnCampoRemove);
+        tabCampos.Controls.Add(lblSeparadorRegex);
+        tabCampos.Controls.Add(txtRegexSource);
+        tabCampos.Controls.Add(lblRegexPattern);
+        tabCampos.Controls.Add(txtRegexPattern);
+        tabCampos.Controls.Add(lblRegexMatchCount);
+        tabCampos.Controls.Add(lblRegexResultados);
+        tabCampos.Controls.Add(dgvRegexMatches);
+        tabCampos.Controls.Add(btnRegexApplyToField);
         tabCampos.Location = new Point(4, 29);
         tabCampos.Name = "tabCampos";
         tabCampos.Size = new Size(736, 507);
@@ -556,7 +547,7 @@ partial class GestionEmisoresForm
         cmbCampoNombre.Size = new Size(308, 28);
         cmbCampoNombre.TabIndex = 1;
         cmbCampoNombre.SelectedIndexChanged += CampoDetalle_Changed;
-        cmbCampoNombre.TextChanged += CampoDetalle_Changed;
+        cmbCampoNombre.TextChanged += CmbCampoNombre_TextChanged;
         // 
         // lblCampoTipo
         // 
@@ -686,6 +677,89 @@ partial class GestionEmisoresForm
         btnCampoRemove.Text = "− Quitar";
         btnCampoRemove.UseVisualStyleBackColor = true;
         btnCampoRemove.Click += BtnCampoRemove_Click;
+        // 
+        // lblSeparadorRegex
+        // 
+        lblSeparadorRegex.AutoSize = true;
+        lblSeparadorRegex.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+        lblSeparadorRegex.ForeColor = Color.Gray;
+        lblSeparadorRegex.Location = new Point(16, 360);
+        lblSeparadorRegex.Name = "lblSeparadorRegex";
+        lblSeparadorRegex.Size = new Size(166, 20);
+        lblSeparadorRegex.TabIndex = 50;
+        lblSeparadorRegex.Text = "━━━ Probar Regex ━━━";
+        // 
+        // txtRegexSource
+        // 
+        txtRegexSource.Font = new Font("Consolas", 9F);
+        txtRegexSource.Location = new Point(16, 385);
+        txtRegexSource.Multiline = true;
+        txtRegexSource.Name = "txtRegexSource";
+        txtRegexSource.ScrollBars = ScrollBars.Vertical;
+        txtRegexSource.Size = new Size(716, 120);
+        txtRegexSource.TabIndex = 51;
+        txtRegexSource.TextChanged += EjecutarRegex;
+        // 
+        // lblRegexPattern
+        // 
+        lblRegexPattern.AutoSize = true;
+        lblRegexPattern.Location = new Point(16, 515);
+        lblRegexPattern.Name = "lblRegexPattern";
+        lblRegexPattern.Size = new Size(127, 20);
+        lblRegexPattern.TabIndex = 52;
+        lblRegexPattern.Text = "Expresión regular:";
+        // 
+        // txtRegexPattern
+        // 
+        txtRegexPattern.Font = new Font("Consolas", 10F);
+        txtRegexPattern.Location = new Point(16, 537);
+        txtRegexPattern.Name = "txtRegexPattern";
+        txtRegexPattern.Size = new Size(600, 27);
+        txtRegexPattern.TabIndex = 53;
+        txtRegexPattern.TextChanged += EjecutarRegex;
+        // 
+        // lblRegexMatchCount
+        // 
+        lblRegexMatchCount.AutoSize = true;
+        lblRegexMatchCount.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+        lblRegexMatchCount.Location = new Point(630, 540);
+        lblRegexMatchCount.Name = "lblRegexMatchCount";
+        lblRegexMatchCount.Size = new Size(0, 20);
+        lblRegexMatchCount.TabIndex = 54;
+        // 
+        // lblRegexResultados
+        // 
+        lblRegexResultados.AutoSize = true;
+        lblRegexResultados.Location = new Point(16, 572);
+        lblRegexResultados.Name = "lblRegexResultados";
+        lblRegexResultados.Size = new Size(289, 20);
+        lblRegexResultados.TabIndex = 55;
+        lblRegexResultados.Text = "Resultados (matches y grupos de captura):";
+        // 
+        // dgvRegexMatches
+        // 
+        dgvRegexMatches.AllowUserToAddRows = false;
+        dgvRegexMatches.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        dgvRegexMatches.ColumnHeadersHeight = 29;
+        dgvRegexMatches.Location = new Point(16, 595);
+        dgvRegexMatches.Name = "dgvRegexMatches";
+        dgvRegexMatches.ReadOnly = true;
+        dgvRegexMatches.RowHeadersWidth = 51;
+        dgvRegexMatches.Size = new Size(716, 100);
+        dgvRegexMatches.TabIndex = 56;
+        // 
+        // btnRegexApplyToField
+        // 
+        btnRegexApplyToField.BackColor = Color.FromArgb(46, 117, 182);
+        btnRegexApplyToField.FlatStyle = FlatStyle.Flat;
+        btnRegexApplyToField.ForeColor = Color.White;
+        btnRegexApplyToField.Location = new Point(16, 705);
+        btnRegexApplyToField.Name = "btnRegexApplyToField";
+        btnRegexApplyToField.Size = new Size(280, 34);
+        btnRegexApplyToField.TabIndex = 57;
+        btnRegexApplyToField.Text = "← Asignar regex al campo seleccionado";
+        btnRegexApplyToField.UseVisualStyleBackColor = false;
+        btnRegexApplyToField.Click += BtnRegexApplyToField_Click;
         // 
         // tabMultiIVA
         // 
@@ -875,103 +949,6 @@ partial class GestionEmisoresForm
         btnPostProcRemove.UseVisualStyleBackColor = true;
         btnPostProcRemove.Click += BtnPostProcRemove_Click;
         // 
-        // tabRegex
-        // 
-        tabRegex.Controls.Add(lblRegexTexto);
-        tabRegex.Controls.Add(txtRegexSource);
-        tabRegex.Controls.Add(lblRegexPattern);
-        tabRegex.Controls.Add(txtRegexPattern);
-        tabRegex.Controls.Add(lblRegexMatchCount);
-        tabRegex.Controls.Add(lblRegexResultados);
-        tabRegex.Controls.Add(dgvRegexMatches);
-        tabRegex.Controls.Add(btnRegexApplyToField);
-        tabRegex.Location = new Point(4, 29);
-        tabRegex.Name = "tabRegex";
-        tabRegex.Size = new Size(736, 507);
-        tabRegex.TabIndex = 5;
-        tabRegex.Text = "Probar Regex";
-        // 
-        // lblRegexTexto
-        // 
-        lblRegexTexto.AutoSize = true;
-        lblRegexTexto.Location = new Point(16, 16);
-        lblRegexTexto.Name = "lblRegexTexto";
-        lblRegexTexto.Size = new Size(324, 20);
-        lblRegexTexto.TabIndex = 0;
-        lblRegexTexto.Text = "Texto de prueba (pégalo o extraído de un PDF):";
-        // 
-        // txtRegexSource
-        // 
-        txtRegexSource.Font = new Font("Consolas", 9F);
-        txtRegexSource.Location = new Point(16, 38);
-        txtRegexSource.Multiline = true;
-        txtRegexSource.Name = "txtRegexSource";
-        txtRegexSource.ScrollBars = ScrollBars.Vertical;
-        txtRegexSource.Size = new Size(716, 200);
-        txtRegexSource.TabIndex = 1;
-        txtRegexSource.TextChanged += EjecutarRegex;
-        // 
-        // lblRegexPattern
-        // 
-        lblRegexPattern.AutoSize = true;
-        lblRegexPattern.Location = new Point(16, 248);
-        lblRegexPattern.Name = "lblRegexPattern";
-        lblRegexPattern.Size = new Size(127, 20);
-        lblRegexPattern.TabIndex = 2;
-        lblRegexPattern.Text = "Expresión regular:";
-        // 
-        // txtRegexPattern
-        // 
-        txtRegexPattern.Font = new Font("Consolas", 10F);
-        txtRegexPattern.Location = new Point(16, 270);
-        txtRegexPattern.Name = "txtRegexPattern";
-        txtRegexPattern.Size = new Size(600, 27);
-        txtRegexPattern.TabIndex = 3;
-        txtRegexPattern.TextChanged += EjecutarRegex;
-        // 
-        // lblRegexMatchCount
-        // 
-        lblRegexMatchCount.AutoSize = true;
-        lblRegexMatchCount.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-        lblRegexMatchCount.Location = new Point(630, 273);
-        lblRegexMatchCount.Name = "lblRegexMatchCount";
-        lblRegexMatchCount.Size = new Size(0, 20);
-        lblRegexMatchCount.TabIndex = 4;
-        // 
-        // lblRegexResultados
-        // 
-        lblRegexResultados.AutoSize = true;
-        lblRegexResultados.Location = new Point(16, 304);
-        lblRegexResultados.Name = "lblRegexResultados";
-        lblRegexResultados.Size = new Size(289, 20);
-        lblRegexResultados.TabIndex = 5;
-        lblRegexResultados.Text = "Resultados (matches y grupos de captura):";
-        // 
-        // dgvRegexMatches
-        // 
-        dgvRegexMatches.AllowUserToAddRows = false;
-        dgvRegexMatches.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        dgvRegexMatches.ColumnHeadersHeight = 29;
-        dgvRegexMatches.Location = new Point(16, 326);
-        dgvRegexMatches.Name = "dgvRegexMatches";
-        dgvRegexMatches.ReadOnly = true;
-        dgvRegexMatches.RowHeadersWidth = 51;
-        dgvRegexMatches.Size = new Size(716, 110);
-        dgvRegexMatches.TabIndex = 6;
-        // 
-        // btnRegexApplyToField
-        // 
-        btnRegexApplyToField.BackColor = Color.FromArgb(46, 117, 182);
-        btnRegexApplyToField.FlatStyle = FlatStyle.Flat;
-        btnRegexApplyToField.ForeColor = Color.White;
-        btnRegexApplyToField.Location = new Point(16, 456);
-        btnRegexApplyToField.Name = "btnRegexApplyToField";
-        btnRegexApplyToField.Size = new Size(280, 34);
-        btnRegexApplyToField.TabIndex = 7;
-        btnRegexApplyToField.Text = "← Asignar regex al campo seleccionado";
-        btnRegexApplyToField.UseVisualStyleBackColor = false;
-        btnRegexApplyToField.Click += BtnRegexApplyToField_Click;
-        // 
         // btnGuardar
         // 
         btnGuardar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
@@ -1078,8 +1055,6 @@ partial class GestionEmisoresForm
         ((System.ComponentModel.ISupportInitialize)dgvMultiIVAMapeo).EndInit();
         tabPostProc.ResumeLayout(false);
         tabPostProc.PerformLayout();
-        tabRegex.ResumeLayout(false);
-        tabRegex.PerformLayout();
         ((System.ComponentModel.ISupportInitialize)dgvRegexMatches).EndInit();
         ((System.ComponentModel.ISupportInitialize)picFactura).EndInit();
         panelDerecho.ResumeLayout(false);
@@ -1158,9 +1133,7 @@ partial class GestionEmisoresForm
     private DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
     private DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
     private DataGridViewTextBoxColumn dataGridViewTextBoxColumn10;
-    private Button btnAbrirEditorVisual;
-    private TabPage tabRegex;
-    private Label lblRegexTexto;
+    private Label lblSeparadorRegex;
     private TextBox txtRegexSource;
     private Label lblRegexPattern;
     private TextBox txtRegexPattern;

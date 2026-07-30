@@ -24,6 +24,7 @@ public partial class GestionEmisoresForm : Form
     private bool _rectanguloActivo;
     private bool _sincronizando;
     private bool _cargandoCampo;
+    private CampoConfig? _campoAnterior;
     private readonly InvoiceProcessorService _invoiceService = new();
 
     public GestionEmisoresForm()
@@ -81,7 +82,6 @@ public partial class GestionEmisoresForm : Form
     private void BtnRegexApplyToField_Click(object? sender, EventArgs e)
     {
         if (string.IsNullOrEmpty(txtRegexPattern.Text)) return;
-        tabs.SelectedIndex = 1;
         if (lstCampos.SelectedItem is CampoConfig campo)
             txtCampoRegex.Text = txtRegexPattern.Text;
     }
@@ -505,7 +505,12 @@ public partial class GestionEmisoresForm : Form
         _emisorActual.ConceptoGasto = txtConceptoGasto.Text.Trim();
 
         if (lstCampos.SelectedItem is CampoConfig campoActual)
+        {
+            var nombre = cmbCampoNombre.Text.Trim();
+            if (!string.IsNullOrEmpty(nombre))
+                campoActual.Nombre = nombre;
             ActualizarCampoDesdeDetalle(campoActual);
+        }
         _emisorActual.Campos = lstCampos.Items.Cast<CampoConfig>().ToList();
     }
 
@@ -655,7 +660,6 @@ public partial class GestionEmisoresForm : Form
 
     private void ActualizarCampoDesdeDetalle(CampoConfig campo)
     {
-        campo.Nombre = cmbCampoNombre.Text.Trim();
         var tipo = cmbCampoTipo.SelectedItem?.ToString() ?? "Regex";
         campo.EsSuma = tipo == "Suma";
         campo.UsarRegexFechaGeneral = tipo == "RegexFechaGeneral";
@@ -670,6 +674,17 @@ public partial class GestionEmisoresForm : Form
             : null;
     }
 
+    private void LimpiarDetalleCampo()
+    {
+        cmbCampoNombre.Text = "";
+        cmbCampoTipo.SelectedIndex = -1;
+        txtCampoRegex.Text = "";
+        txtCampoGrupo.Text = "1";
+        txtCampoValorFijo.Text = "";
+        txtCampoFormatoFecha.Text = "";
+        txtCampoCamposSuma.Text = "";
+    }
+
     private void CampoDetalle_Changed(object? sender, EventArgs e)
     {
         if (_cargandoCampo) return;
@@ -678,9 +693,57 @@ public partial class GestionEmisoresForm : Form
         MarcarModificado();
     }
 
+    private void CmbCampoNombre_TextChanged(object? sender, EventArgs e)
+    {
+        if (_cargandoCampo) return;
+
+        var text = cmbCampoNombre.Text?.Trim() ?? "";
+
+        if (string.IsNullOrEmpty(text))
+        {
+            if (lstCampos.SelectedItem != null)
+            {
+                if (_campoAnterior != null)
+                    ActualizarCampoDesdeDetalle(_campoAnterior);
+                _campoAnterior = null;
+                _cargandoCampo = true;
+                lstCampos.SelectedItem = null;
+                _cargandoCampo = false;
+            }
+            return;
+        }
+
+        var match = lstCampos.Items.Cast<CampoConfig>()
+            .FirstOrDefault(c => c.Nombre.Equals(text, StringComparison.OrdinalIgnoreCase));
+
+        if (match != null)
+        {
+            if (lstCampos.SelectedItem != match)
+                lstCampos.SelectedItem = match;
+        }
+        else
+        {
+            if (lstCampos.SelectedItem != null)
+            {
+                if (_campoAnterior != null)
+                    ActualizarCampoDesdeDetalle(_campoAnterior);
+                _campoAnterior = null;
+                _cargandoCampo = true;
+                lstCampos.SelectedItem = null;
+                cmbCampoNombre.Text = text;
+                _cargandoCampo = false;
+            }
+        }
+    }
+
     private void LstCampos_SelectedIndexChanged(object? sender, EventArgs e)
     {
+        if (_campoAnterior != null)
+            ActualizarCampoDesdeDetalle(_campoAnterior);
+
         _cargandoCampo = true;
+        _campoAnterior = lstCampos.SelectedItem as CampoConfig;
+
         if (lstCampos.SelectedItem is CampoConfig campo)
         {
             if (cmbCampoNombre != null) cmbCampoNombre.Text = campo.Nombre;
@@ -694,6 +757,17 @@ public partial class GestionEmisoresForm : Form
             txtCampoValorFijo.Text = campo.ValorFijo ?? "";
             txtCampoFormatoFecha.Text = campo.FormatoFecha ?? "";
             txtCampoCamposSuma.Text = campo.CamposSuma != null ? string.Join(",", campo.CamposSuma) : "";
+
+            if (!campo.UsarRegexFechaGeneral && !campo.UsarRegexNifGeneral
+                && !campo.EsSuma && string.IsNullOrEmpty(campo.ValorFijo)
+                && !string.IsNullOrEmpty(txtCampoRegex.Text))
+            {
+                txtRegexPattern.Text = txtCampoRegex.Text;
+            }
+        }
+        else
+        {
+            LimpiarDetalleCampo();
         }
         _cargandoCampo = false;
     }
@@ -702,19 +776,34 @@ public partial class GestionEmisoresForm : Form
     {
         if (_emisorActual == null) return;
 
-        if (lstCampos.SelectedItem is CampoConfig campoActual)
-            ActualizarCampoDesdeDetalle(campoActual);
-
         var nombre = cmbCampoNombre?.Text?.Trim();
         if (string.IsNullOrEmpty(nombre))
         {
-            MessageBox.Show("Selecciona o escribe un nombre de campo.",
+            MessageBox.Show("Escribe un nombre de campo.",
                 "Campo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
+
+        if (lstCampos.Items.Cast<CampoConfig>().Any(c =>
+            c.Nombre.Equals(nombre, StringComparison.OrdinalIgnoreCase)))
+        {
+            MessageBox.Show($"Ya existe un campo con el nombre '{nombre}'.",
+                "Duplicado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
         var campo = new CampoConfig { Nombre = nombre };
+        ActualizarCampoDesdeDetalle(campo);
+        campo.Nombre = nombre;
+
         lstCampos.Items.Add(campo);
         lstCampos.SelectedItem = campo;
+
+        _cargandoCampo = true;
+        LimpiarDetalleCampo();
+        if (cmbCampoNombre != null) cmbCampoNombre.Text = nombre;
+        _cargandoCampo = false;
+
         MarcarModificado();
     }
 
@@ -757,30 +846,6 @@ public partial class GestionEmisoresForm : Form
         {
             lstPostProc.Items.Remove(regla);
             MarcarModificado();
-        }
-    }
-
-    // ── EVENTOS ZONAS OCR ──────────────────────────────────────────────────────
-
-    private void BtnAbrirEditorVisual_Click(object? sender, EventArgs e)
-    {
-        if (_emisorActual == null) return;
-        using var editor = new DefinirPlantillaForm();
-        editor.ShowDialog(this);
-
-        var plantillaService = new PlantillaOcrService();
-        var plantilla = plantillaService.ObtenerPorEmisor(_emisorActual.Nombre);
-        dgvZonas.Rows.Clear();
-        if (plantilla != null)
-        {
-            _emisorActual.ZonasOcr = plantilla.Zonas.Select(z => new ZonaOcrConfig
-            {
-                Campo = z.Campo, NumPagina = z.NumPagina,
-                X = z.X, Y = z.Y, Ancho = z.Ancho, Alto = z.Alto,
-                RegexRespaldo = z.RegexRespaldo, Opcional = z.Opcional
-            }).ToList();
-            foreach (var z in _emisorActual.ZonasOcr)
-                dgvZonas.Rows.Add(z.Campo, z.NumPagina, z.X, z.Y, z.Ancho, z.Alto, z.RegexRespaldo ?? "", z.Opcional);
         }
     }
 

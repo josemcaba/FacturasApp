@@ -10,7 +10,7 @@ public class ConfiguracionEmisores
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "FacturasApp", "Emisores");
 
-    private Dictionary<string, EmisorConfig>? _cache;
+    private static Dictionary<string, EmisorConfig>? _cache;
 
     private readonly XmlSerializer _serializer = new(typeof(EmisorConfig));
 
