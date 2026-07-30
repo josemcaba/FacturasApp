@@ -26,10 +26,21 @@ public partial class GestionEmisoresForm : Form
     private bool _cargandoCampo;
     private CampoConfig? _campoAnterior;
     private readonly InvoiceProcessorService _invoiceService = new();
+    private readonly PdfTextExtractor _textExtractor = new();
+    private readonly OcrZonalExtractor _ocrZonalExtractor = new();
+    private bool _sincronizandoTexto;
 
     public GestionEmisoresForm()
     {
         InitializeComponent();
+
+        txtRegexSource.TextChanged += (_, _) =>
+        {
+            if (_sincronizandoTexto) return;
+            _sincronizandoTexto = true;
+            txtZonasSource.Text = txtRegexSource.Text;
+            _sincronizandoTexto = false;
+        };
         panelCentral.Resize += PanelCentral_Resize;
         PanelCentral_Resize(null, EventArgs.Empty);
         CargarEmisores();
@@ -188,7 +199,7 @@ public partial class GestionEmisoresForm : Form
         MostrarPaginaActual();
         picFactura.Invalidate();
 
-        ExtraerTextoMuestra();
+        ActualizarVistaPreviaZonal();
     }
 
     private void ExtraerTextoMuestra()
@@ -202,6 +213,48 @@ public partial class GestionEmisoresForm : Form
         {
             System.Diagnostics.Debug.WriteLine($"Error al extraer texto de muestra: {ex.Message}");
         }
+    }
+
+    private void TxtZonasSource_TextChanged(object? sender, EventArgs e)
+    {
+        if (_sincronizandoTexto) return;
+        _sincronizandoTexto = true;
+        txtRegexSource.Text = txtZonasSource.Text;
+        _sincronizandoTexto = false;
+    }
+
+    private void ActualizarVistaPreviaZonal()
+    {
+        if (string.IsNullOrEmpty(_rutaPdf)) return;
+
+        string texto;
+        try
+        {
+            if (_zonasDibujo.Count == 0)
+            {
+                texto = _invoiceService.ExtraerTexto(_rutaPdf);
+            }
+            else
+            {
+                var plantilla = new PlantillaOcr
+                {
+                    Emisor = "Previsualización",
+                    Zonas = _zonasDibujo.ToList()
+                };
+                var resultados = _ocrZonalExtractor.ExtraerZonas(_rutaPdf, plantilla);
+                texto = string.Join(Environment.NewLine,
+                    resultados.Select(kv => $"[{kv.Key}]: {kv.Value}"));
+            }
+        }
+        catch
+        {
+            texto = _invoiceService.ExtraerTexto(_rutaPdf);
+        }
+
+        _sincronizandoTexto = true;
+        txtRegexSource.Text = texto;
+        txtZonasSource.Text = texto;
+        _sincronizandoTexto = false;
     }
 
     private void TabPaginas_SelectedIndexChanged(object? sender, EventArgs e)
@@ -289,6 +342,7 @@ public partial class GestionEmisoresForm : Form
 
         _rectanguloActivo = false;
         picFactura.Invalidate();
+        ActualizarVistaPreviaZonal();
     }
 
     // ── Coordenadas ──────────────────────────────────────────────────
@@ -415,6 +469,7 @@ public partial class GestionEmisoresForm : Form
         MarcarModificado();
         SincronizarZonasDesdeDgv();
         picFactura.Invalidate();
+        ActualizarVistaPreviaZonal();
     }
 
     private void DgvUserAddedRow(object? sender, DataGridViewRowEventArgs e) => MarcarModificado();
@@ -425,6 +480,7 @@ public partial class GestionEmisoresForm : Form
         MarcarModificado();
         SincronizarZonasDesdeDgv();
         picFactura.Invalidate();
+        ActualizarVistaPreviaZonal();
     }
     // ── CARGA Y SELECCIÓN ──────────────────────────────────────────────────────
 
@@ -491,6 +547,7 @@ public partial class GestionEmisoresForm : Form
         _cargando = false;
         SincronizarZonasDesdeDgv();
         picFactura.Invalidate();
+        ActualizarVistaPreviaZonal();
     }
 
     private void SincronizarUIaConfig()
