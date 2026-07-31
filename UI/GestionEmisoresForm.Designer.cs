@@ -18,6 +18,15 @@ partial class GestionEmisoresForm
 
     private void InitializeComponent()
     {
+        DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+        DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
+        DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+        DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+        DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+        DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+        DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+        DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
+        DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GestionEmisoresForm));
         lstEmisores = new ListBox();
         panelIzquierdo = new Panel();
@@ -36,15 +45,12 @@ partial class GestionEmisoresForm
         txtNuevoId = new TextBox();
         btnAddId = new Button();
         btnRemoveId = new Button();
-        lblGeneralModo = new Label();
-        cmbModoExtraccion = new ComboBox();
         lblGeneralCultura = new Label();
         cmbCulturaFecha = new ComboBox();
         lblGeneralConceptoIngreso = new Label();
         txtConceptoIngreso = new TextBox();
         lblGeneralConceptoGasto = new Label();
         txtConceptoGasto = new TextBox();
-        tabZonas = new TabPage();
         lblZonasTitulo = new Label();
         dgvZonas = new DataGridView();
         dataGridViewTextBoxColumn3 = new DataGridViewTextBoxColumn();
@@ -53,8 +59,7 @@ partial class GestionEmisoresForm
         dataGridViewTextBoxColumn6 = new DataGridViewTextBoxColumn();
         dataGridViewTextBoxColumn7 = new DataGridViewTextBoxColumn();
         dataGridViewTextBoxColumn8 = new DataGridViewTextBoxColumn();
-        lblSeparadorZonas = new Label();
-        txtZonasSource = new TextBox();
+        dataGridViewTextBoxColumn9 = new DataGridViewTextBoxColumn();
         tabCampos = new TabPage();
         lblCamposLista = new Label();
         lstCampos = new ListBox();
@@ -89,7 +94,7 @@ partial class GestionEmisoresForm
         txtMultiIVARegex = new TextBox();
         lblMultiIVAMapeo = new Label();
         dgvMultiIVAMapeo = new DataGridView();
-        dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
+        dataGridViewComboBoxColumn1 = new DataGridViewComboBoxColumn();
         dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
         tabPostProc = new TabPage();
         lblPostProcReglas = new Label();
@@ -108,10 +113,11 @@ partial class GestionEmisoresForm
         picFactura = new PictureBox();
         panelDerecho = new Panel();
         panelCentral = new Panel();
+        cmbModoExtraccion = new ComboBox();
+        lblGeneralModo = new Label();
         panelIzquierdo.SuspendLayout();
         tabs.SuspendLayout();
         tabGeneral.SuspendLayout();
-        tabZonas.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)dgvZonas).BeginInit();
         tabCampos.SuspendLayout();
         panelDetalle.SuspendLayout();
@@ -200,7 +206,6 @@ partial class GestionEmisoresForm
         // 
         tabs.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         tabs.Controls.Add(tabGeneral);
-        tabs.Controls.Add(tabZonas);
         tabs.Controls.Add(tabCampos);
         tabs.Controls.Add(tabMultiIVA);
         tabs.Controls.Add(tabPostProc);
@@ -221,14 +226,14 @@ partial class GestionEmisoresForm
         tabGeneral.Controls.Add(txtNuevoId);
         tabGeneral.Controls.Add(btnAddId);
         tabGeneral.Controls.Add(btnRemoveId);
-        tabGeneral.Controls.Add(lblGeneralModo);
-        tabGeneral.Controls.Add(cmbModoExtraccion);
         tabGeneral.Controls.Add(lblGeneralCultura);
         tabGeneral.Controls.Add(cmbCulturaFecha);
         tabGeneral.Controls.Add(lblGeneralConceptoIngreso);
         tabGeneral.Controls.Add(txtConceptoIngreso);
         tabGeneral.Controls.Add(lblGeneralConceptoGasto);
         tabGeneral.Controls.Add(txtConceptoGasto);
+        tabGeneral.Controls.Add(lblZonasTitulo);
+        tabGeneral.Controls.Add(dgvZonas);
         tabGeneral.Location = new Point(4, 29);
         tabGeneral.Name = "tabGeneral";
         tabGeneral.Size = new Size(736, 627);
@@ -255,24 +260,24 @@ partial class GestionEmisoresForm
         // lblGeneralNif
         // 
         lblGeneralNif.AutoSize = true;
-        lblGeneralNif.Location = new Point(16, 68);
+        lblGeneralNif.Location = new Point(422, 16);
         lblGeneralNif.Name = "lblGeneralNif";
-        lblGeneralNif.Size = new Size(268, 20);
+        lblGeneralNif.Size = new Size(34, 20);
         lblGeneralNif.TabIndex = 2;
-        lblGeneralNif.Text = "NIF (clave única = nombre del archivo):";
+        lblGeneralNif.Text = "NIF:";
         // 
         // txtNif
         // 
-        txtNif.Location = new Point(16, 90);
+        txtNif.Location = new Point(422, 38);
         txtNif.Name = "txtNif";
         txtNif.Size = new Size(200, 27);
-        txtNif.TabIndex = 3;
+        txtNif.TabIndex = 2;
         txtNif.TextChanged += ControlModificado;
         // 
         // lblGeneralIds
         // 
         lblGeneralIds.AutoSize = true;
-        lblGeneralIds.Location = new Point(16, 120);
+        lblGeneralIds.Location = new Point(16, 86);
         lblGeneralIds.Name = "lblGeneralIds";
         lblGeneralIds.Size = new Size(323, 20);
         lblGeneralIds.TabIndex = 4;
@@ -280,22 +285,22 @@ partial class GestionEmisoresForm
         // 
         // lstIdentificadores
         // 
-        lstIdentificadores.Location = new Point(16, 177);
+        lstIdentificadores.Location = new Point(16, 143);
         lstIdentificadores.Name = "lstIdentificadores";
         lstIdentificadores.Size = new Size(400, 84);
         lstIdentificadores.TabIndex = 5;
         // 
         // txtNuevoId
         // 
-        txtNuevoId.Location = new Point(16, 143);
+        txtNuevoId.Location = new Point(16, 109);
         txtNuevoId.Name = "txtNuevoId";
         txtNuevoId.Size = new Size(316, 27);
-        txtNuevoId.TabIndex = 6;
+        txtNuevoId.TabIndex = 3;
         // 
         // btnAddId
         // 
         btnAddId.FlatStyle = FlatStyle.Flat;
-        btnAddId.Location = new Point(338, 141);
+        btnAddId.Location = new Point(338, 107);
         btnAddId.Name = "btnAddId";
         btnAddId.Size = new Size(36, 30);
         btnAddId.TabIndex = 7;
@@ -306,7 +311,7 @@ partial class GestionEmisoresForm
         // btnRemoveId
         // 
         btnRemoveId.FlatStyle = FlatStyle.Flat;
-        btnRemoveId.Location = new Point(380, 141);
+        btnRemoveId.Location = new Point(380, 107);
         btnRemoveId.Name = "btnRemoveId";
         btnRemoveId.Size = new Size(36, 30);
         btnRemoveId.TabIndex = 8;
@@ -314,29 +319,10 @@ partial class GestionEmisoresForm
         btnRemoveId.UseVisualStyleBackColor = true;
         btnRemoveId.Click += BtnRemoveId_Click;
         // 
-        // lblGeneralModo
-        // 
-        lblGeneralModo.AutoSize = true;
-        lblGeneralModo.Location = new Point(16, 282);
-        lblGeneralModo.Name = "lblGeneralModo";
-        lblGeneralModo.Size = new Size(204, 20);
-        lblGeneralModo.TabIndex = 9;
-        lblGeneralModo.Text = "Modo de extracción de texto:";
-        // 
-        // cmbModoExtraccion
-        // 
-        cmbModoExtraccion.DropDownStyle = ComboBoxStyle.DropDownList;
-        cmbModoExtraccion.Items.AddRange(new object[] { "Simple", "OrdenadoPosicion", "LayoutAnalysis" });
-        cmbModoExtraccion.Location = new Point(16, 304);
-        cmbModoExtraccion.Name = "cmbModoExtraccion";
-        cmbModoExtraccion.Size = new Size(200, 28);
-        cmbModoExtraccion.TabIndex = 10;
-        cmbModoExtraccion.SelectedIndexChanged += ControlModificado;
-        // 
         // lblGeneralCultura
         // 
         lblGeneralCultura.AutoSize = true;
-        lblGeneralCultura.Location = new Point(257, 281);
+        lblGeneralCultura.Location = new Point(422, 136);
         lblGeneralCultura.Name = "lblGeneralCultura";
         lblGeneralCultura.Size = new Size(139, 20);
         lblGeneralCultura.TabIndex = 11;
@@ -346,16 +332,16 @@ partial class GestionEmisoresForm
         // 
         cmbCulturaFecha.DropDownStyle = ComboBoxStyle.DropDownList;
         cmbCulturaFecha.Items.AddRange(new object[] { "es-ES", "en-US" });
-        cmbCulturaFecha.Location = new Point(257, 304);
+        cmbCulturaFecha.Location = new Point(573, 133);
         cmbCulturaFecha.Name = "cmbCulturaFecha";
-        cmbCulturaFecha.Size = new Size(159, 28);
+        cmbCulturaFecha.Size = new Size(155, 28);
         cmbCulturaFecha.TabIndex = 12;
         cmbCulturaFecha.SelectedIndexChanged += ControlModificado;
         // 
         // lblGeneralConceptoIngreso
         // 
         lblGeneralConceptoIngreso.AutoSize = true;
-        lblGeneralConceptoIngreso.Location = new Point(16, 355);
+        lblGeneralConceptoIngreso.Location = new Point(422, 170);
         lblGeneralConceptoIngreso.Name = "lblGeneralConceptoIngreso";
         lblGeneralConceptoIngreso.Size = new Size(129, 20);
         lblGeneralConceptoIngreso.TabIndex = 13;
@@ -363,16 +349,16 @@ partial class GestionEmisoresForm
         // 
         // txtConceptoIngreso
         // 
-        txtConceptoIngreso.Location = new Point(16, 378);
+        txtConceptoIngreso.Location = new Point(573, 167);
         txtConceptoIngreso.Name = "txtConceptoIngreso";
-        txtConceptoIngreso.Size = new Size(129, 27);
+        txtConceptoIngreso.Size = new Size(155, 27);
         txtConceptoIngreso.TabIndex = 14;
         txtConceptoIngreso.TextChanged += ControlModificado;
         // 
         // lblGeneralConceptoGasto
         // 
         lblGeneralConceptoGasto.AutoSize = true;
-        lblGeneralConceptoGasto.Location = new Point(167, 355);
+        lblGeneralConceptoGasto.Location = new Point(422, 203);
         lblGeneralConceptoGasto.Name = "lblGeneralConceptoGasto";
         lblGeneralConceptoGasto.Size = new Size(117, 20);
         lblGeneralConceptoGasto.TabIndex = 15;
@@ -380,43 +366,48 @@ partial class GestionEmisoresForm
         // 
         // txtConceptoGasto
         // 
-        txtConceptoGasto.Location = new Point(167, 378);
+        txtConceptoGasto.Location = new Point(573, 200);
         txtConceptoGasto.Name = "txtConceptoGasto";
-        txtConceptoGasto.Size = new Size(129, 27);
+        txtConceptoGasto.Size = new Size(155, 27);
         txtConceptoGasto.TabIndex = 16;
         txtConceptoGasto.TextChanged += ControlModificado;
-        // 
-        // tabZonas
-        // 
-        tabZonas.Controls.Add(lblZonasTitulo);
-        tabZonas.Controls.Add(dgvZonas);
-        tabZonas.Controls.Add(lblSeparadorZonas);
-        tabZonas.Controls.Add(txtZonasSource);
-        tabZonas.Location = new Point(4, 29);
-        tabZonas.Name = "tabZonas";
-        tabZonas.Size = new Size(736, 627);
-        tabZonas.TabIndex = 4;
-        tabZonas.Text = "Zonas OCR";
         // 
         // lblZonasTitulo
         // 
         lblZonasTitulo.AutoSize = true;
-        lblZonasTitulo.Location = new Point(3, 15);
+        lblZonasTitulo.Location = new Point(16, 249);
         lblZonasTitulo.Name = "lblZonasTitulo";
-        lblZonasTitulo.Size = new Size(126, 20);
+        lblZonasTitulo.Size = new Size(85, 20);
         lblZonasTitulo.TabIndex = 0;
-        lblZonasTitulo.Text = "Zonas del emisor:";
+        lblZonasTitulo.Text = "Zonas OCR:";
         // 
         // dgvZonas
         // 
-        dgvZonas.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-        dgvZonas.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        dgvZonas.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+        dgvZonas.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+        dgvZonas.BackgroundColor = Color.White;
+        dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+        dataGridViewCellStyle1.BackColor = SystemColors.Control;
+        dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+        dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+        dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+        dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+        dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+        dgvZonas.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
         dgvZonas.ColumnHeadersHeight = 29;
-        dgvZonas.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn3, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5, dataGridViewTextBoxColumn6, dataGridViewTextBoxColumn7, dataGridViewTextBoxColumn8 });
-        dgvZonas.Location = new Point(3, 38);
+        dgvZonas.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn3, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5, dataGridViewTextBoxColumn6, dataGridViewTextBoxColumn7, dataGridViewTextBoxColumn8, dataGridViewTextBoxColumn9 });
+        dgvZonas.Location = new Point(16, 272);
         dgvZonas.Name = "dgvZonas";
+        dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.TopCenter;
+        dataGridViewCellStyle9.BackColor = SystemColors.Control;
+        dataGridViewCellStyle9.Font = new Font("Segoe UI", 9F);
+        dataGridViewCellStyle9.ForeColor = SystemColors.WindowText;
+        dataGridViewCellStyle9.SelectionBackColor = SystemColors.Highlight;
+        dataGridViewCellStyle9.SelectionForeColor = SystemColors.HighlightText;
+        dataGridViewCellStyle9.WrapMode = DataGridViewTriState.True;
+        dgvZonas.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
         dgvZonas.RowHeadersWidth = 51;
-        dgvZonas.Size = new Size(729, 260);
+        dgvZonas.Size = new Size(704, 343);
         dgvZonas.TabIndex = 1;
         dgvZonas.CellValueChanged += DgvCellValueChanged;
         dgvZonas.UserAddedRow += DgvUserAddedRow;
@@ -424,64 +415,82 @@ partial class GestionEmisoresForm
         // 
         // dataGridViewTextBoxColumn3
         // 
-        dataGridViewTextBoxColumn3.HeaderText = "Campo";
+        dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.TopCenter;
+        dataGridViewCellStyle2.NullValue = null;
+        dataGridViewTextBoxColumn3.DefaultCellStyle = dataGridViewCellStyle2;
+        dataGridViewTextBoxColumn3.HeaderText = "Zona";
         dataGridViewTextBoxColumn3.MinimumWidth = 6;
         dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+        dataGridViewTextBoxColumn3.Width = 60;
         // 
         // dataGridViewTextBoxColumn4
         // 
+        dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.TopCenter;
+        dataGridViewCellStyle3.NullValue = null;
+        dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle3;
         dataGridViewTextBoxColumn4.HeaderText = "Pág";
         dataGridViewTextBoxColumn4.MinimumWidth = 6;
         dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+        dataGridViewTextBoxColumn4.Width = 50;
         // 
         // dataGridViewTextBoxColumn5
         // 
+        dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.TopCenter;
+        dataGridViewCellStyle4.Format = "N1";
+        dataGridViewCellStyle4.NullValue = null;
+        dataGridViewTextBoxColumn5.DefaultCellStyle = dataGridViewCellStyle4;
         dataGridViewTextBoxColumn5.HeaderText = "X%";
         dataGridViewTextBoxColumn5.MinimumWidth = 6;
         dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+        dataGridViewTextBoxColumn5.Width = 55;
         // 
         // dataGridViewTextBoxColumn6
         // 
+        dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.TopCenter;
+        dataGridViewCellStyle5.Format = "N1";
+        dataGridViewCellStyle5.NullValue = null;
+        dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle5;
         dataGridViewTextBoxColumn6.HeaderText = "Y%";
         dataGridViewTextBoxColumn6.MinimumWidth = 6;
         dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
+        dataGridViewTextBoxColumn6.Width = 55;
         // 
         // dataGridViewTextBoxColumn7
         // 
-        dataGridViewTextBoxColumn7.HeaderText = "Ancho%";
+        dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.TopCenter;
+        dataGridViewCellStyle6.Format = "N1";
+        dataGridViewCellStyle6.NullValue = null;
+        dataGridViewTextBoxColumn7.DefaultCellStyle = dataGridViewCellStyle6;
+        dataGridViewTextBoxColumn7.HeaderText = "W%";
         dataGridViewTextBoxColumn7.MinimumWidth = 6;
         dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
+        dataGridViewTextBoxColumn7.Width = 55;
         // 
         // dataGridViewTextBoxColumn8
         // 
-        dataGridViewTextBoxColumn8.HeaderText = "Alto%";
+        dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.TopCenter;
+        dataGridViewCellStyle7.Format = "N1";
+        dataGridViewCellStyle7.NullValue = null;
+        dataGridViewTextBoxColumn8.DefaultCellStyle = dataGridViewCellStyle7;
+        dataGridViewTextBoxColumn8.HeaderText = "H%";
         dataGridViewTextBoxColumn8.MinimumWidth = 6;
         dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
+        dataGridViewTextBoxColumn8.Width = 55;
         // 
-        // lblSeparadorZonas
+        // dataGridViewTextBoxColumn9
         // 
-        lblSeparadorZonas.AutoSize = true;
-        lblSeparadorZonas.Font = new Font("Consolas", 10F, FontStyle.Bold);
-        lblSeparadorZonas.ForeColor = Color.Gray;
-        lblSeparadorZonas.Location = new Point(3, 307);
-        lblSeparadorZonas.Name = "lblSeparadorZonas";
-        lblSeparadorZonas.Size = new Size(273, 20);
-        lblSeparadorZonas.TabIndex = 56;
-        lblSeparadorZonas.Text = "━━━ Vista de la extracción ━━━";
-        // 
-        // txtZonasSource
-        // 
-        txtZonasSource.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-        txtZonasSource.Font = new Font("Consolas", 9F);
-        txtZonasSource.Location = new Point(3, 330);
-        txtZonasSource.Multiline = true;
-        txtZonasSource.Name = "txtZonasSource";
-        txtZonasSource.Size = new Size(729, 294);
-        txtZonasSource.TabIndex = 57;
-        txtZonasSource.TextChanged += TxtZonasSource_TextChanged;
+        dataGridViewTextBoxColumn9.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+        dataGridViewCellStyle8.WrapMode = DataGridViewTriState.True;
+        dataGridViewTextBoxColumn9.DefaultCellStyle = dataGridViewCellStyle8;
+        dataGridViewTextBoxColumn9.HeaderText = "Texto extraído";
+        dataGridViewTextBoxColumn9.MinimumWidth = 6;
+        dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
+        dataGridViewTextBoxColumn9.ReadOnly = true;
         // 
         // tabCampos
         // 
+        tabCampos.Controls.Add(lblGeneralModo);
+        tabCampos.Controls.Add(cmbModoExtraccion);
         tabCampos.Controls.Add(lblCamposLista);
         tabCampos.Controls.Add(lstCampos);
         tabCampos.Controls.Add(panelDetalle);
@@ -553,7 +562,8 @@ partial class GestionEmisoresForm
         // 
         // cmbCampoNombre
         // 
-        cmbCampoNombre.Items.AddRange(new object[] { "NumeroFactura", "Fecha", "BaseImponible", "PorcentajeIVA", "CuotaIVA", "Total", "ReceptorNombre", "ReceptorNif", "EmisorNif", "PorcentajeIRPF", "CuotaIRPF", "PorcentajeRE", "CuotaRE", "ConceptoIngreso", "ConceptoGasto" });
+        cmbCampoNombre.DropDownStyle = ComboBoxStyle.DropDownList;
+        cmbCampoNombre.Items.AddRange(new object[] { "NumeroFactura", "Fecha", "ReceptorNombre", "ReceptorNif", "BaseImponible", "PorcentajeIVA", "CuotaIVA", "PorcentajeIRPF", "CuotaIRPF", "PorcentajeRE", "CuotaRE", "Total", "ConceptoIngreso", "ConceptoGasto" });
         cmbCampoNombre.Location = new Point(153, 9);
         cmbCampoNombre.Name = "cmbCampoNombre";
         cmbCampoNombre.Size = new Size(308, 28);
@@ -708,6 +718,7 @@ partial class GestionEmisoresForm
         txtRegexSource.Location = new Point(3, 354);
         txtRegexSource.Multiline = true;
         txtRegexSource.Name = "txtRegexSource";
+        txtRegexSource.ScrollBars = ScrollBars.Vertical;
         txtRegexSource.Size = new Size(729, 52);
         txtRegexSource.TabIndex = 51;
         txtRegexSource.TextChanged += EjecutarRegex;
@@ -833,21 +844,24 @@ partial class GestionEmisoresForm
         // 
         dgvMultiIVAMapeo.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         dgvMultiIVAMapeo.ColumnHeadersHeight = 29;
-        dgvMultiIVAMapeo.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2 });
+        dgvMultiIVAMapeo.Columns.AddRange(new DataGridViewColumn[] { dataGridViewComboBoxColumn1, dataGridViewTextBoxColumn2 });
         dgvMultiIVAMapeo.Location = new Point(16, 164);
         dgvMultiIVAMapeo.Name = "dgvMultiIVAMapeo";
         dgvMultiIVAMapeo.RowHeadersWidth = 51;
         dgvMultiIVAMapeo.Size = new Size(500, 200);
         dgvMultiIVAMapeo.TabIndex = 4;
         dgvMultiIVAMapeo.CellValueChanged += DgvCellValueChanged;
+        dgvMultiIVAMapeo.EditingControlShowing += DgvMultiIVAMapeo_EditingControlShowing;
         dgvMultiIVAMapeo.UserAddedRow += DgvUserAddedRow;
         dgvMultiIVAMapeo.UserDeletedRow += DgvUserDeletedRow;
         // 
-        // dataGridViewTextBoxColumn1
+        // dataGridViewComboBoxColumn1
         // 
-        dataGridViewTextBoxColumn1.HeaderText = "Campo";
-        dataGridViewTextBoxColumn1.MinimumWidth = 6;
-        dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+        dataGridViewComboBoxColumn1.FlatStyle = FlatStyle.Flat;
+        dataGridViewComboBoxColumn1.HeaderText = "Campo";
+        dataGridViewComboBoxColumn1.Items.AddRange(new object[] { "BaseImponible", "PorcentajeIVA", "CuotaIVA", "PorcentajeIRPF", "CuotaIRPF", "PorcentajeRE", "CuotaRE", "Total" });
+        dataGridViewComboBoxColumn1.MinimumWidth = 6;
+        dataGridViewComboBoxColumn1.Name = "dataGridViewComboBoxColumn1";
         // 
         // dataGridViewTextBoxColumn2
         // 
@@ -1044,6 +1058,28 @@ partial class GestionEmisoresForm
         panelCentral.Size = new Size(239, 711);
         panelCentral.TabIndex = 2;
         // 
+        // cmbModoExtraccion
+        // 
+        cmbModoExtraccion.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        cmbModoExtraccion.DropDownStyle = ComboBoxStyle.DropDownList;
+        cmbModoExtraccion.Items.AddRange(new object[] { "Simple", "OrdenadoPosicion", "LayoutAnalysis" });
+        cmbModoExtraccion.Location = new Point(577, 324);
+        cmbModoExtraccion.Name = "cmbModoExtraccion";
+        cmbModoExtraccion.Size = new Size(155, 28);
+        cmbModoExtraccion.TabIndex = 59;
+        cmbModoExtraccion.SelectedIndexChanged += ControlModificado;
+        cmbModoExtraccion.SelectedIndexChanged += CmbModoExtraccion_SelectedIndexChanged;
+        // 
+        // lblGeneralModo
+        // 
+        lblGeneralModo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        lblGeneralModo.AutoSize = true;
+        lblGeneralModo.Location = new Point(426, 327);
+        lblGeneralModo.Name = "lblGeneralModo";
+        lblGeneralModo.Size = new Size(145, 20);
+        lblGeneralModo.TabIndex = 60;
+        lblGeneralModo.Text = "Modo de extracción:";
+        // 
         // GestionEmisoresForm
         // 
         ClientSize = new Size(1347, 711);
@@ -1060,8 +1096,6 @@ partial class GestionEmisoresForm
         tabs.ResumeLayout(false);
         tabGeneral.ResumeLayout(false);
         tabGeneral.PerformLayout();
-        tabZonas.ResumeLayout(false);
-        tabZonas.PerformLayout();
         ((System.ComponentModel.ISupportInitialize)dgvZonas).EndInit();
         tabCampos.ResumeLayout(false);
         tabCampos.PerformLayout();
@@ -1092,8 +1126,6 @@ partial class GestionEmisoresForm
     private TextBox txtNuevoId;
     private Button btnAddId;
     private Button btnRemoveId;
-    private Label lblGeneralModo;
-    private ComboBox cmbModoExtraccion;
     private Label lblGeneralCultura;
     private ComboBox cmbCulturaFecha;
     private Label lblGeneralConceptoIngreso;
@@ -1126,7 +1158,7 @@ partial class GestionEmisoresForm
     private TextBox txtMultiIVARegex;
     private Label lblMultiIVAMapeo;
     private DataGridView dgvMultiIVAMapeo;
-    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+    private DataGridViewComboBoxColumn dataGridViewComboBoxColumn1;
     private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
     private TabPage tabPostProc;
     private Label lblPostProcReglas;
@@ -1139,15 +1171,8 @@ partial class GestionEmisoresForm
     private TextBox txtPostProcCampos;
     private Button btnPostProcAdd;
     private Button btnPostProcRemove;
-    private TabPage tabZonas;
     private Label lblZonasTitulo;
     private DataGridView dgvZonas;
-    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
-    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
-    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
-    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
-    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
-    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
     private Label lblSeparadorRegex;
     private TextBox txtRegexSource;
     private Label lblRegexPattern;
@@ -1156,12 +1181,19 @@ partial class GestionEmisoresForm
     private Label lblRegexResultados;
     private DataGridView dgvRegexMatches;
     private Button btnRegexApplyToField;
-    private Label lblSeparadorZonas = null!;
-    private TextBox txtZonasSource = null!;
     protected Button btnClonar;
     private Panel panelDerecho;
     private Panel panelCentral;
     private Button btnCargarPdfMuestra;
     private TabControl tabPaginas;
     private PictureBox picFactura;
+    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
+    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
+    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
+    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
+    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
+    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
+    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
+    private Label lblGeneralModo;
+    private ComboBox cmbModoExtraccion;
 }

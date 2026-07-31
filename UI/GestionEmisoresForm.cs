@@ -28,7 +28,6 @@ public partial class GestionEmisoresForm : Form
     private readonly InvoiceProcessorService _invoiceService = new();
     private readonly PdfTextExtractor _textExtractor = new();
     private readonly OcrZonalExtractor _ocrZonalExtractor = new();
-    private bool _sincronizandoTexto;
     private bool _esNuevo;
     private bool _saltarCambioSeleccion;
 
@@ -36,13 +35,6 @@ public partial class GestionEmisoresForm : Form
     {
         InitializeComponent();
 
-        txtRegexSource.TextChanged += (_, _) =>
-        {
-            if (_sincronizandoTexto) return;
-            _sincronizandoTexto = true;
-            txtZonasSource.Text = txtRegexSource.Text;
-            _sincronizandoTexto = false;
-        };
         panelCentral.Resize += PanelCentral_Resize;
         CargarEmisores();
         if (lstEmisores.Items.Count > 0)
@@ -206,24 +198,17 @@ public partial class GestionEmisoresForm : Form
         ActualizarVistaPreviaZonal();
     }
 
-    private void TxtZonasSource_TextChanged(object? sender, EventArgs e)
-    {
-        if (_sincronizandoTexto) return;
-        _sincronizandoTexto = true;
-        txtRegexSource.Text = txtZonasSource.Text;
-        _sincronizandoTexto = false;
-    }
-
     private void ActualizarVistaPreviaZonal()
     {
         if (string.IsNullOrEmpty(_rutaPdf)) return;
 
         string texto;
+        Dictionary<string, string>? resultados = null;
         try
         {
             if (_zonasDibujo.Count == 0)
             {
-                texto = _invoiceService.ExtraerTexto(_rutaPdf);
+                texto = ExtraerTextoConModoSeleccionado();
             }
             else
             {
@@ -232,7 +217,7 @@ public partial class GestionEmisoresForm : Form
                     Emisor = "Previsualización",
                     Zonas = _zonasDibujo.ToList()
                 };
-                var resultados = _ocrZonalExtractor.ExtraerZonas(_rutaPdf, plantilla);
+                resultados = _ocrZonalExtractor.ExtraerZonas(_rutaPdf, plantilla);
                 texto = string.Join(Environment.NewLine,
                     resultados.Select(kv => $"[{kv.Key}]: {kv.Value}"));
             }
@@ -240,12 +225,45 @@ public partial class GestionEmisoresForm : Form
         catch
         {
             texto = _invoiceService.ExtraerTexto(_rutaPdf);
+            resultados = null;
         }
 
-        _sincronizandoTexto = true;
+        _sincronizando = true;
+        foreach (DataGridViewRow r in dgvZonas.Rows)
+        {
+            if (r.Cells.Count < 7) continue;
+            var campo = r.Cells[0].Value?.ToString() ?? "";
+            r.Cells[6].Value = resultados != null && resultados.TryGetValue(campo, out var textoZona)
+                ? textoZona
+                : "";
+        }
+        _sincronizando = false;
+
         txtRegexSource.Text = texto;
-        txtZonasSource.Text = texto;
-        _sincronizandoTexto = false;
+    }
+
+    private string ExtraerTextoConModoSeleccionado()
+    {
+        if (string.IsNullOrEmpty(_rutaPdf)) return "";
+        var modo = Enum.TryParse<PdfTextExtractor.ModoExtraccion>(
+            cmbModoExtraccion.SelectedItem?.ToString(), true, out var modoParsed)
+            ? modoParsed
+            : PdfTextExtractor.ModoExtraccion.OrdenadoPosicion;
+        try
+        {
+            return _textExtractor.ExtraerTextoSeleccionable(_rutaPdf, modo)
+                ?? _invoiceService.ExtraerTexto(_rutaPdf);
+        }
+        catch
+        {
+            return _invoiceService.ExtraerTexto(_rutaPdf);
+        }
+    }
+
+    private void CmbModoExtraccion_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+        if (_cargando || string.IsNullOrEmpty(_rutaPdf) || cmbModoExtraccion.SelectedIndex < 0) return;
+        txtRegexSource.Text = ExtraerTextoConModoSeleccionado();
     }
 
     private void TabPaginas_SelectedIndexChanged(object? sender, EventArgs e)
@@ -400,7 +418,7 @@ public partial class GestionEmisoresForm : Form
         _sincronizando = true;
         dgvZonas.Rows.Clear();
         foreach (var z in _zonasDibujo)
-            dgvZonas.Rows.Add(z.Campo, z.NumPagina, z.X, z.Y, z.Ancho, z.Alto);
+            dgvZonas.Rows.Add(z.Campo, z.NumPagina, z.X, z.Y, z.Ancho, z.Alto, "");
         _sincronizando = false;
         MarcarModificado();
     }
@@ -449,6 +467,11 @@ public partial class GestionEmisoresForm : Form
         _paginaActual = 0;
         _rutaPdf = null;
         picFactura.Image = null;
+        _sincronizando = true;
+        foreach (DataGridViewRow r in dgvZonas.Rows)
+            if (r.Cells.Count >= 7)
+                r.Cells[6].Value = "";
+        _sincronizando = false;
         // tabPaginas remains visible (empty) to reserve layout space
     }
     private void DgvCellValueChanged(object? sender, DataGridViewCellEventArgs e)
@@ -461,6 +484,12 @@ public partial class GestionEmisoresForm : Form
     }
 
     private void DgvUserAddedRow(object? sender, DataGridViewRowEventArgs e) => MarcarModificado();
+
+    private void DgvMultiIVAMapeo_EditingControlShowing(object? sender, DataGridViewEditingControlShowingEventArgs e)
+    {
+        if (e.Control is ComboBox combo)
+            combo.DropDownStyle = ComboBoxStyle.DropDownList;
+    }
 
     private void DgvUserDeletedRow(object? sender, DataGridViewRowEventArgs e)
     {
@@ -533,6 +562,7 @@ public partial class GestionEmisoresForm : Form
         lstCampos.Items.Clear();
         foreach (var c in config.Campos)
             lstCampos.Items.Add(c);
+        ActualizarItemsCmbCampoNombre();
 
         chkMultiIVA.Checked = config.MultiLineaIVA?.Habilitado ?? false;
         txtMultiIVARegex.Text = config.MultiLineaIVA?.RegexLinea ?? "";
@@ -553,6 +583,13 @@ public partial class GestionEmisoresForm : Form
         SincronizarZonasDesdeDgv();
         picFactura.Invalidate();
         ActualizarVistaPreviaZonal();
+    }
+
+    private void ActualizarItemsCmbCampoNombre()
+    {
+        foreach (var c in lstCampos.Items.Cast<CampoConfig>())
+            if (!cmbCampoNombre.Items.Contains(c.Nombre))
+                cmbCampoNombre.Items.Add(c.Nombre);
     }
 
     private void SincronizarUIaConfig()
@@ -927,6 +964,7 @@ public partial class GestionEmisoresForm : Form
 
         lstCampos.Items.Add(campo);
         lstCampos.SelectedItem = campo;
+        ActualizarItemsCmbCampoNombre();
 
         _cargandoCampo = true;
         LimpiarDetalleCampo();
@@ -941,6 +979,7 @@ public partial class GestionEmisoresForm : Form
         if (lstCampos.SelectedItem is CampoConfig campo)
         {
             lstCampos.Items.Remove(campo);
+            ActualizarItemsCmbCampoNombre();
             MarcarModificado();
         }
     }
@@ -1030,7 +1069,7 @@ public partial class GestionEmisoresForm : Form
     private class EmisorListItem
     {
         public EmisorConfig Config { get; }
-        public string DisplayText => $"{Config.Nif} — {Config.Nombre}";
+        public string DisplayText => $"{Config.Nif} - {Config.Nombre}";
         public EmisorListItem(EmisorConfig config) => Config = config;
     }
 }

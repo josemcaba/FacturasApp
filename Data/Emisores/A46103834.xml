@@ -3,9 +3,9 @@
   <Nif>A46103834</Nif>
   <Nombre>MERCADONA, S.A.</Nombre>
   <Identificadores>
+    <Id>mercadona</Id>
     <Id>A-46103834</Id>
-    <Id>MERCADONA</Id>
-    <Id>Valencia</Id>
+    <Id>valencia</Id>
   </Identificadores>
   <ModoExtraccion>LayoutAnalysis</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
@@ -18,6 +18,7 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="Fecha">
       <Regex>Fecha Factura:\s*(\S+)</Regex>
@@ -25,6 +26,7 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNombre">
       <Regex>Razón Social:\s*(.+)</Regex>
@@ -32,28 +34,32 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNif">
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="Total">
-      <Regex>Total Factura\s*(.+)\s*€</Regex>
+      <Regex>Total Factura\s*([-\d.,]+)</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
   </Campos>
   <MultiLineaIVA>
     <Habilitado>true</Habilitado>
-    <RegexLinea>(\d+)%\s+([-\d.,]+)\s+[-\d.,]+\s+([-\d.,]+)[\n\r]</RegexLinea>
+    <RegexLinea>(\d+)%\s+([-\d.,]+)\s+([-\d.,]+)\s+([-\d.,]+)[\r\n]</RegexLinea>
     <MapeoCampos>
       <Mapeo Nombre="BaseImponible" Grupo="2" />
       <Mapeo Nombre="PorcentajeIVA" Grupo="1" />
-      <Mapeo Nombre="Total" Grupo="3" />
+      <Mapeo Nombre="CuotaIVA" Grupo="3" />
+      <Mapeo Nombre="Total" Grupo="4" />
     </MapeoCampos>
   </MultiLineaIVA>
   <PostProcesamiento />
