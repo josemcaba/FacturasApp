@@ -3,35 +3,26 @@
   <Nif>26236236K</Nif>
   <Nombre>ANDRES CAZALLA MEDINA</Nombre>
   <Identificadores>
-    <Id>cazalla</Id>
-    <Id>semirueda</Id>
+    <Id>SEMIRUEDA</Id>
+    <Id>Cazalla</Id>
   </Identificadores>
-  <ModoExtraccion>OrdenadoPosicion</ModoExtraccion>
+  <ModoExtraccion>Simple</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
   <Campos>
+    <Campo Nombre="NumeroFactura">
+      <Regex>FACTURA\s+(\S+)</Regex>
+      <Grupo>1</Grupo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+    </Campo>
     <Campo Nombre="Fecha">
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
-    </Campo>
-    <Campo Nombre="ReceptorNif">
-      <Grupo>1</Grupo>
-      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
-      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
-    </Campo>
-    <Campo Nombre="PorcentajeIVA">
-      <Regex>Base Imponible[\s\n\r]*(?:%|)[\s\n\r]+([-\d.,]+)\s+([-\d.,]+)</Regex>
-      <Grupo>2</Grupo>
-      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
-      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNombre">
       <Regex>CLIENTE[\s\n\r]+(.+)</Regex>
@@ -39,15 +30,33 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
+    </Campo>
+    <Campo Nombre="ReceptorNif">
+      <Grupo>1</Grupo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="BaseImponible">
-      <Regex>Base Imponible[\s\n\r]*(?:%|)[\s\n\r]+([-\d.,]+)\s+([-\d.,]+)</Regex>
+      <Regex>Base Imponible[\s\n\r]+%[\s\n\r]+([-\d.,]+)</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
+    </Campo>
+    <Campo Nombre="PorcentajeIVA">
+      <Regex>Base Imponible[\s\n\r]+%[\s\n\r]+[-\d.,]+\s+([-\d.,]+)</Regex>
+      <Grupo>1</Grupo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+    </Campo>
+    <Campo Nombre="PorcentajeIRPF">
+      <Regex>IRPF[\s\n\r]+([-\d.,]+)</Regex>
+      <Grupo>1</Grupo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="Total">
       <Regex>TOTAL[\s\n\r]+([-\d.,]+)</Regex>
@@ -55,46 +64,14 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
-    </Campo>
-    <Campo Nombre="PorcentajeIRPF">
-      <Regex>IRPF[\s\n\r]+([-\d.,]+)\s+([-\d.,]+)</Regex>
-      <Grupo>1</Grupo>
-      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
-      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
-    </Campo>
-    <Campo Nombre="NumeroFactura">
-      <Regex>FACTURA\s+(\S+)</Regex>
-      <Grupo>1</Grupo>
-      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
-      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
   </Campos>
   <PostProcesamiento />
   <ZonasOcr>
-    <Zona Campo="P1_Z1" Pagina="1" X="49.53416149068323" Y="4.730473047304731" Ancho="39.59627329192546" Alto="3.3003300330033">
-      <RegexRespaldo />
-      <Opcional>false</Opcional>
-    </Zona>
-    <Zona Campo="P1_Z2" Pagina="1" X="48.13664596273292" Y="9.24092409240924" Ancho="40.52795031055901" Alto="9.570957095709572">
-      <RegexRespaldo />
-      <Opcional>false</Opcional>
-    </Zona>
-    <Zona Campo="P1_Z3" Pagina="1" X="26.39751552795031" Y="92.18921892189219" Ancho="24.22360248447205" Alto="4.51045104510451">
-      <RegexRespaldo />
-      <Opcional>false</Opcional>
-    </Zona>
-    <Zona Campo="P1_Z4" Pagina="1" X="61.18012422360248" Y="92.07920792079209" Ancho="16.459627329192546" Alto="4.9504950495049505">
-      <RegexRespaldo />
-      <Opcional>false</Opcional>
-    </Zona>
-    <Zona Campo="P1_Z5" Pagina="1" X="78.1055900621118" Y="92.07920792079209" Ancho="17.70186335403727" Alto="4.9504950495049505">
-      <RegexRespaldo />
-      <Opcional>false</Opcional>
-    </Zona>
+    <Zona Campo="P1_Z1" Pagina="1" X="50.2" Y="4.5" Ancho="39.4" Alto="3.6" />
+    <Zona Campo="P1_Z2" Pagina="1" X="48" Y="9.1" Ancho="45.8" Alto="9.8" />
+    <Zona Campo="P1_Z3" Pagina="1" X="26.9" Y="91.9" Ancho="23.3" Alto="4.8" />
+    <Zona Campo="P1_Z4" Pagina="1" X="62.1" Y="92.2" Ancho="14.3" Alto="4.8" />
+    <Zona Campo="P1_Z5" Pagina="1" X="77.6" Y="92.3" Ancho="16.9" Alto="4.7" />
   </ZonasOcr>
 </Emisor>

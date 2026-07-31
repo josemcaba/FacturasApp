@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>A46103834</Nif>
-  <Nombre>MERCADONA S.A.</Nombre>
+  <Nombre>MERCADONA, S.A.</Nombre>
   <Identificadores>
-    <Id>mercadona</Id>
-    <Id>a-46103834</Id>
-    <Id>valencia</Id>
+    <Id>A-46103834</Id>
+    <Id>MERCADONA</Id>
+    <Id>Valencia</Id>
   </Identificadores>
-  <ModoExtraccion>OrdenadoPosicion</ModoExtraccion>
+  <ModoExtraccion>LayoutAnalysis</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
   <Campos>
     <Campo Nombre="NumeroFactura">
-      <Regex>N. Factura: (\S+)</Regex>
+      <Regex>N. Factura:\s*(\S+)</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
@@ -27,7 +27,7 @@
       <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="ReceptorNombre">
-      <Regex>Razón Social: (.+)</Regex>
+      <Regex>Razón Social:\s*(.+)</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
@@ -40,7 +40,7 @@
       <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="Total">
-      <Regex>Total Factura ([-\d.,]+)</Regex>
+      <Regex>Total Factura\s*(.+)\s*€</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
@@ -49,11 +49,11 @@
   </Campos>
   <MultiLineaIVA>
     <Habilitado>true</Habilitado>
-    <RegexLinea>([-\d.,]+)% ([-\d.,]+) ([-\d.,]+) ([-\d.,]+)[\r\n]</RegexLinea>
+    <RegexLinea>(\d+)%\s+([-\d.,]+)\s+[-\d.,]+\s+([-\d.,]+)[\n\r]</RegexLinea>
     <MapeoCampos>
-      <Mapeo Nombre="PorcentajeIVA" Grupo="1" />
       <Mapeo Nombre="BaseImponible" Grupo="2" />
-      <Mapeo Nombre="Total" Grupo="4" />
+      <Mapeo Nombre="PorcentajeIVA" Grupo="1" />
+      <Mapeo Nombre="Total" Grupo="3" />
     </MapeoCampos>
   </MultiLineaIVA>
   <PostProcesamiento />

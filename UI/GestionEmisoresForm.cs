@@ -358,10 +358,10 @@ public partial class GestionEmisoresForm : Form
 
         return new ZonaOcr
         {
-            X = Math.Max(0, xReal * 100),
-            Y = Math.Max(0, yReal * 100),
-            Ancho = Math.Min(100, wReal * 100),
-            Alto = Math.Min(100, hReal * 100)
+            X = Math.Round(Math.Max(0, xReal * 100), 1),
+            Y = Math.Round(Math.Max(0, yReal * 100), 1),
+            Ancho = Math.Round(Math.Min(100, wReal * 100), 1),
+            Alto = Math.Round(Math.Min(100, hReal * 100), 1)
         };
     }
 
@@ -415,10 +415,10 @@ public partial class GestionEmisoresForm : Form
             {
                 Campo = r.Cells[0].Value?.ToString() ?? "",
                 NumPagina = int.TryParse(r.Cells[1].Value?.ToString(), out var p) ? p : 1,
-                X = double.TryParse(r.Cells[2].Value?.ToString(), out var x) ? x : 0,
-                Y = double.TryParse(r.Cells[3].Value?.ToString(), out var y) ? y : 0,
-                Ancho = double.TryParse(r.Cells[4].Value?.ToString(), out var w) ? w : 0,
-                Alto = double.TryParse(r.Cells[5].Value?.ToString(), out var h) ? h : 0,
+                X = Math.Round(double.TryParse(r.Cells[2].Value?.ToString(), out var x) ? x : 0, 1),
+                Y = Math.Round(double.TryParse(r.Cells[3].Value?.ToString(), out var y) ? y : 0, 1),
+                Ancho = Math.Round(double.TryParse(r.Cells[4].Value?.ToString(), out var w) ? w : 0, 1),
+                Alto = Math.Round(double.TryParse(r.Cells[5].Value?.ToString(), out var h) ? h : 0, 1),
             });
         }
     }
