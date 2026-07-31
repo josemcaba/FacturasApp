@@ -52,10 +52,23 @@ public class ConfiguracionEmisores
         return todos.TryGetValue(nif, out var config) ? config : null;
     }
 
-    public void Guardar(EmisorConfig config)
+    public void Guardar(EmisorConfig config, string? nifAnterior = null)
     {
         var nif = SanitizarNombreArchivo(config.Nif);
         var ruta = Path.Combine(RutaDirectorio, $"{nif}.xml");
+        var sentinel = Path.Combine(RutaDirectorio, $"{nif}.eliminado");
+
+        // Delete old file if NIF changed (for existing emitters)
+        if (nifAnterior != null && !string.Equals(nifAnterior, config.Nif, StringComparison.OrdinalIgnoreCase))
+        {
+            var nifAnt = SanitizarNombreArchivo(nifAnterior);
+            var rutaAnt = Path.Combine(RutaDirectorio, $"{nifAnt}.xml");
+            if (File.Exists(rutaAnt))
+                File.Delete(rutaAnt);
+        }
+
+        if (File.Exists(sentinel))
+            File.Delete(sentinel);
 
         Directory.CreateDirectory(RutaDirectorio);
         using var stream = File.Create(ruta);
@@ -69,9 +82,12 @@ public class ConfiguracionEmisores
     {
         var nifArchivo = SanitizarNombreArchivo(nif);
         var ruta = Path.Combine(RutaDirectorio, $"{nifArchivo}.xml");
+        var sentinel = Path.Combine(RutaDirectorio, $"{nifArchivo}.eliminado");
 
         if (File.Exists(ruta))
             File.Delete(ruta);
+
+        File.WriteAllText(sentinel, string.Empty);
 
         _cache?.Remove(nif);
     }
@@ -91,8 +107,10 @@ public class ConfiguracionEmisores
         {
             var nombreArchivo = recurso.Replace("FacturasApp.Data.Emisores.", "");
             var rutaDestino = Path.Combine(RutaDirectorio, nombreArchivo);
+            var sentinel = Path.Combine(RutaDirectorio,
+                $"{Path.GetFileNameWithoutExtension(nombreArchivo)}.eliminado");
 
-            if (File.Exists(rutaDestino))
+            if (File.Exists(rutaDestino) || File.Exists(sentinel))
                 continue;
 
             using var stream = ensamblado.GetManifestResourceStream(recurso);

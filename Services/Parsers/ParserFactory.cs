@@ -14,7 +14,6 @@ namespace FacturasApp.Services.Parsers
             _parsers =
             [
                 new AmazonAwsParser(),
-                new AndresCazalla(),
                 new AutomotorPremiumParser(),
                 new BixpeParser(),
                 new CathedralSwParser(),
@@ -42,7 +41,6 @@ namespace FacturasApp.Services.Parsers
                 new IonosParser(),
                 new JuanLucasParser(),
                 new LidlParser(),
-                new MERCADONA(),
                 new MoncayoParser(),
                 new NorelisParser(),
                 new OnaCorpParser(),

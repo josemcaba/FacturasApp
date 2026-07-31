@@ -29,6 +29,8 @@ public partial class GestionEmisoresForm : Form
     private readonly PdfTextExtractor _textExtractor = new();
     private readonly OcrZonalExtractor _ocrZonalExtractor = new();
     private bool _sincronizandoTexto;
+    private bool _esNuevo;
+    private bool _saltarCambioSeleccion;
 
     public GestionEmisoresForm()
     {
@@ -43,12 +45,17 @@ public partial class GestionEmisoresForm : Form
         };
         panelCentral.Resize += PanelCentral_Resize;
         CargarEmisores();
+        if (lstEmisores.Items.Count > 0)
+            lstEmisores.SelectedIndex = 0;
         Load += (_, _) => PanelCentral_Resize(null, EventArgs.Empty);
         FormClosing += (_, args) =>
         {
             if (_modificado)
             {
-                var r = MessageBox.Show("Hay cambios sin guardar. ¿Salir sin guardar?",
+                var msg = _esNuevo
+                    ? "Hay un emisor nuevo sin guardar. ¿Salir sin guardar?"
+                    : "Hay cambios sin guardar. ¿Salir sin guardar?";
+                var r = MessageBox.Show(msg,
                     "Cambios no guardados", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (r != DialogResult.Yes) { args.Cancel = true; return; }
             }
@@ -472,8 +479,6 @@ public partial class GestionEmisoresForm : Form
         var todos = _configuracion.CargarTodos();
         foreach (var kvp in todos.OrderBy(e => e.Key))
             lstEmisores.Items.Add(new EmisorListItem(kvp.Value));
-        if (lstEmisores.Items.Count > 0)
-            lstEmisores.SelectedIndex = 0;
         _cargando = false;
         FiltrarEmisores();
     }
@@ -485,6 +490,25 @@ public partial class GestionEmisoresForm : Form
 
     private void LstEmisores_SelectedIndexChanged(object? sender, EventArgs e)
     {
+        if (_cargando || _saltarCambioSeleccion) return;
+
+        if (_esNuevo && _modificado)
+        {
+            var r = MessageBox.Show(
+                "Hay un emisor nuevo sin guardar. ¿Descartarlo y cargar el seleccionado?",
+                "Descartar nuevo",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (r != DialogResult.Yes)
+            {
+                _saltarCambioSeleccion = true;
+                lstEmisores.SelectedIndex = -1;
+                _saltarCambioSeleccion = false;
+                return;
+            }
+            _esNuevo = false;
+            _modificado = false;
+        }
+
         if (lstEmisores.SelectedItem is EmisorListItem item)
             CargarEmisorEnUI(item.Config);
     }
@@ -556,6 +580,15 @@ public partial class GestionEmisoresForm : Form
 
     private void NuevoEmisor()
     {
+        if (_esNuevo && _modificado)
+        {
+            var r = MessageBox.Show(
+                "Hay un emisor nuevo sin guardar. ¿Descartarlo y crear otro?",
+                "Descartar nuevo",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (r != DialogResult.Yes) return;
+        }
+
         var nuevo = new EmisorConfig
         {
             Nif = "NUEVO_NIF",
@@ -565,16 +598,27 @@ public partial class GestionEmisoresForm : Form
             ConceptoIngreso = "700",
             ConceptoGasto = "600"
         };
-        _configuracion.Guardar(nuevo);
-        CargarEmisores();
-        for (int i = 0; i < lstEmisores.Items.Count; i++)
-            if (((EmisorListItem)lstEmisores.Items[i]).Config.Nif == "NUEVO_NIF")
-                lstEmisores.SelectedIndex = i;
+        _esNuevo = true;
+        _emisorActual = nuevo;
+        CargarEmisorEnUI(nuevo);
+        _modificado = true;
+        btnGuardar.Enabled = true;
+        _saltarCambioSeleccion = true;
+        lstEmisores.ClearSelected();
+        _saltarCambioSeleccion = false;
     }
 
     private void EliminarEmisor()
     {
         if (_emisorActual == null) return;
+
+        if (_esNuevo)
+        {
+            MessageBox.Show("Guarda el emisor antes de eliminarlo.", "Operación no válida",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+
         if (string.Equals(_emisorActual.Nif, "General", StringComparison.OrdinalIgnoreCase))
         {
             MessageBox.Show("No se puede eliminar el emisor genérico.", "Operación no permitida",
@@ -590,11 +634,23 @@ public partial class GestionEmisoresForm : Form
         _configuracion.Eliminar(_emisorActual.Nif);
         _emisorActual = null;
         CargarEmisores();
+        if (lstEmisores.Items.Count > 0)
+            lstEmisores.SelectedIndex = 0;
     }
 
     private void ClonarEmisor()
     {
         if (_emisorActual == null) return;
+
+        if (_esNuevo && _modificado)
+        {
+            var r = MessageBox.Show(
+                "Hay un emisor nuevo sin guardar. ¿Descartarlo y clonar el emisor actual?",
+                "Descartar nuevo",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (r != DialogResult.Yes) return;
+        }
+
         SincronizarUIaConfig();
 
         var clon = new EmisorConfig
@@ -626,8 +682,14 @@ public partial class GestionEmisoresForm : Form
                 X = z.X, Y = z.Y, Ancho = z.Ancho, Alto = z.Alto
             }).ToList()
         };
-        _configuracion.Guardar(clon);
-        CargarEmisores();
+        _esNuevo = true;
+        _emisorActual = clon;
+        CargarEmisorEnUI(clon);
+        _modificado = true;
+        btnGuardar.Enabled = true;
+        _saltarCambioSeleccion = true;
+        lstEmisores.ClearSelected();
+        _saltarCambioSeleccion = false;
     }
 
     private static CampoConfig CopiarCampo(CampoConfig c) => new()
@@ -643,6 +705,26 @@ public partial class GestionEmisoresForm : Form
     private void GuardarCambios()
     {
         if (_emisorActual == null) return;
+
+        var nifNuevo = txtNif.Text.Trim();
+        if (string.IsNullOrWhiteSpace(nifNuevo))
+        {
+            MessageBox.Show("El NIF no puede estar vacío.", "Validación",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
+        // Validate NIF uniqueness (exclude self for existing emitters)
+        var nifAnterior = _emisorActual.Nif;
+        var todos = _configuracion.CargarTodos();
+        if (todos.ContainsKey(nifNuevo) &&
+            (_esNuevo || !string.Equals(nifAnterior, nifNuevo, StringComparison.OrdinalIgnoreCase)))
+        {
+            MessageBox.Show($"Ya existe un emisor con NIF '{nifNuevo}'.\nEl NIF debe ser único.",
+                "NIF duplicado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
         SincronizarUIaConfig();
 
         _emisorActual.Identificadores = lstIdentificadores.Items.Cast<string>().ToList();
@@ -674,8 +756,20 @@ public partial class GestionEmisoresForm : Form
 
         try
         {
-            _configuracion.Guardar(_emisorActual);
+            _configuracion.Guardar(_emisorActual, _esNuevo ? null : nifAnterior);
+            _esNuevo = false;
             _modificado = false;
+            btnGuardar.Enabled = false;
+            CargarEmisores();
+            // Find and select the saved emitter in the refreshed list
+            for (int i = 0; i < lstEmisores.Items.Count; i++)
+            {
+                if (((EmisorListItem)lstEmisores.Items[i]).Config.Nif == _emisorActual.Nif)
+                {
+                    lstEmisores.SelectedIndex = i;
+                    break;
+                }
+            }
             MessageBox.Show("Emisor guardado correctamente.",
                 "Guardado", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
