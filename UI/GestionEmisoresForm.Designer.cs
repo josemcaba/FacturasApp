@@ -1089,8 +1089,9 @@ partial class GestionEmisoresForm
         Icon = (Icon)resources.GetObject("$this.Icon");
         MinimizeBox = false;
         Name = "GestionEmisoresForm";
-        StartPosition = FormStartPosition.CenterParent;
+        StartPosition = FormStartPosition.CenterScreen;
         Text = "Gestionar Emisores";
+        WindowState = FormWindowState.Maximized;
         panelIzquierdo.ResumeLayout(false);
         panelIzquierdo.PerformLayout();
         tabs.ResumeLayout(false);

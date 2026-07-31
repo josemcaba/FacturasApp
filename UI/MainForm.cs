@@ -441,13 +441,6 @@ namespace FacturasApp.UI
             }
         }
 
-        // Definir plantilla OCR para un emisor específico
-        private void btnDefinirPlantilla_Click(object sender, EventArgs e)
-        {
-            using var ventana = new DefinirPlantillaForm();
-            ventana.ShowDialog(this);
-        }
-
         // Gestionar emisores (CRUD XML)
         private void btnGestionEmisores_Click(object sender, EventArgs e)
         {
@@ -484,7 +477,6 @@ namespace FacturasApp.UI
             btnExportarExcelIngresos.Enabled = !procesando;
             btnExportarExcelGastos.Enabled = !procesando;
             btnGestionEmisores.Enabled = !procesando;
-            btnDefinirZonas.Enabled = !procesando;
             progressBar.Visible = procesando;
             lblPorcentaje.Visible = procesando;
         }
