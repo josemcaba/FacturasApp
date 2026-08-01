@@ -8,17 +8,12 @@ namespace FacturasApp.Services.Parsers;
 public class ConfigurableParserEngine : BaseParser
 {
     private readonly EmisorConfig _config;
-    private readonly Lazy<Regex> _regexMultiLinea;
 
     public EmisorConfig Config => _config;
 
     public ConfigurableParserEngine(EmisorConfig config)
     {
         _config = config;
-        _regexMultiLinea = new Lazy<Regex>(() =>
-            !string.IsNullOrEmpty(_config.MultiLineaIVA?.RegexLinea)
-                ? new Regex(_config.MultiLineaIVA.RegexLinea, RegexOptions.Compiled)
-                : new Regex("^$"));
     }
 
     public override string Nombre => _config.Nombre;
@@ -40,14 +35,14 @@ public class ConfigurableParserEngine : BaseParser
 
     public override Factura Parsear(string texto, string rutaArchivo, bool viaOcr)
     {
-        if (_config.MultiLineaIVA?.Habilitado == true)
+        if (_config.MultiLinea?.Habilitado == true)
             return ParsearMultiple(texto, rutaArchivo, viaOcr).First();
         return ParsearUnica(texto, rutaArchivo, viaOcr);
     }
 
     public override List<Factura> ParsearMultiple(string texto, string rutaArchivo, bool viaOcr)
     {
-        if (_config.MultiLineaIVA?.Habilitado == true)
+        if (_config.MultiLinea?.Habilitado == true)
             return ParsearMultiLinea(texto, rutaArchivo, viaOcr);
         return [ParsearUnica(texto, rutaArchivo, viaOcr)];
     }
@@ -80,66 +75,92 @@ public class ConfigurableParserEngine : BaseParser
         return factura;
     }
 
-    // ── Multi-IVA ────────────────────────────────────────────────────────────
+    // ── Multi-Línea ──────────────────────────────────────────────────────────
 
     private List<Factura> ParsearMultiLinea(string texto, string rutaArchivo, bool viaOcr)
     {
-        var matches = _regexMultiLinea.Value.Matches(texto);
-        if (matches.Count == 0)
+        var lineas = ObtenerLineasMultiLinea();
+        if (lineas.Count == 0)
             return [ParsearUnica(texto, rutaArchivo, viaOcr)];
 
         var facturas = new List<Factura>();
+        var hayMatches = false;
 
-        foreach (Match match in matches)
+        foreach (var linea in lineas)
         {
-            var factura = CrearFacturaBase(rutaArchivo, viaOcr);
-            factura.EsMultiLinea = true;
-            factura.ConceptoGasto = string.IsNullOrEmpty(_config.ConceptoGasto) ? "600" : _config.ConceptoGasto;
-            factura.ConceptoIngreso = string.IsNullOrEmpty(_config.ConceptoIngreso) ? "700" : _config.ConceptoIngreso;
-
-            var esCampoLinea = new HashSet<string>(
-                _config.MultiLineaIVA!.MapeoCampos
-                    .Select(m => m.Nombre),
-                StringComparer.OrdinalIgnoreCase);
-
-            var camposSuma = new List<CampoConfig>();
-
-            foreach (var campo in _config.Campos)
+            var regex = new Regex(linea.Regex, RegexOptions.Compiled);
+            foreach (Match match in regex.Matches(texto))
             {
-                if (campo.EsSuma)
+                hayMatches = true;
+                var factura = CrearFacturaBase(rutaArchivo, viaOcr);
+                factura.EsMultiLinea = true;
+                factura.ConceptoGasto = string.IsNullOrEmpty(_config.ConceptoGasto) ? "600" : _config.ConceptoGasto;
+                factura.ConceptoIngreso = string.IsNullOrEmpty(_config.ConceptoIngreso) ? "700" : _config.ConceptoIngreso;
+
+                var esCampoLinea = new HashSet<string>(
+                    linea.MapeoCampos
+                        .Select(m => m.Nombre),
+                    StringComparer.OrdinalIgnoreCase);
+
+                var camposSuma = new List<CampoConfig>();
+
+                foreach (var campo in _config.Campos)
                 {
-                    camposSuma.Add(campo);
-                    continue;
+                    if (campo.EsSuma)
+                    {
+                        camposSuma.Add(campo);
+                        continue;
+                    }
+
+                    if (esCampoLinea.Contains(campo.Nombre))
+                        continue;
+
+                    ExtraerYAsignarCampo(factura, campo, texto);
                 }
 
-                if (esCampoLinea.Contains(campo.Nombre))
-                    continue;
+                foreach (var mapeo in linea.MapeoCampos)
+                {
+                    if (mapeo.Grupo >= match.Groups.Count) continue;
+                    var valor = match.Groups[mapeo.Grupo].Value.Trim();
+                    if (!string.IsNullOrEmpty(valor))
+                        AsignarCampo(factura, mapeo.Nombre, valor, campoFormatoFecha: null);
+                }
 
-                ExtraerYAsignarCampo(factura, campo, texto);
+                foreach (var campo in camposSuma)
+                    AsignarSuma(factura, campo);
+
+                AplicarPostProcesamiento(factura, texto);
+                factura.Estado = FacturaEstado.Determinar(factura);
+                facturas.Add(factura);
             }
-
-            foreach (var mapeo in _config.MultiLineaIVA.MapeoCampos)
-            {
-                if (mapeo.Grupo >= match.Groups.Count) continue;
-                var valor = match.Groups[mapeo.Grupo].Value.Trim();
-                if (!string.IsNullOrEmpty(valor))
-                    AsignarCampo(factura, mapeo.Nombre, valor, campoFormatoFecha: null);
-            }
-
-            foreach (var campo in camposSuma)
-                AsignarSuma(factura, campo);
-
-            AplicarPostProcesamiento(factura, texto);
-            factura.Estado = FacturaEstado.Determinar(factura);
-            facturas.Add(factura);
         }
 
-        VerificarCoherenciaTotalMulti(facturas);
+        if (!hayMatches)
+            return [ParsearUnica(texto, rutaArchivo, viaOcr)];
+
+        VerificarCoherenciaTotalMultiLinea(facturas);
 
         return facturas;
     }
 
-    private void VerificarCoherenciaTotalMulti(List<Factura> facturas)
+    private List<LineaConfig> ObtenerLineasMultiLinea()
+    {
+        var multi = _config.MultiLinea;
+        if (multi == null || !multi.Habilitado)
+            return new List<LineaConfig>();
+
+        // Compatibilidad: config antiguo con una única línea (RegexLinea + MapeoCampos)
+        if (multi.Lineas.Count == 0 && !string.IsNullOrEmpty(multi.RegexLinea))
+            return [new LineaConfig
+            {
+                Regex = multi.RegexLinea,
+                MapeoCampos = multi.MapeoCampos
+            }];
+
+        return multi.Lineas;
+    }
+
+    private void VerificarCoherenciaTotalMultiLinea(List<Factura> facturas)
     {
         // Todas las líneas comparten el mismo TotalFactura del documento
         // (extraído sobre el texto completo), ya respetando el post-procesamiento.
@@ -161,7 +182,7 @@ public class ConfigurableParserEngine : BaseParser
 
         if (Math.Abs(sumaSubtotales - totalDocumento) > 0.01m)
         {
-            string mensaje = $"La suma de los subtotales Multi-IVA ({sumaSubtotales:N2} €) no coincide con el TotalFactura extraído ({totalDocumento:N2} €)";
+            string mensaje = $"La suma de los subtotales de las líneas ({sumaSubtotales:N2} €) no coincide con el TotalFactura extraído ({totalDocumento:N2} €)";
             foreach (var factura in facturas)
             {
                 factura.MensajeError.Add(mensaje);

@@ -22,7 +22,7 @@ public class EmisorConfig
     [XmlArrayItem("Campo")]
     public List<CampoConfig> Campos { get; set; } = new();
 
-    public MultiLineaIVAConfig? MultiLineaIVA { get; set; }
+    public MultiLineaConfig? MultiLinea { get; set; }
 
     [XmlArray("PostProcesamiento")]
     [XmlArrayItem("Regla")]

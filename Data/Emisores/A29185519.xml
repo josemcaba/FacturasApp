@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Nif>A46103834</Nif>
-  <Nombre>MERCADONA, S.A.</Nombre>
+  <Nif>A29185519</Nif>
+  <Nombre>EMASA</Nombre>
   <Identificadores>
-    <Id>A-46103834</Id>
-    <Id>Mercadona</Id>
-    <Id>Valencia</Id>
+    <Id>emasa</Id>
+    <Id>plaza general torrijos</Id>
   </Identificadores>
-  <ModoExtraccion>LayoutAnalysis</ModoExtraccion>
+  <ModoExtraccion>OrdenadoPosicion</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
-  <ConceptoGasto>600</ConceptoGasto>
+  <ConceptoGasto>628</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Mercadona 3.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\EMASA.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
-      <Regex>N. Factura:\s*(\S+)</Regex>
+      <Regex>FACTURA:\s*(\S+)</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
@@ -22,7 +21,7 @@
       <CamposSuma />
     </Campo>
     <Campo Nombre="Fecha">
-      <Regex>Fecha Factura:\s*(\S+)</Regex>
+      <Regex>FECHA\sDE\sEMISIÓN:\s*(.*?)\s</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
@@ -30,7 +29,7 @@
       <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNombre">
-      <Regex>Razón Social:\s*(.+)</Regex>
+      <Regex>www.emasa.es\r*\n*(.+)</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
@@ -45,7 +44,7 @@
       <CamposSuma />
     </Campo>
     <Campo Nombre="TotalFactura">
-      <Regex>Total Factura\s+([-\d.,]+)</Regex>
+      <Regex>TOTAL FACTURA\s+([\d.,]+)</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
@@ -57,16 +56,36 @@
     <RegexLinea />
     <Lineas>
       <Linea>
-        <Regex>(\d+)%\s+([-\d.,]+)\s+([-\d.,]+)\s+([-\d.,]+)[\r\n]</Regex>
+        <Regex>IVA\s*\(B.I.\s*([\d.,]+)\)\s+([\d.,]+)\s*%\s+([\d.,]+)</Regex>
         <MapeoCampos>
-          <Mapeo Nombre="BaseImponible" Grupo="2" />
-          <Mapeo Nombre="PorcentajeIVA" Grupo="1" />
-          <Mapeo Nombre="SubTotal" Grupo="4" />
+          <Mapeo Nombre="BaseImponible" Grupo="1" />
+          <Mapeo Nombre="PorcentajeIVA" Grupo="2" />
+          <Mapeo Nombre="CuotaIVA" Grupo="3" />
+        </MapeoCampos>
+      </Linea>
+      <Linea>
+        <Regex>\(Ley 9/2010\)\s+([\d.,]+)</Regex>
+        <MapeoCampos>
+          <Mapeo Nombre="BaseImponible" Grupo="1" />
         </MapeoCampos>
       </Linea>
     </Lineas>
     <MapeoCampos />
   </MultiLinea>
-  <PostProcesamiento />
+  <PostProcesamiento>
+    <Regla>
+      <CondicionCampo>
+        <Campo>EmisorNombre</Campo>
+        <Valor>EMASA</Valor>
+      </CondicionCampo>
+      <Accion Tipo="Establecer Valor" CampoDestino="EmisorNombre" Valor="EMPRESA MUNICIPAL AGUAS DE MALAGA S.A." CampoOrigen1="" Operador="+" CampoOrigen2="" />
+    </Regla>
+    <Regla>
+      <Accion Tipo="Calcular" CampoDestino="SubTotal" Valor="" CampoOrigen1="BaseImponible" Operador="+" CampoOrigen2="CuotaIVA" />
+    </Regla>
+    <Regla>
+      <Accion Tipo="Calcular" CampoDestino="CuotaIVA" Valor="" CampoOrigen1="BaseImponible" Operador="%" CampoOrigen2="PorcentajeIVA" />
+    </Regla>
+  </PostProcesamiento>
   <ZonasOcr />
 </Emisor>

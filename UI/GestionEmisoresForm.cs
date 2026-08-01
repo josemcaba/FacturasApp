@@ -32,6 +32,7 @@ public partial class GestionEmisoresForm : Form
     private bool _esNuevo;
     private bool _saltarCambioSeleccion;
     private bool _cargandoPostProc;
+    private bool _cargandoLinea;
 
     public GestionEmisoresForm()
     {
@@ -65,7 +66,11 @@ public partial class GestionEmisoresForm : Form
             btnGuardar.Enabled = true;
     }
 
-    private void ControlModificado(object? sender, EventArgs e) => MarcarModificado();
+    private void ControlModificado(object? sender, EventArgs e)
+    {
+        if (_cargandoLinea) return;
+        MarcarModificado();
+    }
     private void TxtBuscarEmisor_TextChanged(object? sender, EventArgs e) => FiltrarEmisores();
     private void BtnNuevo_Click(object? sender, EventArgs e) => NuevoEmisor();
     private void BtnEliminar_Click(object? sender, EventArgs e) => EliminarEmisor();
@@ -497,7 +502,7 @@ public partial class GestionEmisoresForm : Form
 
     private void DgvUserAddedRow(object? sender, DataGridViewRowEventArgs e) => MarcarModificado();
 
-    private void DgvMultiIVAMapeo_EditingControlShowing(object? sender, DataGridViewEditingControlShowingEventArgs e)
+    private void DgvMultiLineaMapeo_EditingControlShowing(object? sender, DataGridViewEditingControlShowingEventArgs e)
     {
         if (e.Control is ComboBox combo)
             combo.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -576,12 +581,31 @@ public partial class GestionEmisoresForm : Form
             lstCampos.Items.Add(c);
         ActualizarItemsCmbCampoNombre();
 
-        chkMultiIVA.Checked = config.MultiLineaIVA?.Habilitado ?? false;
-        txtMultiIVARegex.Text = config.MultiLineaIVA?.RegexLinea ?? "";
-        dgvMultiIVAMapeo.Rows.Clear();
-        if (config.MultiLineaIVA?.MapeoCampos != null)
-            foreach (var m in config.MultiLineaIVA.MapeoCampos)
-                dgvMultiIVAMapeo.Rows.Add(m.Nombre, m.Grupo);
+        chkMultiLinea.Checked = config.MultiLinea?.Habilitado ?? false;
+        lstMultiLineas.Items.Clear();
+        var multi = config.MultiLinea;
+        if (multi != null && multi.Habilitado)
+        {
+            if (multi.Lineas.Count > 0)
+            {
+                foreach (var l in multi.Lineas)
+                    lstMultiLineas.Items.Add(l);
+            }
+            else if (!string.IsNullOrEmpty(multi.RegexLinea))
+            {
+                // Compatibilidad: config antiguo con una única línea
+                lstMultiLineas.Items.Add(new LineaConfig
+                {
+                    Regex = multi.RegexLinea,
+                    MapeoCampos = multi.MapeoCampos
+                        .Select(m => new MapeoCampoLinea { Nombre = m.Nombre, Grupo = m.Grupo }).ToList()
+                });
+            }
+        }
+        if (lstMultiLineas.Items.Count > 0)
+            lstMultiLineas.SelectedIndex = 0;
+        else
+            CargarLineaEnUI(null);
 
         lstPostProc.Items.Clear();
         foreach (var r in config.PostProcesamiento)
@@ -609,6 +633,71 @@ public partial class GestionEmisoresForm : Form
         foreach (var c in lstCampos.Items.Cast<CampoConfig>())
             if (!cmbCampoNombre.Items.Contains(c.Nombre))
                 cmbCampoNombre.Items.Add(c.Nombre);
+    }
+
+    // ── LÍNEAS MULTILÍNEA ────────────────────────────────────────────────────
+
+    private void LstMultiLineas_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+        CargarLineaEnUI(lstMultiLineas.SelectedItem as LineaConfig);
+    }
+
+    private void CargarLineaEnUI(LineaConfig? linea)
+    {
+        _cargandoLinea = true;
+        txtMultiLineaRegex.Text = linea?.Regex ?? "";
+        dgvMultiLineaMapeo.Rows.Clear();
+        if (linea != null)
+        {
+            foreach (var m in linea.MapeoCampos)
+                dgvMultiLineaMapeo.Rows.Add(m.Nombre, m.Grupo);
+        }
+        _cargandoLinea = false;
+    }
+
+    private void ActualizarLineaDesdeUI(LineaConfig linea)
+    {
+        linea.Regex = txtMultiLineaRegex.Text.Trim();
+        linea.MapeoCampos = dgvMultiLineaMapeo.Rows.Cast<DataGridViewRow>()
+            .Where(r => r.Cells[0].Value != null)
+            .Select(r => new MapeoCampoLinea
+            {
+                Nombre = r.Cells[0].Value?.ToString() ?? "",
+                Grupo = int.TryParse(r.Cells[1].Value?.ToString(), out var g) ? g : 1
+            }).ToList();
+    }
+
+    private void BtnMultiLineaAdd_Click(object? sender, EventArgs e)
+    {
+        var linea = new LineaConfig { Regex = "Nueva línea (regex)" };
+        lstMultiLineas.Items.Add(linea);
+        lstMultiLineas.SelectedIndex = lstMultiLineas.Items.Count - 1;
+        CargarLineaEnUI(linea);
+        MarcarModificado();
+    }
+
+    private void BtnMultiLineaRemove_Click(object? sender, EventArgs e)
+    {
+        if (lstMultiLineas.SelectedIndex < 0) return;
+        lstMultiLineas.Items.RemoveAt(lstMultiLineas.SelectedIndex);
+        CargarLineaEnUI(lstMultiLineas.SelectedItem as LineaConfig);
+        MarcarModificado();
+    }
+
+    private void BtnMultiLineaUp_Click(object? sender, EventArgs e) => MoverLinea(-1);
+
+    private void BtnMultiLineaDown_Click(object? sender, EventArgs e) => MoverLinea(1);
+
+    private void MoverLinea(int desplazamiento)
+    {
+        int idx = lstMultiLineas.SelectedIndex;
+        int nuevo = idx + desplazamiento;
+        if (idx < 0 || nuevo < 0 || nuevo >= lstMultiLineas.Items.Count) return;
+        var linea = lstMultiLineas.Items[idx];
+        lstMultiLineas.Items.RemoveAt(idx);
+        lstMultiLineas.Items.Insert(nuevo, linea);
+        lstMultiLineas.SelectedIndex = nuevo;
+        MarcarModificado();
     }
 
     private void SincronizarUIaConfig()
@@ -721,12 +810,19 @@ public partial class GestionEmisoresForm : Form
             ConceptoGasto = _emisorActual.ConceptoGasto,
             CulturaFecha = _emisorActual.CulturaFecha,
             Campos = _emisorActual.Campos.Select(CopiarCampo).ToList(),
-            MultiLineaIVA = _emisorActual.MultiLineaIVA != null ? new MultiLineaIVAConfig
+            MultiLinea = _emisorActual.MultiLinea != null ? new MultiLineaConfig
             {
-                Habilitado = _emisorActual.MultiLineaIVA.Habilitado,
-                RegexLinea = _emisorActual.MultiLineaIVA.RegexLinea,
-                MapeoCampos = _emisorActual.MultiLineaIVA.MapeoCampos
-                    .Select(m => new MapeoCampoMultiIVA { Nombre = m.Nombre, Grupo = m.Grupo }).ToList()
+                Habilitado = _emisorActual.MultiLinea.Habilitado,
+                RegexLinea = _emisorActual.MultiLinea.RegexLinea,
+                MapeoCampos = _emisorActual.MultiLinea.MapeoCampos
+                    .Select(m => new MapeoCampoLinea { Nombre = m.Nombre, Grupo = m.Grupo }).ToList(),
+                Lineas = _emisorActual.MultiLinea.Lineas
+                    .Select(l => new LineaConfig
+                    {
+                        Regex = l.Regex,
+                        MapeoCampos = l.MapeoCampos
+                            .Select(m => new MapeoCampoLinea { Nombre = m.Nombre, Grupo = m.Grupo }).ToList()
+                    }).ToList()
             } : null,
             PostProcesamiento = _emisorActual.PostProcesamiento.Select(CopiarPostProc).ToList(),
             ZonasOcr = _emisorActual.ZonasOcr?.Select(z => new ZonaOcrConfig
@@ -804,17 +900,13 @@ public partial class GestionEmisoresForm : Form
 
         _emisorActual.Identificadores = lstIdentificadores.Items.Cast<string>().ToList();
 
-        _emisorActual.MultiLineaIVA = chkMultiIVA.Checked ? new MultiLineaIVAConfig
+        if (lstMultiLineas.SelectedItem is LineaConfig lineaActual)
+            ActualizarLineaDesdeUI(lineaActual);
+
+        _emisorActual.MultiLinea = chkMultiLinea.Checked ? new MultiLineaConfig
         {
             Habilitado = true,
-            RegexLinea = txtMultiIVARegex.Text,
-            MapeoCampos = dgvMultiIVAMapeo.Rows.Cast<DataGridViewRow>()
-                .Where(r => r.Cells[0].Value != null)
-                .Select(r => new MapeoCampoMultiIVA
-                {
-                    Nombre = r.Cells[0].Value?.ToString() ?? "",
-                    Grupo = int.TryParse(r.Cells[1].Value?.ToString(), out var g) ? g : 1
-                }).ToList()
+            Lineas = lstMultiLineas.Items.Cast<LineaConfig>().ToList()
         } : null;
 
         _emisorActual.ZonasOcr = dgvZonas.Rows.Cast<DataGridViewRow>()

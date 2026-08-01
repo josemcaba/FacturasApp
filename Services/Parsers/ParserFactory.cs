@@ -23,7 +23,7 @@ namespace FacturasApp.Services.Parsers
                 new DisgoParser(),
                 // new DulceriaParser(),
                 new EasorParser(),
-                new EMASA(),
+                // new EMASA(),
                 new EnergiaXxiParser(),
                 new EsprinetParser(),
                 new EurocabosParser(),

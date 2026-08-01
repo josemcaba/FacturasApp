@@ -18,14 +18,12 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="Fecha">
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNombre">
       <Regex>\[P1_Z3]:\s+(.+)</Regex>
@@ -39,25 +37,30 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="TotalFactura">
-      <Regex>TOTAL EURO.*[\n\r]*([-\d.,]+)</Regex>
+      <Regex>TOTAL EURO.*[\r\n]+([-\d.,]+)</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
     </Campo>
   </Campos>
-  <MultiLineaIVA>
+  <MultiLinea>
     <Habilitado>true</Habilitado>
-    <RegexLinea>([-\d.,]+)\s+([\d.,]+)\s*%\s+([-\d.,]+)</RegexLinea>
-    <MapeoCampos>
-      <Mapeo Nombre="BaseImponible" Grupo="1" />
-      <Mapeo Nombre="PorcentajeIVA" Grupo="2" />
-      <Mapeo Nombre="CuotaIVA" Grupo="3" />
-    </MapeoCampos>
-  </MultiLineaIVA>
+    <RegexLinea />
+    <Lineas>
+      <Linea>
+        <Regex>([-\d.,]+)\s+([\d.,]+)\s*%\s+([-\d.,]+)</Regex>
+        <MapeoCampos>
+          <Mapeo Nombre="BaseImponible" Grupo="1" />
+          <Mapeo Nombre="PorcentajeIVA" Grupo="2" />
+          <Mapeo Nombre="CuotaIVA" Grupo="3" />
+        </MapeoCampos>
+      </Linea>
+    </Lineas>
+    <MapeoCampos />
+  </MultiLinea>
   <PostProcesamiento>
     <Regla>
       <Accion Tipo="Calcular" CampoDestino="SubTotal" Valor="" CampoOrigen1="BaseImponible" Operador="+" CampoOrigen2="CuotaIVA" />

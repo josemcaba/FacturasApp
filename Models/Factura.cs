@@ -38,7 +38,7 @@
         public decimal TotalCalculado =>
             BaseImponible + CuotaIVACalculado - CuotaIRPFCalculado + CuotaRECalculado;
 
-        // En facturas Multi-IVA la verificación se hace sobre el subtotal de la línea
+        // En facturas multilínea la verificación se hace sobre el subtotal de la línea
         public bool EsMultiLinea { get; set; }
         public decimal ImporteVerificacion => EsMultiLinea ? SubTotal : TotalFactura;
         public decimal DiferenciaTotal =>
