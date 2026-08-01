@@ -1090,14 +1090,13 @@ public partial class GestionEmisoresForm : Form
 
         var usarDestino = tipo is "establecervalor" or "calcular";
         lblPostAccDestino.Visible = usarDestino;
+        lblDestinoA.Visible = usarDestino;
         cmbPostAccDestino.Visible = usarDestino;
 
         var usarValor = tipo == "establecervalor";
-        lblPostAccValor.Visible = usarValor;
         txtPostAccValor.Visible = usarValor;
 
         var usarFormula = tipo == "calcular";
-        lblPostAccCalc.Visible = usarFormula;
         cmbPostAccOrigen1.Visible = usarFormula;
         cmbPostAccOperador.Visible = usarFormula;
         cmbPostAccOrigen2.Visible = usarFormula;
