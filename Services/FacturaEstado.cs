@@ -40,7 +40,7 @@ namespace FacturasApp.Services
                 !string.IsNullOrEmpty(f.Emisor.NIF) &&
                 !string.IsNullOrEmpty(f.Receptor.Nombre) &&
                 !string.IsNullOrEmpty(f.Receptor.NIF) &&
-                f.TotalFactura != 0.0m;
+                f.ImporteVerificacion != 0.0m;
 
             if (!camposObligatoriosOk)
             {

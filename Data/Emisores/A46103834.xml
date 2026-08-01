@@ -3,15 +3,15 @@
   <Nif>A46103834</Nif>
   <Nombre>MERCADONA, S.A.</Nombre>
   <Identificadores>
-    <Id>mercadona</Id>
     <Id>A-46103834</Id>
-    <Id>valencia</Id>
+    <Id>Mercadona</Id>
+    <Id>Valencia</Id>
   </Identificadores>
   <ModoExtraccion>LayoutAnalysis</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\PYTHON\PYTHON-2025\DistiFact\DistiFact-Facturas\+MERCADONA\Mercadona\A-V2025-00002248553.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Mercadona 3.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>N. Factura:\s*(\S+)</Regex>
@@ -50,7 +50,6 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
   </Campos>
   <MultiLineaIVA>

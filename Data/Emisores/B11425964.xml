@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Nif>B87438750</Nif>
-  <Nombre>TRIGORICO, S.L.U.</Nombre>
+  <Nif>B11425964</Nif>
+  <Nombre>DULCERIA 17, S.L.</Nombre>
   <Identificadores>
-    <Id>reinosa</Id>
-    <Id>ESB87438750</Id>
+    <Id>40.0015231/CA</Id>
+    <Id>40.080372/CA</Id>
   </Identificadores>
   <ModoExtraccion>OrdenadoPosicion</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Trigorico 1.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Dulceria 2.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
-      <Regex>(?:FACTURA|ABONO - RECTIFICATIVO|ABONO)\s+(\S+)</Regex>
+      <Regex>Número[\s\n\r]*(\S+)</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
@@ -21,20 +21,18 @@
       <CamposSuma />
     </Campo>
     <Campo Nombre="Fecha">
-      <Regex>(?:FACTURA|ABONO - RECTIFICATIVO|ABONO)\s+\S+\s+(\S+)</Regex>
       <Grupo>1</Grupo>
-      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
       <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNombre">
-      <Regex>(.*)[\n\r]+R.M. de Santander</Regex>
+      <Regex>\[P1_Z3]:\s+(.+)</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNif">
       <Grupo>1</Grupo>
@@ -43,36 +41,36 @@
       <EsSuma>false</EsSuma>
       <CamposSuma />
     </Campo>
-    <Campo Nombre="BaseImponible">
-      <Regex>([\d.,]+)\s+([\d.,]+)\s+[\d.,]+\s+[\d.,]+[\n\r]+</Regex>
-      <Grupo>1</Grupo>
-      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
-      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
-    </Campo>
-    <Campo Nombre="PorcentajeIVA">
-      <Regex>([\d.,]+)\s+([\d.,]+)\s+[\d.,]+\s+[\d.,]+[\n\r]+</Regex>
-      <Grupo>2</Grupo>
-      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
-      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
-    </Campo>
     <Campo Nombre="TotalFactura">
-      <Regex>Total Factura en Euro\s+([\d.,]+)</Regex>
+      <Regex>TOTAL EURO.*[\n\r]*([-\d.,]+)</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
   </Campos>
+  <MultiLineaIVA>
+    <Habilitado>true</Habilitado>
+    <RegexLinea>([-\d.,]+)\s+([\d.,]+)\s*%\s+([-\d.,]+)</RegexLinea>
+    <MapeoCampos>
+      <Mapeo Nombre="BaseImponible" Grupo="1" />
+      <Mapeo Nombre="PorcentajeIVA" Grupo="2" />
+      <Mapeo Nombre="CuotaIVA" Grupo="3" />
+    </MapeoCampos>
+  </MultiLineaIVA>
   <PostProcesamiento>
     <Regla>
-      <CondicionTextoContiene>ABONO</CondicionTextoContiene>
-      <Accion Tipo="Invertir Signo" CampoDestino="" Valor="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+      <Accion Tipo="Calcular" CampoDestino="SubTotal" Valor="" CampoOrigen1="BaseImponible" Operador="+" CampoOrigen2="CuotaIVA" />
+    </Regla>
+    <Regla>
+      <Accion Tipo="Calcular" CampoDestino="CuotaIVA" Valor="" CampoOrigen1="BaseImponible" Operador="%" CampoOrigen2="PorcentajeIVA" />
     </Regla>
   </PostProcesamiento>
-  <ZonasOcr />
+  <ZonasOcr>
+    <Zona Campo="P1_Z1" Pagina="1" X="4" Y="20.5" Ancho="15.5" Alto="6" />
+    <Zona Campo="P1_Z2" Pagina="1" X="18" Y="20.5" Ancho="14" Alto="6" />
+    <Zona Campo="P1_Z3" Pagina="1" X="49" Y="14" Ancho="32" Alto="11" />
+    <Zona Campo="P1_Z4" Pagina="1" X="35" Y="81.5" Ancho="31" Alto="7" />
+    <Zona Campo="P1_Z5" Pagina="1" X="81" Y="81.5" Ancho="16" Alto="6.5" />
+  </ZonasOcr>
 </Emisor>

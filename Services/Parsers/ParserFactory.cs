@@ -21,7 +21,7 @@ namespace FacturasApp.Services.Parsers
                 new ComunicacionesCloudParser(),
                 new CostaSolBalearParser(),
                 new DisgoParser(),
-                new DulceriaParser(),
+                // new DulceriaParser(),
                 new EasorParser(),
                 new EMASA(),
                 new EnergiaXxiParser(),
@@ -55,7 +55,7 @@ namespace FacturasApp.Services.Parsers
                 new SewanParser(),
                 new SimyoParser(),
                 new TdSynnexParser(),
-                new TrigoricoParser(),
+                // new TrigoricoParser(),
                 new VerisureParser(),
             ];
         }

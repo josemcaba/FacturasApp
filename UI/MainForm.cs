@@ -328,7 +328,7 @@ namespace FacturasApp.UI
             int porOcr = facturas.Count(f => f.ExtractedByOcr);
             decimal totalEuros = facturas
                 .Where(f => f.Estado != EstadoFactura.Error)
-                .Sum(f => f.TotalFactura);
+                .Sum(f => f.ImporteVerificacion);
 
             lblResumen.Text =
                 $"Total: {total}  |  ✔ OK: {ok}  |  " +

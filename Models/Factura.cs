@@ -11,22 +11,38 @@
         public decimal BaseImponible { get; set; }
         public decimal PorcentajeIVA { get; set; } = 0m;
         public decimal CuotaIVA { get; set; }
-        public decimal CuotaIVACalculado => Math.Round(BaseImponible * (PorcentajeIVA / 100m), 2, 
-            MidpointRounding.AwayFromZero);
+        private decimal? _cuotaIVACalculadaFijada;
+        public decimal CuotaIVACalculado => _cuotaIVACalculadaFijada ??
+            Math.Round(BaseImponible * (PorcentajeIVA / 100m), 2,
+                MidpointRounding.AwayFromZero);
+        public void FijarCuotaIVACalculado(decimal valor) => _cuotaIVACalculadaFijada = valor;
+        public bool CuotaIVACalculadoFijada => _cuotaIVACalculadaFijada.HasValue;
         public decimal PorcentajeIRPF { get; set; } = 0m;
-        public decimal CuotaIRPF{ get; set; }
-        public decimal CuotaIRPFCalculado => Math.Round(BaseImponible * (PorcentajeIRPF / 100m), 2,
-            MidpointRounding.AwayFromZero);
+        public decimal CuotaIRPF { get; set; }
+        private decimal? _cuotaIRPFCalculadaFijada;
+        public decimal CuotaIRPFCalculado => _cuotaIRPFCalculadaFijada ??
+            Math.Round(BaseImponible * (PorcentajeIRPF / 100m), 2,
+                MidpointRounding.AwayFromZero);
+        public void FijarCuotaIRPFCalculado(decimal valor) => _cuotaIRPFCalculadaFijada = valor;
+        public bool CuotaIRPFCalculadoFijada => _cuotaIRPFCalculadaFijada.HasValue;
         public decimal PorcentajeRE { get; set; } = 0m;
         public decimal CuotaRE { get; set; }
-        public decimal CuotaRECalculado => Math.Round(BaseImponible * (PorcentajeRE / 100m), 2,
-            MidpointRounding.AwayFromZero);
+        private decimal? _cuotaRECalculadaFijada;
+        public decimal CuotaRECalculado => _cuotaRECalculadaFijada ??
+            Math.Round(BaseImponible * (PorcentajeRE / 100m), 2,
+                MidpointRounding.AwayFromZero);
+        public void FijarCuotaRECalculado(decimal valor) => _cuotaRECalculadaFijada = valor;
+        public bool CuotaRECalculadoFijada => _cuotaRECalculadaFijada.HasValue;
         public decimal TotalFactura { get; set; }
         public decimal SubTotal { get; set; }
         public decimal TotalCalculado =>
             BaseImponible + CuotaIVACalculado - CuotaIRPFCalculado + CuotaRECalculado;
+
+        // En facturas Multi-IVA la verificación se hace sobre el subtotal de la línea
+        public bool EsMultiLinea { get; set; }
+        public decimal ImporteVerificacion => EsMultiLinea ? SubTotal : TotalFactura;
         public decimal DiferenciaTotal =>
-            Math.Abs(TotalFactura - TotalCalculado);
+            Math.Abs(ImporteVerificacion - TotalCalculado);
 
         // Tolerancia aceptable en la comparación de totales (0,01€)
         private const decimal ToleranciaTotal = 0.01m;

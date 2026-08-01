@@ -1122,7 +1122,7 @@ partial class GestionEmisoresForm
         // 
         cmbPostAccOperador.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         cmbPostAccOperador.DropDownStyle = ComboBoxStyle.DropDownList;
-        cmbPostAccOperador.Items.AddRange(new object[] { "+", "-", "*", "/" });
+        cmbPostAccOperador.Items.AddRange(new object[] { "+", "-", "*", "/", "%" });
         cmbPostAccOperador.Location = new Point(483, 394);
         cmbPostAccOperador.Name = "cmbPostAccOperador";
         cmbPostAccOperador.Size = new Size(60, 28);

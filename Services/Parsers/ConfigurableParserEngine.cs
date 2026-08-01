@@ -93,6 +93,7 @@ public class ConfigurableParserEngine : BaseParser
         foreach (Match match in matches)
         {
             var factura = CrearFacturaBase(rutaArchivo, viaOcr);
+            factura.EsMultiLinea = true;
             factura.ConceptoGasto = string.IsNullOrEmpty(_config.ConceptoGasto) ? "600" : _config.ConceptoGasto;
             factura.ConceptoIngreso = string.IsNullOrEmpty(_config.ConceptoIngreso) ? "700" : _config.ConceptoIngreso;
 
@@ -114,9 +115,6 @@ public class ConfigurableParserEngine : BaseParser
                 if (esCampoLinea.Contains(campo.Nombre))
                     continue;
 
-                if (campo.Nombre is "TotalFactura")
-                    continue;
-
                 ExtraerYAsignarCampo(factura, campo, texto);
             }
 
@@ -128,8 +126,6 @@ public class ConfigurableParserEngine : BaseParser
                     AsignarCampo(factura, mapeo.Nombre, valor, campoFormatoFecha: null);
             }
 
-            factura.TotalFactura = factura.SubTotal;
-
             foreach (var campo in camposSuma)
                 AsignarSuma(factura, campo);
 
@@ -138,23 +134,29 @@ public class ConfigurableParserEngine : BaseParser
             facturas.Add(factura);
         }
 
-        VerificarCoherenciaTotalMulti(facturas, texto);
+        VerificarCoherenciaTotalMulti(facturas);
 
         return facturas;
     }
 
-    private void VerificarCoherenciaTotalMulti(List<Factura> facturas, string texto)
+    private void VerificarCoherenciaTotalMulti(List<Factura> facturas)
     {
-        var campoTotal = _config.Campos.FirstOrDefault(c =>
-            !c.EsSuma && !string.IsNullOrEmpty(c.Regex) &&
-            (c.Nombre == "TotalFactura"));
-        if (campoTotal == null) return;
+        // Todas las líneas comparten el mismo TotalFactura del documento
+        // (extraído sobre el texto completo), ya respetando el post-procesamiento.
+        var totalDocumento = facturas[0].TotalFactura;
 
-        var regex = new Regex(campoTotal.Regex!, RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        var match = regex.Match(texto);
-        if (!match.Success || campoTotal.Grupo >= match.Groups.Count) return;
+        if (totalDocumento == 0m)
+        {
+            foreach (var factura in facturas)
+            {
+                factura.MensajeError.Add(
+                    "No se pudo extraer el TotalFactura del documento para verificar la suma de subtotales");
+                if (factura.Estado == EstadoFactura.OK)
+                    factura.Estado = EstadoFactura.Revisar;
+            }
+            return;
+        }
 
-        var totalDocumento = ParsearDecimal(match.Groups[campoTotal.Grupo].Value.Trim());
         var sumaSubtotales = facturas.Sum(f => f.SubTotal);
 
         if (Math.Abs(sumaSubtotales - totalDocumento) > 0.01m)
@@ -400,6 +402,7 @@ public class ConfigurableParserEngine : BaseParser
             "-" => a - b,
             "*" => a * b,
             "/" => b == 0m ? a : a / b,
+            "%" => a * b / 100m,
             _ => a
         };
         AsignarDecimal(factura, accion.CampoDestino, resultado);
@@ -454,6 +457,12 @@ public class ConfigurableParserEngine : BaseParser
         factura.CuotaRE *= -1;
         factura.TotalFactura *= -1;
         factura.SubTotal *= -1;
+        if (factura.CuotaIVACalculadoFijada)
+            factura.FijarCuotaIVACalculado(-factura.CuotaIVACalculado);
+        if (factura.CuotaIRPFCalculadoFijada)
+            factura.FijarCuotaIRPFCalculado(-factura.CuotaIRPFCalculado);
+        if (factura.CuotaRECalculadoFijada)
+            factura.FijarCuotaRECalculado(-factura.CuotaRECalculado);
     }
 
     // ── Helpers de lectura de campos ─────────────────────────────────────────
@@ -480,9 +489,18 @@ public class ConfigurableParserEngine : BaseParser
         switch (nombreCampo)
         {
             case "BaseImponible": factura.BaseImponible = valor; break;
-            case "CuotaIVA": factura.CuotaIVA = valor; break;
-            case "CuotaIRPF": factura.CuotaIRPF = valor; break;
-            case "CuotaRE": factura.CuotaRE = valor; break;
+            case "CuotaIVA":
+                factura.CuotaIVA = valor;
+                factura.FijarCuotaIVACalculado(valor);
+                break;
+            case "CuotaIRPF":
+                factura.CuotaIRPF = valor;
+                factura.FijarCuotaIRPFCalculado(valor);
+                break;
+            case "CuotaRE":
+                factura.CuotaRE = valor;
+                factura.FijarCuotaRECalculado(valor);
+                break;
             case "TotalFactura": factura.TotalFactura = valor; break;
             case "SubTotal": factura.SubTotal = valor; break;
             case "PorcentajeIVA": factura.PorcentajeIVA = valor; break;
