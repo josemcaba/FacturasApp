@@ -29,7 +29,7 @@ namespace FacturasApp.Services.Parsers
 
             factura.NumeroFactura = ExtraerGrupo(RegexNumero, texto, 1);
             factura.Fecha = ExtraerFecha(texto);
-            factura.Receptor.Nombre = ExtraerGrupo(RegexReceptorNombre, texto, 1).ToUpper();
+            factura.Receptor.Nombre = ExtraerGrupo(RegexReceptorNombre, texto, 1);
             factura.Receptor.NIF = ExtraerNif(texto);
             factura.BaseImponible = ExtraerDecimal(RegexImportes, texto, 1);
             factura.PorcentajeIVA = 21m;

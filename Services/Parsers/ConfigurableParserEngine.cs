@@ -342,20 +342,12 @@ public class ConfigurableParserEngine : BaseParser
                     InvertirSigno(factura);
                     break;
 
-                case "mayusculas":
-                    PonerMayusculas(factura, accion.CampoDestino);
-                    break;
-
                 case "establecervalor":
                     EstablecerValor(factura, accion);
                     break;
 
                 case "calcular":
                     CalcularCampo(factura, accion);
-                    break;
-
-                case "truncar":
-                    TruncarCampo(factura, accion);
                     break;
             }
         }
@@ -413,17 +405,6 @@ public class ConfigurableParserEngine : BaseParser
         AsignarDecimal(factura, accion.CampoDestino, resultado);
     }
 
-    private static void TruncarCampo(Factura factura, AccionPostProcesamiento accion)
-    {
-        var destino = accion.CampoDestino;
-        if (string.IsNullOrEmpty(destino)) return;
-        if (!int.TryParse(accion.Valor, out var longitud) || longitud < 0) return;
-
-        var texto = ObtenerValorTexto(factura, destino);
-        if (texto == null) return;
-        AsignarTexto(factura, destino, texto[..Math.Min(longitud, texto.Length)]);
-    }
-
     private static string? ObtenerValorTexto(Factura factura, string nombreCampo)
     {
         return nombreCampo switch
@@ -473,19 +454,6 @@ public class ConfigurableParserEngine : BaseParser
         factura.CuotaRE *= -1;
         factura.TotalFactura *= -1;
         factura.SubTotal *= -1;
-    }
-
-    private static void PonerMayusculas(Factura factura, string nombreCampo)
-    {
-        switch (nombreCampo)
-        {
-            case "ReceptorNombre":
-                factura.Receptor.Nombre = factura.Receptor.Nombre.ToUpper();
-                break;
-            case "EmisorNombre":
-                factura.Emisor.Nombre = factura.Emisor.Nombre.ToUpper();
-                break;
-        }
     }
 
     // ── Helpers de lectura de campos ─────────────────────────────────────────

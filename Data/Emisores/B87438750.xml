@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Nif>B87438750</Nif>
+  <Nombre>TRIGORICO, S.L.U.</Nombre>
+  <Identificadores>
+    <Id>reinosa</Id>
+    <Id>ESB87438750</Id>
+  </Identificadores>
+  <ModoExtraccion>OrdenadoPosicion</ModoExtraccion>
+  <ConceptoIngreso>700</ConceptoIngreso>
+  <ConceptoGasto>600</ConceptoGasto>
+  <CulturaFecha>es-ES</CulturaFecha>
+  <RutaPdfMuestra />
+  <Campos>
+    <Campo Nombre="NumeroFactura">
+      <Regex>(?:FACTURA|ABONO - RECTIFICATIVO|ABONO)\s+(\S+)</Regex>
+      <Grupo>1</Grupo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="Fecha">
+      <Regex>(?:FACTURA|ABONO - RECTIFICATIVO|ABONO)\s+\S+\s+(\S+)</Regex>
+      <Grupo>1</Grupo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="ReceptorNombre">
+      <Regex>(.*)[\n\r]+R.M. de Santander</Regex>
+      <Grupo>1</Grupo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="ReceptorNif">
+      <Grupo>1</Grupo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="BaseImponible">
+      <Regex>([\d.,]+)\s+([\d.,]+)\s+[\d.,]+\s+[\d.,]+[\n\r]+</Regex>
+      <Grupo>1</Grupo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="PorcentajeIVA">
+      <Regex>([\d.,]+)\s+([\d.,]+)\s+[\d.,]+\s+[\d.,]+[\n\r]+</Regex>
+      <Grupo>2</Grupo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="TotalFactura">
+      <Regex>Total Factura en Euro\s+([\d.,]+)</Regex>
+      <Grupo>1</Grupo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+  </Campos>
+  <PostProcesamiento>
+    <Regla>
+      <CondicionTextoContiene>ABONO</CondicionTextoContiene>
+      <Accion Tipo="Invertir Signo" />
+    </Regla>
+  </PostProcesamiento>
+  <ZonasOcr />
+</Emisor>

@@ -1088,14 +1088,13 @@ public partial class GestionEmisoresForm : Form
     {
         var tipo = PostProcesamientoConfig.NormalizarTipo(cmbPostProcTipo.SelectedItem?.ToString() ?? "");
 
-        var usarDestino = tipo is "mayusculas" or "establecervalor" or "truncar" or "calcular";
+        var usarDestino = tipo is "establecervalor" or "calcular";
         lblPostAccDestino.Visible = usarDestino;
         cmbPostAccDestino.Visible = usarDestino;
 
-        var usarValor = tipo is "establecervalor" or "truncar";
+        var usarValor = tipo == "establecervalor";
         lblPostAccValor.Visible = usarValor;
         txtPostAccValor.Visible = usarValor;
-        lblPostAccValor.Text = tipo == "truncar" ? "Longitud:" : "Valor:";
 
         var usarFormula = tipo == "calcular";
         lblPostAccCalc.Visible = usarFormula;
@@ -1126,7 +1125,6 @@ public partial class GestionEmisoresForm : Form
             var campos = tipo switch
             {
                 "calcular" => CamposDisponibles().Where(ConfigurableParserEngine.EsCampoNumerico).ToList(),
-                "mayusculas" or "truncar" => CamposDisponibles().Where(ConfigurableParserEngine.EsCampoTexto).ToList(),
                 _ => CamposDisponibles()
             };
             RellenarComboCampos(cmbPostAccDestino, campos);

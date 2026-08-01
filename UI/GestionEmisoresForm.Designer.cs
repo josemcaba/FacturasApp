@@ -988,7 +988,7 @@ partial class GestionEmisoresForm
         // 
         cmbPostProcTipo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         cmbPostProcTipo.DropDownStyle = ComboBoxStyle.DropDownList;
-        cmbPostProcTipo.Items.AddRange(new object[] { "Invertir Signo", "Mayusculas", "Establecer Valor", "Calcular", "Truncar" });
+        cmbPostProcTipo.Items.AddRange(new object[] { "Invertir Signo", "Establecer Valor", "Calcular" });
         cmbPostProcTipo.Location = new Point(483, 38);
         cmbPostProcTipo.Name = "cmbPostProcTipo";
         cmbPostProcTipo.Size = new Size(200, 28);

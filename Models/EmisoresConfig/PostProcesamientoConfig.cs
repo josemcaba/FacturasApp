@@ -28,10 +28,8 @@ public class PostProcesamientoConfig
         return NormalizarTipo(accion.Tipo) switch
         {
             "invertirsigno" => $"{cond}Invertir signo de los importes",
-            "mayusculas" => $"{cond}Mayúsculas en {accion.CampoDestino}",
             "establecervalor" => $"{cond}{accion.CampoDestino} = {accion.Valor}",
             "calcular" => $"{cond}{accion.CampoDestino} = {accion.CampoOrigen1} {accion.Operador} {accion.CampoOrigen2}",
-            "truncar" => $"{cond}Truncar {accion.CampoDestino} a {accion.Valor} caracteres",
             _ => $"{cond}{accion.Tipo}"
         };
     }
