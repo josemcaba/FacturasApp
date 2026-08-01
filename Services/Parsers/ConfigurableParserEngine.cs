@@ -327,8 +327,13 @@ public class ConfigurableParserEngine : BaseParser
             var accion = regla.Accion;
             if (accion == null || string.IsNullOrEmpty(accion.Tipo)) continue;
 
-            if (!string.IsNullOrEmpty(regla.CondicionTextoContiene) &&
+            if (PostProcesamientoConfig.NormalizarTipo(accion.Tipo) == "invertirsigno" &&
+                !string.IsNullOrEmpty(regla.CondicionTextoContiene) &&
                 !texto.Contains(regla.CondicionTextoContiene, StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            if (PostProcesamientoConfig.NormalizarTipo(accion.Tipo) == "establecervalor" &&
+                !EvaluarCondicionCampo(factura, regla.CondicionCampo))
                 continue;
 
             switch (PostProcesamientoConfig.NormalizarTipo(accion.Tipo))
@@ -371,6 +376,24 @@ public class ConfigurableParserEngine : BaseParser
         {
             AsignarTexto(factura, destino, accion.Valor);
         }
+    }
+
+    private static bool EvaluarCondicionCampo(Factura factura, CondicionCampoPostProcesamiento? condicion)
+    {
+        if (condicion == null || string.IsNullOrEmpty(condicion.Campo))
+            return false;
+
+        if (EsCampoNumerico(condicion.Campo))
+        {
+            if (!decimal.TryParse(condicion.Valor, NumberStyles.Number,
+                CultureInfo.GetCultureInfo("es-ES"), out var esperado))
+                return false;
+            return ObtenerValorDecimal(factura, condicion.Campo) == esperado;
+        }
+
+        var actual = ObtenerValorTexto(factura, condicion.Campo);
+        return actual != null &&
+            actual.Equals(condicion.Valor, StringComparison.OrdinalIgnoreCase);
     }
 
     private static void CalcularCampo(Factura factura, AccionPostProcesamiento accion)

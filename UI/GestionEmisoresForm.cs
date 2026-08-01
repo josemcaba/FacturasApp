@@ -758,6 +758,11 @@ public partial class GestionEmisoresForm : Form
         return new PostProcesamientoConfig
         {
             CondicionTextoContiene = p.CondicionTextoContiene,
+            CondicionCampo = p.CondicionCampo == null ? null : new CondicionCampoPostProcesamiento
+            {
+                Campo = p.CondicionCampo.Campo,
+                Valor = p.CondicionCampo.Valor
+            },
             Accion = p.Accion == null ? null : new AccionPostProcesamiento
             {
                 Tipo = p.Accion.Tipo,
@@ -1059,6 +1064,20 @@ public partial class GestionEmisoresForm : Form
 
         txtPostProcCondicion.Text = regla.CondicionTextoContiene ?? "";
 
+        var condCampo = regla.CondicionCampo;
+        if (condCampo == null || string.IsNullOrEmpty(condCampo.Campo))
+        {
+            cmbPostCondCampo.SelectedIndex = -1;
+            txtPostCondValor.Text = "";
+        }
+        else
+        {
+            if (!cmbPostCondCampo.Items.Contains(condCampo.Campo))
+                cmbPostCondCampo.Items.Add(condCampo.Campo);
+            cmbPostCondCampo.SelectedItem = condCampo.Campo;
+            txtPostCondValor.Text = condCampo.Valor;
+        }
+
         ActualizarDetalleAccionDesdeRegla(regla);
         ActualizarResumenPostProc();
 
@@ -1083,6 +1102,23 @@ public partial class GestionEmisoresForm : Form
         cmbPostAccOrigen1.Visible = usarFormula;
         cmbPostAccOperador.Visible = usarFormula;
         cmbPostAccOrigen2.Visible = usarFormula;
+
+        var usarCondTexto = tipo == "invertirsigno";
+        lblPostProcCond.Visible = usarCondTexto;
+        txtPostProcCondicion.Visible = usarCondTexto;
+
+        var usarCondCampo = tipo == "establecervalor";
+        lblPostCondCampo.Visible = usarCondCampo;
+        cmbPostCondCampo.Visible = usarCondCampo;
+        lblPostCondValor.Visible = usarCondCampo;
+        txtPostCondValor.Visible = usarCondCampo;
+        if (usarCondCampo)
+        {
+            var actual = cmbPostCondCampo.SelectedItem?.ToString();
+            RellenarComboCampos(cmbPostCondCampo, CamposDisponibles());
+            if (actual != null && cmbPostCondCampo.Items.Contains(actual))
+                cmbPostCondCampo.SelectedItem = actual;
+        }
 
         if (usarDestino)
         {
@@ -1172,6 +1208,14 @@ public partial class GestionEmisoresForm : Form
         if (!string.IsNullOrWhiteSpace(condicion))
             regla.CondicionTextoContiene = condicion;
 
+        var condCampo = cmbPostCondCampo.SelectedItem?.ToString();
+        if (!string.IsNullOrEmpty(condCampo))
+        {
+            regla.CondicionCampo ??= new CondicionCampoPostProcesamiento();
+            regla.CondicionCampo.Campo = condCampo;
+            regla.CondicionCampo.Valor = txtPostCondValor.Text.Trim();
+        }
+
         var accion = regla.Accion;
         if (accion != null)
         {
@@ -1197,21 +1241,41 @@ public partial class GestionEmisoresForm : Form
 
     private void BtnPostProcAdd_Click(object? sender, EventArgs e)
     {
-        var condicion = txtPostProcCondicion.Text.Trim();
-        if (string.IsNullOrWhiteSpace(condicion))
+        var tipoNorm = PostProcesamientoConfig.NormalizarTipo(cmbPostProcTipo.SelectedItem?.ToString() ?? "");
+        if (tipoNorm == "invertirsigno")
         {
-            MessageBox.Show("La condición (texto en factura) es obligatoria.",
-                "Condición requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            txtPostProcCondicion.Focus();
-            return;
+            if (string.IsNullOrWhiteSpace(txtPostProcCondicion.Text))
+            {
+                MessageBox.Show("Para 'Invertir Signo' la condición (texto en factura) es obligatoria.",
+                    "Condición requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtPostProcCondicion.Focus();
+                return;
+            }
+        }
+        else if (tipoNorm == "establecervalor")
+        {
+            if (cmbPostCondCampo.SelectedItem == null || string.IsNullOrWhiteSpace(txtPostCondValor.Text))
+            {
+                MessageBox.Show("Para 'Establecer Valor' debes indicar el campo de la condición y el valor esperado.",
+                    "Condición requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cmbPostCondCampo.Focus();
+                return;
+            }
         }
 
         var tipo = cmbPostProcTipo.SelectedItem?.ToString() ?? "InvertirSigno";
         var regla = new PostProcesamientoConfig
         {
-            CondicionTextoContiene = condicion,
             Accion = new AccionPostProcesamiento { Tipo = tipo }
         };
+        if (tipoNorm == "invertirsigno")
+            regla.CondicionTextoContiene = txtPostProcCondicion.Text.Trim();
+        else if (tipoNorm == "establecervalor")
+            regla.CondicionCampo = new CondicionCampoPostProcesamiento
+            {
+                Campo = cmbPostCondCampo.SelectedItem!.ToString()!,
+                Valor = txtPostCondValor.Text.Trim()
+            };
 
         lstPostProc.Items.Add(regla);
         lstPostProc.SelectedItem = regla;

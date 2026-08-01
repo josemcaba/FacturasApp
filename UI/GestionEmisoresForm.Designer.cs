@@ -107,6 +107,10 @@ partial class GestionEmisoresForm
         cmbPostProcTipo = new ComboBox();
         lblPostProcCond = new Label();
         txtPostProcCondicion = new TextBox();
+        lblPostCondCampo = new Label();
+        cmbPostCondCampo = new ComboBox();
+        lblPostCondValor = new Label();
+        txtPostCondValor = new TextBox();
         lblPostAccDestino = new Label();
         cmbPostAccDestino = new ComboBox();
         lblPostAccValor = new Label();
@@ -909,6 +913,10 @@ partial class GestionEmisoresForm
         tabPostProc.Controls.Add(cmbPostProcTipo);
         tabPostProc.Controls.Add(lblPostProcCond);
         tabPostProc.Controls.Add(txtPostProcCondicion);
+        tabPostProc.Controls.Add(lblPostCondCampo);
+        tabPostProc.Controls.Add(cmbPostCondCampo);
+        tabPostProc.Controls.Add(lblPostCondValor);
+        tabPostProc.Controls.Add(txtPostCondValor);
         tabPostProc.Controls.Add(lblPostAccDestino);
         tabPostProc.Controls.Add(cmbPostAccDestino);
         tabPostProc.Controls.Add(lblPostAccValor);
@@ -940,7 +948,7 @@ partial class GestionEmisoresForm
         lstPostProc.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         lstPostProc.Location = new Point(16, 38);
         lstPostProc.Name = "lstPostProc";
-        lstPostProc.Size = new Size(369, 384);
+        lstPostProc.Size = new Size(323, 384);
         lstPostProc.TabIndex = 1;
         lstPostProc.SelectedIndexChanged += LstPostProc_SelectedIndexChanged;
         // 
@@ -991,7 +999,7 @@ partial class GestionEmisoresForm
         // 
         lblPostProcCond.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         lblPostProcCond.AutoSize = true;
-        lblPostProcCond.Location = new Point(398, 88);
+        lblPostProcCond.Location = new Point(398, 101);
         lblPostProcCond.Name = "lblPostProcCond";
         lblPostProcCond.Size = new Size(79, 20);
         lblPostProcCond.TabIndex = 4;
@@ -1000,13 +1008,54 @@ partial class GestionEmisoresForm
         // txtPostProcCondicion
         // 
         txtPostProcCondicion.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        txtPostProcCondicion.Location = new Point(483, 85);
+        txtPostProcCondicion.Location = new Point(483, 98);
         txtPostProcCondicion.Name = "txtPostProcCondicion";
         txtPostProcCondicion.PlaceholderText = "Texto que debe aparecer en factura";
         txtPostProcCondicion.Size = new Size(250, 27);
         txtPostProcCondicion.TabIndex = 5;
         txtPostProcCondicion.TextChanged += PostProcControl_Changed;
         txtPostProcCondicion.Leave += TxtPostProcCondicion_Leave;
+        // 
+        // lblPostCondCampo
+        // 
+        lblPostCondCampo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        lblPostCondCampo.AutoSize = true;
+        lblPostCondCampo.Location = new Point(345, 147);
+        lblPostCondCampo.Name = "lblPostCondCampo";
+        lblPostCondCampo.Size = new Size(71, 20);
+        lblPostCondCampo.TabIndex = 40;
+        lblPostCondCampo.Text = "Si campo";
+        // 
+        // cmbPostCondCampo
+        // 
+        cmbPostCondCampo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        cmbPostCondCampo.DropDownStyle = ComboBoxStyle.DropDownList;
+        cmbPostCondCampo.Items.AddRange(new object[] { "PorcentajeIRPF" });
+        cmbPostCondCampo.Location = new Point(422, 144);
+        cmbPostCondCampo.Name = "cmbPostCondCampo";
+        cmbPostCondCampo.Size = new Size(146, 28);
+        cmbPostCondCampo.TabIndex = 6;
+        cmbPostCondCampo.SelectedIndexChanged += PostProcControl_Changed;
+        // 
+        // lblPostCondValor
+        // 
+        lblPostCondValor.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        lblPostCondValor.AutoSize = true;
+        lblPostCondValor.Location = new Point(574, 147);
+        lblPostCondValor.Name = "lblPostCondValor";
+        lblPostCondValor.Size = new Size(72, 20);
+        lblPostCondValor.TabIndex = 41;
+        lblPostCondValor.Text = "es igual a";
+        // 
+        // txtPostCondValor
+        // 
+        txtPostCondValor.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        txtPostCondValor.Location = new Point(652, 144);
+        txtPostCondValor.Name = "txtPostCondValor";
+        txtPostCondValor.PlaceholderText = "Ej: 0";
+        txtPostCondValor.Size = new Size(81, 27);
+        txtPostCondValor.TabIndex = 7;
+        txtPostCondValor.TextChanged += PostProcControl_Changed;
         // 
         // lblPostAccDestino
         // 
@@ -1022,6 +1071,7 @@ partial class GestionEmisoresForm
         // 
         cmbPostAccDestino.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         cmbPostAccDestino.DropDownStyle = ComboBoxStyle.DropDownList;
+        cmbPostAccDestino.Items.AddRange(new object[] { "ConceptoIngreso", "ConceptoGasto" });
         cmbPostAccDestino.Location = new Point(513, 241);
         cmbPostAccDestino.Name = "cmbPostAccDestino";
         cmbPostAccDestino.Size = new Size(220, 28);
@@ -1052,7 +1102,7 @@ partial class GestionEmisoresForm
         // 
         lblPostAccCalc.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         lblPostAccCalc.AutoSize = true;
-        lblPostAccCalc.Location = new Point(391, 160);
+        lblPostAccCalc.Location = new Point(379, 367);
         lblPostAccCalc.Name = "lblPostAccCalc";
         lblPostAccCalc.Size = new Size(133, 20);
         lblPostAccCalc.TabIndex = 14;
@@ -1062,7 +1112,7 @@ partial class GestionEmisoresForm
         // 
         cmbPostAccOrigen1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         cmbPostAccOrigen1.DropDownStyle = ComboBoxStyle.DropDownList;
-        cmbPostAccOrigen1.Location = new Point(394, 187);
+        cmbPostAccOrigen1.Location = new Point(382, 394);
         cmbPostAccOrigen1.Name = "cmbPostAccOrigen1";
         cmbPostAccOrigen1.Size = new Size(95, 28);
         cmbPostAccOrigen1.TabIndex = 15;
@@ -1073,7 +1123,7 @@ partial class GestionEmisoresForm
         cmbPostAccOperador.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         cmbPostAccOperador.DropDownStyle = ComboBoxStyle.DropDownList;
         cmbPostAccOperador.Items.AddRange(new object[] { "+", "-", "*", "/" });
-        cmbPostAccOperador.Location = new Point(495, 187);
+        cmbPostAccOperador.Location = new Point(483, 394);
         cmbPostAccOperador.Name = "cmbPostAccOperador";
         cmbPostAccOperador.Size = new Size(60, 28);
         cmbPostAccOperador.TabIndex = 16;
@@ -1083,7 +1133,7 @@ partial class GestionEmisoresForm
         // 
         cmbPostAccOrigen2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         cmbPostAccOrigen2.DropDownStyle = ComboBoxStyle.DropDownList;
-        cmbPostAccOrigen2.Location = new Point(561, 187);
+        cmbPostAccOrigen2.Location = new Point(549, 394);
         cmbPostAccOrigen2.Name = "cmbPostAccOrigen2";
         cmbPostAccOrigen2.Size = new Size(100, 28);
         cmbPostAccOrigen2.TabIndex = 17;
@@ -1288,6 +1338,10 @@ partial class GestionEmisoresForm
     private ComboBox cmbPostProcTipo;
     private Label lblPostProcCond;
     private TextBox txtPostProcCondicion;
+    private Label lblPostCondCampo;
+    private ComboBox cmbPostCondCampo;
+    private Label lblPostCondValor;
+    private TextBox txtPostCondValor;
     private Label lblPostAccDestino;
     private ComboBox cmbPostAccDestino;
     private Label lblPostAccValor;

@@ -75,7 +75,22 @@
       <CamposSuma />
     </Campo>
   </Campos>
-  <PostProcesamiento />
+  <PostProcesamiento>
+    <Regla>
+      <CondicionCampo>
+        <Campo>PorcentajeIRPF</Campo>
+        <Valor>19</Valor>
+      </CondicionCampo>
+      <Accion Tipo="Establecer Valor" CampoDestino="ConceptoIngreso" Valor="720" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+    </Regla>
+    <Regla>
+      <CondicionCampo>
+        <Campo>PorcentajeIRPF</Campo>
+        <Valor>19</Valor>
+      </CondicionCampo>
+      <Accion Tipo="Establecer Valor" CampoDestino="ConceptoGasto" Valor="620" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+    </Regla>
+  </PostProcesamiento>
   <ZonasOcr>
     <Zona Campo="P1_Z1" Pagina="1" X="50.2" Y="4.5" Ancho="39.4" Alto="3.6" />
     <Zona Campo="P1_Z2" Pagina="1" X="48" Y="9.1" Ancho="45.8" Alto="9.8" />

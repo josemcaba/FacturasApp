@@ -9,6 +9,8 @@ public class PostProcesamientoConfig
 
     public string? CondicionTextoContiene { get; set; }
 
+    public CondicionCampoPostProcesamiento? CondicionCampo { get; set; }
+
     public AccionPostProcesamiento? Accion { get; set; }
 
     public override string ToString()
@@ -16,6 +18,8 @@ public class PostProcesamientoConfig
         string cond = string.Empty;
         if (!string.IsNullOrEmpty(CondicionTextoContiene))
             cond = $"Texto \"{CondicionTextoContiene}\" → ";
+        else if (CondicionCampo is { } cc && !string.IsNullOrEmpty(cc.Campo))
+            cond = $"{cc.Campo} == \"{cc.Valor}\" → ";
 
         var accion = Accion;
         if (accion == null || string.IsNullOrEmpty(accion.Tipo))
@@ -31,6 +35,13 @@ public class PostProcesamientoConfig
             _ => $"{cond}{accion.Tipo}"
         };
     }
+}
+
+public class CondicionCampoPostProcesamiento
+{
+    public string Campo { get; set; } = string.Empty;
+
+    public string Valor { get; set; } = string.Empty;
 }
 
 public class AccionPostProcesamiento
