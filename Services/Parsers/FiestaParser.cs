@@ -70,10 +70,10 @@ namespace FacturasApp.Services.Parsers
                     factura.BaseImponible = ParsearDecimal(linea.Groups[2].Value);
                     factura.PorcentajeIVA = ParsearDecimal(linea.Groups[1].Value);
                     factura.CuotaIVA = ParsearDecimal(linea.Groups[3].Value);
-                    factura.Total = factura.BaseImponible + factura.CuotaIVA;
+                    factura.TotalFactura = factura.BaseImponible + factura.CuotaIVA;
                     factura.Estado = FacturaEstado.Determinar(factura);
                 }
-                subtotales += factura.Total;
+                subtotales += factura.TotalFactura;
                 facturas.Add(factura);
             }
             if (subtotales != totalFactura)

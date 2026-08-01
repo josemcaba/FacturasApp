@@ -114,6 +114,9 @@ public class ConfigurableParserEngine : BaseParser
                 if (esCampoLinea.Contains(campo.Nombre))
                     continue;
 
+                if (campo.Nombre is "TotalFactura")
+                    continue;
+
                 ExtraerYAsignarCampo(factura, campo, texto);
             }
 
@@ -125,6 +128,8 @@ public class ConfigurableParserEngine : BaseParser
                     AsignarCampo(factura, mapeo.Nombre, valor, campoFormatoFecha: null);
             }
 
+            factura.TotalFactura = factura.SubTotal;
+
             foreach (var campo in camposSuma)
                 AsignarSuma(factura, campo);
 
@@ -133,7 +138,34 @@ public class ConfigurableParserEngine : BaseParser
             facturas.Add(factura);
         }
 
+        VerificarCoherenciaTotalMulti(facturas, texto);
+
         return facturas;
+    }
+
+    private void VerificarCoherenciaTotalMulti(List<Factura> facturas, string texto)
+    {
+        var campoTotal = _config.Campos.FirstOrDefault(c =>
+            !c.EsSuma && !string.IsNullOrEmpty(c.Regex) &&
+            (c.Nombre == "TotalFactura"));
+        if (campoTotal == null) return;
+
+        var regex = new Regex(campoTotal.Regex!, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        var match = regex.Match(texto);
+        if (!match.Success || campoTotal.Grupo >= match.Groups.Count) return;
+
+        var totalDocumento = ParsearDecimal(match.Groups[campoTotal.Grupo].Value.Trim());
+        var sumaSubtotales = facturas.Sum(f => f.SubTotal);
+
+        if (Math.Abs(sumaSubtotales - totalDocumento) > 0.01m)
+        {
+            string mensaje = $"La suma de los subtotales Multi-IVA ({sumaSubtotales:N2} €) no coincide con el TotalFactura extraído ({totalDocumento:N2} €)";
+            foreach (var factura in facturas)
+            {
+                factura.MensajeError.Add(mensaje);
+                factura.Estado = EstadoFactura.Error;
+            }
+        }
     }
 
     // ── Extracción y asignación ──────────────────────────────────────────────
@@ -223,8 +255,12 @@ public class ConfigurableParserEngine : BaseParser
                 factura.CuotaRE = ParsearDecimal(valorTexto);
                 break;
 
-            case "Total":
-                factura.Total = ParsearDecimal(valorTexto);
+            case "TotalFactura":
+                factura.TotalFactura = ParsearDecimal(valorTexto);
+                break;
+
+            case "SubTotal":
+                factura.SubTotal = ParsearDecimal(valorTexto);
                 break;
 
             case "ReceptorNombre":
@@ -315,7 +351,8 @@ public class ConfigurableParserEngine : BaseParser
             case "CuotaIVA": factura.CuotaIVA *= -1; break;
             case "CuotaIRPF": factura.CuotaIRPF *= -1; break;
             case "CuotaRE": factura.CuotaRE *= -1; break;
-            case "Total": factura.Total *= -1; break;
+            case "TotalFactura": factura.TotalFactura *= -1; break;
+            case "SubTotal": factura.SubTotal *= -1; break;
         }
     }
 
@@ -342,7 +379,8 @@ public class ConfigurableParserEngine : BaseParser
             "CuotaIVA" => factura.CuotaIVA,
             "CuotaIRPF" => factura.CuotaIRPF,
             "CuotaRE" => factura.CuotaRE,
-            "Total" => factura.Total,
+            "TotalFactura" => factura.TotalFactura,
+            "SubTotal" => factura.SubTotal,
             "PorcentajeIVA" => factura.PorcentajeIVA,
             "PorcentajeIRPF" => factura.PorcentajeIRPF,
             "PorcentajeRE" => factura.PorcentajeRE,
@@ -358,7 +396,8 @@ public class ConfigurableParserEngine : BaseParser
             case "CuotaIVA": factura.CuotaIVA = valor; break;
             case "CuotaIRPF": factura.CuotaIRPF = valor; break;
             case "CuotaRE": factura.CuotaRE = valor; break;
-            case "Total": factura.Total = valor; break;
+            case "TotalFactura": factura.TotalFactura = valor; break;
+            case "SubTotal": factura.SubTotal = valor; break;
             case "PorcentajeIVA": factura.PorcentajeIVA = valor; break;
             case "PorcentajeIRPF": factura.PorcentajeIRPF = valor; break;
             case "PorcentajeRE": factura.PorcentajeRE = valor; break;

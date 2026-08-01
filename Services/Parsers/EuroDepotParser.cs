@@ -34,7 +34,7 @@ namespace FacturasApp.Services.Parsers
             factura.BaseImponible = ExtraerDecimal(RegexImportes, texto, 1);
             factura.PorcentajeIVA = 21m;
             factura.CuotaIVA = ExtraerDecimal(RegexImportes, texto, 2);
-            factura.Total = ExtraerDecimal(RegexImportes, texto, 3);
+            factura.TotalFactura = ExtraerDecimal(RegexImportes, texto, 3);
             factura.Estado = FacturaEstado.Determinar(factura);
 
             return factura;

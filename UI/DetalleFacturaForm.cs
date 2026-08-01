@@ -43,7 +43,7 @@ namespace FacturasApp.UI
                 txtCuotaReCalculada.Text = _factura.CuotaRECalculado.ToString("N2");
             }
             txtTotalCalculado.Text = $"{_factura.TotalCalculado.ToString("N2")} €";
-            txtTotalExtraido.Text = $"{_factura.Total.ToString("N2")} €";
+            txtTotalExtraido.Text = $"{_factura.TotalFactura.ToString("N2")} €";
 
             if (!_factura.TotalesCoinciden)
             {

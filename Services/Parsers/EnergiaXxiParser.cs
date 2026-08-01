@@ -63,7 +63,7 @@ namespace FacturasApp.Services.Parsers
             CuotaIVA = Regex.Replace(CuotaIVA, "[ .]", "");
             factura.CuotaIVA = ParsearDecimal(CuotaIVA);
             
-            factura.Total = ExtraerDecimal(RegexTotal, texto, 1);
+            factura.TotalFactura = ExtraerDecimal(RegexTotal, texto, 1);
             factura.Estado = FacturaEstado.Determinar(factura);
 
             return factura;

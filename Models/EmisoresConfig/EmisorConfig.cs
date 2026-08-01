@@ -16,6 +16,7 @@ public class EmisorConfig
     public string ConceptoIngreso { get; set; } = "700";
     public string ConceptoGasto { get; set; } = "600";
     public string CulturaFecha { get; set; } = "es-ES";
+    public string RutaPdfMuestra { get; set; } = string.Empty;
 
     [XmlArray("Campos")]
     [XmlArrayItem("Campo")]

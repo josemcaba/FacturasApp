@@ -48,7 +48,7 @@ namespace FacturasApp.Services.Parsers
                 factura.CuotaIVA = ParsearDecimal(mImportes.Groups[4].Value);
             }
 
-            factura.Total = ExtraerDecimal(RegexTotal, texto, 1);
+            factura.TotalFactura = ExtraerDecimal(RegexTotal, texto, 1);
             factura.Estado = FacturaEstado.Determinar(factura);
 
             return factura;

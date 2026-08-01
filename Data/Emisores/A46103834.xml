@@ -43,13 +43,19 @@
       <EsSuma>false</EsSuma>
       <CamposSuma />
     </Campo>
-    <Campo Nombre="Total">
-      <Regex>Total Factura\s*([-\d.,]+)</Regex>
+    <Campo Nombre="TotalFactura">
+      <Grupo>1</Grupo>
+      <ValorFijo>9999</ValorFijo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+    </Campo>
+    <Campo Nombre="ConceptoIngreso">
+      <Regex>TOTAL[\s\n\r]+([-\d.,]+)</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
   </Campos>
   <MultiLineaIVA>
@@ -59,7 +65,7 @@
       <Mapeo Nombre="BaseImponible" Grupo="2" />
       <Mapeo Nombre="PorcentajeIVA" Grupo="1" />
       <Mapeo Nombre="CuotaIVA" Grupo="3" />
-      <Mapeo Nombre="Total" Grupo="4" />
+      <Mapeo Nombre="SubTotal" Grupo="4" />
     </MapeoCampos>
   </MultiLineaIVA>
   <PostProcesamiento />

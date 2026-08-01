@@ -563,7 +563,7 @@ partial class GestionEmisoresForm
         // cmbCampoNombre
         // 
         cmbCampoNombre.DropDownStyle = ComboBoxStyle.DropDownList;
-        cmbCampoNombre.Items.AddRange(new object[] { "NumeroFactura", "Fecha", "ReceptorNombre", "ReceptorNif", "BaseImponible", "PorcentajeIVA", "CuotaIVA", "PorcentajeIRPF", "CuotaIRPF", "PorcentajeRE", "CuotaRE", "Total", "ConceptoIngreso", "ConceptoGasto" });
+        cmbCampoNombre.Items.AddRange(new object[] { "NumeroFactura", "Fecha", "ReceptorNombre", "ReceptorNif", "BaseImponible", "PorcentajeIVA", "CuotaIVA", "PorcentajeIRPF", "CuotaIRPF", "PorcentajeRE", "CuotaRE", "TotalFactura", "ConceptoIngreso", "ConceptoGasto" });
         cmbCampoNombre.Location = new Point(153, 9);
         cmbCampoNombre.Name = "cmbCampoNombre";
         cmbCampoNombre.Size = new Size(308, 28);
@@ -859,7 +859,7 @@ partial class GestionEmisoresForm
         // 
         dataGridViewComboBoxColumn1.FlatStyle = FlatStyle.Flat;
         dataGridViewComboBoxColumn1.HeaderText = "Campo";
-        dataGridViewComboBoxColumn1.Items.AddRange(new object[] { "BaseImponible", "PorcentajeIVA", "CuotaIVA", "PorcentajeIRPF", "CuotaIRPF", "PorcentajeRE", "CuotaRE", "Total" });
+        dataGridViewComboBoxColumn1.Items.AddRange(new object[] { "BaseImponible", "PorcentajeIVA", "CuotaIVA", "PorcentajeIRPF", "CuotaIRPF", "PorcentajeRE", "CuotaRE", "SubTotal" });
         dataGridViewComboBoxColumn1.MinimumWidth = 6;
         dataGridViewComboBoxColumn1.Name = "dataGridViewComboBoxColumn1";
         // 

@@ -39,7 +39,7 @@ namespace FacturasApp.UI
             CuotaIrpfFmt = $"{f.CuotaIRPFCalculado:N2} €";
             PorcentajeRE = f.PorcentajeRE;
             CuotaREFmt = $"{f.CuotaRECalculado:N2} €";
-            TotalFormateado = $"{f.Total:N2} €";
+            TotalFormateado = $"{f.TotalFactura:N2} €";
             EstadoTexto = f.Estado.ToDisplayText();
             ExtractedByOcr = f.ExtractedByOcr;
             NombreArchivo = Path.GetFileName(f.RutaArchivo);

@@ -21,11 +21,12 @@
         public decimal CuotaRE { get; set; }
         public decimal CuotaRECalculado => Math.Round(BaseImponible * (PorcentajeRE / 100m), 2,
             MidpointRounding.AwayFromZero);
-        public decimal Total { get; set; }
+        public decimal TotalFactura { get; set; }
+        public decimal SubTotal { get; set; }
         public decimal TotalCalculado =>
             BaseImponible + CuotaIVACalculado - CuotaIRPFCalculado + CuotaRECalculado;
         public decimal DiferenciaTotal =>
-            Math.Abs(Total - TotalCalculado);
+            Math.Abs(TotalFactura - TotalCalculado);
 
         // Tolerancia aceptable en la comparación de totales (0,01€)
         private const decimal ToleranciaTotal = 0.01m;

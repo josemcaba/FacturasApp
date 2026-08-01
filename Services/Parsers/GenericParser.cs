@@ -39,7 +39,7 @@ namespace FacturasApp.Services.Parsers
                     NIF = ExtraerNif(texto)
                 },
                 BaseImponible = ExtraerDecimal(RegexBase(), texto, 1),
-                Total = ExtraerDecimal(RegexTotal(), texto, 1)
+                TotalFactura = ExtraerDecimal(RegexTotal(), texto, 1)
             };
 
             return factura;

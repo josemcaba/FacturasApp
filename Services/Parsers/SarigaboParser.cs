@@ -41,7 +41,7 @@ namespace FacturasApp.Services.Parsers
             if (factura.Receptor.NIF.StartsWith("74890980")) { factura.Receptor.NIF = "74890980J"; }
             factura.BaseImponible = ExtraerDecimal(RegexImportes(), texto, 1);
             factura.PorcentajeIVA = 10.0m;
-            factura.Total = ExtraerDecimal(RegexTotalFactura(), texto, 1);
+            factura.TotalFactura = ExtraerDecimal(RegexTotalFactura(), texto, 1);
             factura.Estado = FacturaEstado.Determinar(factura);
 
             return factura;

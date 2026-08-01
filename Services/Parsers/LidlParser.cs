@@ -68,7 +68,7 @@ namespace FacturasApp.Services.Parsers
                     { Nombre = receptorNombre, NIF = receptorNIF },
                     BaseImponible = ParsearDecimal(linea.Groups[2].Value),
                     PorcentajeIVA = ParsearDecimal(linea.Groups[1].Value),
-                    Total = ParsearDecimal(linea.Groups[3].Value)
+                    TotalFactura = ParsearDecimal(linea.Groups[3].Value)
                 };
                 factura.Estado = FacturaEstado.Determinar(factura);
                 facturas.Add(factura);

@@ -39,7 +39,7 @@ namespace FacturasApp.Services.Parsers
                 factura.BaseImponible = ParsearDecimal(mImportes.Groups[1].Value);
                 factura.PorcentajeIVA = ParsearDecimal(mImportes.Groups[2].Value);
                 factura.CuotaIVA = ParsearDecimal(mImportes.Groups[3].Value);
-                factura.Total = ParsearDecimal(mImportes.Groups[4].Value);
+                factura.TotalFactura = ParsearDecimal(mImportes.Groups[4].Value);
             }
 
             factura.Estado = FacturaEstado.Determinar(factura);

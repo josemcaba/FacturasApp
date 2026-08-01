@@ -138,25 +138,32 @@ public partial class GestionEmisoresForm : Form
         };
         if (dialogo.ShowDialog() != DialogResult.OK) return;
 
+        CargarPdfMuestra(dialogo.FileName, mostrarErrores: true);
+    }
+
+    private bool CargarPdfMuestra(string rutaPdf, bool mostrarErrores)
+    {
         LimpiarPaginas();
-        _rutaPdf = dialogo.FileName;
+        _rutaPdf = rutaPdf;
 
         byte[] pdfBytes;
-        try { pdfBytes = File.ReadAllBytes(_rutaPdf); }
+        try { pdfBytes = File.ReadAllBytes(rutaPdf); }
         catch (Exception ex)
         {
-            MessageBox.Show($"Error al leer PDF:\n{ex.Message}",
-                "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return;
+            if (mostrarErrores)
+                MessageBox.Show($"Error al leer PDF:\n{ex.Message}",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return false;
         }
 
         int numPaginas;
         try { numPaginas = Conversion.GetPageCount(pdfBytes); }
         catch (Exception ex)
         {
-            MessageBox.Show($"Error al contar páginas:\n{ex.Message}",
-                "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return;
+            if (mostrarErrores)
+                MessageBox.Show($"Error al contar páginas:\n{ex.Message}",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return false;
         }
 
         for (int i = 0; i < numPaginas; i++)
@@ -172,9 +179,10 @@ public partial class GestionEmisoresForm : Form
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al renderizar página {i + 1}:\n{ex.Message}",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                if (mostrarErrores)
+                    MessageBox.Show($"Error al renderizar página {i + 1}:\n{ex.Message}",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
             }
 
             using (skBitmap)
@@ -196,6 +204,8 @@ public partial class GestionEmisoresForm : Form
         picFactura.Invalidate();
 
         ActualizarVistaPreviaZonal();
+
+        return true;
     }
 
     private void ActualizarVistaPreviaZonal()
@@ -579,6 +589,13 @@ public partial class GestionEmisoresForm : Form
         if (config.ZonasOcr != null)
             foreach (var z in config.ZonasOcr)
                 dgvZonas.Rows.Add(z.Campo, z.NumPagina, z.X, z.Y, z.Ancho, z.Alto);
+
+        var rutaPdf = config.RutaPdfMuestra;
+        if (string.IsNullOrWhiteSpace(rutaPdf) || !File.Exists(rutaPdf))
+            LimpiarPaginas();
+        else
+            CargarPdfMuestra(rutaPdf, mostrarErrores: false);
+
         _cargando = false;
         SincronizarZonasDesdeDgv();
         picFactura.Invalidate();
@@ -602,6 +619,7 @@ public partial class GestionEmisoresForm : Form
         _emisorActual.CulturaFecha = cmbCulturaFecha.SelectedItem?.ToString() ?? "es-ES";
         _emisorActual.ConceptoIngreso = txtConceptoIngreso.Text.Trim();
         _emisorActual.ConceptoGasto = txtConceptoGasto.Text.Trim();
+        _emisorActual.RutaPdfMuestra = _rutaPdf ?? string.Empty;
 
         if (lstCampos.SelectedItem is CampoConfig campoActual)
         {

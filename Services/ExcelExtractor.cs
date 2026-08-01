@@ -23,7 +23,7 @@ namespace FacturasApp.Services
             ["CuotaIRPF"]       = ["irpf"],
             ["PorcentajeRE"]    = [],
             ["CuotaRE"]         = ["re"],
-            ["Total"]           = ["total", "importe total"],
+            ["TotalFactura"]    = ["total", "importe total"],
         };
 
         // ── Método principal ─────────────────────────────────────────────────
@@ -132,7 +132,7 @@ namespace FacturasApp.Services
             factura.CuotaIRPF = LeerDecimal(row, mapaIndices, "CuotaIRPF");
             factura.PorcentajeRE = LeerDecimal(row, mapaIndices, "PorcentajeRE");
             factura.CuotaRE = LeerDecimal(row, mapaIndices, "CuotaRE");
-            factura.Total = LeerDecimal(row, mapaIndices, "Total");
+            factura.TotalFactura = LeerDecimal(row, mapaIndices, "TotalFactura");
 
             // Determinar estado y mensajes de error
             factura.Estado = FacturaEstado.Determinar(factura);

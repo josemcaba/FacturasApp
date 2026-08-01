@@ -6,7 +6,7 @@
     <Id>SEMIRUEDA</Id>
     <Id>Cazalla</Id>
   </Identificadores>
-  <ModoExtraccion>Simple</ModoExtraccion>
+  <ModoExtraccion>LayoutAnalysis</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
@@ -17,12 +17,14 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="Fecha">
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNombre">
       <Regex>CLIENTE[\s\n\r]+(.+)</Regex>
@@ -30,12 +32,14 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNif">
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="BaseImponible">
       <Regex>Base Imponible[\s\n\r]+%[\s\n\r]+([-\d.,]+)</Regex>
@@ -43,6 +47,7 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="PorcentajeIVA">
       <Regex>Base Imponible[\s\n\r]+%[\s\n\r]+[-\d.,]+\s+([-\d.,]+)</Regex>
@@ -50,6 +55,7 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="PorcentajeIRPF">
       <Regex>IRPF[\s\n\r]+([-\d.,]+)</Regex>
@@ -57,8 +63,9 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
-    <Campo Nombre="Total">
+    <Campo Nombre="TotalFactura">
       <Regex>TOTAL[\s\n\r]+([-\d.,]+)</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>

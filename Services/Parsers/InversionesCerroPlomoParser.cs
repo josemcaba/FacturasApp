@@ -47,7 +47,7 @@ namespace FacturasApp.Services.Parsers
                 factura.CuotaIRPF = ParsearDecimal(mImportes.Groups[5].Value);
             }
 
-            factura.Total = ExtraerDecimal(RegexTotal, texto, 1);
+            factura.TotalFactura = ExtraerDecimal(RegexTotal, texto, 1);
             factura.Estado = FacturaEstado.Determinar(factura);
 
             return factura;

@@ -46,7 +46,7 @@ namespace FacturasApp.Services.Parsers
             factura.Receptor.NIF = ExtraerNif(RegexNif, texto, Nif);
             factura.BaseImponible = ExtraerDecimal(RegexImportes, texto, 1);
             factura.PorcentajeIVA = 10;
-            factura.Total = ExtraerDecimal(RegexImportes, texto, 2);
+            factura.TotalFactura = ExtraerDecimal(RegexImportes, texto, 2);
             factura.Estado = FacturaEstado.Determinar(factura);
             
             return factura;
