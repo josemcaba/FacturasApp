@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using FacturasApp.Models;
 using FacturasApp.Models.EmisoresConfig;
 using FacturasApp.Services;
+using FacturasApp.Services.Parsers;
 using PDFtoImage;
 using SkiaSharp;
 
@@ -30,6 +31,7 @@ public partial class GestionEmisoresForm : Form
     private readonly OcrZonalExtractor _ocrZonalExtractor = new();
     private bool _esNuevo;
     private bool _saltarCambioSeleccion;
+    private bool _cargandoPostProc;
 
     public GestionEmisoresForm()
     {
@@ -629,6 +631,7 @@ public partial class GestionEmisoresForm : Form
             ActualizarCampoDesdeDetalle(campoActual);
         }
         _emisorActual.Campos = lstCampos.Items.Cast<CampoConfig>().ToList();
+        _emisorActual.PostProcesamiento = lstPostProc.Items.Cast<PostProcesamientoConfig>().ToList();
     }
 
     // ── CRUD ───────────────────────────────────────────────────────────────────
@@ -725,12 +728,7 @@ public partial class GestionEmisoresForm : Form
                 MapeoCampos = _emisorActual.MultiLineaIVA.MapeoCampos
                     .Select(m => new MapeoCampoMultiIVA { Nombre = m.Nombre, Grupo = m.Grupo }).ToList()
             } : null,
-            PostProcesamiento = _emisorActual.PostProcesamiento.Select(p => new PostProcesamientoConfig
-            {
-                Tipo = p.Tipo,
-                CondicionTextoContiene = p.CondicionTextoContiene,
-                CamposAfectados = new List<string>(p.CamposAfectados)
-            }).ToList(),
+            PostProcesamiento = _emisorActual.PostProcesamiento.Select(CopiarPostProc).ToList(),
             ZonasOcr = _emisorActual.ZonasOcr?.Select(z => new ZonaOcrConfig
             {
                 Campo = z.Campo, NumPagina = z.NumPagina,
@@ -754,6 +752,23 @@ public partial class GestionEmisoresForm : Form
         UsarRegexNifGeneral = c.UsarRegexNifGeneral, EsSuma = c.EsSuma,
         CamposSuma = c.CamposSuma?.ToList(), FormatoFecha = c.FormatoFecha
     };
+
+    private static PostProcesamientoConfig CopiarPostProc(PostProcesamientoConfig p)
+    {
+        return new PostProcesamientoConfig
+        {
+            CondicionTextoContiene = p.CondicionTextoContiene,
+            Accion = p.Accion == null ? null : new AccionPostProcesamiento
+            {
+                Tipo = p.Accion.Tipo,
+                CampoDestino = p.Accion.CampoDestino,
+                Valor = p.Accion.Valor,
+                CampoOrigen1 = p.Accion.CampoOrigen1,
+                Operador = p.Accion.Operador,
+                CampoOrigen2 = p.Accion.CampoOrigen2
+            }
+        };
+    }
 
     // ── GUARDAR ────────────────────────────────────────────────────────────────
 
@@ -1004,25 +1019,202 @@ public partial class GestionEmisoresForm : Form
 
     // ── EVENTOS POST-PROCESAMIENTO ─────────────────────────────────────────────
 
+    private List<string> CamposDisponibles()
+    {
+        var campos = new List<string>
+        {
+            "BaseImponible", "CuotaIVA", "CuotaIRPF", "CuotaRE",
+            "TotalFactura", "SubTotal", "PorcentajeIVA", "PorcentajeIRPF", "PorcentajeRE",
+            "NumeroFactura", "ReceptorNombre", "ReceptorNif", "EmisorNombre", "EmisorNif",
+            "ConceptoIngreso", "ConceptoGasto"
+        };
+        foreach (var c in lstCampos.Items.Cast<CampoConfig>())
+            if (!campos.Contains(c.Nombre, StringComparer.OrdinalIgnoreCase))
+                campos.Add(c.Nombre);
+        return campos;
+    }
+
+    private static void RellenarComboCampos(ComboBox combo, IEnumerable<string> campos)
+    {
+        combo.Items.Clear();
+        foreach (var c in campos)
+            combo.Items.Add(c);
+    }
+
     private void LstPostProc_SelectedIndexChanged(object? sender, EventArgs e)
     {
-        if (lstPostProc.SelectedItem is PostProcesamientoConfig regla)
+        if (lstPostProc.SelectedItem is not PostProcesamientoConfig regla)
+            return;
+
+        _cargandoPostProc = true;
+
+        var tipo = regla.Accion?.Tipo;
+        cmbPostProcTipo.SelectedItem = tipo;
+        if (cmbPostProcTipo.SelectedItem == null && !string.IsNullOrEmpty(tipo))
         {
-            cmbPostProcTipo.SelectedItem = regla.Tipo;
-            txtPostProcCondicion.Text = regla.CondicionTextoContiene ?? "";
-            txtPostProcCampos.Text = string.Join(",", regla.CamposAfectados);
+            cmbPostProcTipo.SelectedItem = cmbPostProcTipo.Items.Cast<string>()
+                .FirstOrDefault(i => PostProcesamientoConfig.NormalizarTipo(i) == PostProcesamientoConfig.NormalizarTipo(tipo));
         }
+        ActualizarControlesAccion();
+
+        txtPostProcCondicion.Text = regla.CondicionTextoContiene ?? "";
+
+        ActualizarDetalleAccionDesdeRegla(regla);
+        ActualizarResumenPostProc();
+
+        _cargandoPostProc = false;
+    }
+
+    private void ActualizarControlesAccion()
+    {
+        var tipo = PostProcesamientoConfig.NormalizarTipo(cmbPostProcTipo.SelectedItem?.ToString() ?? "");
+
+        var usarDestino = tipo is "mayusculas" or "establecervalor" or "truncar" or "calcular";
+        lblPostAccDestino.Visible = usarDestino;
+        cmbPostAccDestino.Visible = usarDestino;
+
+        var usarValor = tipo is "establecervalor" or "truncar";
+        lblPostAccValor.Visible = usarValor;
+        txtPostAccValor.Visible = usarValor;
+        lblPostAccValor.Text = tipo == "truncar" ? "Longitud:" : "Valor:";
+
+        var usarFormula = tipo == "calcular";
+        lblPostAccCalc.Visible = usarFormula;
+        cmbPostAccOrigen1.Visible = usarFormula;
+        cmbPostAccOperador.Visible = usarFormula;
+        cmbPostAccOrigen2.Visible = usarFormula;
+
+        if (usarDestino)
+        {
+            var actual = cmbPostAccDestino.SelectedItem?.ToString();
+            var campos = tipo switch
+            {
+                "calcular" => CamposDisponibles().Where(ConfigurableParserEngine.EsCampoNumerico).ToList(),
+                "mayusculas" or "truncar" => CamposDisponibles().Where(ConfigurableParserEngine.EsCampoTexto).ToList(),
+                _ => CamposDisponibles()
+            };
+            RellenarComboCampos(cmbPostAccDestino, campos);
+            if (actual != null && cmbPostAccDestino.Items.Contains(actual))
+                cmbPostAccDestino.SelectedItem = actual;
+        }
+
+        if (usarFormula)
+        {
+            var camposNum = CamposDisponibles().Where(ConfigurableParserEngine.EsCampoNumerico).ToList();
+            var a1 = cmbPostAccOrigen1.SelectedItem?.ToString();
+            var a2 = cmbPostAccOrigen2.SelectedItem?.ToString();
+            RellenarComboCampos(cmbPostAccOrigen1, camposNum);
+            RellenarComboCampos(cmbPostAccOrigen2, camposNum);
+            if (a1 != null && cmbPostAccOrigen1.Items.Contains(a1)) cmbPostAccOrigen1.SelectedItem = a1;
+            if (a2 != null && cmbPostAccOrigen2.Items.Contains(a2)) cmbPostAccOrigen2.SelectedItem = a2;
+            if (cmbPostAccOrigen1.Items.Count > 0 && cmbPostAccOrigen1.SelectedIndex < 0)
+                cmbPostAccOrigen1.SelectedIndex = 0;
+            if (cmbPostAccOrigen2.Items.Count > 0 && cmbPostAccOrigen2.SelectedIndex < 0)
+                cmbPostAccOrigen2.SelectedIndex = 0;
+        }
+    }
+
+    private void ActualizarDetalleAccionDesdeRegla(PostProcesamientoConfig regla)
+    {
+        var accion = regla.Accion;
+        if (accion == null) return;
+
+        if (!string.IsNullOrEmpty(accion.CampoDestino) && cmbPostAccDestino.Items.Contains(accion.CampoDestino))
+            cmbPostAccDestino.SelectedItem = accion.CampoDestino;
+
+        txtPostAccValor.Text = accion.Valor;
+
+        if (!string.IsNullOrEmpty(accion.CampoOrigen1) && cmbPostAccOrigen1.Items.Contains(accion.CampoOrigen1))
+            cmbPostAccOrigen1.SelectedItem = accion.CampoOrigen1;
+        else if (cmbPostAccOrigen1.Items.Count > 0 && string.IsNullOrEmpty(accion.CampoOrigen1))
+            cmbPostAccOrigen1.SelectedIndex = 0;
+
+        if (cmbPostAccOperador.Items.Contains(accion.Operador))
+            cmbPostAccOperador.SelectedItem = accion.Operador;
+
+        if (!string.IsNullOrEmpty(accion.CampoOrigen2) && cmbPostAccOrigen2.Items.Contains(accion.CampoOrigen2))
+            cmbPostAccOrigen2.SelectedItem = accion.CampoOrigen2;
+        else if (cmbPostAccOrigen2.Items.Count > 0 && string.IsNullOrEmpty(accion.CampoOrigen2))
+            cmbPostAccOrigen2.SelectedIndex = 0;
+    }
+
+    private void ActualizarResumenPostProc()
+    {
+        lblPostProcResumen.Text = lstPostProc.SelectedItem is PostProcesamientoConfig regla
+            ? "Resumen: " + regla
+            : "";
+    }
+
+    private void CmbPostProcTipo_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+        if (_cargandoPostProc) return;
+        if (lstPostProc.SelectedItem is not PostProcesamientoConfig regla) return;
+
+        var tipo = cmbPostProcTipo.SelectedItem?.ToString() ?? "InvertirSigno";
+        regla.Accion ??= new AccionPostProcesamiento();
+        regla.Accion.Tipo = tipo;
+
+        _cargandoPostProc = true;
+        ActualizarControlesAccion();
+        _cargandoPostProc = false;
+
+        lstPostProc.Refresh();
+        ActualizarResumenPostProc();
+        MarcarModificado();
+    }
+
+    private void PostProcControl_Changed(object? sender, EventArgs e)
+    {
+        if (_cargandoPostProc) return;
+        if (lstPostProc.SelectedItem is not PostProcesamientoConfig regla) return;
+
+        var condicion = txtPostProcCondicion.Text.Trim();
+        if (!string.IsNullOrWhiteSpace(condicion))
+            regla.CondicionTextoContiene = condicion;
+
+        var accion = regla.Accion;
+        if (accion != null)
+        {
+            accion.CampoDestino = cmbPostAccDestino.SelectedItem?.ToString() ?? accion.CampoDestino;
+            accion.Valor = txtPostAccValor.Text.Trim();
+            accion.CampoOrigen1 = cmbPostAccOrigen1.SelectedItem?.ToString() ?? "";
+            accion.Operador = cmbPostAccOperador.SelectedItem?.ToString() ?? "+";
+            accion.CampoOrigen2 = cmbPostAccOrigen2.SelectedItem?.ToString() ?? "";
+        }
+
+        lstPostProc.Refresh();
+        ActualizarResumenPostProc();
+        MarcarModificado();
+    }
+
+    private void TxtPostProcCondicion_Leave(object? sender, EventArgs e)
+    {
+        if (_cargandoPostProc) return;
+        if (lstPostProc.SelectedItem is not PostProcesamientoConfig regla) return;
+        if (string.IsNullOrWhiteSpace(txtPostProcCondicion.Text))
+            txtPostProcCondicion.Text = regla.CondicionTextoContiene ?? "";
     }
 
     private void BtnPostProcAdd_Click(object? sender, EventArgs e)
     {
+        var condicion = txtPostProcCondicion.Text.Trim();
+        if (string.IsNullOrWhiteSpace(condicion))
+        {
+            MessageBox.Show("La condición (texto en factura) es obligatoria.",
+                "Condición requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            txtPostProcCondicion.Focus();
+            return;
+        }
+
+        var tipo = cmbPostProcTipo.SelectedItem?.ToString() ?? "InvertirSigno";
         var regla = new PostProcesamientoConfig
         {
-            Tipo = cmbPostProcTipo.SelectedItem?.ToString() ?? "InvertirSigno",
-            CondicionTextoContiene = txtPostProcCondicion.Text.Trim(),
-            CamposAfectados = txtPostProcCampos.Text.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList()
+            CondicionTextoContiene = condicion,
+            Accion = new AccionPostProcesamiento { Tipo = tipo }
         };
+
         lstPostProc.Items.Add(regla);
+        lstPostProc.SelectedItem = regla;
         MarcarModificado();
     }
 
@@ -1030,9 +1222,34 @@ public partial class GestionEmisoresForm : Form
     {
         if (lstPostProc.SelectedItem is PostProcesamientoConfig regla)
         {
+            var idx = lstPostProc.SelectedIndex;
             lstPostProc.Items.Remove(regla);
+            if (lstPostProc.Items.Count > 0)
+                lstPostProc.SelectedIndex = Math.Min(idx, lstPostProc.Items.Count - 1);
             MarcarModificado();
         }
+    }
+
+    private void BtnPostProcUp_Click(object? sender, EventArgs e)
+    {
+        var idx = lstPostProc.SelectedIndex;
+        if (idx <= 0) return;
+        var item = lstPostProc.Items[idx];
+        lstPostProc.Items.RemoveAt(idx);
+        lstPostProc.Items.Insert(idx - 1, item);
+        lstPostProc.SelectedIndex = idx - 1;
+        MarcarModificado();
+    }
+
+    private void BtnPostProcDown_Click(object? sender, EventArgs e)
+    {
+        var idx = lstPostProc.SelectedIndex;
+        if (idx < 0 || idx >= lstPostProc.Items.Count - 1) return;
+        var item = lstPostProc.Items[idx];
+        lstPostProc.Items.RemoveAt(idx);
+        lstPostProc.Items.Insert(idx + 1, item);
+        lstPostProc.SelectedIndex = idx + 1;
+        MarcarModificado();
     }
 
     // ── PROBAR REGEX ───────────────────────────────────────────────────────────

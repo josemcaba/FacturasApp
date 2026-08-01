@@ -11,6 +11,7 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\PYTHON\PYTHON-2025\DistiFact\DistiFact-Facturas\+MERCADONA\Mercadona\A-V2025-00002248553.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>N. Factura:\s*(\S+)</Regex>
@@ -44,18 +45,12 @@
       <CamposSuma />
     </Campo>
     <Campo Nombre="TotalFactura">
-      <Grupo>1</Grupo>
-      <ValorFijo>9999</ValorFijo>
-      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
-      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-    </Campo>
-    <Campo Nombre="ConceptoIngreso">
-      <Regex>TOTAL[\s\n\r]+([-\d.,]+)</Regex>
+      <Regex>Total Factura\s+([-\d.,]+)</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
   </Campos>
   <MultiLineaIVA>
@@ -64,7 +59,6 @@
     <MapeoCampos>
       <Mapeo Nombre="BaseImponible" Grupo="2" />
       <Mapeo Nombre="PorcentajeIVA" Grupo="1" />
-      <Mapeo Nombre="CuotaIVA" Grupo="3" />
       <Mapeo Nombre="SubTotal" Grupo="4" />
     </MapeoCampos>
   </MultiLineaIVA>

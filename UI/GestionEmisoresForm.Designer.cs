@@ -61,6 +61,8 @@ partial class GestionEmisoresForm
         dataGridViewTextBoxColumn8 = new DataGridViewTextBoxColumn();
         dataGridViewTextBoxColumn9 = new DataGridViewTextBoxColumn();
         tabCampos = new TabPage();
+        lblGeneralModo = new Label();
+        cmbModoExtraccion = new ComboBox();
         lblCamposLista = new Label();
         lstCampos = new ListBox();
         panelDetalle = new Panel();
@@ -99,12 +101,21 @@ partial class GestionEmisoresForm
         tabPostProc = new TabPage();
         lblPostProcReglas = new Label();
         lstPostProc = new ListBox();
+        btnPostProcUp = new Button();
+        btnPostProcDown = new Button();
         lblPostProcTipo = new Label();
         cmbPostProcTipo = new ComboBox();
         lblPostProcCond = new Label();
         txtPostProcCondicion = new TextBox();
-        lblPostProcCampos = new Label();
-        txtPostProcCampos = new TextBox();
+        lblPostAccDestino = new Label();
+        cmbPostAccDestino = new ComboBox();
+        lblPostAccValor = new Label();
+        txtPostAccValor = new TextBox();
+        lblPostAccCalc = new Label();
+        cmbPostAccOrigen1 = new ComboBox();
+        cmbPostAccOperador = new ComboBox();
+        cmbPostAccOrigen2 = new ComboBox();
+        lblPostProcResumen = new Label();
         btnPostProcAdd = new Button();
         btnPostProcRemove = new Button();
         btnGuardar = new Button();
@@ -113,8 +124,6 @@ partial class GestionEmisoresForm
         picFactura = new PictureBox();
         panelDerecho = new Panel();
         panelCentral = new Panel();
-        cmbModoExtraccion = new ComboBox();
-        lblGeneralModo = new Label();
         panelIzquierdo.SuspendLayout();
         tabs.SuspendLayout();
         tabGeneral.SuspendLayout();
@@ -510,6 +519,27 @@ partial class GestionEmisoresForm
         tabCampos.TabIndex = 1;
         tabCampos.Text = "Campos";
         // 
+        // lblGeneralModo
+        // 
+        lblGeneralModo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        lblGeneralModo.AutoSize = true;
+        lblGeneralModo.Location = new Point(426, 327);
+        lblGeneralModo.Name = "lblGeneralModo";
+        lblGeneralModo.Size = new Size(145, 20);
+        lblGeneralModo.TabIndex = 60;
+        lblGeneralModo.Text = "Modo de extracción:";
+        // 
+        // cmbModoExtraccion
+        // 
+        cmbModoExtraccion.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        cmbModoExtraccion.DropDownStyle = ComboBoxStyle.DropDownList;
+        cmbModoExtraccion.Items.AddRange(new object[] { "Simple", "OrdenadoPosicion", "LayoutAnalysis" });
+        cmbModoExtraccion.Location = new Point(577, 324);
+        cmbModoExtraccion.Name = "cmbModoExtraccion";
+        cmbModoExtraccion.Size = new Size(155, 28);
+        cmbModoExtraccion.TabIndex = 59;
+        cmbModoExtraccion.SelectedIndexChanged += CmbModoExtraccion_SelectedIndexChanged;
+        // 
         // lblCamposLista
         // 
         lblCamposLista.AutoSize = true;
@@ -873,12 +903,21 @@ partial class GestionEmisoresForm
         // 
         tabPostProc.Controls.Add(lblPostProcReglas);
         tabPostProc.Controls.Add(lstPostProc);
+        tabPostProc.Controls.Add(btnPostProcUp);
+        tabPostProc.Controls.Add(btnPostProcDown);
         tabPostProc.Controls.Add(lblPostProcTipo);
         tabPostProc.Controls.Add(cmbPostProcTipo);
         tabPostProc.Controls.Add(lblPostProcCond);
         tabPostProc.Controls.Add(txtPostProcCondicion);
-        tabPostProc.Controls.Add(lblPostProcCampos);
-        tabPostProc.Controls.Add(txtPostProcCampos);
+        tabPostProc.Controls.Add(lblPostAccDestino);
+        tabPostProc.Controls.Add(cmbPostAccDestino);
+        tabPostProc.Controls.Add(lblPostAccValor);
+        tabPostProc.Controls.Add(txtPostAccValor);
+        tabPostProc.Controls.Add(lblPostAccCalc);
+        tabPostProc.Controls.Add(cmbPostAccOrigen1);
+        tabPostProc.Controls.Add(cmbPostAccOperador);
+        tabPostProc.Controls.Add(cmbPostAccOrigen2);
+        tabPostProc.Controls.Add(lblPostProcResumen);
         tabPostProc.Controls.Add(btnPostProcAdd);
         tabPostProc.Controls.Add(btnPostProcRemove);
         tabPostProc.Location = new Point(4, 29);
@@ -898,16 +937,40 @@ partial class GestionEmisoresForm
         // 
         // lstPostProc
         // 
+        lstPostProc.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         lstPostProc.Location = new Point(16, 38);
         lstPostProc.Name = "lstPostProc";
-        lstPostProc.Size = new Size(220, 184);
+        lstPostProc.Size = new Size(369, 384);
         lstPostProc.TabIndex = 1;
         lstPostProc.SelectedIndexChanged += LstPostProc_SelectedIndexChanged;
         // 
+        // btnPostProcUp
+        // 
+        btnPostProcUp.FlatStyle = FlatStyle.Flat;
+        btnPostProcUp.Location = new Point(16, 466);
+        btnPostProcUp.Name = "btnPostProcUp";
+        btnPostProcUp.Size = new Size(100, 30);
+        btnPostProcUp.TabIndex = 20;
+        btnPostProcUp.Text = "↑ Subir";
+        btnPostProcUp.UseVisualStyleBackColor = true;
+        btnPostProcUp.Click += BtnPostProcUp_Click;
+        // 
+        // btnPostProcDown
+        // 
+        btnPostProcDown.FlatStyle = FlatStyle.Flat;
+        btnPostProcDown.Location = new Point(146, 466);
+        btnPostProcDown.Name = "btnPostProcDown";
+        btnPostProcDown.Size = new Size(100, 30);
+        btnPostProcDown.TabIndex = 21;
+        btnPostProcDown.Text = "↓ Bajar";
+        btnPostProcDown.UseVisualStyleBackColor = true;
+        btnPostProcDown.Click += BtnPostProcDown_Click;
+        // 
         // lblPostProcTipo
         // 
+        lblPostProcTipo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         lblPostProcTipo.AutoSize = true;
-        lblPostProcTipo.Location = new Point(250, 16);
+        lblPostProcTipo.Location = new Point(435, 41);
         lblPostProcTipo.Name = "lblPostProcTipo";
         lblPostProcTipo.Size = new Size(42, 20);
         lblPostProcTipo.TabIndex = 2;
@@ -915,54 +978,131 @@ partial class GestionEmisoresForm
         // 
         // cmbPostProcTipo
         // 
+        cmbPostProcTipo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         cmbPostProcTipo.DropDownStyle = ComboBoxStyle.DropDownList;
-        cmbPostProcTipo.Items.AddRange(new object[] { "InvertirSigno", "Mayusculas" });
-        cmbPostProcTipo.Location = new Point(320, 13);
+        cmbPostProcTipo.Items.AddRange(new object[] { "Invertir Signo", "Mayusculas", "Establecer Valor", "Calcular", "Truncar" });
+        cmbPostProcTipo.Location = new Point(483, 38);
         cmbPostProcTipo.Name = "cmbPostProcTipo";
         cmbPostProcTipo.Size = new Size(200, 28);
         cmbPostProcTipo.TabIndex = 3;
-        cmbPostProcTipo.SelectedIndexChanged += ControlModificado;
+        cmbPostProcTipo.SelectedIndexChanged += CmbPostProcTipo_SelectedIndexChanged;
         // 
         // lblPostProcCond
         // 
+        lblPostProcCond.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         lblPostProcCond.AutoSize = true;
-        lblPostProcCond.Location = new Point(250, 46);
+        lblPostProcCond.Location = new Point(398, 88);
         lblPostProcCond.Name = "lblPostProcCond";
-        lblPostProcCond.Size = new Size(197, 20);
+        lblPostProcCond.Size = new Size(79, 20);
         lblPostProcCond.TabIndex = 4;
-        lblPostProcCond.Text = "Condición (texto en factura):";
+        lblPostProcCond.Text = "Condición:";
         // 
         // txtPostProcCondicion
         // 
-        txtPostProcCondicion.Location = new Point(320, 43);
+        txtPostProcCondicion.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        txtPostProcCondicion.Location = new Point(483, 85);
         txtPostProcCondicion.Name = "txtPostProcCondicion";
-        txtPostProcCondicion.PlaceholderText = "Ej: ABONO (dejar vacío = siempre)";
+        txtPostProcCondicion.PlaceholderText = "Texto que debe aparecer en factura";
         txtPostProcCondicion.Size = new Size(250, 27);
         txtPostProcCondicion.TabIndex = 5;
-        txtPostProcCondicion.TextChanged += ControlModificado;
+        txtPostProcCondicion.TextChanged += PostProcControl_Changed;
+        txtPostProcCondicion.Leave += TxtPostProcCondicion_Leave;
         // 
-        // lblPostProcCampos
+        // lblPostAccDestino
         // 
-        lblPostProcCampos.AutoSize = true;
-        lblPostProcCampos.Location = new Point(250, 76);
-        lblPostProcCampos.Name = "lblPostProcCampos";
-        lblPostProcCampos.Size = new Size(186, 20);
-        lblPostProcCampos.TabIndex = 6;
-        lblPostProcCampos.Text = "Campos afectados (coma):";
+        lblPostAccDestino.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        lblPostAccDestino.AutoSize = true;
+        lblPostAccDestino.Location = new Point(394, 244);
+        lblPostAccDestino.Name = "lblPostAccDestino";
+        lblPostAccDestino.Size = new Size(113, 20);
+        lblPostAccDestino.TabIndex = 10;
+        lblPostAccDestino.Text = "Campo destino:";
         // 
-        // txtPostProcCampos
+        // cmbPostAccDestino
         // 
-        txtPostProcCampos.Location = new Point(320, 73);
-        txtPostProcCampos.Name = "txtPostProcCampos";
-        txtPostProcCampos.PlaceholderText = "BaseImponible,Total";
-        txtPostProcCampos.Size = new Size(250, 27);
-        txtPostProcCampos.TabIndex = 7;
-        txtPostProcCampos.TextChanged += ControlModificado;
+        cmbPostAccDestino.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        cmbPostAccDestino.DropDownStyle = ComboBoxStyle.DropDownList;
+        cmbPostAccDestino.Location = new Point(513, 241);
+        cmbPostAccDestino.Name = "cmbPostAccDestino";
+        cmbPostAccDestino.Size = new Size(220, 28);
+        cmbPostAccDestino.TabIndex = 11;
+        cmbPostAccDestino.SelectedIndexChanged += PostProcControl_Changed;
+        // 
+        // lblPostAccValor
+        // 
+        lblPostAccValor.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        lblPostAccValor.AutoSize = true;
+        lblPostAccValor.Location = new Point(461, 278);
+        lblPostAccValor.Name = "lblPostAccValor";
+        lblPostAccValor.Size = new Size(46, 20);
+        lblPostAccValor.TabIndex = 12;
+        lblPostAccValor.Text = "Valor:";
+        // 
+        // txtPostAccValor
+        // 
+        txtPostAccValor.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        txtPostAccValor.Location = new Point(513, 275);
+        txtPostAccValor.Name = "txtPostAccValor";
+        txtPostAccValor.PlaceholderText = "123,45";
+        txtPostAccValor.Size = new Size(120, 27);
+        txtPostAccValor.TabIndex = 13;
+        txtPostAccValor.TextChanged += PostProcControl_Changed;
+        // 
+        // lblPostAccCalc
+        // 
+        lblPostAccCalc.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        lblPostAccCalc.AutoSize = true;
+        lblPostAccCalc.Location = new Point(391, 160);
+        lblPostAccCalc.Name = "lblPostAccCalc";
+        lblPostAccCalc.Size = new Size(133, 20);
+        lblPostAccCalc.TabIndex = 14;
+        lblPostAccCalc.Text = "Fórmula (Calcular):";
+        // 
+        // cmbPostAccOrigen1
+        // 
+        cmbPostAccOrigen1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        cmbPostAccOrigen1.DropDownStyle = ComboBoxStyle.DropDownList;
+        cmbPostAccOrigen1.Location = new Point(394, 187);
+        cmbPostAccOrigen1.Name = "cmbPostAccOrigen1";
+        cmbPostAccOrigen1.Size = new Size(95, 28);
+        cmbPostAccOrigen1.TabIndex = 15;
+        cmbPostAccOrigen1.SelectedIndexChanged += PostProcControl_Changed;
+        // 
+        // cmbPostAccOperador
+        // 
+        cmbPostAccOperador.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        cmbPostAccOperador.DropDownStyle = ComboBoxStyle.DropDownList;
+        cmbPostAccOperador.Items.AddRange(new object[] { "+", "-", "*", "/" });
+        cmbPostAccOperador.Location = new Point(495, 187);
+        cmbPostAccOperador.Name = "cmbPostAccOperador";
+        cmbPostAccOperador.Size = new Size(60, 28);
+        cmbPostAccOperador.TabIndex = 16;
+        cmbPostAccOperador.SelectedIndexChanged += PostProcControl_Changed;
+        // 
+        // cmbPostAccOrigen2
+        // 
+        cmbPostAccOrigen2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        cmbPostAccOrigen2.DropDownStyle = ComboBoxStyle.DropDownList;
+        cmbPostAccOrigen2.Location = new Point(561, 187);
+        cmbPostAccOrigen2.Name = "cmbPostAccOrigen2";
+        cmbPostAccOrigen2.Size = new Size(100, 28);
+        cmbPostAccOrigen2.TabIndex = 17;
+        cmbPostAccOrigen2.SelectedIndexChanged += PostProcControl_Changed;
+        // 
+        // lblPostProcResumen
+        // 
+        lblPostProcResumen.AutoSize = true;
+        lblPostProcResumen.ForeColor = Color.FromArgb(70, 70, 70);
+        lblPostProcResumen.Location = new Point(16, 510);
+        lblPostProcResumen.Name = "lblPostProcResumen";
+        lblPostProcResumen.Size = new Size(72, 20);
+        lblPostProcResumen.TabIndex = 19;
+        lblPostProcResumen.Text = "Resumen:";
         // 
         // btnPostProcAdd
         // 
         btnPostProcAdd.FlatStyle = FlatStyle.Flat;
-        btnPostProcAdd.Location = new Point(16, 250);
+        btnPostProcAdd.Location = new Point(16, 430);
         btnPostProcAdd.Name = "btnPostProcAdd";
         btnPostProcAdd.Size = new Size(120, 30);
         btnPostProcAdd.TabIndex = 8;
@@ -973,7 +1113,7 @@ partial class GestionEmisoresForm
         // btnPostProcRemove
         // 
         btnPostProcRemove.FlatStyle = FlatStyle.Flat;
-        btnPostProcRemove.Location = new Point(146, 250);
+        btnPostProcRemove.Location = new Point(146, 430);
         btnPostProcRemove.Name = "btnPostProcRemove";
         btnPostProcRemove.Size = new Size(100, 30);
         btnPostProcRemove.TabIndex = 9;
@@ -1057,28 +1197,6 @@ partial class GestionEmisoresForm
         panelCentral.Name = "panelCentral";
         panelCentral.Size = new Size(239, 711);
         panelCentral.TabIndex = 2;
-        // 
-        // cmbModoExtraccion
-        // 
-        cmbModoExtraccion.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        cmbModoExtraccion.DropDownStyle = ComboBoxStyle.DropDownList;
-        cmbModoExtraccion.Items.AddRange(new object[] { "Simple", "OrdenadoPosicion", "LayoutAnalysis" });
-        cmbModoExtraccion.Location = new Point(577, 324);
-        cmbModoExtraccion.Name = "cmbModoExtraccion";
-        cmbModoExtraccion.Size = new Size(155, 28);
-        cmbModoExtraccion.TabIndex = 59;
-        cmbModoExtraccion.SelectedIndexChanged += ControlModificado;
-        cmbModoExtraccion.SelectedIndexChanged += CmbModoExtraccion_SelectedIndexChanged;
-        // 
-        // lblGeneralModo
-        // 
-        lblGeneralModo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        lblGeneralModo.AutoSize = true;
-        lblGeneralModo.Location = new Point(426, 327);
-        lblGeneralModo.Name = "lblGeneralModo";
-        lblGeneralModo.Size = new Size(145, 20);
-        lblGeneralModo.TabIndex = 60;
-        lblGeneralModo.Text = "Modo de extracción:";
         // 
         // GestionEmisoresForm
         // 
@@ -1164,12 +1282,21 @@ partial class GestionEmisoresForm
     private TabPage tabPostProc;
     private Label lblPostProcReglas;
     private ListBox lstPostProc;
+    private Button btnPostProcUp;
+    private Button btnPostProcDown;
     private Label lblPostProcTipo;
     private ComboBox cmbPostProcTipo;
     private Label lblPostProcCond;
     private TextBox txtPostProcCondicion;
-    private Label lblPostProcCampos;
-    private TextBox txtPostProcCampos;
+    private Label lblPostAccDestino;
+    private ComboBox cmbPostAccDestino;
+    private Label lblPostAccValor;
+    private TextBox txtPostAccValor;
+    private Label lblPostAccCalc;
+    private ComboBox cmbPostAccOrigen1;
+    private ComboBox cmbPostAccOperador;
+    private ComboBox cmbPostAccOrigen2;
+    private Label lblPostProcResumen;
     private Button btnPostProcAdd;
     private Button btnPostProcRemove;
     private Label lblZonasTitulo;

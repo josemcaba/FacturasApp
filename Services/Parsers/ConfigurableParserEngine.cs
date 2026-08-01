@@ -324,36 +324,132 @@ public class ConfigurableParserEngine : BaseParser
     {
         foreach (var regla in _config.PostProcesamiento)
         {
+            var accion = regla.Accion;
+            if (accion == null || string.IsNullOrEmpty(accion.Tipo)) continue;
+
             if (!string.IsNullOrEmpty(regla.CondicionTextoContiene) &&
                 !texto.Contains(regla.CondicionTextoContiene, StringComparison.OrdinalIgnoreCase))
                 continue;
 
-            switch (regla.Tipo.ToLowerInvariant())
+            switch (PostProcesamientoConfig.NormalizarTipo(accion.Tipo))
             {
                 case "invertirsigno":
-                    foreach (var c in regla.CamposAfectados)
-                        InvertirSigno(factura, c);
+                    InvertirSigno(factura);
                     break;
 
                 case "mayusculas":
-                    foreach (var c in regla.CamposAfectados)
-                        PonerMayusculas(factura, c);
+                    PonerMayusculas(factura, accion.CampoDestino);
+                    break;
+
+                case "establecervalor":
+                    EstablecerValor(factura, accion);
+                    break;
+
+                case "calcular":
+                    CalcularCampo(factura, accion);
+                    break;
+
+                case "truncar":
+                    TruncarCampo(factura, accion);
                     break;
             }
         }
     }
 
-    private static void InvertirSigno(Factura factura, string nombreCampo)
+    private static void EstablecerValor(Factura factura, AccionPostProcesamiento accion)
+    {
+        var destino = accion.CampoDestino;
+        if (string.IsNullOrEmpty(destino)) return;
+
+        if (EsCampoNumerico(destino))
+        {
+            if (decimal.TryParse(accion.Valor, NumberStyles.Number,
+                CultureInfo.GetCultureInfo("es-ES"), out var valor))
+                AsignarDecimal(factura, destino, valor);
+        }
+        else
+        {
+            AsignarTexto(factura, destino, accion.Valor);
+        }
+    }
+
+    private static void CalcularCampo(Factura factura, AccionPostProcesamiento accion)
+    {
+        if (string.IsNullOrEmpty(accion.CampoDestino) || !EsCampoNumerico(accion.CampoDestino)) return;
+
+        var a = ObtenerValorDecimal(factura, accion.CampoOrigen1);
+        var b = ObtenerValorDecimal(factura, accion.CampoOrigen2);
+        var resultado = accion.Operador switch
+        {
+            "+" => a + b,
+            "-" => a - b,
+            "*" => a * b,
+            "/" => b == 0m ? a : a / b,
+            _ => a
+        };
+        AsignarDecimal(factura, accion.CampoDestino, resultado);
+    }
+
+    private static void TruncarCampo(Factura factura, AccionPostProcesamiento accion)
+    {
+        var destino = accion.CampoDestino;
+        if (string.IsNullOrEmpty(destino)) return;
+        if (!int.TryParse(accion.Valor, out var longitud) || longitud < 0) return;
+
+        var texto = ObtenerValorTexto(factura, destino);
+        if (texto == null) return;
+        AsignarTexto(factura, destino, texto[..Math.Min(longitud, texto.Length)]);
+    }
+
+    private static string? ObtenerValorTexto(Factura factura, string nombreCampo)
+    {
+        return nombreCampo switch
+        {
+            "NumeroFactura" => factura.NumeroFactura,
+            "ReceptorNombre" => factura.Receptor.Nombre,
+            "ReceptorNif" => factura.Receptor.NIF,
+            "EmisorNombre" => factura.Emisor.Nombre,
+            "EmisorNif" => factura.Emisor.NIF,
+            "ConceptoIngreso" => factura.ConceptoIngreso,
+            "ConceptoGasto" => factura.ConceptoGasto,
+            _ => null
+        };
+    }
+
+    private static void AsignarTexto(Factura factura, string nombreCampo, string valor)
     {
         switch (nombreCampo)
         {
-            case "BaseImponible": factura.BaseImponible *= -1; break;
-            case "CuotaIVA": factura.CuotaIVA *= -1; break;
-            case "CuotaIRPF": factura.CuotaIRPF *= -1; break;
-            case "CuotaRE": factura.CuotaRE *= -1; break;
-            case "TotalFactura": factura.TotalFactura *= -1; break;
-            case "SubTotal": factura.SubTotal *= -1; break;
+            case "NumeroFactura": factura.NumeroFactura = valor; break;
+            case "ReceptorNombre": factura.Receptor.Nombre = valor; break;
+            case "ReceptorNif": factura.Receptor.NIF = valor; break;
+            case "EmisorNombre": factura.Emisor.Nombre = valor; break;
+            case "EmisorNif": factura.Emisor.NIF = valor; break;
+            case "ConceptoIngreso": factura.ConceptoIngreso = valor; break;
+            case "ConceptoGasto": factura.ConceptoGasto = valor; break;
         }
+    }
+
+    public static bool EsCampoNumerico(string nombreCampo)
+    {
+        return nombreCampo is "BaseImponible" or "CuotaIVA" or "CuotaIRPF" or "CuotaRE"
+            or "TotalFactura" or "SubTotal" or "PorcentajeIVA" or "PorcentajeIRPF" or "PorcentajeRE";
+    }
+
+    public static bool EsCampoTexto(string nombreCampo)
+    {
+        return nombreCampo is "NumeroFactura" or "ReceptorNombre" or "ReceptorNif"
+            or "EmisorNombre" or "EmisorNif" or "ConceptoIngreso" or "ConceptoGasto";
+    }
+
+    private static void InvertirSigno(Factura factura)
+    {
+        factura.BaseImponible *= -1;
+        factura.CuotaIVA *= -1;
+        factura.CuotaIRPF *= -1;
+        factura.CuotaRE *= -1;
+        factura.TotalFactura *= -1;
+        factura.SubTotal *= -1;
     }
 
     private static void PonerMayusculas(Factura factura, string nombreCampo)
