@@ -7,11 +7,6 @@
 "/mnt/c/Program Files/dotnet/dotnet.exe" run
 ```
 
-**Gotcha**: `dotnet build` fails with `MSB3021` if `FacturasApp.exe` is still running. Kill first:
-```bash
-taskkill /F /IM FacturasApp.exe 2>nul
-```
-
 No tests, CI/CD, linting, or typecheck configured.
 
 ## Key Architecture
