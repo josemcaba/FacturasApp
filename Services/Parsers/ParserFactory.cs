@@ -33,7 +33,7 @@ namespace FacturasApp.Services.Parsers
                 new FasaworldParser(),
                 new FiestaParser(),
                 new FobosParser(),
-                new GregorioArandaParser(),
+                // new GregorioArandaParser(),
                 new GruasJuandiParser(),
                 new HostaliaParser(),
                 new IgnacioIbanezParser(),
