@@ -1,6 +1,5 @@
 ﻿using DrawingImageFormat = System.Drawing.Imaging.ImageFormat;
-using PDFtoImage;
-using SkiaSharp;
+using PdfiumViewer;
 using Tesseract;
 
 namespace FacturasApp.Services
@@ -37,15 +36,8 @@ namespace FacturasApp.Services
         {
             try
             {
-                byte[] pdfBytes = File.ReadAllBytes(rutaPdf);
-
-                using var skBitmap = Conversion.ToImage(
-                    pdfBytes,
-                    page: new Index(numeroPagina),
-                    password: null,
-                    options: new RenderOptions(Dpi: DpiRender));
-
-                return ConvertirSkBitmapABitmap(skBitmap);
+                using var documento = PdfDocument.Load(rutaPdf);
+                return RenderizarPagina(documento, numeroPagina, DpiRender);
             }
             catch
             {
@@ -59,20 +51,12 @@ namespace FacturasApp.Services
 
             try
             {
-                byte[] pdfBytes = File.ReadAllBytes(rutaPdf);
-                int numPaginas = Conversion.GetPageCount(pdfBytes);
-
-                for (int i = 0; i < numPaginas; i++)
+                using var documento = PdfDocument.Load(rutaPdf);
+                for (int i = 0; i < documento.PageCount; i++)
                 {
                     try
                     {
-                        using var skBitmap = Conversion.ToImage(
-                            pdfBytes,
-                            page: new Index(i),
-                            password: null,
-                            options: new RenderOptions(Dpi: DpiRender));
-
-                        var bitmap = ConvertirSkBitmapABitmap(skBitmap);
+                        var bitmap = RenderizarPagina(documento, i, DpiRender);
                         if (bitmap != null)
                             resultado.Add(bitmap);
                     }
@@ -88,13 +72,31 @@ namespace FacturasApp.Services
         {
             try
             {
-                byte[] pdfBytes = File.ReadAllBytes(rutaPdf);
-                using var skBitmap = Conversion.ToImage(
-                    pdfBytes,
-                    page: new Index(numeroPagina),
-                    password: null,
-                    options: new RenderOptions(Dpi: dpi));
-                return ConvertirSkBitmapABitmap(skBitmap);
+                using var documento = PdfDocument.Load(rutaPdf);
+                return RenderizarPagina(documento, numeroPagina, dpi);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        // ── Renderizado (PDFium) ──────────────────────────────────────────────
+
+        private static Bitmap? RenderizarPagina(PdfDocument documento, int numeroPagina, int dpi)
+        {
+            try
+            {
+                // Tamaño de página en puntos PDF (72 ppp); se escala al DPI pedido.
+                SizeF tamano = documento.PageSizes[numeroPagina];
+                int ancho = (int)Math.Ceiling(tamano.Width * dpi / 72f);
+                int alto = (int)Math.Ceiling(tamano.Height * dpi / 72f);
+
+                // El Bitmap devuelto es la imagen real (System.Drawing) — NO se
+                // dispone aquí: el llamador es responsable de liberarla.
+                var imagen = documento.Render(
+                    numeroPagina, ancho, alto, dpi, dpi, PdfRenderFlags.ForPrinting);
+                return imagen as Bitmap;
             }
             catch
             {
@@ -103,21 +105,6 @@ namespace FacturasApp.Services
         }
 
         // ── Conversiones ──────────────────────────────────────────────────────
-
-        protected Bitmap? ConvertirSkBitmapABitmap(SKBitmap skBitmap)
-        {
-            try
-            {
-                using var skImage = SKImage.FromBitmap(skBitmap);
-                using var skData = skImage.Encode(SKEncodedImageFormat.Png, 100);
-                using var ms = new MemoryStream(skData.ToArray());
-                return new Bitmap(ms);
-            }
-            catch
-            {
-                return null;
-            }
-        }
 
         protected Pix? ConvertirAPix(byte[] bytesImagen)
         {

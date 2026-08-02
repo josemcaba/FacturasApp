@@ -1,10 +1,6 @@
-﻿using FacturasApp.Models;
-using UglyToad.PdfPig;
-using UglyToad.PdfPig.Core;
-using UglyToad.PdfPig.DocumentLayoutAnalysis.TextExtractor;
-using UglyToad.PdfPig.Geometry;
-using UglyToad.PdfPig.Util;
-using PdfPigPage = UglyToad.PdfPig.Content.Page;
+﻿using System.Text;
+using FacturasApp.Models;
+using PdfiumViewer;
 
 namespace FacturasApp.Services
 {
@@ -24,16 +20,16 @@ namespace FacturasApp.Services
         {
             var textoTotal = new System.Text.StringBuilder();
 
-            using var documento = PdfDocument.Open(rutaPdf);
+            using var documento = PdfDocument.Load(rutaPdf);
 
-            foreach (PdfPigPage pagina in documento.GetPages())
+            for (int i = 0; i < documento.PageCount; i++)
             {
                 string textoPagina = modo switch
                 {
-                    ModoExtraccion.Simple => ExtraerSimple(pagina),
-                    ModoExtraccion.OrdenadoPosicion => ExtraerOrdenadoPorPosicion(pagina),
-                    ModoExtraccion.LayoutAnalysis => ExtraerConLayoutAnalysis(pagina),
-                    _ => ExtraerConLayoutAnalysis(pagina)
+                    ModoExtraccion.Simple => ExtraerSimple(documento, i),
+                    ModoExtraccion.OrdenadoPosicion => ExtraerOrdenadoPorPosicion(documento, i),
+                    ModoExtraccion.LayoutAnalysis => ExtraerSimple(documento, i),
+                    _ => ExtraerOrdenadoPorPosicion(documento, i)
                 };
 
                 textoTotal.AppendLine(textoPagina);
@@ -49,40 +45,46 @@ namespace FacturasApp.Services
         public bool EsSeleccionable(string rutaPdf) =>
             ExtraerTextoSeleccionable(rutaPdf) != null;
 
-        private string ExtraerSimple(PdfPigPage pagina)
+        private static string ExtraerSimple(PdfDocument documento, int numPagina)
         {
-            return pagina.Text;
+            return documento.GetPdfText(numPagina) ?? string.Empty;
         }
 
-        private string ExtraerOrdenadoPorPosicion(PdfPigPage pagina)
+        private static string ExtraerOrdenadoPorPosicion(PdfDocument documento, int numPagina)
         {
-            const double toleranciaLinea = 3.0;
+            const double toleranciaLinea = 4.0;
 
-            var palabras = pagina.GetWords().ToList();
-            if (palabras.Count == 0) return string.Empty;
+            var chars = documento.GetCharacterInformation(numPagina)
+                .Where(c => !char.IsControl(c.Character))
+                .ToList();
+            if (chars.Count == 0) return string.Empty;
 
-            var lineas = palabras
-                .GroupBy(p => Math.Round(p.BoundingBox.Bottom / toleranciaLinea)
-                              * toleranciaLinea)
-                .OrderByDescending(g => g.Key)
-                .Select(g => string.Join(" ",
-                    g.OrderBy(p => p.BoundingBox.Left)
-                     .Select(p => p.Text)));
+            // PDFium usa coordenadas PDF nativas: Y desde la parte INFERIOR (0 = abajo).
+            // El bottom del glifo (Y + Height, con Height negativo) se alinea con la
+            // baseline. Los chars de una misma línea tienen bottoms que pueden variar
+            // unos puntos, así que se agrupan por anclas encadenadas (cada ancla agrupa
+            // los bottoms que distan <= tolerancia del anterior, sin límites de bin).
+            var anclas = new List<double>();
+            foreach (var bottom in chars
+                         .Select(c => c.Bounds.Y + c.Bounds.Height)
+                         .OrderByDescending(b => b))
+            {
+                if (anclas.Count == 0 || anclas[^1] - bottom > toleranciaLinea)
+                    anclas.Add(bottom);
+            }
+
+            var lineas = chars
+                .GroupBy(c => anclas
+                    .OrderBy(a => Math.Abs((c.Bounds.Y + c.Bounds.Height) - a))
+                    .First())
+                .OrderByDescending(g => g.Key)  // De arriba a abajo
+                .Select(g => string.Concat(
+                    g.OrderBy(c => c.Bounds.X)
+                     .Select(c => c.Character)))
+                .Select(l => l.Trim())
+                .Where(l => l.Length > 0);
 
             return string.Join(Environment.NewLine, lineas);
-        }
-
-        private string ExtraerConLayoutAnalysis(PdfPigPage pagina)
-        {
-            try
-            {
-                return ContentOrderTextExtractor.GetText(pagina,
-                    addDoubleNewline: true);
-            }
-            catch
-            {
-                return ExtraerOrdenadoPorPosicion(pagina);
-            }
         }
 
         // ── NUEVA ESTRATEGIA: Extraer texto por zonas manteniendo el formato ───
@@ -93,7 +95,7 @@ namespace FacturasApp.Services
         {
             var resultado = new Dictionary<string, string>();
 
-            using var documento = PdfDocument.Open(rutaPdf);
+            using var documento = PdfDocument.Load(rutaPdf);
 
             // Precachear páginas necesarias por número de página (1-based)
             var paginasRequeridas = plantilla.Zonas
@@ -101,31 +103,22 @@ namespace FacturasApp.Services
                 .Distinct()
                 .ToList();
 
-            var cachePaginas = new Dictionary<int, PdfPigPage>();
-            foreach (int numPagina in paginasRequeridas)
-            {
-                var pagina = documento.GetPages()
-                    .FirstOrDefault(p => p.Number == numPagina);
-                if (pagina != null)
-                    cachePaginas[numPagina] = pagina;
-            }
-
             foreach (var zona in plantilla.Zonas)
             {
                 try
                 {
-                    if (!cachePaginas.TryGetValue(zona.NumPagina, out var pagina))
+                    if (zona.NumPagina < 1 || zona.NumPagina > documento.PageCount)
                     {
                         resultado[zona.Campo] = string.Empty;
                         continue;
                     }
 
-                    double paginaWidth = pagina.Width;
-                    double paginaHeight = pagina.Height;
+                    int indicePagina = zona.NumPagina - 1;
+                    var tamanio = documento.PageSizes[indicePagina];
 
-                    var rect = ConvertirZonaAPdfRectangle(zona, paginaWidth, paginaHeight);
+                    var rect = ConvertirZonaAPdfRectangle(zona, tamanio.Width, tamanio.Height);
 
-                    string textoDirecto = ExtraerTextoLayoutDesdeArea(pagina, rect);
+                    string textoDirecto = ExtraerTextoLayoutDesdeArea(documento, indicePagina, rect);
 
                     resultado[zona.Campo] = textoDirecto;
                 }
@@ -149,14 +142,15 @@ namespace FacturasApp.Services
 
             try
             {
-                using var documento = PdfDocument.Open(rutaPdf);
-                var pagina = documento.GetPages()
-                    .FirstOrDefault(p => p.Number == zona.NumPagina);
+                using var documento = PdfDocument.Load(rutaPdf);
+                if (zona.NumPagina < 1 || zona.NumPagina > documento.PageCount)
+                    return null;
 
-                if (pagina == null) return null;
+                int indicePagina = zona.NumPagina - 1;
+                var tamanio = documento.PageSizes[indicePagina];
 
-                var rect = ConvertirZonaAPdfRectangle(zona, pagina.Width, pagina.Height);
-                return ExtraerTextoLayoutDesdeArea(pagina, rect);
+                var rect = ConvertirZonaAPdfRectangle(zona, tamanio.Width, tamanio.Height);
+                return ExtraerTextoLayoutDesdeArea(documento, indicePagina, rect);
             }
             catch (Exception ex)
             {
@@ -167,26 +161,51 @@ namespace FacturasApp.Services
 
         /// <summary>
         /// Extrae texto de un área específica respetando el layout original.
-        /// Filtra las palabras por su posición y luego aplica el extractor de layout.
+        /// Filtra los caracteres por su posición y los agrupa por líneas.
+        /// PDFium usa coordenadas PDF nativas: Y desde la parte INFERIOR (0 = abajo).
         /// </summary>
-        private string ExtraerTextoLayoutDesdeArea(PdfPigPage pagina, PdfRectangle area)
+        private static string ExtraerTextoLayoutDesdeArea(PdfDocument documento, int indicePagina,
+            RectangleF rect)
         {
-            // Filtrar palabras que están dentro del área
-            var palabrasEnArea = pagina.GetWords()
-                .Where(w => area.Contains(w.BoundingBox))
+            var chars = documento.GetCharacterInformation(indicePagina);
+
+            // Filtrar caracteres completamente dentro del área (coordenadas bottom-based:
+            // rect.Top = borde inferior de la zona, rect.Bottom = borde superior)
+            var charsEnArea = chars
+                .Where(c => !char.IsControl(c.Character))
+                .Where(c => c.Bounds.X >= rect.Left
+                    && (c.Bounds.X + c.Bounds.Width) <= rect.Right
+                    && c.Bounds.Y >= rect.Top
+                    && (c.Bounds.Y + c.Bounds.Height) <= rect.Bottom)
                 .ToList();
 
-            if (!palabrasEnArea.Any())
+            if (charsEnArea.Count == 0)
                 return string.Empty;
 
-            const double toleranciaLinea = 5.0; // puntos para considerar misma línea
+            // Misma agrupación por anclas encadenadas que en OrdenadoPosicion:
+            // los bottoms de una misma línea varían unos puntos y los bins fijos
+            // podían partir líneas.
+            const double toleranciaLinea = 4.0;
 
-            var lineas = palabrasEnArea
-                .GroupBy(w => Math.Round(w.BoundingBox.Bottom / toleranciaLinea))
+            var anclas = new List<double>();
+            foreach (var bottom in charsEnArea
+                         .Select(c => c.Bounds.Y + c.Bounds.Height)
+                         .OrderByDescending(b => b))
+            {
+                if (anclas.Count == 0 || anclas[^1] - bottom > toleranciaLinea)
+                    anclas.Add(bottom);
+            }
+
+            var lineas = charsEnArea
+                .GroupBy(c => anclas
+                    .OrderBy(a => Math.Abs((c.Bounds.Y + c.Bounds.Height) - a))
+                    .First())
                 .OrderByDescending(g => g.Key)  // De arriba a abajo
-                .Select(g => string.Join(" ",
-                    g.OrderBy(w => w.BoundingBox.Left)  // De izquierda a derecha
-                     .Select(w => w.Text)))
+                .Select(g => string.Concat(
+                    g.OrderBy(c => c.Bounds.X)
+                     .Select(c => c.Character)))
+                .Select(l => l.Trim())
+                .Where(l => l.Length > 0)
                 .ToList();
 
             return string.Join(Environment.NewLine, lineas);
@@ -194,22 +213,23 @@ namespace FacturasApp.Services
 
         // ── Conversión de ZonaOcr a PdfRectangle ────────────────
 
-        private PdfRectangle ConvertirZonaAPdfRectangle(ZonaOcr zona, double paginaWidth, double paginaHeight)
+        private RectangleF ConvertirZonaAPdfRectangle(ZonaOcr zona, float paginaWidth, float paginaHeight)
         {
-            // Coordenadas en porcentaje (0-100) a puntos PDF
-            double izquierda = (zona.X / 100.0) * paginaWidth;
-            double ancho = (zona.Ancho / 100.0) * paginaWidth;
-            double derecha = izquierda + ancho;
+            // Coordenadas en porcentaje (0-100) a puntos PDF.
+            // PDFium usa Y desde la parte INFERIOR (0 = abajo).
+            // Nuestras coordenadas Y son desde la parte SUPERIOR (0 = arriba).
+            float izquierda = (float)(zona.X / 100.0) * paginaWidth;
+            float ancho = (float)(zona.Ancho / 100.0) * paginaWidth;
 
-            // PdfPig usa Y desde la parte INFERIOR de la página (0 = abajo)
-            // Nuestras coordenadas Y son desde la parte SUPERIOR (0 = arriba)
-            double topPorcentaje = zona.Y;                      // Desde arriba
-            double bottomPorcentaje = zona.Y + zona.Alto;       // Desde arriba
+            float topDesdeArriba = (float)(zona.Y / 100.0) * paginaHeight;    // Borde superior (desde arriba)
+            float altoZona = (float)(zona.Alto / 100.0) * paginaHeight;       // Altura positiva
 
-            double bottom = paginaHeight - (bottomPorcentaje / 100.0) * paginaHeight;
-            double top = paginaHeight - (topPorcentaje / 100.0) * paginaHeight;
+            // Y PDF desde abajo, con altura SIEMPRE positiva: el constructor de
+            // RectangleF (desde .NET 8) normaliza alturas negativas y deja la recta
+            // invertida, lo que descartaba todos los caracteres del filtro.
+            float yPdf = paginaHeight - topDesdeArriba - altoZona;
 
-            return new PdfRectangle(izquierda, bottom, derecha, top);
+            return new RectangleF(izquierda, yPdf, ancho, altoZona);
         }
     }
 }

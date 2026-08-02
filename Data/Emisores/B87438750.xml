@@ -6,66 +6,58 @@
     <Id>reinosa</Id>
     <Id>ESB87438750</Id>
   </Identificadores>
-  <ModoExtraccion>OrdenadoPosicion</ModoExtraccion>
+  <ModoExtraccion>LayoutAnalysis</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Trigorico 1.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Trigorico 3-.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
-      <Regex>(?:FACTURA|ABONO - RECTIFICATIVO|ABONO)\s+(\S+)</Regex>
+      <Regex>Fecha[\s\r\n]*(\S+)</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="Fecha">
-      <Regex>(?:FACTURA|ABONO - RECTIFICATIVO|ABONO)\s+\S+\s+(\S+)</Regex>
       <Grupo>1</Grupo>
-      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNombre">
-      <Regex>(.*)[\n\r]+R.M. de Santander</Regex>
+      <Regex>\[P1_Z2]:\s+(.+)</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNif">
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="BaseImponible">
-      <Regex>([\d.,]+)\s+([\d.,]+)\s+[\d.,]+\s+[\d.,]+[\n\r]+</Regex>
+      <Regex>([\d.,]+)\s+[\d.,]+\s+[\d.,]+\s+[\d.,]+[\s\n\r]+</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="PorcentajeIVA">
-      <Regex>([\d.,]+)\s+([\d.,]+)\s+[\d.,]+\s+[\d.,]+[\n\r]+</Regex>
-      <Grupo>2</Grupo>
-      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
-      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
-    </Campo>
-    <Campo Nombre="TotalFactura">
-      <Regex>Total Factura en Euro\s+([\d.,]+)</Regex>
+      <Regex>[\d.,]+\s+([\d.,]+)\s+[\d.,]+\s+[\d.,]+[\s\n\r]+</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
+    </Campo>
+    <Campo Nombre="TotalFactura">
+      <Regex>Total\s+Factura.+?([-\d.,]+)</Regex>
+      <Grupo>1</Grupo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
     </Campo>
   </Campos>
   <PostProcesamiento>
@@ -74,5 +66,13 @@
       <Accion Tipo="Invertir Signo" CampoDestino="" Valor="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
     </Regla>
   </PostProcesamiento>
-  <ZonasOcr />
+  <ZonasOcr>
+    <Zona Campo="P1_Z1" Pagina="1" X="62" Y="1.1" Ancho="35" Alto="6.3" />
+    <Zona Campo="P1_Z2" Pagina="1" X="47.4" Y="13.9" Ancho="36" Alto="10.5" />
+    <Zona Campo="P1_Z3" Pagina="1" X="76.1" Y="25.7" Ancho="18.9" Alto="6.3" />
+    <Zona Campo="P1_Z4" Pagina="1" X="30.9" Y="73.4" Ancho="64" Alto="6.8" />
+    <Zona Campo="P1_Z5" Pagina="1" X="30.9" Y="80.2" Ancho="64" Alto="4" />
+    <Zona Campo="P2_Z1" Pagina="2" X="30.9" Y="73.4" Ancho="64" Alto="6.8" />
+    <Zona Campo="P2_Z2" Pagina="2" X="30.9" Y="80.2" Ancho="64" Alto="4" />
+  </ZonasOcr>
 </Emisor>

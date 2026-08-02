@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Nif>26236236K</Nif>
-  <Nombre>ANDRES CAZALLA MEDINA</Nombre>
+  <Nif>74890980J</Nif>
+  <Nombre>Oscar Arias Merino</Nombre>
   <Identificadores>
-    <Id>SEMIRUEDA</Id>
-    <Id>Cazalla</Id>
+    <Id>oscar arias merino</Id>
+    <Id>74890980-j</Id>
+    <Id>deudor</Id>
   </Identificadores>
-  <ModoExtraccion>LayoutAnalysis</ModoExtraccion>
+  <ModoExtraccion>Simple</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Andres Cazalla 1.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\PYTHON\PYTHON-2025\DistiFact\DistiFact-Facturas\Oscar Arias Merino\Ingresos\FV13534.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
-      <Regex>FACTURA\s*(\S+)</Regex>
+      <Regex>FACTURA[\s\n\r]*(FV\d{5})\b</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
@@ -26,7 +27,7 @@
       <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="ReceptorNombre">
-      <Regex>CLIENTE[\s\r\n]+(.+)</Regex>
+      <Regex>CLIENTE[\s\r\n]*(.+)</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
@@ -39,28 +40,21 @@
       <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="BaseImponible">
-      <Regex>Base Imponible.*[\s\n\r]+([-\d.,]+)</Regex>
+      <Regex>([-\d.,]+).+[\r\n]+IVA</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="PorcentajeIVA">
-      <Regex>Base Imponible.*[\s\n\r]+[-\d.,]+\s+([-\d.,]+)</Regex>
-      <Grupo>1</Grupo>
-      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
-      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-    </Campo>
-    <Campo Nombre="PorcentajeIRPF">
-      <Regex>IRPF[\s\n\r]+([-\d.,]+)</Regex>
+      <Regex>IVA\s*(?:\+\s*RE|)\s*\(([\d.,]+)\s*%</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="TotalFactura">
-      <Regex>TOTAL[\s\n\r]+([-\d.,]+)</Regex>
+      <Regex>TOTAL\s+([-\d.,]+)</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
@@ -70,24 +64,18 @@
   <PostProcesamiento>
     <Regla>
       <CondicionCampo>
-        <Campo>PorcentajeIRPF</Campo>
-        <Valor>19</Valor>
+        <Campo>PorcentajeIVA</Campo>
+        <Valor>11,4</Valor>
       </CondicionCampo>
-      <Accion Tipo="Establecer Valor" CampoDestino="ConceptoIngreso" Valor="720" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+      <Accion Tipo="Establecer Valor" CampoDestino="PorcentajeRE" Valor="1,4" CampoOrigen1="" Operador="+" CampoOrigen2="" />
     </Regla>
     <Regla>
       <CondicionCampo>
-        <Campo>PorcentajeIRPF</Campo>
-        <Valor>19</Valor>
+        <Campo>PorcentajeIVA</Campo>
+        <Valor>11,4</Valor>
       </CondicionCampo>
-      <Accion Tipo="Establecer Valor" CampoDestino="ConceptoGasto" Valor="620" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+      <Accion Tipo="Establecer Valor" CampoDestino="PorcentajeIVA" Valor="10" CampoOrigen1="" Operador="+" CampoOrigen2="" />
     </Regla>
   </PostProcesamiento>
-  <ZonasOcr>
-    <Zona Campo="P1_Z1" Pagina="1" X="50.2" Y="4.5" Ancho="39.4" Alto="3.6" />
-    <Zona Campo="P1_Z2" Pagina="1" X="47.8" Y="8.9" Ancho="40.2" Alto="9.9" />
-    <Zona Campo="P1_Z3" Pagina="1" X="26.9" Y="91.9" Ancho="23.3" Alto="4.8" />
-    <Zona Campo="P1_Z4" Pagina="1" X="62.1" Y="92.2" Ancho="14.3" Alto="4.8" />
-    <Zona Campo="P1_Z5" Pagina="1" X="77.6" Y="92.3" Ancho="16.9" Alto="4.7" />
-  </ZonasOcr>
+  <ZonasOcr />
 </Emisor>

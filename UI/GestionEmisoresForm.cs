@@ -4,8 +4,7 @@ using FacturasApp.Models;
 using FacturasApp.Models.EmisoresConfig;
 using FacturasApp.Services;
 using FacturasApp.Services.Parsers;
-using PDFtoImage;
-using SkiaSharp;
+using PdfiumViewer;
 
 namespace FacturasApp.UI;
 
@@ -153,18 +152,13 @@ public partial class GestionEmisoresForm : Form
         LimpiarPaginas();
         _rutaPdf = rutaPdf;
 
-        byte[] pdfBytes;
-        try { pdfBytes = File.ReadAllBytes(rutaPdf); }
-        catch (Exception ex)
-        {
-            if (mostrarErrores)
-                MessageBox.Show($"Error al leer PDF:\n{ex.Message}",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return false;
-        }
-
         int numPaginas;
-        try { numPaginas = Conversion.GetPageCount(pdfBytes); }
+        PdfDocument documento;
+        try
+        {
+            documento = PdfDocument.Load(rutaPdf);
+            numPaginas = documento.PageCount;
+        }
         catch (Exception ex)
         {
             if (mostrarErrores)
@@ -173,31 +167,29 @@ public partial class GestionEmisoresForm : Form
             return false;
         }
 
-        for (int i = 0; i < numPaginas; i++)
+        using (documento)
         {
-            SKBitmap skBitmap;
-            try
+            for (int i = 0; i < numPaginas; i++)
             {
-                skBitmap = Conversion.ToImage(
-                    pdfBytes,
-                    page: new Index(i),
-                    password: null,
-                    options: new RenderOptions(Dpi: 300));
-            }
-            catch (Exception ex)
-            {
-                if (mostrarErrores)
-                    MessageBox.Show($"Error al renderizar página {i + 1}:\n{ex.Message}",
-                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-
-            using (skBitmap)
-            {
-                using var skImage = SKImage.FromBitmap(skBitmap);
-                using var skData = skImage.Encode(SKEncodedImageFormat.Png, 100);
-                using var ms = new MemoryStream(skData.ToArray());
-                _imagenPaginas.Add(new Bitmap(ms));
+                try
+                {
+                    SizeF tamano = documento.PageSizes[i];
+                    int ancho = (int)Math.Ceiling(tamano.Width * 300 / 72f);
+                    int alto = (int)Math.Ceiling(tamano.Height * 300 / 72f);
+                    var imagen = documento.Render(
+                        i, ancho, alto, 300, 300, PdfRenderFlags.ForPrinting);
+                    if (imagen is Bitmap bitmap)
+                        _imagenPaginas.Add(bitmap);
+                    else
+                        imagen.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    if (mostrarErrores)
+                        MessageBox.Show($"Error al renderizar página {i + 1}:\n{ex.Message}",
+                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
             }
         }
 

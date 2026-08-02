@@ -6,14 +6,14 @@
     <Id>40.0015231/CA</Id>
     <Id>40.080372/CA</Id>
   </Identificadores>
-  <ModoExtraccion>OrdenadoPosicion</ModoExtraccion>
+  <ModoExtraccion>LayoutAnalysis</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
   <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Dulceria 2.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
-      <Regex>Número[\s\n\r]*(\S+)</Regex>
+      <Regex>Número[\s\n\r]+(\S+)</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
@@ -26,7 +26,7 @@
       <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="ReceptorNombre">
-      <Regex>\[P1_Z3]:\s+(.+)</Regex>
+      <Regex>\[P1_Z3]:\s*(.+)</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
@@ -39,7 +39,7 @@
       <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="TotalFactura">
-      <Regex>TOTAL EURO.*[\r\n]+([-\d.,]+)</Regex>
+      <Regex>TOTAL EURO.*[\s\n\r]+([-\d.,]+)</Regex>
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
@@ -51,7 +51,7 @@
     <RegexLinea />
     <Lineas>
       <Linea>
-        <Regex>([-\d.,]+)\s+([\d.,]+)\s*%\s+([-\d.,]+)</Regex>
+        <Regex>([-\d.,]+)\s+([-\d.,]+)%\s+([-\d.,]+)</Regex>
         <MapeoCampos>
           <Mapeo Nombre="BaseImponible" Grupo="1" />
           <Mapeo Nombre="PorcentajeIVA" Grupo="2" />

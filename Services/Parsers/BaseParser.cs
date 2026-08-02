@@ -211,6 +211,9 @@ namespace FacturasApp.Services.Parsers
                     return null;
             }
 
+            if (m.Count == 0)
+                return null;
+
             Regex RegexFechaFormateada = new(
                 @"\b(\d{1,4})\s*[\/\.-]\s*((?:\d{1,2}|\D{3}))\s*[\/\.-]\s*(\d{1,4})\b",
                 RegexOptions.Compiled);
