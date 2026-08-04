@@ -7,7 +7,19 @@
 "/mnt/c/Program Files/dotnet/dotnet.exe" run
 ```
 
+Target: **.NET 10** (net10.0-windows, SDK de los repos oficiales de dotnet).
+
 No tests, CI/CD, linting, or typecheck configured.
+
+### Rebuild falla si la app está en ejecución
+
+Si la app está corriendo, `dotnet build --no-incremental` (o `dotnet run`) falla con warnings `MSB3061`/`MSB3026`/`MSB3027` porque `FacturasApp.exe` está bloqueado por el proceso. Cerrarla antes de rebuildar:
+
+```bash
+/mnt/c/Windows/System32/taskkill.exe /F /IM FacturasApp.exe
+```
+
+Si se ve un PID concreto en el error (ej. "blocked by FacturasApp (1808)") también puede usarse `/F /PID <pid>`. Tras el kill, rebuildar de nuevo.
 
 ## Key Architecture
 
@@ -45,9 +57,11 @@ The project uses a mix of styles — match the existing convention for the direc
 ## Conventions
 
 - Code in Spanish (names, comments, files)
+- Commitear es responsabilidad del usuario: no hacer commits ni estar pendiente de asuntos de commit
 - `Proveedor` and `Cliente` are empty subclasses of `Empresa` (semantic clarity only)
 - Nullable enable, ImplicitUsings enabled
 - WinForms with Designer files (`*.Designer.cs`, `*.resx`)
+- Target framework: `.NET 10` (`net10.0-windows`)
 - `.slnx` format (new .NET XML solution format)
 - App icon: `Assets/app-icon.ico`
 - Custom using alias in `OcrBase.cs`: `using DrawingImageFormat = System.Drawing.Imaging.ImageFormat;`

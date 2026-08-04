@@ -1232,7 +1232,7 @@ partial class GestionEmisoresForm
         // 
         // btnGuardar
         // 
-        btnGuardar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+        btnGuardar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
         btnGuardar.BackColor = Color.FromArgb(46, 117, 182);
         btnGuardar.FlatStyle = FlatStyle.Flat;
         btnGuardar.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
