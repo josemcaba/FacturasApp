@@ -10,7 +10,7 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>628</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\EMASA.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Mix\EMASA.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>FACTURA:\s*(\S+)</Regex>
@@ -18,7 +18,6 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="Fecha">
       <Regex>FECHA\sDE\sEMISIÓN:\s*(.*?)\s</Regex>
@@ -26,7 +25,6 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNombre">
       <Regex>www.emasa.es\r*\n*(.+)</Regex>
@@ -34,14 +32,13 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNif">
       <Grupo>1</Grupo>
+      <ValorFijo>EMMMM</ValorFijo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
-      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="TotalFactura">
       <Regex>TOTAL FACTURA\s+([\d.,]+)</Regex>
@@ -49,6 +46,7 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
   </Campos>
   <MultiLinea>

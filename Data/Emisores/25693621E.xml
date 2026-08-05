@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>25693621E</Nif>
-  <Nombre>Gregorio Aranda Garcia</Nombre>
+  <Nombre>ARANDA GARCIA, GREGORIO</Nombre>
   <Identificadores>
     <Id>25693621E</Id>
     <Id>fecha de vencimiento</Id>
@@ -11,7 +11,7 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Gregorio Aranda 1.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Mix\Gregorio Aranda 1.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>Número de Factura.*[\n\r]+(?:Fact-)?(\d+)</Regex>
@@ -19,6 +19,7 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="Fecha">
       <Regex>Facturación[\s\n\r]+(?:Fecha de Vencimiento[\s\n\r]+)?(\d{1,2}/\d{1,2}/\d{4})</Regex>
@@ -26,6 +27,7 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNombre">
       <Regex>Datos Cliente[\s\n\r]+(?:Datos Proveedor[\s\n\r]+)?(.+)</Regex>
@@ -33,12 +35,14 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNif">
       <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="BaseImponible">
       <Regex>otal.*?([\d,.]+)[\n\r]*IVA\s*\(([\d]+)%\)</Regex>
@@ -46,6 +50,7 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="PorcentajeIVA">
       <Regex>otal.*?([\d,.]+)[\n\r]*IVA\s*\(([\d]+)%\)</Regex>
@@ -53,6 +58,7 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="TotalFactura">
       <Regex>Envío[\s\n\r]+(?:[\d,.\s\n\r]*)Total\s+([\d.,]+)</Regex>
@@ -60,6 +66,7 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
   </Campos>
   <PostProcesamiento />
