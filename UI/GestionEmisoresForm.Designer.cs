@@ -72,8 +72,6 @@ partial class GestionEmisoresForm
         cmbCampoTipo = new ComboBox();
         lblCampoRegex = new Label();
         txtCampoRegex = new TextBox();
-        lblCampoGrupo = new Label();
-        txtCampoGrupo = new TextBox();
         lblCampoValorFijo = new Label();
         txtCampoValorFijo = new TextBox();
         lblCampoFormato = new Label();
@@ -576,8 +574,6 @@ partial class GestionEmisoresForm
         panelDetalle.Controls.Add(cmbCampoTipo);
         panelDetalle.Controls.Add(lblCampoRegex);
         panelDetalle.Controls.Add(txtCampoRegex);
-        panelDetalle.Controls.Add(lblCampoGrupo);
-        panelDetalle.Controls.Add(txtCampoGrupo);
         panelDetalle.Controls.Add(lblCampoValorFijo);
         panelDetalle.Controls.Add(txtCampoValorFijo);
         panelDetalle.Controls.Add(lblCampoFormato);
@@ -645,75 +641,57 @@ partial class GestionEmisoresForm
         txtCampoRegex.TabIndex = 5;
         txtCampoRegex.TextChanged += CampoDetalle_Changed;
         // 
-        // lblCampoGrupo
-        // 
-        lblCampoGrupo.AutoSize = true;
-        lblCampoGrupo.Location = new Point(12, 102);
-        lblCampoGrupo.Name = "lblCampoGrupo";
-        lblCampoGrupo.Size = new Size(53, 20);
-        lblCampoGrupo.TabIndex = 6;
-        lblCampoGrupo.Text = "Grupo:";
-        // 
-        // txtCampoGrupo
-        // 
-        txtCampoGrupo.Location = new Point(126, 99);
-        txtCampoGrupo.Name = "txtCampoGrupo";
-        txtCampoGrupo.Size = new Size(50, 27);
-        txtCampoGrupo.TabIndex = 7;
-        txtCampoGrupo.Text = "1";
-        txtCampoGrupo.TextChanged += CampoDetalle_Changed;
-        // 
         // lblCampoValorFijo
         // 
         lblCampoValorFijo.AutoSize = true;
-        lblCampoValorFijo.Location = new Point(12, 132);
+        lblCampoValorFijo.Location = new Point(12, 102);
         lblCampoValorFijo.Name = "lblCampoValorFijo";
         lblCampoValorFijo.Size = new Size(72, 20);
-        lblCampoValorFijo.TabIndex = 8;
+        lblCampoValorFijo.TabIndex = 6;
         lblCampoValorFijo.Text = "Valor fijo:";
         // 
         // txtCampoValorFijo
         // 
-        txtCampoValorFijo.Location = new Point(126, 129);
+        txtCampoValorFijo.Location = new Point(126, 99);
         txtCampoValorFijo.Name = "txtCampoValorFijo";
         txtCampoValorFijo.Size = new Size(335, 27);
-        txtCampoValorFijo.TabIndex = 9;
+        txtCampoValorFijo.TabIndex = 7;
         txtCampoValorFijo.TextChanged += CampoDetalle_Changed;
         // 
         // lblCampoFormato
         // 
         lblCampoFormato.AutoSize = true;
-        lblCampoFormato.Location = new Point(12, 162);
+        lblCampoFormato.Location = new Point(12, 132);
         lblCampoFormato.Name = "lblCampoFormato";
         lblCampoFormato.Size = new Size(108, 20);
-        lblCampoFormato.TabIndex = 10;
+        lblCampoFormato.TabIndex = 8;
         lblCampoFormato.Text = "Formato fecha:";
         // 
         // txtCampoFormatoFecha
         // 
-        txtCampoFormatoFecha.Location = new Point(126, 159);
+        txtCampoFormatoFecha.Location = new Point(126, 129);
         txtCampoFormatoFecha.Name = "txtCampoFormatoFecha";
         txtCampoFormatoFecha.PlaceholderText = "dd/MM/yyyy (opcional)";
         txtCampoFormatoFecha.Size = new Size(335, 27);
-        txtCampoFormatoFecha.TabIndex = 11;
+        txtCampoFormatoFecha.TabIndex = 9;
         txtCampoFormatoFecha.TextChanged += CampoDetalle_Changed;
         // 
         // lblCampoSuma
         // 
         lblCampoSuma.AutoSize = true;
-        lblCampoSuma.Location = new Point(12, 192);
+        lblCampoSuma.Location = new Point(12, 162);
         lblCampoSuma.Name = "lblCampoSuma";
         lblCampoSuma.Size = new Size(156, 20);
-        lblCampoSuma.TabIndex = 12;
+        lblCampoSuma.TabIndex = 10;
         lblCampoSuma.Text = "Campos suma (coma):";
         // 
         // txtCampoCamposSuma
         // 
-        txtCampoCamposSuma.Location = new Point(174, 189);
+        txtCampoCamposSuma.Location = new Point(174, 159);
         txtCampoCamposSuma.Name = "txtCampoCamposSuma";
         txtCampoCamposSuma.PlaceholderText = "BaseImponible,CuotaIVA";
         txtCampoCamposSuma.Size = new Size(287, 27);
-        txtCampoCamposSuma.TabIndex = 13;
+        txtCampoCamposSuma.TabIndex = 11;
         txtCampoCamposSuma.TextChanged += CampoDetalle_Changed;
         // 
         // btnCampoAdd
@@ -1373,8 +1351,6 @@ partial class GestionEmisoresForm
     private ComboBox cmbCampoTipo;
     private Label lblCampoRegex;
     private TextBox txtCampoRegex;
-    private Label lblCampoGrupo;
-    private TextBox txtCampoGrupo;
     private Label lblCampoValorFijo;
     private TextBox txtCampoValorFijo;
     private Label lblCampoFormato;

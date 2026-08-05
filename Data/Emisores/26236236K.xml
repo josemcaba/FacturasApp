@@ -14,14 +14,12 @@
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>FACTURA\s*(\S+)</Regex>
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
       <CamposSuma />
     </Campo>
     <Campo Nombre="Fecha">
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
@@ -29,14 +27,12 @@
     </Campo>
     <Campo Nombre="ReceptorNombre">
       <Regex>CLIENTE[\s\r\n]+(.+)</Regex>
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
       <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNif">
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
@@ -44,7 +40,6 @@
     </Campo>
     <Campo Nombre="BaseImponible">
       <Regex>Base Imponible.*[\s\n\r]+([-\d.,]+)</Regex>
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
@@ -52,7 +47,6 @@
     </Campo>
     <Campo Nombre="PorcentajeIVA">
       <Regex>Base Imponible.*[\s\n\r]+[-\d.,]+\s+([-\d.,]+)</Regex>
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
@@ -60,7 +54,6 @@
     </Campo>
     <Campo Nombre="PorcentajeIRPF">
       <Regex>IRPF[\s\n\r]+([-\d.,]+)</Regex>
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
@@ -68,7 +61,6 @@
     </Campo>
     <Campo Nombre="TotalFactura">
       <Regex>TOTAL[\s\n\r]+([-\d.,]+)</Regex>
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>

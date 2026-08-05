@@ -14,35 +14,29 @@
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>FACTURA:\s*(\S+)</Regex>
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="Fecha">
       <Regex>FECHA\sDE\sEMISIÓN:\s*(.*?)\s</Regex>
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="ReceptorNombre">
       <Regex>www.emasa.es\r*\n*(.+)</Regex>
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="ReceptorNif">
-      <Grupo>1</Grupo>
-      <ValorFijo>EMMMM</ValorFijo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
-      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="TotalFactura">
       <Regex>TOTAL FACTURA\s+([\d.,]+)</Regex>
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>

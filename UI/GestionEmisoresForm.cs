@@ -835,7 +835,7 @@ public partial class GestionEmisoresForm : Form
 
     private static CampoConfig CopiarCampo(CampoConfig c) => new()
     {
-        Nombre = c.Nombre, Regex = c.Regex, Grupo = c.Grupo,
+        Nombre = c.Nombre, Regex = c.Regex,
         ValorFijo = c.ValorFijo, UsarRegexFechaGeneral = c.UsarRegexFechaGeneral,
         UsarRegexNifGeneral = c.UsarRegexNifGeneral, EsSuma = c.EsSuma,
         CamposSuma = c.CamposSuma?.ToList(), FormatoFecha = c.FormatoFecha
@@ -954,7 +954,6 @@ public partial class GestionEmisoresForm : Form
         campo.UsarRegexNifGeneral = tipo == "RegexNifGeneral";
         campo.ValorFijo = tipo == "ValorFijo" ? txtCampoValorFijo.Text.Trim() : null;
         campo.Regex = tipo == "Regex" ? txtCampoRegex.Text.Trim() : null;
-        campo.Grupo = int.TryParse(txtCampoGrupo.Text, out var g) ? g : 1;
         campo.FormatoFecha = string.IsNullOrWhiteSpace(txtCampoFormatoFecha.Text)
             ? null : txtCampoFormatoFecha.Text.Trim();
         campo.CamposSuma = tipo == "Suma" && !string.IsNullOrWhiteSpace(txtCampoCamposSuma.Text)
@@ -967,7 +966,6 @@ public partial class GestionEmisoresForm : Form
         cmbCampoNombre.Text = "";
         cmbCampoTipo.SelectedIndex = -1;
         txtCampoRegex.Text = "";
-        txtCampoGrupo.Text = "1";
         txtCampoValorFijo.Text = "";
         txtCampoFormatoFecha.Text = "";
         txtCampoCamposSuma.Text = "";
@@ -1041,7 +1039,6 @@ public partial class GestionEmisoresForm : Form
                 : !string.IsNullOrEmpty(campo.ValorFijo) ? "ValorFijo"
                 : "Regex";
             txtCampoRegex.Text = campo.Regex ?? "";
-            txtCampoGrupo.Text = campo.Grupo.ToString();
             txtCampoValorFijo.Text = campo.ValorFijo ?? "";
             txtCampoFormatoFecha.Text = campo.FormatoFecha ?? "";
             txtCampoCamposSuma.Text = campo.CamposSuma != null ? string.Join(",", campo.CamposSuma) : "";

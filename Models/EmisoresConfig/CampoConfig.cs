@@ -8,7 +8,6 @@ public class CampoConfig
     public string Nombre { get; set; } = string.Empty;
 
     public string? Regex { get; set; }
-    public int Grupo { get; set; } = 1;
 
     public string? ValorFijo { get; set; }
     public bool UsarRegexFechaGeneral { get; set; }

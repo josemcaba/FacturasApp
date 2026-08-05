@@ -15,54 +15,41 @@
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>Número de Factura.*[\n\r]+(?:Fact-)?(\d+)</Regex>
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="Fecha">
       <Regex>Facturación[\s\n\r]+(?:Fecha de Vencimiento[\s\n\r]+)?(\d{1,2}/\d{1,2}/\d{4})</Regex>
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNombre">
       <Regex>Datos Cliente[\s\n\r]+(?:Datos Proveedor[\s\n\r]+)?(.+)</Regex>
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNif">
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="BaseImponible">
-      <Regex>otal.*?([\d,.]+)[\n\r]*IVA\s*\(([\d]+)%\)</Regex>
-      <Grupo>1</Grupo>
+      <Regex>otal.*?([\d,.]+)[\n\r]*IVA\s*\([\d]+%\)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="PorcentajeIVA">
-      <Regex>otal.*?([\d,.]+)[\n\r]*IVA\s*\(([\d]+)%\)</Regex>
-      <Grupo>2</Grupo>
+      <Regex>otal.*?[\d,.]+[\n\r]*IVA\s*\(([\d]+)%\)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="TotalFactura">
       <Regex>Envío[\s\n\r]+(?:[\d,.\s\n\r]*)Total\s+([\d.,]+)</Regex>
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>

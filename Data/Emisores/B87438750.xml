@@ -14,14 +14,12 @@
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>Fecha[\s\r\n]*(\S+)</Regex>
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
       <CamposSuma />
     </Campo>
     <Campo Nombre="Fecha">
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
@@ -29,14 +27,12 @@
     </Campo>
     <Campo Nombre="ReceptorNombre">
       <Regex>\[P1_Z2]:\s+(.+)</Regex>
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
       <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNif">
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
@@ -44,7 +40,6 @@
     </Campo>
     <Campo Nombre="BaseImponible">
       <Regex>([\d.,]+)\s+[\d.,]+\s+[\d.,]+\s+[\d.,]+[\s\n\r]+</Regex>
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
@@ -52,7 +47,6 @@
     </Campo>
     <Campo Nombre="PorcentajeIVA">
       <Regex>[\d.,]+\s+([\d.,]+)\s+[\d.,]+\s+[\d.,]+[\s\n\r]+</Regex>
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
@@ -60,7 +54,6 @@
     </Campo>
     <Campo Nombre="TotalFactura">
       <Regex>Total\s+Factura.+?([-\d.,]+)</Regex>
-      <Grupo>1</Grupo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>

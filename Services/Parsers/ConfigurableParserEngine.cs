@@ -227,8 +227,8 @@ public class ConfigurableParserEngine : BaseParser
         {
             var regex = new Regex(campo.Regex, RegexOptions.IgnoreCase | RegexOptions.Compiled);
             var match = regex.Match(texto);
-            if (match.Success && campo.Grupo < match.Groups.Count)
-                rawValue = match.Groups[campo.Grupo].Value.Trim();
+            if (match.Success && match.Groups.Count > 1)
+                rawValue = match.Groups[1].Value.Trim();
         }
 
         if (rawValue != null)
