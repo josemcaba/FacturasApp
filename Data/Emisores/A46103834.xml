@@ -49,7 +49,6 @@
     </Campo>
   </Campos>
   <MultiLinea>
-    <Habilitado>true</Habilitado>
     <RegexLinea />
     <Lineas>
       <Linea>

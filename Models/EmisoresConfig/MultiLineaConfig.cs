@@ -4,8 +4,6 @@ namespace FacturasApp.Models.EmisoresConfig;
 
 public class MultiLineaConfig
 {
-    public bool Habilitado { get; set; }
-
     // Compatibilidad: si Lineas está vacía, se usa RegexLinea + MapeoCampos
     public string RegexLinea { get; set; } = string.Empty;
 

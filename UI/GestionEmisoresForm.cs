@@ -573,10 +573,9 @@ public partial class GestionEmisoresForm : Form
             lstCampos.Items.Add(c);
         ActualizarItemsCmbCampoNombre();
 
-        chkMultiLinea.Checked = config.MultiLinea?.Habilitado ?? false;
         lstMultiLineas.Items.Clear();
         var multi = config.MultiLinea;
-        if (multi != null && multi.Habilitado)
+        if (multi != null)
         {
             if (multi.Lineas.Count > 0)
             {
@@ -804,7 +803,6 @@ public partial class GestionEmisoresForm : Form
             Campos = _emisorActual.Campos.Select(CopiarCampo).ToList(),
             MultiLinea = _emisorActual.MultiLinea != null ? new MultiLineaConfig
             {
-                Habilitado = _emisorActual.MultiLinea.Habilitado,
                 RegexLinea = _emisorActual.MultiLinea.RegexLinea,
                 MapeoCampos = _emisorActual.MultiLinea.MapeoCampos
                     .Select(m => new MapeoCampoLinea { Nombre = m.Nombre, Grupo = m.Grupo }).ToList(),
@@ -895,9 +893,8 @@ public partial class GestionEmisoresForm : Form
         if (lstMultiLineas.SelectedItem is LineaConfig lineaActual)
             ActualizarLineaDesdeUI(lineaActual);
 
-        _emisorActual.MultiLinea = chkMultiLinea.Checked ? new MultiLineaConfig
+        _emisorActual.MultiLinea = lstMultiLineas.Items.Count > 0 ? new MultiLineaConfig
         {
-            Habilitado = true,
             Lineas = lstMultiLineas.Items.Cast<LineaConfig>().ToList()
         } : null;
 

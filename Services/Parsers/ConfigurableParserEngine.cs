@@ -35,16 +35,24 @@ public class ConfigurableParserEngine : BaseParser
 
     public override Factura Parsear(string texto, string rutaArchivo, bool viaOcr)
     {
-        if (_config.MultiLinea?.Habilitado == true)
+        if (TieneMultiLinea())
             return ParsearMultiple(texto, rutaArchivo, viaOcr).First();
         return ParsearUnica(texto, rutaArchivo, viaOcr);
     }
 
     public override List<Factura> ParsearMultiple(string texto, string rutaArchivo, bool viaOcr)
     {
-        if (_config.MultiLinea?.Habilitado == true)
+        if (TieneMultiLinea())
             return ParsearMultiLinea(texto, rutaArchivo, viaOcr);
         return [ParsearUnica(texto, rutaArchivo, viaOcr)];
+    }
+
+    private bool TieneMultiLinea()
+    {
+        var multi = _config.MultiLinea;
+        if (multi == null) return false;
+        if (multi.Lineas.Count > 0) return true;
+        return !string.IsNullOrEmpty(multi.RegexLinea);
     }
 
     // ── Factura única ────────────────────────────────────────────────────────
@@ -146,7 +154,7 @@ public class ConfigurableParserEngine : BaseParser
     private List<LineaConfig> ObtenerLineasMultiLinea()
     {
         var multi = _config.MultiLinea;
-        if (multi == null || !multi.Habilitado)
+        if (multi == null)
             return new List<LineaConfig>();
 
         // Compatibilidad: config antiguo con una única línea (RegexLinea + MapeoCampos)
