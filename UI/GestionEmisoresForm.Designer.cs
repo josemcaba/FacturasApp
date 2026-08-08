@@ -44,10 +44,7 @@ partial class GestionEmisoresForm
         lblGeneralNif = new Label();
         txtNif = new TextBox();
         lblGeneralIds = new Label();
-        lstIdentificadores = new ListBox();
-        txtNuevoId = new TextBox();
-        btnAddId = new Button();
-        btnRemoveId = new Button();
+        txtIdentificadores = new TextBox();
         lblIndicadorEmisor = new Label();
         lblGeneralCultura = new Label();
         cmbCulturaFecha = new ComboBox();
@@ -65,8 +62,6 @@ partial class GestionEmisoresForm
         dataGridViewTextBoxColumn8 = new DataGridViewTextBoxColumn();
         dataGridViewTextBoxColumn9 = new DataGridViewTextBoxColumn();
         tabCampos = new TabPage();
-        lblGeneralModo = new Label();
-        cmbModoExtraccion = new ComboBox();
         lblCamposLista = new Label();
         lstCampos = new ListBox();
         panelDetalle = new Panel();
@@ -125,6 +120,8 @@ partial class GestionEmisoresForm
         cmbPostAccOrigen1 = new ComboBox();
         cmbPostAccOperador = new ComboBox();
         cmbPostAccOrigen2 = new ComboBox();
+        cmbModoExtraccion = new ComboBox();
+        lblGeneralModo = new Label();
         lblSeparadorRegex = new Label();
         txtRegexSource = new TextBox();
         btnGuardar = new Button();
@@ -277,10 +274,7 @@ partial class GestionEmisoresForm
         tabGeneral.Controls.Add(lblGeneralNif);
         tabGeneral.Controls.Add(txtNif);
         tabGeneral.Controls.Add(lblGeneralIds);
-        tabGeneral.Controls.Add(lstIdentificadores);
-        tabGeneral.Controls.Add(txtNuevoId);
-        tabGeneral.Controls.Add(btnAddId);
-        tabGeneral.Controls.Add(btnRemoveId);
+        tabGeneral.Controls.Add(txtIdentificadores);
         tabGeneral.Controls.Add(lblIndicadorEmisor);
         tabGeneral.Controls.Add(lblGeneralCultura);
         tabGeneral.Controls.Add(cmbCulturaFecha);
@@ -339,47 +333,22 @@ partial class GestionEmisoresForm
         lblGeneralIds.TabIndex = 4;
         lblGeneralIds.Text = "Identificadores (textos para detectar el emisor):";
         // 
-        // lstIdentificadores
+        // txtIdentificadores
         // 
-        lstIdentificadores.Location = new Point(16, 143);
-        lstIdentificadores.Name = "lstIdentificadores";
-        lstIdentificadores.Size = new Size(400, 84);
-        lstIdentificadores.TabIndex = 5;
-        // 
-        // txtNuevoId
-        // 
-        txtNuevoId.Location = new Point(16, 107);
-        txtNuevoId.Name = "txtNuevoId";
-        txtNuevoId.Size = new Size(316, 27);
-        txtNuevoId.TabIndex = 3;
-        // 
-        // btnAddId
-        // 
-        btnAddId.FlatStyle = FlatStyle.Flat;
-        btnAddId.Location = new Point(338, 107);
-        btnAddId.Name = "btnAddId";
-        btnAddId.Size = new Size(36, 30);
-        btnAddId.TabIndex = 7;
-        btnAddId.Text = "+";
-        btnAddId.UseVisualStyleBackColor = true;
-        btnAddId.Click += BtnAddId_Click;
-        // 
-        // btnRemoveId
-        // 
-        btnRemoveId.FlatStyle = FlatStyle.Flat;
-        btnRemoveId.Location = new Point(380, 107);
-        btnRemoveId.Name = "btnRemoveId";
-        btnRemoveId.Size = new Size(36, 30);
-        btnRemoveId.TabIndex = 8;
-        btnRemoveId.Text = "−";
-        btnRemoveId.UseVisualStyleBackColor = true;
-        btnRemoveId.Click += BtnRemoveId_Click;
+        txtIdentificadores.AcceptsReturn = true;
+        txtIdentificadores.Location = new Point(16, 107);
+        txtIdentificadores.Multiline = true;
+        txtIdentificadores.Name = "txtIdentificadores";
+        txtIdentificadores.ScrollBars = ScrollBars.Vertical;
+        txtIdentificadores.Size = new Size(400, 127);
+        txtIdentificadores.TabIndex = 5;
+        txtIdentificadores.TextChanged += TxtIdentificadores_TextChanged;
         // 
         // lblIndicadorEmisor
         // 
         lblIndicadorEmisor.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
         lblIndicadorEmisor.ForeColor = Color.Gray;
-        lblIndicadorEmisor.Location = new Point(422, 110);
+        lblIndicadorEmisor.Location = new Point(422, 107);
         lblIndicadorEmisor.Name = "lblIndicadorEmisor";
         lblIndicadorEmisor.Size = new Size(550, 20);
         lblIndicadorEmisor.TabIndex = 9;
@@ -389,7 +358,7 @@ partial class GestionEmisoresForm
         // lblGeneralCultura
         // 
         lblGeneralCultura.AutoSize = true;
-        lblGeneralCultura.Location = new Point(422, 136);
+        lblGeneralCultura.Location = new Point(422, 143);
         lblGeneralCultura.Name = "lblGeneralCultura";
         lblGeneralCultura.Size = new Size(139, 20);
         lblGeneralCultura.TabIndex = 11;
@@ -399,7 +368,7 @@ partial class GestionEmisoresForm
         // 
         cmbCulturaFecha.DropDownStyle = ComboBoxStyle.DropDownList;
         cmbCulturaFecha.Items.AddRange(new object[] { "es-ES", "en-US" });
-        cmbCulturaFecha.Location = new Point(573, 133);
+        cmbCulturaFecha.Location = new Point(567, 140);
         cmbCulturaFecha.Name = "cmbCulturaFecha";
         cmbCulturaFecha.Size = new Size(96, 28);
         cmbCulturaFecha.TabIndex = 12;
@@ -408,7 +377,7 @@ partial class GestionEmisoresForm
         // lblGeneralConceptoIngreso
         // 
         lblGeneralConceptoIngreso.AutoSize = true;
-        lblGeneralConceptoIngreso.Location = new Point(422, 170);
+        lblGeneralConceptoIngreso.Location = new Point(422, 177);
         lblGeneralConceptoIngreso.Name = "lblGeneralConceptoIngreso";
         lblGeneralConceptoIngreso.Size = new Size(129, 20);
         lblGeneralConceptoIngreso.TabIndex = 13;
@@ -416,7 +385,7 @@ partial class GestionEmisoresForm
         // 
         // txtConceptoIngreso
         // 
-        txtConceptoIngreso.Location = new Point(573, 167);
+        txtConceptoIngreso.Location = new Point(567, 174);
         txtConceptoIngreso.Name = "txtConceptoIngreso";
         txtConceptoIngreso.Size = new Size(96, 27);
         txtConceptoIngreso.TabIndex = 14;
@@ -425,7 +394,7 @@ partial class GestionEmisoresForm
         // lblGeneralConceptoGasto
         // 
         lblGeneralConceptoGasto.AutoSize = true;
-        lblGeneralConceptoGasto.Location = new Point(422, 203);
+        lblGeneralConceptoGasto.Location = new Point(422, 210);
         lblGeneralConceptoGasto.Name = "lblGeneralConceptoGasto";
         lblGeneralConceptoGasto.Size = new Size(117, 20);
         lblGeneralConceptoGasto.TabIndex = 15;
@@ -433,7 +402,7 @@ partial class GestionEmisoresForm
         // 
         // txtConceptoGasto
         // 
-        txtConceptoGasto.Location = new Point(573, 200);
+        txtConceptoGasto.Location = new Point(567, 207);
         txtConceptoGasto.Name = "txtConceptoGasto";
         txtConceptoGasto.Size = new Size(96, 27);
         txtConceptoGasto.TabIndex = 16;
@@ -556,8 +525,6 @@ partial class GestionEmisoresForm
         // 
         // tabCampos
         // 
-        tabCampos.Controls.Add(lblGeneralModo);
-        tabCampos.Controls.Add(cmbModoExtraccion);
         tabCampos.Controls.Add(lblCamposLista);
         tabCampos.Controls.Add(lstCampos);
         tabCampos.Controls.Add(panelDetalle);
@@ -574,27 +541,6 @@ partial class GestionEmisoresForm
         tabCampos.Size = new Size(745, 531);
         tabCampos.TabIndex = 1;
         tabCampos.Text = "Campos";
-        // 
-        // lblGeneralModo
-        // 
-        lblGeneralModo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        lblGeneralModo.AutoSize = true;
-        lblGeneralModo.Location = new Point(438, 254);
-        lblGeneralModo.Name = "lblGeneralModo";
-        lblGeneralModo.Size = new Size(145, 20);
-        lblGeneralModo.TabIndex = 60;
-        lblGeneralModo.Text = "Modo de extracción:";
-        // 
-        // cmbModoExtraccion
-        // 
-        cmbModoExtraccion.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        cmbModoExtraccion.DropDownStyle = ComboBoxStyle.DropDownList;
-        cmbModoExtraccion.Items.AddRange(new object[] { "Simple", "OrdenadoPosicion" });
-        cmbModoExtraccion.Location = new Point(589, 251);
-        cmbModoExtraccion.Name = "cmbModoExtraccion";
-        cmbModoExtraccion.Size = new Size(155, 28);
-        cmbModoExtraccion.TabIndex = 59;
-        cmbModoExtraccion.SelectedIndexChanged += CmbModoExtraccion_SelectedIndexChanged;
         // 
         // lblCamposLista
         // 
@@ -1218,12 +1164,33 @@ partial class GestionEmisoresForm
         cmbPostAccOrigen2.TabIndex = 17;
         cmbPostAccOrigen2.SelectedIndexChanged += PostProcControl_Changed;
         // 
+        // cmbModoExtraccion
+        // 
+        cmbModoExtraccion.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        cmbModoExtraccion.DropDownStyle = ComboBoxStyle.DropDownList;
+        cmbModoExtraccion.Items.AddRange(new object[] { "Simple", "OrdenadoPosicion" });
+        cmbModoExtraccion.Location = new Point(575, 568);
+        cmbModoExtraccion.Name = "cmbModoExtraccion";
+        cmbModoExtraccion.Size = new Size(155, 28);
+        cmbModoExtraccion.TabIndex = 59;
+        cmbModoExtraccion.SelectedIndexChanged += CmbModoExtraccion_SelectedIndexChanged;
+        // 
+        // lblGeneralModo
+        // 
+        lblGeneralModo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        lblGeneralModo.AutoSize = true;
+        lblGeneralModo.Location = new Point(424, 571);
+        lblGeneralModo.Name = "lblGeneralModo";
+        lblGeneralModo.Size = new Size(145, 20);
+        lblGeneralModo.TabIndex = 60;
+        lblGeneralModo.Text = "Modo de extracción:";
+        // 
         // lblSeparadorRegex
         // 
         lblSeparadorRegex.AutoSize = true;
         lblSeparadorRegex.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
         lblSeparadorRegex.ForeColor = Color.Gray;
-        lblSeparadorRegex.Location = new Point(10, 571);
+        lblSeparadorRegex.Location = new Point(13, 571);
         lblSeparadorRegex.Name = "lblSeparadorRegex";
         lblSeparadorRegex.Size = new Size(172, 20);
         lblSeparadorRegex.TabIndex = 50;
@@ -1233,11 +1200,11 @@ partial class GestionEmisoresForm
         // 
         txtRegexSource.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         txtRegexSource.Font = new Font("Consolas", 9F);
-        txtRegexSource.Location = new Point(13, 594);
+        txtRegexSource.Location = new Point(13, 602);
         txtRegexSource.Multiline = true;
         txtRegexSource.Name = "txtRegexSource";
         txtRegexSource.ScrollBars = ScrollBars.Vertical;
-        txtRegexSource.Size = new Size(738, 70);
+        txtRegexSource.Size = new Size(738, 62);
         txtRegexSource.TabIndex = 51;
         txtRegexSource.TextChanged += EjecutarRegex;
         // 
@@ -1299,6 +1266,8 @@ partial class GestionEmisoresForm
         // 
         // panelDerecho
         // 
+        panelDerecho.Controls.Add(lblGeneralModo);
+        panelDerecho.Controls.Add(cmbModoExtraccion);
         panelDerecho.Controls.Add(txtRegexSource);
         panelDerecho.Controls.Add(lblSeparadorRegex);
         panelDerecho.Controls.Add(tabs);
@@ -1366,10 +1335,7 @@ partial class GestionEmisoresForm
     private Label lblGeneralNif;
     private TextBox txtNif;
     private Label lblGeneralIds;
-    private ListBox lstIdentificadores;
-    private TextBox txtNuevoId;
-    private Button btnAddId;
-    private Button btnRemoveId;
+    private TextBox txtIdentificadores;
     private Label lblIndicadorEmisor;
     private Label lblGeneralCultura;
     private ComboBox cmbCulturaFecha;

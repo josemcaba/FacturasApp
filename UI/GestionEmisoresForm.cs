@@ -76,26 +76,18 @@ public partial class GestionEmisoresForm : Form
     private void BtnClonar_Click(object? sender, EventArgs e) => ClonarEmisor();
     private void BtnCancelar_Click(object? sender, EventArgs e) => Close();
 
-    private void BtnAddId_Click(object? sender, EventArgs e)
+    private void TxtIdentificadores_TextChanged(object? sender, EventArgs e)
     {
-        if (!string.IsNullOrWhiteSpace(txtNuevoId.Text))
-        {
-            lstIdentificadores.Items.Add(txtNuevoId.Text.Trim());
-            txtNuevoId.Clear();
-            MarcarModificado();
-            ActualizarIndicadorIdentificadores();
-        }
+        if (_cargando) return;
+        MarcarModificado();
+        ActualizarIndicadorIdentificadores();
     }
 
-    private void BtnRemoveId_Click(object? sender, EventArgs e)
-    {
-        if (lstIdentificadores.SelectedIndex >= 0)
-        {
-            lstIdentificadores.Items.RemoveAt(lstIdentificadores.SelectedIndex);
-            MarcarModificado();
-            ActualizarIndicadorIdentificadores();
-        }
-    }
+    private List<string> ObtenerIdentificadores() =>
+        txtIdentificadores.Lines
+            .Select(l => l.Trim())
+            .Where(l => l.Length > 0)
+            .ToList();
 
     private void BtnRegexApplyToField_Click(object? sender, EventArgs e)
     {
@@ -266,7 +258,7 @@ public partial class GestionEmisoresForm : Form
             return;
         }
 
-        var ids = lstIdentificadores.Items.Cast<string>().ToList();
+        var ids = ObtenerIdentificadores();
         if (ids.Count == 0)
         {
             lblIndicadorEmisor.ForeColor = Color.Gray;
@@ -348,11 +340,11 @@ public partial class GestionEmisoresForm : Form
         AñadirComun("Concepto Gasto", f => f.ConceptoGasto);
         Añadir("Base Imponible", f => f.BaseImponible);
         Añadir("% IVA", f => f.PorcentajeIVA);
-        Añadir("Cuota IVA", f => f.CuotaIVA);
+        Añadir("Cuota IVA", f => f.CuotaIVA+f.CuotaIVACalculado);
         Añadir("% IRPF", f => f.PorcentajeIRPF);
-        Añadir("Cuota IRPF", f => f.CuotaIRPF);
+        Añadir("Cuota IRPF", f => f.CuotaIRPF+f.CuotaIRPFCalculado);
         Añadir("% RE", f => f.PorcentajeRE);
-        Añadir("Cuota RE", f => f.CuotaRE);
+        Añadir("Cuota RE", f => f.CuotaRE+f.CuotaRECalculado);
         Añadir("SubTotal", f => f.SubTotal);
         Añadir("Total Calculado", f => f.TotalCalculado);
         AñadirComun("Total Factura", f => f.TotalFactura);
@@ -671,9 +663,7 @@ public partial class GestionEmisoresForm : Form
 
         txtNombre.Text = config.Nombre;
         txtNif.Text = config.Nif;
-        lstIdentificadores.Items.Clear();
-        foreach (var id in config.Identificadores)
-            lstIdentificadores.Items.Add(id);
+        txtIdentificadores.Text = string.Join(Environment.NewLine, config.Identificadores);
         cmbModoExtraccion.SelectedItem = config.ModoExtraccion;
         cmbCulturaFecha.SelectedItem = config.CulturaFecha;
         txtConceptoIngreso.Text = config.ConceptoIngreso;
@@ -809,7 +799,7 @@ public partial class GestionEmisoresForm : Form
         if (_emisorActual == null) return;
         _emisorActual.Nombre = txtNombre.Text.Trim();
         _emisorActual.Nif = txtNif.Text.Trim();
-        _emisorActual.Identificadores = lstIdentificadores.Items.Cast<string>().ToList();
+        _emisorActual.Identificadores = ObtenerIdentificadores();
         _emisorActual.ModoExtraccion = cmbModoExtraccion.SelectedItem?.ToString() ?? "OrdenadoPosicion";
         _emisorActual.CulturaFecha = cmbCulturaFecha.SelectedItem?.ToString() ?? "es-ES";
         _emisorActual.ConceptoIngreso = txtConceptoIngreso.Text.Trim();
@@ -1003,7 +993,7 @@ public partial class GestionEmisoresForm : Form
 
         SincronizarUIaConfig();
 
-        _emisorActual.Identificadores = lstIdentificadores.Items.Cast<string>().ToList();
+        _emisorActual.Identificadores = ObtenerIdentificadores();
 
         if (lstMultiLineas.SelectedItem is LineaConfig lineaActual)
             ActualizarLineaDesdeUI(lineaActual);
@@ -1530,7 +1520,8 @@ public partial class GestionEmisoresForm : Form
             lblRegexMatchCount.Text = $"{matches.Count} match(es)";
 
             dgvRegexMatches.Columns.Clear();
-            dgvRegexMatches.Columns.Add("colMatch", "#");
+            var colMatch = new DataGridViewTextBoxColumn { Name = "colMatch", HeaderText = "#", Width = 50, AutoSizeMode = DataGridViewAutoSizeColumnMode.None, MinimumWidth = 50 };
+            dgvRegexMatches.Columns.Add(colMatch);
             if (matches.Count > 0)
             {
                 for (int i = 0; i < matches[0].Groups.Count; i++)

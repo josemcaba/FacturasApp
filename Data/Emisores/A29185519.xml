@@ -17,23 +17,27 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="Fecha">
       <Regex>FECHA\sDE\sEMISIÓN:\s*(.*?)\s</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNombre">
       <Regex>www.emasa.es\r*\n*(.+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNif">
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="TotalFactura">
       <Regex>TOTAL FACTURA\s+([\d.,]+)</Regex>
@@ -69,13 +73,17 @@
         <Campo>EmisorNombre</Campo>
         <Valor>EMASA</Valor>
       </CondicionCampo>
-      <Accion Tipo="Establecer Valor" CampoDestino="EmisorNombre" Valor="EMPRESA MUNICIPAL AGUAS DE MALAGA S.A." CampoOrigen1="" Operador="+" CampoOrigen2="" />
+      <Accion Tipo="Establecer Valor" CampoDestino="" Valor="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
     </Regla>
     <Regla>
       <Accion Tipo="Calcular" CampoDestino="SubTotal" Valor="" CampoOrigen1="BaseImponible" Operador="+" CampoOrigen2="CuotaIVA" />
     </Regla>
     <Regla>
-      <Accion Tipo="Calcular" CampoDestino="CuotaIVA" Valor="" CampoOrigen1="BaseImponible" Operador="%" CampoOrigen2="PorcentajeIVA" />
+      <CondicionCampo>
+        <Campo>EmisorNombre</Campo>
+        <Valor>EMASA</Valor>
+      </CondicionCampo>
+      <Accion Tipo="Establecer Valor" CampoDestino="EmisorNombre" Valor="EMPRESA MUNICIPAL AGUAS DE MALAGA S.A." CampoOrigen1="BaseImponible" Operador="%" CampoOrigen2="PorcentajeIVA" />
     </Regla>
   </PostProcesamiento>
   <ZonasOcr />
