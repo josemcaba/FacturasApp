@@ -92,3 +92,24 @@ The project uses a mix of styles — match the existing convention for the direc
 - Embedded resource logical names use dots: `FacturasApp.Data.Emisores.{Filename}.xml` and `FacturasApp.Data.plantillas_ocr.xml`
 - `ExtraerEmisoresPorDefecto` solo extrae si el archivo NO existe en AppData: los cambios en `Data/Emisores/*.xml` deben copiarse manualmente a `%APPDATA%/FacturasApp/Emisores/`
 - `ExtraerFecha` (general) devuelve null si encuentra 2+ fechas distintas (ej. un teléfono "951.91.63.89" rompe la extracción) → usar regex de fecha explícita en el XML
+
+## Publicación (ClickOnce)
+
+Flujo completo: `bash PublicarFacturasApp.sh` (raíz del repo, WSL/Git Bash). El script:
+
+1. Copia `%APPDATA%/FacturasApp/Emisores/` → `Data/Emisores/` y `plantillas_ocr.xml` → `Data/` (los cambios del usuario quedan versionados en el repo).
+2. Publica con el perfil `ClickOnceProfile` (Release, win-x64) → `bin/Release/net10.0-windows/win-x64/app.publish/`.
+3. Copia el contenido a `Publicados en GitHub/ClickOnce/FacturasApp/` (repo `josemcaba.github.io`, rama `main`).
+4. Borra versiones antiguas de `Application Files/` (conserva las 3 más recientes).
+5. Commit (`--amend` solo si el último es "Actualizada FacturasApp…") + `git push --force-with-lease`.
+
+Puntos importantes:
+
+- **Manifiestos firmados** (`SignManifests=True`) con certificado autofirmado de firma de código en `Cert:\CurrentUser\My` (subject "CN=Jose Manuel Cabello", validez 3 años). Backup exportado a `Properties/FacturasAppClickOnce.pfx` (en `.gitignore`, no se comitea). Recrear si caduca o se rgenera:
+  `New-SelfSignedCertificate -Type CodeSigning -Subject "CN=Jose Manuel Cabello" -CertStoreLocation Cert:\CurrentUser\My -KeyExportPolicy Exportable`
+  y exportar el pfx. Cambiar el thumbprint en `ClickOnceProfile.pubxml`.
+- **Firma ≠ SmartScreen**: el certificado autofirmado evita "Editor desconocido" en la instalación, pero Windows SmartScreen seguirá advirtiendo si exige firma de certificado comercial/trusted.
+- **Bootstrapper runtime hardcodeado**: `Microsoft.NetCore.DesktopRuntime.10.0.x64` (10.0.10) en `ClickOnceProfile.pubxml` → actualizarlo cuando salgan parches nuevos del runtime .NET 10.
+- **Versionado**: `<Version>3.0.0</Version>` en el csproj → `AssemblyVersion`/`FileVersion` 3.0.0.0 y ClickOnce `ApplicationVersion=3.0.0.*` (autoincremento de revisión).
+- Si no hay cambios en el sitio, el script avisa y no commitea vacío.
+
