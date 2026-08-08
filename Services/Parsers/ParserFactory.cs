@@ -50,7 +50,7 @@ namespace FacturasApp.Services.Parsers
                 new PescaderiaMarengoParser(),
                 new PescaderiaSalvadorParser(),
                 new PetroprixParser(),
-                new PlenergyParser(),
+                // new PlenergyParser(),
                 new RangnyValenciaParser(),
                 new RyanairDacParser(),
                 new SarigaboParser(),

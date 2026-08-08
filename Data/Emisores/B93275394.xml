@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Nif>B93275394</Nif>
+  <Nombre>PLENERGY GRUPO, S.L.</Nombre>
+  <Identificadores>
+    <Id>PLENERGY GRUPO</Id>
+    <Id>B93275394</Id>
+  </Identificadores>
+  <ModoExtraccion>Simple</ModoExtraccion>
+  <ConceptoIngreso>700</ConceptoIngreso>
+  <ConceptoGasto>624</ConceptoGasto>
+  <CulturaFecha>es-ES</CulturaFecha>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Mix\Plenergy.pdf</RutaPdfMuestra>
+  <Campos>
+    <Campo Nombre="NumeroFactura">
+      <Regex>N. FACTURA:\s*(.+)\b</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+    </Campo>
+    <Campo Nombre="Fecha">
+      <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+    </Campo>
+    <Campo Nombre="ReceptorNombre">
+      <Regex>(.*)[\r\n]+</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+    </Campo>
+    <Campo Nombre="ReceptorNif">
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+    </Campo>
+    <Campo Nombre="BaseImponible">
+      <Regex>Importe\s+TOTAL[\r\n]+([\d,.]+)\s+\d+\s*%\s+[\d,.]+\s+[\d,.]+\s*€\s+[\d,.]+\s*€</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+    </Campo>
+    <Campo Nombre="PorcentajeIVA">
+      <Regex>Importe\s+TOTAL[\r\n]+[\d,.]+\s+(\d+)\s*%\s+[\d,.]+\s+[\d,.]+\s*€\s+[\d,.]+\s*€</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+    </Campo>
+    <Campo Nombre="TotalFactura">
+      <Regex>Importe\s+TOTAL[\r\n]+[\d,.]+\s+\d+\s*%\s+[\d,.]+\s+[\d,.]+\s*€\s+([\d,.]+)\s*€</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+    </Campo>
+  </Campos>
+  <PostProcesamiento />
+  <ZonasOcr />
+</Emisor>
