@@ -1168,7 +1168,7 @@ partial class GestionEmisoresForm
         // 
         cmbModoExtraccion.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         cmbModoExtraccion.DropDownStyle = ComboBoxStyle.DropDownList;
-        cmbModoExtraccion.Items.AddRange(new object[] { "Simple", "OrdenadoPosicion" });
+        cmbModoExtraccion.Items.AddRange(new object[] { "Simple", "Ordenado" });
         cmbModoExtraccion.Location = new Point(575, 568);
         cmbModoExtraccion.Name = "cmbModoExtraccion";
         cmbModoExtraccion.Size = new Size(155, 28);

@@ -12,7 +12,7 @@ public class EmisorConfig
     [XmlArrayItem("Id")]
     public List<string> Identificadores { get; set; } = new();
 
-    public string ModoExtraccion { get; set; } = "OrdenadoPosicion";
+    public string ModoExtraccion { get; set; } = "Ordenado";
     public string ConceptoIngreso { get; set; } = "700";
     public string ConceptoGasto { get; set; } = "600";
     public string CulturaFecha { get; set; } = "es-ES";

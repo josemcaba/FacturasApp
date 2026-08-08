@@ -4,15 +4,14 @@
   <Nombre>ARIAS MERINO, OSCAR</Nombre>
   <Identificadores>
     <Id>Oscar Arias Merino</Id>
-    <Id>74890980j</Id>
-    <Id>kojakcereza</Id>
+    <Id>74890980-j</Id>
     <Id>deudor</Id>
   </Identificadores>
   <ModoExtraccion>Simple</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Mix\Oscar Arias 1.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Mix\Oscar Arias 2.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>FACTURA[\s\n\r]*(FV\d{5})\b</Regex>

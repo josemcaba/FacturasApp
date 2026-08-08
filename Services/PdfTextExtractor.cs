@@ -11,7 +11,7 @@ namespace FacturasApp.Services
         public enum ModoExtraccion
         {
             Simple,
-            OrdenadoPosicion
+            Ordenado
         }
 
         public string? ExtraerTextoSeleccionable(string rutaPdf,
@@ -26,7 +26,7 @@ namespace FacturasApp.Services
                 string textoPagina = modo switch
                 {
                     ModoExtraccion.Simple => ExtraerSimple(documento, i),
-                    ModoExtraccion.OrdenadoPosicion => ExtraerOrdenadoPorPosicion(documento, i),
+                    ModoExtraccion.Ordenado => ExtraerOrdenadoPorPosicion(documento, i),
                     _ => ExtraerOrdenadoPorPosicion(documento, i)
                 };
 
@@ -180,7 +180,7 @@ namespace FacturasApp.Services
             if (charsEnArea.Count == 0)
                 return string.Empty;
 
-            // Misma agrupación por anclas encadenadas que en OrdenadoPosicion:
+            // Misma agrupación por anclas encadenadas que en Ordenado:
             // los bottoms de una misma línea varían unos puntos y los bins fijos
             // podían partir líneas.
             const double toleranciaLinea = 4.0;

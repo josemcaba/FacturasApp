@@ -6,7 +6,7 @@
     <Id>emasa</Id>
     <Id>plaza general torrijos</Id>
   </Identificadores>
-  <ModoExtraccion>OrdenadoPosicion</ModoExtraccion>
+  <ModoExtraccion>Ordenado</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>628</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>

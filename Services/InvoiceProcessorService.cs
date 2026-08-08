@@ -65,7 +65,7 @@ namespace FacturasApp.Services
         /// </summary>
         public IInvoiceParser IdentificarEmisor(string rutaPdf) =>
             IdentificarEmisor(rutaPdf, _textExtractor.ExtraerTextoSeleccionable(rutaPdf,
-                PdfTextExtractor.ModoExtraccion.OrdenadoPosicion));
+                PdfTextExtractor.ModoExtraccion.Simple));
 
         private IInvoiceParser IdentificarEmisor(string rutaPdf, string? textoRapido) =>
             textoRapido != null

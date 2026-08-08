@@ -280,7 +280,9 @@ public partial class GestionEmisoresForm : Form
         }
 
         bool coincide = parser is ConfigurableParserEngine engine &&
-            engine.Config.Nif == _emisorActual?.Nif;
+            engine.Config.Nif != null &&
+            string.Equals(engine.Config.Nif.Trim(), _emisorActual?.Nif?.Trim(),
+                StringComparison.OrdinalIgnoreCase);
 
         lblIndicadorEmisor.ForeColor = coincide ? Color.FromArgb(0, 128, 0) : Color.FromArgb(192, 0, 0);
         lblIndicadorEmisor.Text = coincide
@@ -359,7 +361,7 @@ public partial class GestionEmisoresForm : Form
         var modo = Enum.TryParse<PdfTextExtractor.ModoExtraccion>(
             cmbModoExtraccion.SelectedItem?.ToString(), true, out var modoParsed)
             ? modoParsed
-            : PdfTextExtractor.ModoExtraccion.OrdenadoPosicion;
+            : PdfTextExtractor.ModoExtraccion.Ordenado;
         try
         {
             return _textExtractor.ExtraerTextoSeleccionable(_rutaPdf, modo)
@@ -800,7 +802,7 @@ public partial class GestionEmisoresForm : Form
         _emisorActual.Nombre = txtNombre.Text.Trim();
         _emisorActual.Nif = txtNif.Text.Trim();
         _emisorActual.Identificadores = ObtenerIdentificadores();
-        _emisorActual.ModoExtraccion = cmbModoExtraccion.SelectedItem?.ToString() ?? "OrdenadoPosicion";
+        _emisorActual.ModoExtraccion = cmbModoExtraccion.SelectedItem?.ToString() ?? "Ordenado";
         _emisorActual.CulturaFecha = cmbCulturaFecha.SelectedItem?.ToString() ?? "es-ES";
         _emisorActual.ConceptoIngreso = txtConceptoIngreso.Text.Trim();
         _emisorActual.ConceptoGasto = txtConceptoGasto.Text.Trim();
@@ -834,7 +836,7 @@ public partial class GestionEmisoresForm : Form
         {
             Nif = "NUEVO_NIF",
             Nombre = "Nuevo Emisor",
-            ModoExtraccion = "OrdenadoPosicion",
+            ModoExtraccion = "Ordenado",
             CulturaFecha = "es-ES",
             ConceptoIngreso = "700",
             ConceptoGasto = "600"

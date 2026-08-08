@@ -9,8 +9,8 @@ namespace FacturasApp.Services.Parsers
         Factura Parsear(string texto, string rutaArchivo, bool viaOcr);
 
         // Modo de extracción preferido
-        // Por defecto OrdenadoPosicion, cada parser puede sobreescribirlo
+        // Por defecto Ordenado, cada parser puede sobreescribirlo
         PdfTextExtractor.ModoExtraccion ModoExtraccion =>
-            PdfTextExtractor.ModoExtraccion.OrdenadoPosicion;
+            PdfTextExtractor.ModoExtraccion.Ordenado;
     }
 }

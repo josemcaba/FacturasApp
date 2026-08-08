@@ -23,7 +23,7 @@ public class ConfigurableParserEngine : BaseParser
         Enum.TryParse<PdfTextExtractor.ModoExtraccion>(_config.ModoExtraccion,
             ignoreCase: true, out var modo)
             ? modo
-            : PdfTextExtractor.ModoExtraccion.OrdenadoPosicion;
+            : PdfTextExtractor.ModoExtraccion.Ordenado;
 
     public override bool PuedeParsar(string texto)
     {

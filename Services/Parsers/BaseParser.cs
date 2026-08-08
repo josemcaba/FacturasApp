@@ -12,7 +12,7 @@ namespace FacturasApp.Services.Parsers
         public abstract Factura Parsear(string texto, string rutaArchivo, bool viaOcr);
 
         public virtual PdfTextExtractor.ModoExtraccion ModoExtraccion =>
-            PdfTextExtractor.ModoExtraccion.OrdenadoPosicion;
+            PdfTextExtractor.ModoExtraccion.Ordenado;
 
         // Implementación base: devuelve lista con una sola factura
         // MercadonaParser (y cualquier otro que lo necesite) lo sobreescribe
