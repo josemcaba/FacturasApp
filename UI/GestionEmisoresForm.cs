@@ -375,7 +375,9 @@ public partial class GestionEmisoresForm : Form
 
     private void CmbModoExtraccion_SelectedIndexChanged(object? sender, EventArgs e)
     {
-        if (_cargando || string.IsNullOrEmpty(_rutaPdf) || cmbModoExtraccion.SelectedIndex < 0) return;
+        if (_cargando || cmbModoExtraccion.SelectedIndex < 0) return;
+        MarcarModificado();
+        if (string.IsNullOrEmpty(_rutaPdf)) return;
         txtRegexSource.Text = ExtraerTextoConModoSeleccionado();
         ActualizarIndicadorIdentificadores();
     }

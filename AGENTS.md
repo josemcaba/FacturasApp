@@ -105,8 +105,8 @@ Flujo completo: `bash PublicarFacturasApp.sh` (raíz del repo, WSL/Git Bash). El
 
 Puntos importantes:
 
-- **Manifiestos firmados** (`SignManifests=True`) con certificado autofirmado de firma de código en `Cert:\CurrentUser\My` (subject "CN=Jose Manuel Cabello", validez 3 años). Backup exportado a `Properties/FacturasAppClickOnce.pfx` (en `.gitignore`, no se comitea). Recrear si caduca o se rgenera:
-  `New-SelfSignedCertificate -Type CodeSigning -Subject "CN=Jose Manuel Cabello" -CertStoreLocation Cert:\CurrentUser\My -KeyExportPolicy Exportable`
+- **Manifiestos firmados** (`SignManifests=True`) con certificado autofirmado de firma de código en `Cert:\CurrentUser\My` (subject "CN=Jose M. Caballero", validez 3 años). Backup exportado a `Properties/FacturasAppClickOnce.pfx` (en `.gitignore`, no se comitea). Recrear si caduca o se rgenera:
+  `New-SelfSignedCertificate -Type CodeSigning -Subject "CN=Jose M. Caballero" -CertStoreLocation Cert:\CurrentUser\My -KeyExportPolicy Exportable`
   y exportar el pfx. Cambiar el thumbprint en `ClickOnceProfile.pubxml`.
 - **Firma ≠ SmartScreen**: el certificado autofirmado evita "Editor desconocido" en la instalación, pero Windows SmartScreen seguirá advirtiendo si exige firma de certificado comercial/trusted.
 - **Bootstrapper runtime hardcodeado**: `Microsoft.NetCore.DesktopRuntime.10.0.x64` (10.0.10) en `ClickOnceProfile.pubxml` → actualizarlo cuando salgan parches nuevos del runtime .NET 10.

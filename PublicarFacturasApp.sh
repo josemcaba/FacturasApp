@@ -70,6 +70,9 @@ done
 log "Paso 2: Publicando ClickOnce ($(basename "$MSBUILD"))"
 cd "$PROYECTO_DIR"
 
+# Restaurar con el RID de publicación (evita NETSDK1047)
+"/mnt/c/Program Files/dotnet/dotnet.exe" restore -r win-x64
+
 if [[ "$MSBUILD" == *dotnet.exe ]]; then
     "$MSBUILD" publish -c Release -r win-x64 -p:PublishProfile=ClickOnceProfile
 else
