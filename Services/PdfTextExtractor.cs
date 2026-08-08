@@ -11,12 +11,11 @@ namespace FacturasApp.Services
         public enum ModoExtraccion
         {
             Simple,
-            OrdenadoPosicion,
-            LayoutAnalysis
+            OrdenadoPosicion
         }
 
         public string? ExtraerTextoSeleccionable(string rutaPdf,
-            ModoExtraccion modo = ModoExtraccion.LayoutAnalysis)
+            ModoExtraccion modo = ModoExtraccion.Simple)
         {
             var textoTotal = new System.Text.StringBuilder();
 
@@ -28,7 +27,6 @@ namespace FacturasApp.Services
                 {
                     ModoExtraccion.Simple => ExtraerSimple(documento, i),
                     ModoExtraccion.OrdenadoPosicion => ExtraerOrdenadoPorPosicion(documento, i),
-                    ModoExtraccion.LayoutAnalysis => ExtraerSimple(documento, i),
                     _ => ExtraerOrdenadoPorPosicion(documento, i)
                 };
 

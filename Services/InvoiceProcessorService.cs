@@ -59,6 +59,20 @@ namespace FacturasApp.Services
         }
 
         /// <summary>
+        /// Identifica el emisor de un PDF usando el mismo procedimiento que en el
+        /// flujo normal: extrae texto rápido (u OCR si está escaneado) y delega
+        /// en ParserFactory.ObtenerParser.
+        /// </summary>
+        public IInvoiceParser IdentificarEmisor(string rutaPdf) =>
+            IdentificarEmisor(rutaPdf, _textExtractor.ExtraerTextoSeleccionable(rutaPdf,
+                PdfTextExtractor.ModoExtraccion.OrdenadoPosicion));
+
+        private IInvoiceParser IdentificarEmisor(string rutaPdf, string? textoRapido) =>
+            textoRapido != null
+                ? _parserFactory.ObtenerParser(textoRapido)
+                : _parserFactory.ObtenerParser(_ocrExtractor.ExtraerTextoIdentificacion(rutaPdf));
+
+        /// <summary>
         /// Extrae el texto de un PDF usando el pipeline completo
         /// (detección, identificación de emisor, extracción zonal, fallback).
         /// Equivale a los pasos 1-4 de ProcesarUnPdf.
@@ -82,19 +96,7 @@ namespace FacturasApp.Services
             bool usarOcr = !esPdfSeleccionable;
 
             // ── PASO 2: Identificar emisor (con método rápido) ──────────────
-            string textoIdentificacion;
-            IInvoiceParser parser;
-
-            if (esPdfSeleccionable)
-            {
-                textoIdentificacion = textoRapido!;
-                parser = _parserFactory.ObtenerParser(textoIdentificacion);
-            }
-            else
-            {
-                textoIdentificacion = _ocrExtractor.ExtraerTextoIdentificacion(rutaPdf);
-                parser = _parserFactory.ObtenerParser(textoIdentificacion);
-            }
+            IInvoiceParser parser = IdentificarEmisor(rutaPdf, textoRapido);
 
             string nombreEmisor = parser.Nombre;
 
@@ -173,6 +175,66 @@ namespace FacturasApp.Services
             }
 
             return facturasParseadas;
+        }
+
+        public List<Factura> ProcesarEmisorMuestra(EmisorConfig config, string rutaPdf)
+        {
+            var parser = new ConfigurableParserEngine(config);
+
+            // ── PASO 1: Detectar tipo de PDF ──────────────────────────────────
+            string? textoRapido = _textExtractor.ExtraerTextoSeleccionable(rutaPdf,
+                PdfTextExtractor.ModoExtraccion.Simple);
+
+            bool esPdfSeleccionable = textoRapido != null;
+            bool usarOcr = !esPdfSeleccionable;
+
+            // ── PASO 2: Extracción zonal (solo para el emisor indicado) ───────
+            string textoExtraido = "";
+            bool extraccionZonalExitosa = false;
+            PlantillaOcr? plantilla = ObtenerPlantilla(parser, parser.Nombre);
+
+            if (UsarZonasSiempre && plantilla != null && plantilla.Zonas.Any())
+            {
+                if (esPdfSeleccionable)
+                    textoExtraido = ExtraerTextoZonalDesdePdf(rutaPdf, plantilla);
+                else
+                    textoExtraido = ExtraerTextoOcrZonalConPlantilla(rutaPdf, plantilla);
+
+                extraccionZonalExitosa = !string.IsNullOrEmpty(textoExtraido);
+            }
+
+            // ── PASO 3: Fallback a texto completo ──────────────────────────────
+            if (!extraccionZonalExitosa && FallbackATextoCompleto)
+            {
+                if (esPdfSeleccionable)
+                {
+                    textoExtraido = parser.ModoExtraccion == PdfTextExtractor.ModoExtraccion.Simple
+                        ? textoRapido!
+                        : _textExtractor.ExtraerTextoSeleccionable(rutaPdf, parser.ModoExtraccion)
+                          ?? textoRapido!;
+                }
+                else
+                {
+                    textoExtraido = _ocrExtractor.ExtraerTextoConOcr(rutaPdf);
+                }
+            }
+
+            // ── PASO 4: Parsear ────────────────────────────────────────────────
+            if (string.IsNullOrEmpty(textoExtraido))
+                return new List<Factura>();
+
+            var facturas = parser.ParsearMultiple(textoExtraido, rutaPdf, usarOcr);
+
+            foreach (var factura in facturas)
+            {
+                if (extraccionZonalExitosa)
+                {
+                    factura.MensajeError ??= new List<string>();
+                    factura.MensajeError.Add($"Extracción zonal utilizada ({(esPdfSeleccionable ? "coordenadas" : "OCR zonal")})");
+                }
+            }
+
+            return facturas;
         }
 
         // ── Selección de plantilla de zonas OCR ─────────────────────────────────

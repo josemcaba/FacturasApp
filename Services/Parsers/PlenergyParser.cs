@@ -12,7 +12,7 @@ namespace FacturasApp.Services.Parsers
             ["PLENERGY GRUPO", "B93275394"];
 
         public override PdfTextExtractor.ModoExtraccion ModoExtraccion =>
-            PdfTextExtractor.ModoExtraccion.LayoutAnalysis;
+            PdfTextExtractor.ModoExtraccion.Simple;
 
         private static readonly Regex RegexNumero = new(
             @"Nº FACTURA:\s+(.+)\b",

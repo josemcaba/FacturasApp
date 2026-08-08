@@ -83,6 +83,7 @@ public partial class GestionEmisoresForm : Form
             lstIdentificadores.Items.Add(txtNuevoId.Text.Trim());
             txtNuevoId.Clear();
             MarcarModificado();
+            ActualizarIndicadorIdentificadores();
         }
     }
 
@@ -92,6 +93,7 @@ public partial class GestionEmisoresForm : Form
         {
             lstIdentificadores.Items.RemoveAt(lstIdentificadores.SelectedIndex);
             MarcarModificado();
+            ActualizarIndicadorIdentificadores();
         }
     }
 
@@ -203,6 +205,7 @@ public partial class GestionEmisoresForm : Form
         picFactura.Invalidate();
 
         ActualizarVistaPreviaZonal();
+        ActualizarTablaValoresExtraidos();
 
         return true;
     }
@@ -249,6 +252,113 @@ public partial class GestionEmisoresForm : Form
         _sincronizando = false;
 
         txtRegexSource.Text = texto;
+        ActualizarIndicadorIdentificadores();
+    }
+
+    private void ActualizarIndicadorIdentificadores()
+    {
+        if (lblIndicadorEmisor == null) return;
+
+        if (string.IsNullOrEmpty(_rutaPdf) || !File.Exists(_rutaPdf))
+        {
+            lblIndicadorEmisor.ForeColor = Color.Gray;
+            lblIndicadorEmisor.Text = "Cargue un PDF de muestra para verificar los identificadores";
+            return;
+        }
+
+        var ids = lstIdentificadores.Items.Cast<string>().ToList();
+        if (ids.Count == 0)
+        {
+            lblIndicadorEmisor.ForeColor = Color.Gray;
+            lblIndicadorEmisor.Text = "Sin identificadores (no detecta ningún PDF)";
+            return;
+        }
+
+        // Mismo procedimiento que el flujo normal: detectar emisor y ver si es el actual
+        IInvoiceParser parser;
+        try
+        {
+            parser = _invoiceService.IdentificarEmisor(_rutaPdf);
+        }
+        catch
+        {
+            lblIndicadorEmisor.ForeColor = Color.FromArgb(192, 0, 0);
+            lblIndicadorEmisor.Text = "✗ No se pudo leer el PDF";
+            return;
+        }
+
+        bool coincide = parser is ConfigurableParserEngine engine &&
+            engine.Config.Nif == _emisorActual?.Nif;
+
+        lblIndicadorEmisor.ForeColor = coincide ? Color.FromArgb(0, 128, 0) : Color.FromArgb(192, 0, 0);
+        lblIndicadorEmisor.Text = coincide
+            ? "✓ El PDF pertenece al emisor"
+            : "✗ El PDF no pertenece al emisor";
+    }
+
+    private void ActualizarTablaValoresExtraidos()
+    {
+        dgvValoresExtraidos.Rows.Clear();
+
+        if (_emisorActual == null || string.IsNullOrEmpty(_rutaPdf) || !File.Exists(_rutaPdf))
+            return;
+
+        List<Factura> facturas;
+        try
+        {
+            facturas = _invoiceService.ProcesarEmisorMuestra(_emisorActual, _rutaPdf);
+        }
+        catch (Exception ex)
+        {
+            dgvValoresExtraidos.Rows.Clear();
+            dgvValoresExtraidos.Rows.Add("Error", ex.Message);
+            return;
+        }
+
+        if (facturas.Count == 0) return;
+
+        string Formato(object? v) => v switch
+        {
+            null => "",
+            DateTime dt => dt.ToString("dd/MM/yyyy"),
+            decimal d => d.ToString("N2"),
+            bool b => b ? "Sí" : "No",
+            _ => v.ToString() ?? ""
+        };
+
+        string Joinar(Func<Factura, object?> selector) =>
+            string.Join(" | ", facturas.Select(selector).Select(Formato));
+
+        string Comunes(Func<Factura, object?> selector) =>
+            Formato(selector(facturas.First()));
+
+        void Añadir(string atributo, Func<Factura, object?> selector) =>
+            dgvValoresExtraidos.Rows.Add(atributo, Joinar(selector));
+
+        void AñadirComun(string atributo, Func<Factura, object?> selector) =>
+            dgvValoresExtraidos.Rows.Add(atributo, Comunes(selector));
+
+        AñadirComun("Nº Factura", f => f.NumeroFactura);
+        AñadirComun("Fecha", f => f.Fecha);
+        AñadirComun("Emisor", f => f.Emisor?.Nombre);
+        AñadirComun("NIF Emisor", f => f.Emisor?.NIF);
+        AñadirComun("Receptor", f => f.Receptor?.Nombre);
+        AñadirComun("NIF Receptor", f => f.Receptor?.NIF);
+        AñadirComun("Concepto Ingreso", f => f.ConceptoIngreso);
+        AñadirComun("Concepto Gasto", f => f.ConceptoGasto);
+        Añadir("Base Imponible", f => f.BaseImponible);
+        Añadir("% IVA", f => f.PorcentajeIVA);
+        Añadir("Cuota IVA", f => f.CuotaIVA);
+        Añadir("% IRPF", f => f.PorcentajeIRPF);
+        Añadir("Cuota IRPF", f => f.CuotaIRPF);
+        Añadir("% RE", f => f.PorcentajeRE);
+        Añadir("Cuota RE", f => f.CuotaRE);
+        Añadir("SubTotal", f => f.SubTotal);
+        Añadir("Total Calculado", f => f.TotalCalculado);
+        AñadirComun("Total Factura", f => f.TotalFactura);
+        Añadir("Estado", f => f.Estado);
+        if (facturas.Any(f => f.MensajeError?.Count > 0))
+            Añadir("Mensajes", f => string.Join("; ", f.MensajeError ?? new List<string>()));
     }
 
     private string ExtraerTextoConModoSeleccionado()
@@ -273,6 +383,7 @@ public partial class GestionEmisoresForm : Form
     {
         if (_cargando || string.IsNullOrEmpty(_rutaPdf) || cmbModoExtraccion.SelectedIndex < 0) return;
         txtRegexSource.Text = ExtraerTextoConModoSeleccionado();
+        ActualizarIndicadorIdentificadores();
     }
 
     private void TabPaginas_SelectedIndexChanged(object? sender, EventArgs e)
@@ -617,6 +728,8 @@ public partial class GestionEmisoresForm : Form
         SincronizarZonasDesdeDgv();
         picFactura.Invalidate();
         ActualizarVistaPreviaZonal();
+        ActualizarTablaValoresExtraidos();
+        ActualizarIndicadorIdentificadores();
     }
 
     private void ActualizarItemsCmbCampoNombre()
@@ -739,6 +852,8 @@ public partial class GestionEmisoresForm : Form
         _esNuevo = true;
         _emisorActual = nuevo;
         CargarEmisorEnUI(nuevo);
+        txtRegexSource.Clear();
+        ActualizarIndicadorIdentificadores();
         _modificado = true;
         btnGuardar.Enabled = true;
         _saltarCambioSeleccion = true;
@@ -928,6 +1043,7 @@ public partial class GestionEmisoresForm : Form
             }
             MessageBox.Show("Emisor guardado correctamente.",
                 "Guardado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            ActualizarTablaValoresExtraidos();
         }
         catch (Exception ex)
         {

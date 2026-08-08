@@ -12,7 +12,7 @@ namespace FacturasApp.Services.Parsers
             ["ona corp", "ESB85002764", "+34915079385"];
 
         public override PdfTextExtractor.ModoExtraccion ModoExtraccion =>
-            PdfTextExtractor.ModoExtraccion.LayoutAnalysis;
+            PdfTextExtractor.ModoExtraccion.Simple;
 
         private static readonly Regex RegexNumero = new(
             @"FACTURA(?:| RECTIFICATIVA)[\r\n]+(.+)[\r\n]+FECHA",

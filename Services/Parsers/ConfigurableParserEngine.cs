@@ -28,7 +28,7 @@ public class ConfigurableParserEngine : BaseParser
     public override bool PuedeParsar(string texto)
     {
         if (_config.Identificadores == null || _config.Identificadores.Count == 0)
-            return true;
+            return false;
         return _config.Identificadores
             .All(id => texto.Contains(id, StringComparison.OrdinalIgnoreCase));
     }

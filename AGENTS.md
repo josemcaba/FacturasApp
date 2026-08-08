@@ -28,7 +28,7 @@ Si se ve un PID concreto en el error (ej. "blocked by FacturasApp (1808)") tambi
 - **Parser dispatch**: `ParserFactory` first checks XML configs from `ConfiguracionEmisores`, then falls back to hardcoded C# parsers. `GenericParser.PuedeParsar() => true` (always fallback). ParserFactory has a ~50-entry hardcoded list — missing a registration means the C# parser is unreachable.
 - **Config-driven parser**: `ConfigurableParserEngine` replaces C# parsers with XML. Each emitter = one `{Nif}.xml` stored at `%APPDATA%/FacturasApp/Emisores/`. C# parsers still work during migration.
 - **Emisor XML deployment flow**: Source XMLs live in `Data/Emisores/` as embedded resources (`FacturasApp.Data.Emisores.*`), auto-extracted to `%APPDATA%/FacturasApp/Emisores/` on first run via `ConfiguracionEmisores.ExtraerEmisoresPorDefecto()`. Users edit the AppData copies, not the embedded originals.
-- **Text extraction**: `PdfTextExtractor` (PDFium, 3 modes: `Simple`, `OrdenadoPosicion`, `LayoutAnalysis`). `Simple`/`LayoutAnalysis` → `PdfDocument.GetPdfText(page)` (texto limpio, orden de contenido, saltos de línea). `OrdenadoPosicion` (default) → `GetCharacterInformation(page)` con agrupación por anclas encadenadas (tolerancia 4pt sobre `Bounds.Y + Bounds.Height`, bottom del glifo, Y desde abajo) y orden por `Bounds.X`.
+- **Text extraction**: `PdfTextExtractor` (PDFium, 2 modes: `Simple`, `OrdenadoPosicion`). `Simple` → `PdfDocument.GetPdfText(page)` (texto limpio, orden de contenido, saltos de línea). `OrdenadoPosicion` (default) → `GetCharacterInformation(page)` con agrupación por anclas encadenadas (tolerancia 4pt sobre `Bounds.Y + Bounds.Height`, bottom del glifo, Y desde abajo) y orden por `Bounds.X`.
 - **OCR path**: PDFs without selectable text → rendered via PDFium → Tesseract 5.2.0 with `spa` language. `OcrBase` provides shared engine setup. `tessdata/` (eng+spa) copied to output dir via `<Content>` in csproj.
 - **OCR uses only `spa`** despite both `eng.traineddata` and `spa.traineddata` being deployed.
 - **PDF rendering**: `OcrBase.RenderizarPaginas()`/`RenderizarPagina()`/`RenderizarPaginaReducida()` y el preview de `GestionEmisoresForm.CargarPdfMuestra` usan `PdfDocument.Render(page, w, h, dpiX, dpiY, PdfRenderFlags.ForPrinting)` con `w/h = PageSizes × dpi/72` (DPI 300 OCR, preview 300). El Bitmap devuelto NO debe dispose-se en el método: el llamador es responsable.
@@ -82,7 +82,7 @@ The project uses a mix of styles — match the existing convention for the direc
 - `Factura.TotalesCoinciden` tolerance is 0.01€
 - `Factura.TotalCalculado` = Base + CuotaIVA − CuotaIRPF + CuotaRE: si el XML extrae IRPF y la factura imprime el total BRUTO (sin descontar IRPF), el estado será Error
 - `ConfigurableParserEngine` regexes NO usan flag `Multiline` (`^`/`$` no funcionan por línea)
-- Los XML que usan `<ModoExtraccion>LayoutAnalysis</ModoExtraccion>` reciben texto de `GetPdfText`: línea "Documento Fecha" + número a continuación; `\r\n` como saltos de línea reales
+- Los XML que usan `<ModoExtraccion>Simple</ModoExtraccion>` reciben texto de `GetPdfText`: línea "Documento Fecha" + número a continuación; `\r\n` como saltos de línea reales
 - En el texto de `GetPdfText` algunas palabras salen fusionadas sin espacio (ej. "Facturaen Euro") y prefijos colapsados (ej. "FACTURA500949502")
 - Regex con `(?<!\d)` en un XML debe escribirse escapado: `(?&lt;!\d)`
 - `GenericParser` extracts NIF from text via regex (since `Nif` property is "General")

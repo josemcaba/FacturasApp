@@ -7,7 +7,7 @@
     <Id>fecha de vencimiento</Id>
     <Id>datos proveedor</Id>
   </Identificadores>
-  <ModoExtraccion>LayoutAnalysis</ModoExtraccion>
+  <ModoExtraccion>Simple</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>

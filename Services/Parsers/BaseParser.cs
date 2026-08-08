@@ -25,6 +25,7 @@ namespace FacturasApp.Services.Parsers
         protected virtual string[] Identificadores => [];
 
         public virtual bool PuedeParsar(string texto) =>
+            Identificadores.Length > 0 &&
             Identificadores.All(id =>
                 texto.Contains(id, StringComparison.OrdinalIgnoreCase));
 
@@ -43,7 +44,8 @@ namespace FacturasApp.Services.Parsers
         /// Puede ser sobrescrita si se necesita un patrón específico.
         /// </summary>
         protected virtual Regex RegexNif { get; } = new(
-            @"\b(?:ES|)((?:(?:[A-Z]|\d{2})(?:.|)\d{3}(?:.|)\d{3}(?:.|)[A-Z]|[A-Z](?:.|)\d{8}))\b",
+            // @"\b(?:ES|)((?:(?:[A-Z]|\d{2})(?:.|)\d{3}(?:.|)\d{3}(?:.|)[A-Z]|[A-Z](?:.|)\d{8}))\b",
+            @"\b(?:ES |)([A-Z](?:-|)\d{2}(?:\.|)\d{3}(?:\.|)\d{3}|\d{2}(?:\.|)\d{3}(?:\.|)\d{3}(?:-|)[A-Z])\b",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         // ── Helpers de extracción ────────────────────────────────────────────

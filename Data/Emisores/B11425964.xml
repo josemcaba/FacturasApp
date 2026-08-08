@@ -6,7 +6,7 @@
     <Id>40.0015231/CA</Id>
     <Id>40.080372/CA</Id>
   </Identificadores>
-  <ModoExtraccion>LayoutAnalysis</ModoExtraccion>
+  <ModoExtraccion>Simple</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>

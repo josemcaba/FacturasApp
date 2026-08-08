@@ -1,34 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Nif>A46103834</Nif>
-  <Nombre>MERCADONA, S.A.</Nombre>
+  <Nif>33360360X</Nif>
+  <Nombre>IBAÑEZ PACHECO, IGNACIO</Nombre>
   <Identificadores>
-    <Id>A-46103834</Id>
-    <Id>Mercadona</Id>
-    <Id>Valencia</Id>
+    <Id>33.360.360-X</Id>
+    <Id>servinfotec</Id>
   </Identificadores>
   <ModoExtraccion>Simple</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Mix\Mercadona 3.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Mix\Ignacio Papeleria.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
-      <Regex>N. Factura:\s*(\S+)</Regex>
+      <Regex>Número\s+(\S+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="Fecha">
-      <Regex>Fecha Factura:\s*(\S+)</Regex>
-      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
       <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNombre">
-      <Regex>Razón Social:\s*(.+)</Regex>
+      <Regex>CLIENTE\s+(.+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
@@ -38,30 +35,34 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+    </Campo>
+    <Campo Nombre="BaseImponible">
+      <Regex>([-\d.,]+)\s+[-\d.,]+\s+[-\d.,]+\s+[-\d.,]+\s+[-\d.,]+</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="PorcentajeIVA">
+      <Regex>[-\d.,]+\s+([-\d.,]+)\s+[-\d.,]+\s+[-\d.,]+\s+[-\d.,]+</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
       <CamposSuma />
     </Campo>
     <Campo Nombre="TotalFactura">
-      <Regex>Total Factura\s+([-\d.,]+)</Regex>
+      <Regex>TOTAL\s+([-\d.,]+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
       <CamposSuma />
     </Campo>
   </Campos>
-  <MultiLinea>
-    <RegexLinea />
-    <Lineas>
-      <Linea>
-        <Regex>(\d+)%\s+([-\d.,]+)\s+([-\d.,]+)\s+([-\d.,]+)[\r\n]</Regex>
-        <MapeoCampos>
-          <Mapeo Nombre="BaseImponible" Grupo="2" />
-          <Mapeo Nombre="PorcentajeIVA" Grupo="1" />
-          <Mapeo Nombre="SubTotal" Grupo="4" />
-        </MapeoCampos>
-      </Linea>
-    </Lineas>
-    <MapeoCampos />
-  </MultiLinea>
   <PostProcesamiento />
-  <ZonasOcr />
+  <ZonasOcr>
+    <Zona Campo="P1_Z1" Pagina="1" X="3.1" Y="18.8" Ancho="45.5" Alto="4.2" />
+    <Zona Campo="P1_Z2" Pagina="1" X="48.4" Y="4.7" Ancho="41.5" Alto="17.4" />
+    <Zona Campo="P1_Z3" Pagina="1" X="22.2" Y="81.2" Ancho="51.2" Alto="6.8" />
+    <Zona Campo="P1_Z4" Pagina="1" X="73.8" Y="81.2" Ancho="22" Alto="8.2" />
+  </ZonasOcr>
 </Emisor>

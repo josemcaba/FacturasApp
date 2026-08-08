@@ -36,7 +36,7 @@ namespace FacturasApp.Services.Parsers
                 // new GregorioArandaParser(),
                 new GruasJuandiParser(),
                 new HostaliaParser(),
-                new IgnacioIbanezParser(),
+                // new IgnacioIbanezParser(),
                 new InstantByteParser(),
                 new InversionesCerroPlomoParser(),
                 new IonosParser(),
@@ -62,16 +62,24 @@ namespace FacturasApp.Services.Parsers
             ];
         }
 
-        public IInvoiceParser ObtenerParser(string texto)
+        public IInvoiceParser ObtenerParser(string texto) =>
+            ObtenerParser(texto, null);
+
+        public IInvoiceParser ObtenerParser(string texto, EmisorConfig? configPreferida)
         {
             var configs = _configuracionEmisores.CargarTodos();
+
+            // 0. Config preferida (en edición en la UI) con identificadores → prioridad
+            if (configPreferida != null &&
+                CoincideConIdentificadores(configPreferida, texto))
+            {
+                return new ConfigurableParserEngine(configPreferida);
+            }
 
             // 1. XML configs con identificadores → prioridad
             foreach (var config in configs.Values)
             {
-                if (config.Identificadores is { Count: > 0 } &&
-                    config.Identificadores.All(id =>
-                        texto.Contains(id, StringComparison.OrdinalIgnoreCase)))
+                if (CoincideConIdentificadores(config, texto))
                 {
                     return new ConfigurableParserEngine(config);
                 }
@@ -89,6 +97,11 @@ namespace FacturasApp.Services.Parsers
             // 4. Fallback último: GenericParser C#
             return _genericParser;
         }
+
+        private static bool CoincideConIdentificadores(EmisorConfig config, string texto) =>
+            config.Identificadores is { Count: > 0 } &&
+            config.Identificadores.All(id =>
+                texto.Contains(id, StringComparison.OrdinalIgnoreCase));
 
         public IReadOnlyList<string> ParsersDisponibles
         {

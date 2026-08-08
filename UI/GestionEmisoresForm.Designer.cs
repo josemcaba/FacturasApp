@@ -30,6 +30,9 @@ partial class GestionEmisoresForm
         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GestionEmisoresForm));
         lstEmisores = new ListBox();
         panelIzquierdo = new Panel();
+        dgvValoresExtraidos = new DataGridView();
+        dataGridViewTextBoxColumn10 = new DataGridViewTextBoxColumn();
+        dataGridViewTextBoxColumn11 = new DataGridViewTextBoxColumn();
         txtBuscarEmisor = new TextBox();
         btnEliminar = new Button();
         btnClonar = new Button();
@@ -45,6 +48,7 @@ partial class GestionEmisoresForm
         txtNuevoId = new TextBox();
         btnAddId = new Button();
         btnRemoveId = new Button();
+        lblIndicadorEmisor = new Label();
         lblGeneralCultura = new Label();
         cmbCulturaFecha = new ComboBox();
         lblGeneralConceptoIngreso = new Label();
@@ -130,6 +134,7 @@ partial class GestionEmisoresForm
         panelDerecho = new Panel();
         panelCentral = new Panel();
         panelIzquierdo.SuspendLayout();
+        ((System.ComponentModel.ISupportInitialize)dgvValoresExtraidos).BeginInit();
         tabs.SuspendLayout();
         tabGeneral.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)dgvZonas).BeginInit();
@@ -151,12 +156,13 @@ partial class GestionEmisoresForm
         lstEmisores.Font = new Font("Consolas", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
         lstEmisores.Location = new Point(11, 30);
         lstEmisores.Name = "lstEmisores";
-        lstEmisores.Size = new Size(324, 630);
+        lstEmisores.Size = new Size(324, 216);
         lstEmisores.TabIndex = 2;
         lstEmisores.SelectedIndexChanged += LstEmisores_SelectedIndexChanged;
         // 
         // panelIzquierdo
         // 
+        panelIzquierdo.Controls.Add(dgvValoresExtraidos);
         panelIzquierdo.Controls.Add(txtBuscarEmisor);
         panelIzquierdo.Controls.Add(lstEmisores);
         panelIzquierdo.Controls.Add(btnEliminar);
@@ -168,6 +174,42 @@ partial class GestionEmisoresForm
         panelIzquierdo.Padding = new Padding(8);
         panelIzquierdo.Size = new Size(346, 711);
         panelIzquierdo.TabIndex = 1;
+        // 
+        // dgvValoresExtraidos
+        // 
+        dgvValoresExtraidos.AllowUserToAddRows = false;
+        dgvValoresExtraidos.AllowUserToDeleteRows = false;
+        dgvValoresExtraidos.AllowUserToResizeRows = false;
+        dgvValoresExtraidos.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+        dgvValoresExtraidos.BackgroundColor = SystemColors.Control;
+        dgvValoresExtraidos.ColumnHeadersHeight = 29;
+        dgvValoresExtraidos.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn10, dataGridViewTextBoxColumn11 });
+        dgvValoresExtraidos.Location = new Point(11, 292);
+        dgvValoresExtraidos.Name = "dgvValoresExtraidos";
+        dgvValoresExtraidos.ReadOnly = true;
+        dgvValoresExtraidos.RowHeadersVisible = false;
+        dgvValoresExtraidos.RowHeadersWidth = 51;
+        dgvValoresExtraidos.RowTemplate.Height = 19;
+        dgvValoresExtraidos.ScrollBars = ScrollBars.None;
+        dgvValoresExtraidos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+        dgvValoresExtraidos.Size = new Size(324, 411);
+        dgvValoresExtraidos.TabIndex = 6;
+        // 
+        // dataGridViewTextBoxColumn10
+        // 
+        dataGridViewTextBoxColumn10.HeaderText = "Atributo";
+        dataGridViewTextBoxColumn10.MinimumWidth = 6;
+        dataGridViewTextBoxColumn10.Name = "dataGridViewTextBoxColumn10";
+        dataGridViewTextBoxColumn10.ReadOnly = true;
+        dataGridViewTextBoxColumn10.Width = 130;
+        // 
+        // dataGridViewTextBoxColumn11
+        // 
+        dataGridViewTextBoxColumn11.HeaderText = "Valor";
+        dataGridViewTextBoxColumn11.MinimumWidth = 6;
+        dataGridViewTextBoxColumn11.Name = "dataGridViewTextBoxColumn11";
+        dataGridViewTextBoxColumn11.ReadOnly = true;
+        dataGridViewTextBoxColumn11.Width = 194;
         // 
         // txtBuscarEmisor
         // 
@@ -182,9 +224,9 @@ partial class GestionEmisoresForm
         // 
         // btnEliminar
         // 
-        btnEliminar.Anchor = AnchorStyles.Bottom;
+        btnEliminar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
         btnEliminar.FlatStyle = FlatStyle.Flat;
-        btnEliminar.Location = new Point(121, 673);
+        btnEliminar.Location = new Point(121, 252);
         btnEliminar.Name = "btnEliminar";
         btnEliminar.Size = new Size(104, 30);
         btnEliminar.TabIndex = 4;
@@ -194,9 +236,9 @@ partial class GestionEmisoresForm
         // 
         // btnClonar
         // 
-        btnClonar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+        btnClonar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
         btnClonar.FlatStyle = FlatStyle.Flat;
-        btnClonar.Location = new Point(231, 673);
+        btnClonar.Location = new Point(231, 252);
         btnClonar.Name = "btnClonar";
         btnClonar.Size = new Size(104, 30);
         btnClonar.TabIndex = 5;
@@ -208,7 +250,7 @@ partial class GestionEmisoresForm
         // 
         btnNuevo.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
         btnNuevo.FlatStyle = FlatStyle.Flat;
-        btnNuevo.Location = new Point(11, 673);
+        btnNuevo.Location = new Point(11, 252);
         btnNuevo.Name = "btnNuevo";
         btnNuevo.Size = new Size(104, 30);
         btnNuevo.TabIndex = 3;
@@ -239,6 +281,7 @@ partial class GestionEmisoresForm
         tabGeneral.Controls.Add(txtNuevoId);
         tabGeneral.Controls.Add(btnAddId);
         tabGeneral.Controls.Add(btnRemoveId);
+        tabGeneral.Controls.Add(lblIndicadorEmisor);
         tabGeneral.Controls.Add(lblGeneralCultura);
         tabGeneral.Controls.Add(cmbCulturaFecha);
         tabGeneral.Controls.Add(lblGeneralConceptoIngreso);
@@ -331,6 +374,17 @@ partial class GestionEmisoresForm
         btnRemoveId.Text = "−";
         btnRemoveId.UseVisualStyleBackColor = true;
         btnRemoveId.Click += BtnRemoveId_Click;
+        // 
+        // lblIndicadorEmisor
+        // 
+        lblIndicadorEmisor.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+        lblIndicadorEmisor.ForeColor = Color.Gray;
+        lblIndicadorEmisor.Location = new Point(422, 110);
+        lblIndicadorEmisor.Name = "lblIndicadorEmisor";
+        lblIndicadorEmisor.Size = new Size(550, 20);
+        lblIndicadorEmisor.TabIndex = 9;
+        lblIndicadorEmisor.Text = "Cargue un PDF de muestra para verificar los identificadores";
+        lblIndicadorEmisor.TextAlign = ContentAlignment.MiddleLeft;
         // 
         // lblGeneralCultura
         // 
@@ -535,7 +589,7 @@ partial class GestionEmisoresForm
         // 
         cmbModoExtraccion.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         cmbModoExtraccion.DropDownStyle = ComboBoxStyle.DropDownList;
-        cmbModoExtraccion.Items.AddRange(new object[] { "Simple", "OrdenadoPosicion", "LayoutAnalysis" });
+        cmbModoExtraccion.Items.AddRange(new object[] { "Simple", "OrdenadoPosicion" });
         cmbModoExtraccion.Location = new Point(589, 251);
         cmbModoExtraccion.Name = "cmbModoExtraccion";
         cmbModoExtraccion.Size = new Size(155, 28);
@@ -1280,6 +1334,7 @@ partial class GestionEmisoresForm
         WindowState = FormWindowState.Maximized;
         panelIzquierdo.ResumeLayout(false);
         panelIzquierdo.PerformLayout();
+        ((System.ComponentModel.ISupportInitialize)dgvValoresExtraidos).EndInit();
         tabs.ResumeLayout(false);
         tabGeneral.ResumeLayout(false);
         tabGeneral.PerformLayout();
@@ -1300,6 +1355,9 @@ partial class GestionEmisoresForm
     }
 
     private Panel panelIzquierdo;
+    private DataGridView dgvValoresExtraidos;
+    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn10;
+    private DataGridViewTextBoxColumn dataGridViewTextBoxColumn11;
     private TabControl tabs;
     private TabPage tabGeneral;
     private Label lblGeneralNombre;
@@ -1312,6 +1370,7 @@ partial class GestionEmisoresForm
     private TextBox txtNuevoId;
     private Button btnAddId;
     private Button btnRemoveId;
+    private Label lblIndicadorEmisor;
     private Label lblGeneralCultura;
     private ComboBox cmbCulturaFecha;
     private Label lblGeneralConceptoIngreso;
