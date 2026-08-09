@@ -6,7 +6,7 @@
     <Id>emasa</Id>
     <Id>plaza general torrijos</Id>
   </Identificadores>
-  <ModoExtraccion>Ordenado</ModoExtraccion>
+  <ModoExtraccion>Simple</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>628</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
@@ -17,21 +17,18 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="Fecha">
       <Regex>FECHA\sDE\sEMISIÓN:\s*(.*?)\s</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNombre">
-      <Regex>www.emasa.es\r*\n*(.+)</Regex>
+      <Regex>Titular:\s*(.+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNif">
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
