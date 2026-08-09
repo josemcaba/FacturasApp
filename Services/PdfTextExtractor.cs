@@ -50,39 +50,11 @@ namespace FacturasApp.Services
 
         private static string ExtraerOrdenadoPorPosicion(PdfDocument documento, int numPagina)
         {
-            const double toleranciaLinea = 4.0;
-
             var chars = documento.GetCharacterInformation(numPagina)
                 .Where(c => !char.IsControl(c.Character))
                 .ToList();
-            if (chars.Count == 0) return string.Empty;
 
-            // PDFium usa coordenadas PDF nativas: Y desde la parte INFERIOR (0 = abajo).
-            // El bottom del glifo (Y + Height, con Height negativo) se alinea con la
-            // baseline. Los chars de una misma línea tienen bottoms que pueden variar
-            // unos puntos, así que se agrupan por anclas encadenadas (cada ancla agrupa
-            // los bottoms que distan <= tolerancia del anterior, sin límites de bin).
-            var anclas = new List<double>();
-            foreach (var bottom in chars
-                         .Select(c => c.Bounds.Y + c.Bounds.Height)
-                         .OrderByDescending(b => b))
-            {
-                if (anclas.Count == 0 || anclas[^1] - bottom > toleranciaLinea)
-                    anclas.Add(bottom);
-            }
-
-            var lineas = chars
-                .GroupBy(c => anclas
-                    .OrderBy(a => Math.Abs((c.Bounds.Y + c.Bounds.Height) - a))
-                    .First())
-                .OrderByDescending(g => g.Key)  // De arriba a abajo
-                .Select(g => string.Concat(
-                    g.OrderBy(c => c.Bounds.X)
-                     .Select(c => c.Character)))
-                .Select(l => l.Trim())
-                .Where(l => l.Length > 0);
-
-            return string.Join(Environment.NewLine, lineas);
+            return ReensamblarPorPosicion(chars);
         }
 
         // ── NUEVA ESTRATEGIA: Extraer texto por zonas manteniendo el formato ───
@@ -177,16 +149,24 @@ namespace FacturasApp.Services
                     && (c.Bounds.Y + c.Bounds.Height) <= rect.Bottom)
                 .ToList();
 
-            if (charsEnArea.Count == 0)
-                return string.Empty;
+            return ReensamblarPorPosicion(charsEnArea);
+        }
 
-            // Misma agrupación por anclas encadenadas que en Ordenado:
-            // los bottoms de una misma línea varían unos puntos y los bins fijos
-            // podían partir líneas.
-            const double toleranciaLinea = 4.0;
+        // ── Reensamblado posicional compartido ────────────────────
+        // Misma agrupación por anclas encadenadas que en Ordenado:
+        // PDFium usa coordenadas PDF nativas: Y desde la parte INFERIOR (0 = abajo).
+        // El bottom del glifo (Y + Height, con Height negativo) se alinea con la
+        // baseline. Los chars de una misma línea tienen bottoms que pueden variar
+        // unos puntos, así que se agrupan por anclas encadenadas (cada ancla agrupa
+        // los bottoms que distan <= tolerancia del anterior, sin límites de bin).
+        private static string ReensamblarPorPosicion(List<PdfCharacterInformation> chars)
+        {
+            if (chars.Count == 0) return string.Empty;
+
+            const double toleranciaLinea = 9.2;
 
             var anclas = new List<double>();
-            foreach (var bottom in charsEnArea
+            foreach (var bottom in chars
                          .Select(c => c.Bounds.Y + c.Bounds.Height)
                          .OrderByDescending(b => b))
             {
@@ -194,7 +174,7 @@ namespace FacturasApp.Services
                     anclas.Add(bottom);
             }
 
-            var lineas = charsEnArea
+            var lineas = chars
                 .GroupBy(c => anclas
                     .OrderBy(a => Math.Abs((c.Bounds.Y + c.Bounds.Height) - a))
                     .First())
@@ -203,8 +183,7 @@ namespace FacturasApp.Services
                     g.OrderBy(c => c.Bounds.X)
                      .Select(c => c.Character)))
                 .Select(l => l.Trim())
-                .Where(l => l.Length > 0)
-                .ToList();
+                .Where(l => l.Length > 0);
 
             return string.Join(Environment.NewLine, lineas);
         }
