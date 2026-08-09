@@ -45,7 +45,7 @@ namespace FacturasApp.Services.Parsers
         /// </summary>
         protected virtual Regex RegexNif { get; } = new(
             // @"\b(?:ES|)((?:(?:[A-Z]|\d{2})(?:.|)\d{3}(?:.|)\d{3}(?:.|)[A-Z]|[A-Z](?:.|)\d{8}))\b",
-            @"\b(?:ES |)([A-Z](?:-|)\d{2}(?:\.|)\d{3}(?:\.|)\d{3}|\d{2}(?:\.|)\d{3}(?:\.|)\d{3}(?:-|)[A-Z])\b",
+            @"\b(?:ES |)([A-Z](?:-|)\d{2}(?:\.|)\d{3}(?:\.|)\d{3}|\d{2}(?:\.|)\d{3}(?:\.|)\d{3}(?:-|)[A-Z]|[A-Z](?:-|)\d{7}(?:-|)[A-Z])\b",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         // ── Helpers de extracción ────────────────────────────────────────────
