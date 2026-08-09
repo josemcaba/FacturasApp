@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Nif>33384986A</Nif>
+  <Nombre>PESCADERIA MARENGO</Nombre>
+  <Identificadores>
+    <Id>Marengo</Id>
+    <Id>33384986-A</Id>
+  </Identificadores>
+  <ModoExtraccion>Ordenado</ModoExtraccion>
+  <ConceptoIngreso>700</ConceptoIngreso>
+  <ConceptoGasto>600</ConceptoGasto>
+  <CulturaFecha>es-ES</CulturaFecha>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\PYTHON\PYTHON-2025\DistiFact\DistiFact-Facturas\PESCADERIA MARENGO - ELI\Pagina_4.pdf</RutaPdfMuestra>
+  <Campos>
+    <Campo Nombre="NumeroFactura">
+      <Regex>N. factura\s+([\d]+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="Fecha">
+      <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="ReceptorNombre">
+      <Regex>\[P1_Z2]:\s+(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="ReceptorNif">
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="BaseImponible">
+      <Regex>Base\s+([-\d.,]+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="PorcentajeIVA">
+      <ValorFijo>10</ValorFijo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="TotalFactura">
+      <Regex>Base.+Total\s+([-\d.,]+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+  </Campos>
+  <PostProcesamiento>
+    <Regla>
+      <CondicionCampo>
+        <Campo>ReceptorNif</Campo>
+        <Valor>B19448877</Valor>
+      </CondicionCampo>
+      <Accion Tipo="Establecer Valor" CampoDestino="ReceptorNombre" Valor="La Magna `La ofi se sienta a la mesa SL´" CampoOrigen1="BaseImponible" Operador="+" CampoOrigen2="BaseImponible" />
+    </Regla>
+  </PostProcesamiento>
+  <ZonasOcr>
+    <Zona Campo="P1_Z1" Pagina="1" X="53" Y="10" Ancho="45" Alto="8" />
+    <Zona Campo="P1_Z2" Pagina="1" X="50" Y="24.8" Ancho="48" Alto="12" />
+    <Zona Campo="P1_Z3" Pagina="1" X="2" Y="67" Ancho="96" Alto="30" />
+  </ZonasOcr>
+</Emisor>

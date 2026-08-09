@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Nif>25041071M</Nif>
+  <Nombre>PESCADERIA SALVADOR</Nombre>
+  <Identificadores>
+    <Id>Salvador</Id>
+    <Id>25041071-M</Id>
+  </Identificadores>
+  <ModoExtraccion>Ordenado</ModoExtraccion>
+  <ConceptoIngreso>700</ConceptoIngreso>
+  <ConceptoGasto>600</ConceptoGasto>
+  <CulturaFecha>es-ES</CulturaFecha>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Mix\Pescaderia SALVADOR 2.pdf</RutaPdfMuestra>
+  <Campos>
+    <Campo Nombre="NumeroFactura">
+      <Regex>N. factura\s+([\d]+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="Fecha">
+      <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="ReceptorNombre">
+      <Regex>\[P1_Z2]:\s+(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="ReceptorNif">
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="BaseImponible">
+      <Regex>Base\s+([-\d.,]+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="PorcentajeIVA">
+      <ValorFijo>10</ValorFijo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+    <Campo Nombre="TotalFactura">
+      <Regex>Base.+Total\s+([-\d.,]+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
+      <CamposSuma />
+    </Campo>
+  </Campos>
+  <PostProcesamiento>
+    <Regla>
+      <CondicionCampo>
+        <Campo>ReceptorNif</Campo>
+        <Valor>B93315612</Valor>
+      </CondicionCampo>
+      <Accion Tipo="Establecer Valor" CampoDestino="ReceptorNombre" Valor="Ramírez Sánchez S.L. 'Rest Refrectorium'" CampoOrigen1="BaseImponible" Operador="+" CampoOrigen2="BaseImponible" />
+    </Regla>
+  </PostProcesamiento>
+  <ZonasOcr>
+    <Zona Campo="P1_Z1" Pagina="1" X="54" Y="10" Ancho="38" Alto="7" />
+    <Zona Campo="P1_Z2" Pagina="1" X="50" Y="24.8" Ancho="41" Alto="8.2" />
+    <Zona Campo="P1_Z3" Pagina="1" X="3.3" Y="67.7" Ancho="90.5" Alto="30" />
+  </ZonasOcr>
+</Emisor>
