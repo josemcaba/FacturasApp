@@ -534,7 +534,7 @@ public partial class GestionEmisoresForm : Form
         _sincronizando = true;
         dgvZonas.Rows.Clear();
         foreach (var z in _zonasDibujo)
-            dgvZonas.Rows.Add(z.Campo, z.NumPagina, z.X, z.Y, z.Ancho, z.Alto, "");
+            dgvZonas.Rows.Add(z.Campo, z.NumPagina, z.X, z.Y, z.Ancho, z.Alto);
         _sincronizando = false;
         MarcarModificado();
     }

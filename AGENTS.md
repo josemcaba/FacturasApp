@@ -110,6 +110,7 @@ Puntos importantes:
   y exportar el pfx. Cambiar el thumbprint en `ClickOnceProfile.pubxml`.
 - **Firma ≠ SmartScreen**: el certificado autofirmado evita "Editor desconocido" en la instalación, pero Windows SmartScreen seguirá advirtiendo si exige firma de certificado comercial/trusted.
 - **Bootstrapper runtime hardcodeado**: `Microsoft.NetCore.DesktopRuntime.10.0.x64` (10.0.10) en `ClickOnceProfile.pubxml` → actualizarlo cuando salgan parches nuevos del runtime .NET 10.
-- **Versionado**: `<Version>3.0.0</Version>` en el csproj → `AssemblyVersion`/`FileVersion` 3.0.0.0 y ClickOnce `ApplicationVersion=3.0.0.*` (autoincremento de revisión).
+- **Versionado**: `<Version>3.0.0</Version>` en el csproj → `AssemblyVersion`/`FileVersion` 3.0.0.0 y ClickOnce `ApplicationVersion=3.0.0.*`. **El script incrementa `ApplicationRevision` en `ClickOnceProfile.pubxml` antes de cada publicación** (Paso 1.5), garantizando que cada push sea una versión nueva que ClickOnce detecta como actualización.
+- **Auto-actualización al iniciar**: configurada en el pubxml con `UpdateEnabled=True`, `UpdateMode=Foreground`, `UpdateRequired=False`, `InstallFrom=Web`. Al arrancar, ClickOnce compara la versión del manifest del sitio con la instalada; si hay una más nueva ofrece instalarla. Si un usuario no recibe actualizaciones, revisar que la revisión de la publicación anterior sea distinta de la instalada.
 - Si no hay cambios en el sitio, el script avisa y no commitea vacío.
 

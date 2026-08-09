@@ -51,6 +51,19 @@ cp "$APPDATA_DIR/plantillas_ocr.xml" "$PROYECTO_DIR/Data/plantillas_ocr.xml"
 ok "Plantillas OCR copiadas"
 
 # ───────────────────────────────────────────────────────────────
+# Paso 1.5: Incrementar revisión ClickOnce (cada publicación = versión nueva)
+# ───────────────────────────────────────────────────────────────
+PUBXML="$PROYECTO_DIR/Properties/PublishProfiles/ClickOnceProfile.pubxml"
+REV=$(grep -oP '(?<=<ApplicationRevision>)[0-9]+(?=</ApplicationRevision>)' "$PUBXML" || echo "")
+if [ -n "$REV" ] && [ -z "${REV//[0-9]/}" ]; then
+    NEW_REV=$((REV + 1))
+    sed -i "s|<ApplicationRevision>$REV</ApplicationRevision>|<ApplicationRevision>$NEW_REV</ApplicationRevision>|" "$PUBXML"
+    ok "Revisión ClickOnce: $REV → $NEW_REV"
+else
+    abort "No se encontró ApplicationRevision en $PUBXML — no se puede versionar la publicación"
+fi
+
+# ───────────────────────────────────────────────────────────────
 # Paso 2: Publicar con el perfil ClickOnce
 # ───────────────────────────────────────────────────────────────
 MSBUILD=""
