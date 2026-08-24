@@ -1,5 +1,6 @@
 using System.ComponentModel;
-using FacturasApp.Models;
+using FacturasApp.Core.Models;
+using FacturasApp.Core.Services;
 using FacturasApp.Services;
 
 namespace FacturasApp.UI
@@ -43,7 +44,8 @@ namespace FacturasApp.UI
             if (!Directory.Exists(tessDataPath))
                 tessDataPath = @"./tessdata";
 
-            var service = new InvoiceProcessorService(tessDataPath);
+            var textExtractor = new WinFormsTextExtractor(tessDataPath);
+            var service = new InvoiceProcessorService(textExtractor);
 
             // Configuración óptima para usar zonas cuando sea posible
             service.UsarZonasSiempre = true;

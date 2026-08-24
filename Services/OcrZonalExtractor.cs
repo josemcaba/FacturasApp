@@ -1,4 +1,4 @@
-﻿using FacturasApp.Models;
+﻿using FacturasApp.Core.Models;
 using Tesseract;
 
 namespace FacturasApp.Services

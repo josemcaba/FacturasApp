@@ -1,9 +1,10 @@
 using System.Drawing.Drawing2D;
 using System.Text.RegularExpressions;
-using FacturasApp.Models;
-using FacturasApp.Models.EmisoresConfig;
+using FacturasApp.Core.Models;
+using FacturasApp.Core.Models.EmisoresConfig;
+using FacturasApp.Core.Services;
+using FacturasApp.Core.Services.Parsers;
 using FacturasApp.Services;
-using FacturasApp.Services.Parsers;
 using PdfiumViewer;
 
 namespace FacturasApp.UI;
@@ -25,7 +26,7 @@ public partial class GestionEmisoresForm : Form
     private bool _sincronizando;
     private bool _cargandoCampo;
     private CampoConfig? _campoAnterior;
-    private readonly InvoiceProcessorService _invoiceService = new();
+    private readonly InvoiceProcessorService _invoiceService;
     private readonly PdfTextExtractor _textExtractor = new();
     private readonly OcrZonalExtractor _ocrZonalExtractor = new();
     private bool _esNuevo;
@@ -35,6 +36,9 @@ public partial class GestionEmisoresForm : Form
 
     public GestionEmisoresForm()
     {
+        var textExtractor = new WinFormsTextExtractor();
+        _invoiceService = new InvoiceProcessorService(textExtractor);
+
         InitializeComponent();
 
         panelCentral.Resize += PanelCentral_Resize;
@@ -358,13 +362,18 @@ public partial class GestionEmisoresForm : Form
     private string ExtraerTextoConModoSeleccionado()
     {
         if (string.IsNullOrEmpty(_rutaPdf)) return "";
-        var modo = Enum.TryParse<PdfTextExtractor.ModoExtraccion>(
+        var modo = Enum.TryParse<ModoExtraccion>(
             cmbModoExtraccion.SelectedItem?.ToString(), true, out var modoParsed)
             ? modoParsed
+            : ModoExtraccion.Ordenado;
+
+        var modoPdfium = modo == ModoExtraccion.Simple
+            ? PdfTextExtractor.ModoExtraccion.Simple
             : PdfTextExtractor.ModoExtraccion.Ordenado;
+
         try
         {
-            return _textExtractor.ExtraerTextoSeleccionable(_rutaPdf, modo)
+            return _textExtractor.ExtraerTextoSeleccionable(_rutaPdf, modoPdfium)
                 ?? _invoiceService.ExtraerTexto(_rutaPdf);
         }
         catch

@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using FacturasApp.Models;
+using FacturasApp.Core.Models;
 using PdfiumViewer;
 
 namespace FacturasApp.Services

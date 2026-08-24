@@ -1,4 +1,4 @@
-﻿using FacturasApp.Models;
+﻿using FacturasApp.Core.Models;
 
 namespace FacturasApp.UI
 {
