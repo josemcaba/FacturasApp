@@ -12,16 +12,16 @@ namespace FacturasApp.Services
         {
             ["NumeroFactura"]   = ["número factura", "número de factura"],
             ["Fecha"]           = ["fecha factura"],
-            ["EmisorNombre"]    = [],
-            ["EmisorNIF"]       = [],
+            ["EmisorNombre"]    = ["emisor", "nombre emisor"],
+            ["EmisorNIF"]       = ["cif emisor", "nif emisor"],
             ["ClienteNombre"]   = ["cliente"],
             ["ClienteNIF"]      = ["cif", "nif / cif"],
             ["BaseImponible"]   = ["base", "base imponible"],
             ["PorcentajeIVA"]   = ["tipo"],
             ["CuotaIVA"]        = ["iva"],
-            ["PorcentajeIRPF"]  = [],
+            ["PorcentajeIRPF"]  = ["irpf %", "% irpf"],
             ["CuotaIRPF"]       = ["irpf"],
-            ["PorcentajeRE"]    = [],
+            ["PorcentajeRE"]    = ["re %", "% re"],
             ["CuotaRE"]         = ["re"],
             ["TotalFactura"]    = ["total", "importe total"],
         };
@@ -54,7 +54,7 @@ namespace FacturasApp.Services
 
                 try
                 {
-                    var factura = ConstruirFactura(row, mapaIndices);
+                    var factura = ConstruirFactura(row, mapaIndices, rutaExcel, fila);
                     facturas.Add(factura);
                 }
                 catch (Exception ex)
@@ -106,20 +106,25 @@ namespace FacturasApp.Services
         // ── Construcción de la factura ───────────────────────────────────────
 
         private Factura ConstruirFactura(IXLRow row,
-            Dictionary<string, int> mapaIndices)
+            Dictionary<string, int> mapaIndices, string rutaExcel, int numFila)
         {
             var factura = new Factura
             {
                 ExtractedByOcr = false, // viene de Excel, no de OCR
                 Emisor = new Proveedor(),
-                Receptor = new Cliente()
+                Receptor = new Cliente(),
+                RutaArchivo = $"{rutaExcel} (fila {numFila})"
             };
 
             // Lectura de campos
             factura.NumeroFactura = LeerTexto(row, mapaIndices, "NumeroFactura");
             factura.Fecha = LeerFecha(row, mapaIndices);
-            factura.Emisor.Nombre = "Emisor";
-            factura.Emisor.NIF = "99999999R";
+            factura.Emisor.Nombre = LeerTexto(row, mapaIndices, "EmisorNombre");
+            if (string.IsNullOrEmpty(factura.Emisor.Nombre))
+                factura.Emisor.Nombre = "Emisor";
+            factura.Emisor.NIF = LeerTexto(row, mapaIndices, "EmisorNIF");
+            if (string.IsNullOrEmpty(factura.Emisor.NIF))
+                factura.Emisor.NIF = "99999999R";
             factura.Receptor.Nombre = LeerTexto(row, mapaIndices, "ClienteNombre");
             factura.Receptor.NIF = LeerTexto(row, mapaIndices, "ClienteNIF");
             factura.BaseImponible = LeerDecimal(row, mapaIndices, "BaseImponible");
@@ -133,6 +138,12 @@ namespace FacturasApp.Services
             factura.PorcentajeRE = LeerDecimal(row, mapaIndices, "PorcentajeRE");
             factura.CuotaRE = LeerDecimal(row, mapaIndices, "CuotaRE");
             factura.TotalFactura = LeerDecimal(row, mapaIndices, "TotalFactura");
+
+            // Validación de campos mínimos
+            if (string.IsNullOrEmpty(factura.NumeroFactura))
+                factura.MensajeError.Add("Falta número de factura");
+            if (factura.BaseImponible == 0m && factura.TotalFactura == 0m)
+                factura.MensajeError.Add("Faltan base imponible y total");
 
             // Determinar estado y mensajes de error
             factura.Estado = FacturaEstado.Determinar(factura);

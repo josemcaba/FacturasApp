@@ -1,9 +1,6 @@
 ﻿using ClosedXML.Excel;
-using CsvHelper;
-using CsvHelper.Configuration;
 using FacturasApp.Models;
 using FacturasApp.UI;
-using System.Globalization;
 
 namespace FacturasApp.Services
 {

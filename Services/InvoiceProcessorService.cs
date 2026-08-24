@@ -417,15 +417,33 @@ namespace FacturasApp.Services
             IProgress<(int actual, int total, string archivo)>? progreso = null)
         {
             var facturas = new List<Factura>();
+            var clavesVistas = new HashSet<string>(StringComparer.Ordinal);
 
             if (rutasPdf.Any())
-                facturas.AddRange(ProcesarLote(rutasPdf, progreso));
+            {
+                var facturasPdf = ProcesarLote(rutasPdf, progreso);
+                foreach (var f in facturasPdf)
+                    clavesVistas.Add(GenerarClaveDeduplicacion(f));
+                facturas.AddRange(facturasPdf);
+            }
 
             if (!string.IsNullOrEmpty(rutaExcel) && File.Exists(rutaExcel))
-                facturas.AddRange(ImportarDesdeExcel(rutaExcel));
+            {
+                var facturasExcel = ImportarDesdeExcel(rutaExcel);
+                foreach (var f in facturasExcel)
+                {
+                    string clave = GenerarClaveDeduplicacion(f);
+                    if (!clavesVistas.Add(clave) && f.Estado == EstadoFactura.OK)
+                        f.Estado = EstadoFactura.Duplicada;
+                }
+                facturas.AddRange(facturasExcel);
+            }
 
             return facturas;
         }
+
+        private static string GenerarClaveDeduplicacion(Factura f) =>
+            $"{f.NumeroFactura}|{f.Emisor.NIF}|{f.Fecha:yyyy-MM-dd}|{f.BaseImponible}|{f.SubTotal}";
 
         // ── Información de parsers disponibles ───────────────────────────────
 
