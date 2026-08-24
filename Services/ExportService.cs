@@ -9,71 +9,57 @@ namespace FacturasApp.Services
 {
     public class ExportService
     {
+        // ── Índices de columna (1-based) ──────────────────────────────────────
+        private const int ColNumeroFactura = 1;
+        private const int ColFecha = 2;
+        private const int ColFechaOperacion = 3;
+        private const int ColConcepto = 4;
+        private const int ColBaseIVA = 5;
+        private const int ColPorcentajeIVA = 6;
+        private const int ColCuotaIVA = 7;
+        private const int ColBaseIRPF = 8;
+        private const int ColPorcentajeIRPF = 9;
+        private const int ColCuotaIRPF = 10;
+        private const int ColBaseRE = 11;
+        private const int ColPorcentajeRE = 12;
+        private const int ColCuotaRE = 13;
+        private const int ColNifEntidad = 14;
+        private const int ColNombreEntidad = 15;
+        private const int ColArchivo = 16;
+
         // ── Excel ────────────────────────────────────────────────────────────
 
-        public void ExportarAExcelIngresos(List<Factura> facturas, string rutaDestino)
+        public void ExportarAExcel(List<Factura> facturas, string rutaDestino, bool esGasto)
         {
             using var workbook = new XLWorkbook();
 
             var correctas = facturas.Where(f => f.Estado == EstadoFactura.OK).ToList();
             var incorrectas = facturas.Where(f => f.Estado != EstadoFactura.OK).ToList();
 
-            CrearHojaIngresos(workbook, correctas, "Ingresos Correctos");
-            CrearHojaIngresos(workbook, incorrectas, "Ingresos Pendientes");
-
-            workbook.SaveAs(rutaDestino);
-        }
-
-        public void ExportarAExcelGastos(List<Factura> facturas, string rutaDestino)
-        {
-            using var workbook = new XLWorkbook();
-
-            var correctas = facturas.Where(f => f.Estado == EstadoFactura.OK).ToList();
-            var incorrectas = facturas.Where(f => f.Estado != EstadoFactura.OK).ToList();
-
-            CrearHojaGastos(workbook, correctas, "Gastos Correctos");
-            CrearHojaGastos(workbook, incorrectas, "Gastos Pendientes");
+            string tipo = esGasto ? "Gastos" : "Ingresos";
+            CrearHoja(workbook, correctas, $"{tipo} Correctos", esGasto);
+            CrearHoja(workbook, incorrectas, $"{tipo} Pendientes", esGasto);
 
             workbook.SaveAs(rutaDestino);
         }
 
         // ── Métodos privados de creación de hojas ────────────────────────────────────
 
-        private void CrearHojaIngresos(XLWorkbook workbook,
-            List<Factura> facturas, string nombreHoja)
+        private void CrearHoja(XLWorkbook workbook,
+            List<Factura> facturas, string nombreHoja, bool esGasto)
         {
             var hoja = workbook.Worksheets.Add(nombreHoja);
 
-            EscribirConceptosComunes(facturas, hoja);
+            EscribirConceptosComunes(facturas, hoja, esGasto);
 
             for (int i = 0; i < facturas.Count; i++)
             {
                 var f = facturas[i];
                 int fila = i + 2;
 
-                hoja.Cell(fila, 4).Value = f.ConceptoIngreso;
-                hoja.Cell(fila, 14).Value = f.Receptor.NIF;
-                hoja.Cell(fila, 15).Value = f.Receptor.Nombre;
-            }
-
-            hoja.Columns().AdjustToContents();
-        }
-
-        private void CrearHojaGastos(XLWorkbook workbook,
-            List<Factura> facturas, string nombreHoja)
-        {
-            var hoja = workbook.Worksheets.Add(nombreHoja);
-
-            EscribirConceptosComunes(facturas, hoja);
-
-            for (int i = 0; i < facturas.Count; i++)
-            {
-                var f = facturas[i];
-                int fila = i + 2;
-
-                hoja.Cell(fila, 4).Value = f.ConceptoGasto;
-                hoja.Cell(fila, 14).Value = f.Emisor.NIF;
-                hoja.Cell(fila, 15).Value = f.Emisor.Nombre;
+                hoja.Cell(fila, ColConcepto).Value = esGasto ? f.ConceptoGasto : f.ConceptoIngreso;
+                hoja.Cell(fila, ColNifEntidad).Value = esGasto ? f.Emisor.NIF : f.Receptor.NIF;
+                hoja.Cell(fila, ColNombreEntidad).Value = esGasto ? f.Emisor.Nombre : f.Receptor.Nombre;
             }
 
             hoja.Columns().AdjustToContents();
@@ -81,15 +67,16 @@ namespace FacturasApp.Services
 
         // ── Helpers compartidos ───────────────────────────────────────────────────────
 
-        private int EscribirCabecera(IXLWorksheet hoja)
+        private int EscribirCabecera(IXLWorksheet hoja, bool esGasto)
         {
+            string entidad = esGasto ? "Emisor" : "Cliente";
             string[] columnas =
-{
+            {
                 "Número de factura", "Fecha de factura", "Fecha de operación",
                 "Concepto", "Base IVA", "% IVA", "Cuota IVA",
                 "Base IRPF", "% IRPF", "Cuota IRPF",
                 "Base RE", "% RE", "Cuota RE",
-                "NIF del Cliente", "Nombre del Cliente"
+                $"NIF del {entidad}", $"Nombre del {entidad}"
             };
             if (hoja.Name.Contains("Pendientes"))
                 columnas = columnas.Append("Archivo").ToArray();
@@ -108,28 +95,28 @@ namespace FacturasApp.Services
         }
 
         private void EscribirConceptosComunes(List<Factura> facturas,
-            IXLWorksheet hoja)
+            IXLWorksheet hoja, bool esGasto)
         {
-            int columnasLength = EscribirCabecera(hoja);
+            int columnasLength = EscribirCabecera(hoja, esGasto);
 
             for (int i = 0; i < facturas.Count; i++)
             {
                 var f = facturas[i];
                 int fila = i + 2;
-                hoja.Cell(fila, 1).Value = f.NumeroFactura;
-                hoja.Cell(fila, 2).Value = f.Fecha?.ToString("dd/MM/yyyy") ?? string.Empty;
-                hoja.Cell(fila, 3).Value = f.Fecha?.ToString("dd/MM/yyyy") ?? string.Empty;
-                hoja.Cell(fila, 5).Value = f.BaseImponible;
-                hoja.Cell(fila, 6).Value = f.PorcentajeIVA;
-                hoja.Cell(fila, 7).Value = f.CuotaIVACalculado;
-                hoja.Cell(fila, 8).Value = f.BaseImponible;
-                hoja.Cell(fila, 9).Value = f.PorcentajeIRPF;
-                hoja.Cell(fila, 10).Value = f.CuotaIRPFCalculado;
-                hoja.Cell(fila, 11).Value = f.BaseImponible;
-                hoja.Cell(fila, 12).Value = f.PorcentajeRE;
-                hoja.Cell(fila, 13).Value = f.CuotaRECalculado;
+                hoja.Cell(fila, ColNumeroFactura).Value = f.NumeroFactura;
+                hoja.Cell(fila, ColFecha).Value = f.Fecha?.ToString("dd/MM/yyyy") ?? string.Empty;
+                hoja.Cell(fila, ColFechaOperacion).Value = f.Fecha?.ToString("dd/MM/yyyy") ?? string.Empty;
+                hoja.Cell(fila, ColBaseIVA).Value = f.BaseImponible;
+                hoja.Cell(fila, ColPorcentajeIVA).Value = f.PorcentajeIVA;
+                hoja.Cell(fila, ColCuotaIVA).Value = f.CuotaIVACalculado;
+                hoja.Cell(fila, ColBaseIRPF).Value = f.BaseImponible;
+                hoja.Cell(fila, ColPorcentajeIRPF).Value = f.PorcentajeIRPF;
+                hoja.Cell(fila, ColCuotaIRPF).Value = f.CuotaIRPFCalculado;
+                hoja.Cell(fila, ColBaseRE).Value = f.BaseImponible;
+                hoja.Cell(fila, ColPorcentajeRE).Value = f.PorcentajeRE;
+                hoja.Cell(fila, ColCuotaRE).Value = f.CuotaRECalculado;
                 if (hoja.Name.Contains("Pendientes"))
-                    hoja.Cell(fila, 16).Value = Path.GetFileName(f.RutaArchivo);
+                    hoja.Cell(fila, ColArchivo).Value = Path.GetFileName(f.RutaArchivo);
 
                 AplicarFormatosIngresoGasto(hoja, fila);
 
@@ -144,13 +131,13 @@ namespace FacturasApp.Services
             string fmtMoneda = "#,##0.00";
             string fmtNumero = "0.00";
 
-            foreach (int col in new[] { 5, 7, 8, 10, 11, 13 })
+            foreach (int col in new[] { ColBaseIVA, ColCuotaIVA, ColBaseIRPF, ColCuotaIRPF, ColBaseRE, ColCuotaRE })
                 hoja.Cell(fila, col).Style.NumberFormat.Format = fmtMoneda;
 
-            foreach (int col in new[] { 6, 9, 12 })
+            foreach (int col in new[] { ColPorcentajeIVA, ColPorcentajeIRPF, ColPorcentajeRE })
                 hoja.Cell(fila, col).Style.NumberFormat.Format = fmtNumero;
 
-            hoja.Cell(fila, 4).Style.NumberFormat.Format = "@";
+            hoja.Cell(fila, ColConcepto).Style.NumberFormat.Format = "@";
         }
 
         private void AplicarColorEstado(IXLWorksheet hoja,

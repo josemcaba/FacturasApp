@@ -401,7 +401,7 @@ namespace FacturasApp.UI
 
             try
             {
-                _exportador.ExportarAExcelIngresos(_facturas, dialogo.FileName);
+                _exportador.ExportarAExcel(_facturas, dialogo.FileName, esGasto: false);
                 MostrarExitoExportacion(dialogo.FileName);
             }
             catch (Exception ex)
@@ -431,7 +431,7 @@ namespace FacturasApp.UI
             try
             {
                 // Exportar todas las facturas sin alterarlas
-                _exportador.ExportarAExcelGastos(_facturas, dialogo.FileName);
+                _exportador.ExportarAExcel(_facturas, dialogo.FileName, esGasto: true);
                 MostrarExitoExportacion(dialogo.FileName);
             }
             catch (Exception ex)
