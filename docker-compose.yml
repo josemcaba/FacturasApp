@@ -1,0 +1,11 @@
+services:
+  facturas-web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - facturas-config:/root/.config/FacturasApp
+    restart: unless-stopped
+
+volumes:
+  facturas-config:

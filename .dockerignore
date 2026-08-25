@@ -1,0 +1,24 @@
+**/bin/
+**/obj/
+**/.vs/
+**/.vscode/
+**/*.user
+**/temp_uploads/
+**/Publicados en GitHub/
+**/.github/
+**/*.md
+**/*.suo
+**/node_modules/
+
+# Git
+**/.git/
+**/.gitignore
+
+# WinForms project (no se usa en Docker)
+FacturasApp.csproj
+Properties/
+
+# Docker files (no incluir en el contexto)
+Dockerfile
+docker-compose.yml
+.dockerignore
