@@ -3,6 +3,9 @@ using FacturasApp.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Servicio de Windows
+builder.Host.UseWindowsService();
+
 // Servicios
 builder.Services.AddSingleton<ITextExtractor>(sp =>
     new WebTextExtractor(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "tessdata")));
