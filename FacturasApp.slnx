@@ -1,5 +1,4 @@
 <Solution>
   <Project Path="FacturasApp.csproj" />
   <Project Path="FacturasApp.Core/FacturasApp.Core.csproj" />
-  <Project Path="FacturasApp.Web/FacturasApp.Web.csproj" />
 </Solution>
