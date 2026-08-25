@@ -196,11 +196,11 @@ async function loadSummary() {
         const resp = await fetch(`${API}/resumen`);
         const data = await resp.json();
 
-        $('sum-total').textContent = data.Total;
-        $('sum-ok').textContent = data.OK;
-        $('sum-revisar').textContent = data.Revisar;
-        $('sum-error').textContent = data.Error;
-        $('sum-duplicada').textContent = data.Duplicada;
+        $('sum-total').textContent = formatEntero(data.Total);
+        $('sum-ok').textContent = formatEntero(data.OK);
+        $('sum-revisar').textContent = formatEntero(data.Revisar);
+        $('sum-error').textContent = formatEntero(data.Error);
+        $('sum-duplicada').textContent = formatEntero(data.Duplicada);
         $('sum-euros').textContent = formatEuro(data.TotalEuros);
 
         summarySection.classList.remove('hidden');
@@ -264,12 +264,17 @@ function downloadExcel(tipo) {
 // ── Helpers ─────────────────────────────────────────────────────────
 function formatEuro(valor) {
     if (valor == null) return '-';
-    return new Intl.NumberFormat('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(valor) + ' EUR';
+    return new Intl.NumberFormat('es-ES', { style: 'decimal', useGrouping: true, minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(valor)) + ' EUR';
 }
 
 function formatPct(valor) {
     if (valor == null) return '-';
-    return valor.toFixed(2) + '%';
+    return new Intl.NumberFormat('es-ES', { style: 'decimal', useGrouping: true, minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(valor)) + '%';
+}
+
+function formatEntero(valor) {
+    if (valor == null) return '-';
+    return new Intl.NumberFormat('es-ES', { style: 'decimal', useGrouping: true }).format(Number(valor));
 }
 
 function showProgress(pct, text) {
