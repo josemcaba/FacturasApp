@@ -11,6 +11,24 @@ Target: **.NET 10** (net10.0-windows, SDK de los repos oficiales de dotnet).
 
 No tests, CI/CD, linting, or typecheck configured.
 
+### Proyectos de la solución
+
+| Proyecto | Tipo | Target |
+|---|---|---|
+| `FacturasApp.csproj` | WinForms (WinExe) | net10.0-windows |
+| `FacturasApp.Core/` | Biblioteca de clases (Library) | net10.0 |
+| `FacturasApp.Web/` | ASP.NET Core Web API | net10.0-windows |
+
+### Ejecutar cada proyecto
+
+```bash
+# WinForms (escritorio)
+"/mnt/c/Program Files/dotnet/dotnet.exe" run --project FacturasApp.csproj
+
+# Web API (navegador en http://localhost:5000)
+"/mnt/c/Program Files/dotnet/dotnet.exe" run --project FacturasApp.Web/FacturasApp.Web.csproj
+```
+
 ### Rebuild falla si la app está en ejecución
 
 Si la app está corriendo, `dotnet build --no-incremental` (o `dotnet run`) falla con warnings `MSB3061`/`MSB3026`/`MSB3027` porque `FacturasApp.exe` está bloqueado por el proceso. Cerrarla antes de rebuildar:
