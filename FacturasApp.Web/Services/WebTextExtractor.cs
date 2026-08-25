@@ -18,6 +18,12 @@ namespace FacturasApp.Web.Services
         private const int DpiRender = 300;
         private const int MinCaracteres = 30;
 
+        // Tamaño de referencia para coordenadas (proporciones A4).
+        // Las zonas porcentuales y el reensamblaje por posición necesitan
+        // un espacio de coordenadas con valores significativos.
+        private const int RefPageWidth = 1000;
+        private const int RefPageHeight = 1414;
+
         public WebTextExtractor(string tessDataPath = @"./tessdata")
         {
             _tessDataPath = tessDataPath;
@@ -29,7 +35,7 @@ namespace FacturasApp.Web.Services
 
         private static (int PageWidth, int PageHeight) ObtenerTamanosPagina(string rutaPdf, int numPagina)
         {
-            using var docReader = GetDocLib().GetDocReader(rutaPdf, new PageDimensions(1, 1));
+            using var docReader = GetDocLib().GetDocReader(rutaPdf, new PageDimensions(RefPageWidth, RefPageHeight));
             using var pageReader = docReader.GetPageReader(numPagina);
             return (pageReader.GetPageWidth(), pageReader.GetPageHeight());
         }
@@ -43,7 +49,7 @@ namespace FacturasApp.Web.Services
 
         private static List<Character> ObtenerCaracteresPagina(string rutaPdf, int numPagina)
         {
-            using var docReader = GetDocLib().GetDocReader(rutaPdf, new PageDimensions(1, 1));
+            using var docReader = GetDocLib().GetDocReader(rutaPdf, new PageDimensions(RefPageWidth, RefPageHeight));
             using var pageReader = docReader.GetPageReader(numPagina);
             return pageReader.GetCharacters().ToList();
         }
