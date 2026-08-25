@@ -6,46 +6,31 @@
 		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<AssemblyName>FacturasApp</AssemblyName>
 
 		<ApplicationIcon>Assets/app-icon.ico</ApplicationIcon>
-		
+
 		<!-- Versionado -->
 		<Version>3.0.0</Version>
-		
+
 		<!-- Información de la aplicación -->
 		<Company>FacturasApp</Company>
 		<Product>FacturasApp</Product>
 		<Description>Aplicación para procesar y gestionar facturas</Description>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<None Remove="tessdata\eng.traineddata" />
-		<None Remove="tessdata\spa.traineddata" />
-	</ItemGroup>
-
 	<!-- Referencia al proyecto Core (lógica de negocio compartida) -->
 	<ItemGroup>
-		<ProjectReference Include="FacturasApp.Core\FacturasApp.Core.csproj" />
+		<ProjectReference Include="..\FacturasApp.Core\FacturasApp.Core.csproj" />
 	</ItemGroup>
 
-	<!-- Archivo de plantillas: ya no está en este proyecto, viene de Core -->
+	<!-- Tessdata en la raíz del repo -->
 	<ItemGroup>
-		<Compile Remove="Tests\**" />
-		<Compile Remove="FacturasApp.Core\**" />
-		<Compile Remove="FacturasApp.Web\**" />
-		<EmbeddedResource Remove="Tests\**" />
-		<EmbeddedResource Remove="FacturasApp.Core\**" />
-		<EmbeddedResource Remove="FacturasApp.Web\**" />
-		<None Remove="Tests\**" />
-		<None Remove="FacturasApp.Core\**" />
-		<None Remove="FacturasApp.Web\**" />
-		
-		<!-- Archivos de Tesseract (copiados normalmente) -->
-		<Content Include="tessdata\eng.traineddata">
+		<Content Include="..\tessdata\eng.traineddata" Link="tessdata\eng.traineddata">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Publish>true</Publish>
 		</Content>
-		<Content Include="tessdata\spa.traineddata">
+		<Content Include="..\tessdata\spa.traineddata" Link="tessdata\spa.traineddata">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Publish>true</Publish>
 		</Content>

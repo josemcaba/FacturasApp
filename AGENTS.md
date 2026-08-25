@@ -15,18 +15,13 @@ No tests, CI/CD, linting, or typecheck configured.
 
 | Proyecto | Tipo | Target |
 |---|---|---|
-| `FacturasApp.csproj` | WinForms (WinExe) | net10.0-windows |
+| `FacturasApp.Desktop/` | WinForms (WinExe) | net10.0-windows |
 | `FacturasApp.Core/` | Biblioteca de clases (Library) | net10.0 |
-| `FacturasApp.Web/` | ASP.NET Core Web API | net10.0-windows |
 
-### Ejecutar cada proyecto
+### Ejecutar
 
 ```bash
-# WinForms (escritorio)
-"/mnt/c/Program Files/dotnet/dotnet.exe" run --project FacturasApp.csproj
-
-# Web API (navegador en http://localhost:5000)
-"/mnt/c/Program Files/dotnet/dotnet.exe" run --project FacturasApp.Web/FacturasApp.Web.csproj
+"/mnt/c/Program Files/dotnet/dotnet.exe" run --project FacturasApp.Desktop/FacturasApp.Desktop.csproj
 ```
 
 ### Rebuild falla si la app está en ejecución
@@ -41,13 +36,13 @@ Si se ve un PID concreto en el error (ej. "blocked by FacturasApp (1808)") tambi
 
 ## Key Architecture
 
-- **Entry point**: `Program.cs` → `MainForm` (WinForms)
+- **Entry point**: `FacturasApp.Desktop/Program.cs` → `MainForm` (WinForms)
 - **Orchestrator**: `InvoiceProcessorService` — PDF→text extraction → emitter detection → parser dispatch
 - **Parser dispatch**: `ParserFactory` first checks XML configs from `ConfiguracionEmisores`, then falls back to hardcoded C# parsers. `GenericParser.PuedeParsar() => true` (always fallback). ParserFactory has a ~50-entry hardcoded list — missing a registration means the C# parser is unreachable.
 - **Config-driven parser**: `ConfigurableParserEngine` replaces C# parsers with XML. Each emitter = one `{Nif}.xml` stored at `%APPDATA%/FacturasApp/Emisores/`. C# parsers still work during migration.
 - **Emisor XML deployment flow**: Source XMLs live in `Data/Emisores/` as embedded resources (`FacturasApp.Data.Emisores.*`), auto-extracted to `%APPDATA%/FacturasApp/Emisores/` on first run via `ConfiguracionEmisores.ExtraerEmisoresPorDefecto()`. Users edit the AppData copies, not the embedded originals.
 - **Text extraction**: `PdfTextExtractor` (PDFium, 2 modes: `Simple`, `Ordenado`). `Simple` → `PdfDocument.GetPdfText(page)` (texto limpio, orden de contenido, saltos de línea). `Ordenado` (default) → `GetCharacterInformation(page)` con agrupación por anclas encadenadas (tolerancia 4pt sobre `Bounds.Y + Bounds.Height`, bottom del glifo, Y desde abajo) y orden por `Bounds.X`.
-- **OCR path**: PDFs without selectable text → rendered via PDFium → Tesseract 5.2.0 with `spa` language. `OcrBase` provides shared engine setup. `tessdata/` (eng+spa) copied to output dir via `<Content>` in csproj.
+- **OCR path**: PDFs without selectable text → rendered via PDFium → Tesseract 5.2.0 with `spa` language. `OcrBase` provides shared engine setup. `tessdata/` (eng+spa) in repo root, linked to output dir via `<Content>` in csproj.
 - **OCR uses only `spa`** despite both `eng.traineddata` and `spa.traineddata` being deployed.
 - **PDF rendering**: `OcrBase.RenderizarPaginas()`/`RenderizarPagina()`/`RenderizarPaginaReducida()` y el preview de `GestionEmisoresForm.CargarPdfMuestra` usan `PdfDocument.Render(page, w, h, dpiX, dpiY, PdfRenderFlags.ForPrinting)` con `w/h = PageSizes × dpi/72` (DPI 300 OCR, preview 300). El Bitmap devuelto NO debe dispose-se en el método: el llamador es responsable.
 - **PDFium native**: `PdfiumViewer.Updated 2.14.5` (wrapper) + `bblanchon.PDFium.Win32 139.0.7215` (nativo, deployado en `runtimes/win-x64/native/pdfium.dll`; el fork lo resuelve solo). No hay PdfPig ni PDFtoImage/SkiaSharp.
@@ -66,11 +61,12 @@ The project uses a mix of styles — match the existing convention for the direc
 
 | Directory | Style |
 |---|---|
-| `UI/*.cs` | File-scoped `namespace FacturasApp.UI;` |
-| `Services/*.cs` | Brace `namespace FacturasApp.Services { }` |
-| `Models/*.cs` | Brace `namespace FacturasApp.Models { }` |
-| `Models/EmisoresConfig/*.cs` | File-scoped `namespace FacturasApp.Models.EmisoresConfig;` |
-| `Services/Parsers/*.cs` | Brace `namespace FacturasApp.Services.Parsers { }` |
+| `FacturasApp.Desktop/UI/*.cs` | File-scoped `namespace FacturasApp.UI;` |
+| `FacturasApp.Desktop/Services/*.cs` | Brace `namespace FacturasApp.Services { }` |
+| `FacturasApp.Core/Models/*.cs` | Brace `namespace FacturasApp.Core.Models { }` |
+| `FacturasApp.Core/Models/EmisoresConfig/*.cs` | File-scoped `namespace FacturasApp.Core.Models.EmisoresConfig;` |
+| `FacturasApp.Core/Services/*.cs` | Brace `namespace FacturasApp.Core.Services { }` |
+| `FacturasApp.Core/Services/Parsers/*.cs` | Brace `namespace FacturasApp.Core.Services.Parsers { }` |
 
 ## Conventions
 
