@@ -264,12 +264,12 @@ function downloadExcel(tipo) {
 // ── Helpers ─────────────────────────────────────────────────────────
 function formatEuro(valor) {
     if (valor == null) return '-';
-    return new Intl.NumberFormat('es-ES', { style: 'decimal', useGrouping: true, minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(valor)) + ' EUR';
+    return new Intl.NumberFormat('es-ES', { style: 'decimal', useGrouping: true, minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(valor));
 }
 
 function formatPct(valor) {
     if (valor == null) return '-';
-    return new Intl.NumberFormat('es-ES', { style: 'decimal', useGrouping: true, minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(valor)) + '%';
+    return new Intl.NumberFormat('es-ES', { style: 'decimal', useGrouping: true, minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(Number(valor)) + '%';
 }
 
 function formatEntero(valor) {
