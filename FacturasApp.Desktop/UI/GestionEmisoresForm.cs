@@ -242,13 +242,21 @@ public partial class GestionEmisoresForm : Form
             if (r.Cells.Count < 7) continue;
             var campo = r.Cells[0].Value?.ToString() ?? "";
             r.Cells[6].Value = resultados != null && resultados.TryGetValue(campo, out var textoZona)
-                ? textoZona
+                ? NormalizarSaltoLinea(textoZona)
                 : "";
         }
         _sincronizando = false;
 
-        txtRegexSource.Text = texto;
+        txtRegexSource.Text = NormalizarSaltoLinea(texto);
         ActualizarIndicadorIdentificadores();
+    }
+
+    private static string NormalizarSaltoLinea(string texto)
+    {
+        if (string.IsNullOrEmpty(texto)) return texto;
+        texto = texto.Replace("\r\n", "\n");
+        texto = Regex.Replace(texto, @"(\n[\s]*)+", "\n");
+        return texto.Replace("\n", "\r\n");
     }
 
     private void ActualizarIndicadorIdentificadores()
