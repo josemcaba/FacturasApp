@@ -38,9 +38,9 @@ Si se ve un PID concreto en el error (ej. "blocked by FacturasApp (1808)") tambi
 
 - **Entry point**: `FacturasApp.Desktop/Program.cs` → `MainForm` (WinForms)
 - **Orchestrator**: `InvoiceProcessorService` — PDF→text extraction → emitter detection → parser dispatch
-- **Parser dispatch**: `ParserFactory` first checks XML configs from `ConfiguracionEmisores`, then falls back to hardcoded C# parsers. `GenericParser.PuedeParsar() => true` (always fallback). ParserFactory has a ~50-entry hardcoded list — missing a registration means the C# parser is unreachable.
+- **Parser dispatch**: `ParserFactory` first checks XML configs from `ConfiguracionEmisores`, then falls back to hardcoded C# parsers. `GenericParser.PuedeParsar() => true` (always fallback). ParserFactory has ~35 active entries (plus ~11 commented-out) — missing a registration means the C# parser is unreachable.
 - **Config-driven parser**: `ConfigurableParserEngine` replaces C# parsers with XML. Each emitter = one `{Nif}.xml` stored at `%APPDATA%/FacturasApp/Emisores/`. C# parsers still work during migration.
-- **Emisor XML deployment flow**: Source XMLs live in `Data/Emisores/` as embedded resources (`FacturasApp.Data.Emisores.*`), auto-extracted to `%APPDATA%/FacturasApp/Emisores/` on first run via `ConfiguracionEmisores.ExtraerEmisoresPorDefecto()`. Users edit the AppData copies, not the embedded originals.
+- **Emisor XML deployment flow**: Source XMLs live in `Data/Emisores/` as embedded resources (`FacturasApp.Core.Data.Emisores.*`), auto-extracted to `%APPDATA%/FacturasApp/Emisores/` on first run via `ConfiguracionEmisores.ExtraerEmisoresPorDefecto()`. Users edit the AppData copies, not the embedded originals.
 - **Text extraction**: `PdfTextExtractor` (PDFium, 2 modes: `Simple`, `Ordenado`). `Simple` → `PdfDocument.GetPdfText(page)` (texto limpio, orden de contenido, saltos de línea). `Ordenado` (default) → `GetCharacterInformation(page)` con agrupación por anclas encadenadas (tolerancia 4pt sobre `Bounds.Y + Bounds.Height`, bottom del glifo, Y desde abajo) y orden por `Bounds.X`.
 - **OCR path**: PDFs without selectable text → rendered via PDFium → Tesseract 5.2.0 with `spa` language. `OcrBase` provides shared engine setup. `tessdata/` (eng+spa) in repo root, linked to output dir via `<Content>` in csproj.
 - **OCR uses only `spa`** despite both `eng.traineddata` and `spa.traineddata` being deployed.
@@ -66,7 +66,7 @@ The project uses a mix of styles — match the existing convention for the direc
 | `FacturasApp.Core/Models/*.cs` | Brace `namespace FacturasApp.Core.Models { }` |
 | `FacturasApp.Core/Models/EmisoresConfig/*.cs` | File-scoped `namespace FacturasApp.Core.Models.EmisoresConfig;` |
 | `FacturasApp.Core/Services/*.cs` | Brace `namespace FacturasApp.Core.Services { }` |
-| `FacturasApp.Core/Services/Parsers/*.cs` | Brace `namespace FacturasApp.Core.Services.Parsers { }` |
+| `FacturasApp.Core/Services/Parsers/*.cs` | Mix: most brace `namespace FacturasApp.Core.Services.Parsers { }`, `ConfigurableParserEngine` file-scoped |
 
 ## Conventions
 
@@ -103,7 +103,7 @@ The project uses a mix of styles — match the existing convention for the direc
 - Adding a C# parser requires registering it in both `ParserFactory` constructor list AND the `ConfigurableParserEngine` check (if applicable)
 - Zonal coordinates in `plantillas_ocr.xml` and `ZonasOcr` configs are percentages (0–100), not PDF points
 - `tessdata/` ships both `eng` and `spa` but OCR only uses `spa`
-- Embedded resource logical names use dots: `FacturasApp.Data.Emisores.{Filename}.xml` and `FacturasApp.Data.plantillas_ocr.xml`
+- Embedded resource logical names use dots: `FacturasApp.Core.Data.Emisores.{Filename}.xml` and `FacturasApp.Core.Data.plantillas_ocr.xml`
 - `ExtraerEmisoresPorDefecto` solo extrae si el archivo NO existe en AppData: los cambios en `Data/Emisores/*.xml` deben copiarse manualmente a `%APPDATA%/FacturasApp/Emisores/`
 - `ExtraerFecha` (general) devuelve null si encuentra 2+ fechas distintas (ej. un teléfono "951.91.63.89" rompe la extracción) → usar regex de fecha explícita en el XML
 
