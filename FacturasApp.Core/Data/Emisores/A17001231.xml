@@ -1,75 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Nif>25041071M</Nif>
-  <Nombre>PESCADERIA SALVADOR</Nombre>
+  <Nif>A17001231</Nif>
+  <Nombre>FACCSA</Nombre>
   <Identificadores>
-    <Id>Salvador</Id>
-    <Id>25041071-M</Id>
+    <Id>Andaluces</Id>
+    <Id>Conservas</Id>
+    <Id>Carne</Id>
+    <Id>A-17001231</Id>
   </Identificadores>
-  <ModoExtraccion>Ordenado</ModoExtraccion>
+  <ModoExtraccion>Simple</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Mix\Pescaderia SALVADOR 2.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Mix\FACCSA.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
-      <Regex>N. factura\s+([\d]+)</Regex>
+      <Regex>FACTURA\s+(\d+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="Fecha">
-      <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
-      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-    </Campo>
-    <Campo Nombre="ReceptorNombre">
-      <Regex>\[P1_Z2]:\s+(.+)</Regex>
+      <Regex>FECHA\s+([\.\d]+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNif">
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
+    </Campo>
+    <Campo Nombre="ReceptorNombre">
+      <Regex>CIF.+\s+(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="BaseImponible">
-      <Regex>Base\s+([-\d.,]+)</Regex>
+      <Regex>\s+([-\d.,]+)\s+[-\d.,]+\s+[-\d.,]+\s+[-\d.,]+\s+[-\d.,]+\s+</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="PorcentajeIVA">
-      <ValorFijo>10</ValorFijo>
+      <Regex>\s+[-\d.,]+\s+([-\d.,]+)\s+[-\d.,]+\s+[-\d.,]+\s+[-\d.,]+\s+</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
+    </Campo>
+    <Campo Nombre="PorcentajeRE">
+      <Regex>\s+[-\d.,]+\s+[-\d.,]+\s+[-\d.,]+\s+([-\d.,]+)\s+[-\d.,]+\s+</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+      <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="TotalFactura">
-      <Regex>Base.+Total\s+([-\d.,]+)</Regex>
+      <Regex>FACTURA.+\s+([-\d.,]+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
   </Campos>
   <PostProcesamiento>
     <Regla>
       <CondicionCampo>
-        <Campo>ReceptorNif</Campo>
-        <Valor>B93315612</Valor>
+        <Campo>EmisorNif</Campo>
+        <Valor>A17001231</Valor>
       </CondicionCampo>
-      <Accion Tipo="Establecer Valor" CampoDestino="ReceptorNombre" Valor="Ramírez Sánchez S.L. 'Rest Refrectorium'" CampoOrigen1="BaseImponible" Operador="+" CampoOrigen2="BaseImponible" />
+      <Accion Tipo="Establecer Valor" CampoDestino="EmisorNombre" Valor="FRIG. ANDALUCES DE CONS. DE CARNE, S.A." CampoOrigen1="" Operador="+" CampoOrigen2="" />
     </Regla>
   </PostProcesamiento>
   <ZonasOcr>
-    <Zona Campo="P1_Z1" Pagina="1" X="54" Y="10" Ancho="38" Alto="7" />
-    <Zona Campo="P1_Z2" Pagina="1" X="50" Y="24.8" Ancho="41" Alto="8.2" />
-    <Zona Campo="P1_Z3" Pagina="1" X="3.3" Y="67.7" Ancho="90.5" Alto="30" />
+    <Zona Campo="P1_Z1" Pagina="1" X="3.6" Y="11.2" Ancho="27" Alto="6.5" />
+    <Zona Campo="P1_Z2" Pagina="1" X="60.1" Y="11.2" Ancho="34" Alto="6.5" />
+    <Zona Campo="P1_Z3" Pagina="1" X="25.2" Y="73.7" Ancho="41.5" Alto="6.2" />
+    <Zona Campo="P1_Z4" Pagina="1" X="66" Y="81.4" Ancho="28.9" Alto="5.2" />
   </ZonasOcr>
 </Emisor>
