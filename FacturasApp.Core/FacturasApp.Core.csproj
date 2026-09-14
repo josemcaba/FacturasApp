@@ -8,14 +8,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Remove="Data\plantillas_ocr.xml" />
-	</ItemGroup>
-
-	<!-- Archivo de plantillas: incrustado en el ensamblado -->
-	<ItemGroup>
-		<EmbeddedResource Include="Data\plantillas_ocr.xml">
-			<LogicalName>FacturasApp.Core.Data.plantillas_ocr.xml</LogicalName>
-		</EmbeddedResource>
 		<EmbeddedResource Include="Data\Emisores\*.xml">
 			<LogicalName>FacturasApp.Core.Data.Emisores.%(Filename)%(Extension)</LogicalName>
 		</EmbeddedResource>

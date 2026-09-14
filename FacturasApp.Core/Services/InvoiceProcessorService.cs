@@ -9,7 +9,6 @@ namespace FacturasApp.Core.Services
         private readonly ITextExtractor _textExtractor;
         private readonly ParserFactory _parserFactory = new();
         private readonly ExcelExtractor _excelExtractor = new();
-        private readonly PlantillaOcrService _plantillaService = new();
 
         // Configuración de tolerancia para extracción zonal
         public bool UsarZonasSiempre { get; set; } = true;
@@ -257,7 +256,7 @@ namespace FacturasApp.Core.Services
                 };
             }
 
-            return _plantillaService.ObtenerPorEmisor(nombreEmisor);
+            return null;
         }
 
         // ── Helper: detección de duplicados ─────────────────────────────────────
@@ -387,8 +386,8 @@ namespace FacturasApp.Core.Services
             var parser = _parserFactory.ObtenerParser(textoRapido);
             sb.AppendLine($"Emisor detectado: {parser.Nombre}");
 
-            var plantilla = _plantillaService.ObtenerPorEmisor(parser.Nombre);
-            sb.AppendLine($"Plantilla de zonas disponible: {(plantilla != null ? $"SÍ ({plantilla.Zonas.Count} zonas)" : "NO")}");
+            PlantillaOcr? plantilla = ObtenerPlantilla(parser, parser.Nombre);
+            sb.AppendLine($"Zonas OCR disponibles: {(plantilla != null ? $"SÍ ({plantilla.Zonas.Count} zonas)" : "NO")}");
 
             if (UsarZonasSiempre && plantilla != null)
             {
