@@ -379,7 +379,14 @@ echo    "  Versión ............ $CS_VERSION"
 echo    "  Revisión ........... ${REV_FINAL:-?}"
 echo    "  Sitio .............. $(leer_xml "$PUBXML" InstallUrl)"
 echo
-echo -e "  Emisores modificados en el repo del proyecto (commit aparte):"
-git -C "$PROYECTO_DIR" status --porcelain -- FacturasApp.Core/Data/Emisores 2>/dev/null | sed 's/^/    /' || true
-echo
+
+# Sólo se avisa si el Paso 1 ha dejado emisores sin commitear en el repo del
+# proyecto: este script sólo hace commit del repo del sitio.
+EMISORES_MOD="$(git -C "$PROYECTO_DIR" status --porcelain -- FacturasApp.Core/Data/Emisores 2>/dev/null || true)"
+if [ -n "$EMISORES_MOD" ]; then
+    echo -e "  Emisores modificados en el repo del proyecto (commit aparte):"
+    printf '%s\n' "$EMISORES_MOD" | sed 's/^/    /' || true
+    echo
+fi
+
 read -r -p "ENTER para finalizar..." || true
