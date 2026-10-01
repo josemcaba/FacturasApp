@@ -2,6 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>33384986A</Nif>
   <Nombre>PESCADERIA MARENGO</Nombre>
+  <Version>202610011551</Version>
   <Identificadores>
     <Id>Marengo</Id>
     <Id>33384986-A</Id>

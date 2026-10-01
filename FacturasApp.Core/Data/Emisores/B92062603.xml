@@ -2,6 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B92062603</Nif>
   <Nombre>COSTA DEL SOL BALEAR, S.A.</Nombre>
+  <Version>202610011551</Version>
   <Identificadores>
     <Id>SOL BALEAR</Id>
     <Id>B92062603</Id>

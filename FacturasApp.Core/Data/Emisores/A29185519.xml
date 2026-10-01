@@ -2,6 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>A29185519</Nif>
   <Nombre>EMASA</Nombre>
+  <Version>202610011551</Version>
   <Identificadores>
     <Id>emasa</Id>
     <Id>plaza general torrijos</Id>

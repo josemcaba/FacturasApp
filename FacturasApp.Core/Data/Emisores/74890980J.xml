@@ -2,6 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>74890980J</Nif>
   <Nombre>ARIAS MERINO, OSCAR</Nombre>
+  <Version>202610011551</Version>
   <Identificadores>
     <Id>Oscar Arias Merino</Id>
     <Id>74890980-j</Id>

@@ -2,6 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B93275394</Nif>
   <Nombre>PLENERGY GRUPO, S.L.</Nombre>
+  <Version>202610011551</Version>
   <Identificadores>
     <Id>PLENERGY GRUPO</Id>
     <Id>B93275394</Id>

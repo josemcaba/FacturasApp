@@ -2,6 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B11425964</Nif>
   <Nombre>DULCERIA 17, S.L.</Nombre>
+  <Version>202610011551</Version>
   <Identificadores>
     <Id>40.0015231/CA</Id>
     <Id>40.080372/CA</Id>

@@ -2,6 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B87438750</Nif>
   <Nombre>TRIGORICO, S.L.U.</Nombre>
+  <Version>202610011551</Version>
   <Identificadores>
     <Id>reinosa</Id>
     <Id>ESB87438750</Id>

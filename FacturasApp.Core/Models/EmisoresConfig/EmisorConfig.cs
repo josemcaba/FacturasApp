@@ -8,6 +8,18 @@ public class EmisorConfig
     public string Nif { get; set; } = string.Empty;
     public string Nombre { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Versión del emisor como timestamp yyyyMMddHHmm. Va declarado tras Nombre
+    /// para que el orden serializado coincida con el XML editado a mano.
+    /// </summary>
+    /// <remarks>
+    /// Se toma <c>long</c>, no <c>int</c>: un timestamp como 202610011530 supera
+    /// Int32.MaxValue (2.147.483.647) y desbordaría a negativo, dejando el emisor
+    /// congelado por debajo de cualquier versión publicada.
+    /// Un XML sin &lt;Version&gt; se lee como 1, siempre menor que cualquier timestamp.
+    /// </remarks>
+    public long Version { get; set; } = 1;
+
     [XmlArray("Identificadores")]
     [XmlArrayItem("Id")]
     public List<string> Identificadores { get; set; } = new();

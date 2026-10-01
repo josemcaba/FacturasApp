@@ -2,6 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>25041071M</Nif>
   <Nombre>PESCADERIA SALVADOR</Nombre>
+  <Version>202610011551</Version>
   <Identificadores>
     <Id>Salvador</Id>
     <Id>25041071-M</Id>
