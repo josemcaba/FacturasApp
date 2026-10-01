@@ -90,6 +90,100 @@ comparar_version() {
 
 leer_xml() { grep -oP "(?<=<$2>)[^<]*(?=</$2>)" "$1" 2>/dev/null || true; }
 
+# <Version> de un XML de emisor; devuelve 1 si no tiene o no es numérico,
+# igual que hace ConfiguracionEmisores.LeerVersion en C#.
+version_emisor() {
+    local v
+    v="$(leer_xml "$1" Version)"
+    if [[ "$v" =~ ^[1-9][0-9]*$ ]]; then printf '%s' "$v"; else printf '1'; fi
+}
+
+# Contenido del XML sin la línea <Version> y con \r normalizado: para saber si
+# ha cambiado algo más allá de la versión (mismo criterio que ContenidoSinVersion).
+contenido_sin_version() {
+    tr -d '\r' < "$1" 2>/dev/null | grep -v '<Version>' || true
+}
+
+# Sincroniza %APPDATA%/FacturasApp/Emisores/*.xml hacia FacturasApp.Core/Data/Emisores.
+# Consciente de <Version> (timestamp yyyyMMddHHmm):
+#   · no existe en el repo           → copia (emisor nuevo / instalación limpia)
+#   · AppData > repo                 → copia (edición normal desde la GUI: Guardar()
+#                                       garantiza que sube la versión en cada cambio)
+#   · repo > AppData                 → NO copia: la app lo baja sola al arrancar
+#   · iguales e idéntico contenido   → NO copia (sin cambios)
+#   · iguales y distinto contenido   → NO copia + aviso: o se edita desde la GUI, o se
+#                                       sube <Version> en el XML del repo
+# Los dos últimos casos evitan el "cp a ciego" que revertía cambios hechos a mano
+# en el repo (era sólo un aviso documental en AGENTS.md; ahora es regla técnica).
+sincronizar_emisores() {
+    local origen="$APPDATA_DIR/Emisores"
+    local copiados=0 sin_cambios=0 avisos=0
+    local f nombre destino v_app v_repo n
+
+    [ -d "$EMISORES_DEST" ] || abort "No se encuentra la carpeta de emisores del repo en: $EMISORES_DEST"
+    [ -d "$origen" ]        || abort "Falta $origen"
+
+    n=$(find "$origen" -maxdepth 1 -type f -name '*.xml' | wc -l)
+    [ "$n" -gt 0 ] || abort "No hay XML de emisores en $origen"
+
+    while IFS= read -r f; do
+        nombre="$(basename "$f")"
+        destino="$EMISORES_DEST/$nombre"
+        v_app="$(version_emisor "$f")"
+
+        if [ ! -f "$destino" ]; then
+            cp -f "$f" "$destino"
+            copiados=$((copiados + 1))
+            continue
+        fi
+
+        v_repo="$(version_emisor "$destino")"
+
+        if [ "$v_app" -gt "$v_repo" ]; then
+            cp -f "$f" "$destino"
+            copiados=$((copiados + 1))
+        elif [ "$v_repo" -gt "$v_app" ]; then
+            warn "$nombre: el repo es más nuevo (v$v_repo > v$v_app) — NO se copia; la app lo bajará sola al arrancar"
+            avisos=$((avisos + 1))
+        elif [ "$(contenido_sin_version "$f")" = "$(contenido_sin_version "$destino")" ]; then
+            sin_cambios=$((sin_cambios + 1))
+        else
+            warn "$nombre: mismo <Version> pero distinto contenido — NO se copia."
+            warn "    Edita desde la GUI (sube el timestamp solo) o sube <Version> en"
+            warn "    FacturasApp.Core/Data/Emisores/$nombre"
+            avisos=$((avisos + 1))
+        fi
+    done < <(find "$origen" -maxdepth 1 -type f -name '*.xml' | sort)
+
+    ok "Emisores: $copiados copiados, $sin_cambios sin cambios, $avisos aviso(s)"
+}
+
+# ───────────────────────────────────────────────────────────────
+# Argumentos de línea de comandos
+# ───────────────────────────────────────────────────────────────
+SOLO_EMISORES=0
+for arg in "$@"; do
+    case "$arg" in
+        --solo-emisores) SOLO_EMISORES=1 ;;
+        -h|--help)
+            printf 'Uso: bash PublicarFacturasApp.sh [opciones]\n\n'
+            printf '  (sin opciones)   Publicación ClickOnce completa (pasos 0..5)\n'
+            printf '  --solo-emisores  Sincroniza %%APPDATA%%/FacturasApp/Emisores hacia\n'
+            printf '                   FacturasApp.Core/Data/Emisores y termina sin\n'
+            printf '                   publicar. No necesita MSBuild, pubxml ni el\n'
+            printf '                   repo del sitio.\n'
+            printf '  -h, --help       Esta ayuda\n'
+            exit 0 ;;
+        *) abort "Opción desconocida: $arg (usa --help)" ;;
+    esac
+done
+
+if [ "$SOLO_EMISORES" = 1 ]; then
+    log "Sincronizar Emisores (AppData → repo), sin publicar"
+    sincronizar_emisores
+    exit 0
+fi
+
 # ───────────────────────────────────────────────────────────────
 # Paso 0: Comprobaciones previas
 # ───────────────────────────────────────────────────────────────
@@ -154,11 +248,7 @@ ok "Perfil: $(leer_xml "$PUBXML" PublishUrl)"
 # ───────────────────────────────────────────────────────────────
 log "Paso 1: Sincronizar Emisores (AppData → repo)"
 # ───────────────────────────────────────────────────────────────
-[ -d "$APPDATA_DIR/Emisores" ] || abort "Falta $APPDATA_DIR/Emisores"
-N_EMISORES=$(find "$APPDATA_DIR/Emisores" -maxdepth 1 -type f -name '*.xml' | wc -l)
-[ "$N_EMISORES" -gt 0 ] || abort "No hay XML de emisores en $APPDATA_DIR/Emisores"
-find "$APPDATA_DIR/Emisores" -maxdepth 1 -type f -name '*.xml' -exec cp -f {} "$EMISORES_DEST/" \;
-ok "$N_EMISORES emisores copiados a Core/Data/Emisores (recursos embebidos)"
+sincronizar_emisores
 
 # ───────────────────────────────────────────────────────────────
 log "Paso 1.5: Versionado"
