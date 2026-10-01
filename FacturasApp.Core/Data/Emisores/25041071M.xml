@@ -22,6 +22,7 @@
       <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNombre">
       <Regex>\[P1_Z2]:\s+(.+)</Regex>

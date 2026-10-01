@@ -10,7 +10,7 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Mix\Andres Cazalla 1.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\CAZALLA MEDINA, ANDRES\2026 08 - Ingresos\Factura nº 2026442 de Anouar Elharem.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>FACTURA\s*(\S+)</Regex>
@@ -85,7 +85,7 @@
   </PostProcesamiento>
   <ZonasOcr>
     <Zona Campo="P1_Z1" Pagina="1" X="50.2" Y="4.5" Ancho="39.4" Alto="3.6" />
-    <Zona Campo="P1_Z2" Pagina="1" X="47.8" Y="8.9" Ancho="40.2" Alto="9.9" />
+    <Zona Campo="P1_Z2" Pagina="1" X="47.8" Y="8.9" Ancho="40.2" Alto="10.2" />
     <Zona Campo="P1_Z3" Pagina="1" X="26.9" Y="91.9" Ancho="23.3" Alto="4.8" />
     <Zona Campo="P1_Z4" Pagina="1" X="62.1" Y="92.2" Ancho="14.3" Alto="4.8" />
     <Zona Campo="P1_Z5" Pagina="1" X="77.6" Y="92.3" Ancho="16.9" Alto="4.7" />

@@ -4,64 +4,64 @@
   <Nombre>ARANDA GARCIA, GREGORIO</Nombre>
   <Identificadores>
     <Id>25693621E</Id>
-    <Id>fecha de vencimiento</Id>
-    <Id>datos proveedor</Id>
+    <Id>Gregorio Aranda</Id>
   </Identificadores>
   <ModoExtraccion>Simple</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Mix\Gregorio Aranda 1.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Nueva carpeta\Gregorio\2607\1349.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
-      <Regex>Número de Factura.*[\n\r]+(?:Fact-)?(\d+)</Regex>
+      <Regex>(?:Número de Factura|Invoice Number).*[\n\r]+(?:Fact-)?(\d+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="Fecha">
-      <Regex>Facturación[\s\n\r]+(?:Fecha de Vencimiento[\s\n\r]+)?(\d{1,2}/\d{1,2}/\d{4})</Regex>
+      <Regex>(?:Facturación|Billing Date)[\s\n\r]+(?:(?:Fecha de Vencimiento|Due Date)[\s\n\r]+)?(\d{1,2}/\d{1,2}/\d{4})</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNombre">
-      <Regex>Datos Cliente[\s\n\r]+(?:Datos Proveedor[\s\n\r]+)?(.+)</Regex>
+      <Regex>(?:Datos Cliente|Client Details)[\s\n\r]+(?:Datos Proveedor|Supplier Details)[\s\n\r]+?(.+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNif">
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="BaseImponible">
-      <Regex>otal.*?([\d,.]+)[\n\r]*IVA\s*\([\d]+%\)</Regex>
+      <Regex>otal.*?([\d,.]+)[\n\r]*(?:VAT|IVA)\s*\([\d]+%\)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="PorcentajeIVA">
-      <Regex>otal.*?[\d,.]+[\n\r]*IVA\s*\(([\d]+)%\)</Regex>
+      <Regex>otal.*?[\d,.]+[\n\r]*(?:VAT|IVA)\s*\(([\d]+)%\)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="TotalFactura">
-      <Regex>Envío[\s\n\r]+(?:[\d,.\s\n\r]*)Total\s+([\d.,]+)</Regex>
+      <Regex>(?:Envío|Shipping)[\s\n\r]+(?:[\d,.\s\n\r]*)Total\s+([\d.,]+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
   </Campos>
-  <PostProcesamiento />
+  <PostProcesamiento>
+    <Regla>
+      <CondicionCampo>
+        <Campo>ReceptorNif</Campo>
+        <Valor>B93522266</Valor>
+      </CondicionCampo>
+      <Accion Tipo="Establecer Valor" CampoDestino="ReceptorNombre" Valor="Estudio Jurídico Fernández Navarro, SLP" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+    </Regla>
+  </PostProcesamiento>
   <ZonasOcr />
 </Emisor>

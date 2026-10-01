@@ -104,27 +104,30 @@ The project uses a mix of styles — match the existing convention for the direc
 - Zonal coordinates in `ZonasOcr` configs are percentages (0–100), not PDF points
 - `tessdata/` ships both `eng` and `spa` but OCR only uses `spa`
 - Embedded resource logical names use dots: `FacturasApp.Core.Data.Emisores.{Filename}.xml`
-- `ExtraerEmisoresPorDefecto` solo extrae si el archivo NO existe en AppData: los cambios en `Data/Emisores/*.xml` deben copiarse manualmente a `%APPDATA%/FacturasApp/Emisores/`
+- `ExtraerEmisoresPorDefecto` solo extrae si el archivo NO existe en AppData: los cambios en `FacturasApp.Core/Data/Emisores/*.xml` deben copiarse manualmente a `%APPDATA%/FacturasApp/Emisores/` (o al revés con `bash ActualizarEmisores.sh`)
 - `ExtraerFecha` (general) devuelve null si encuentra 2+ fechas distintas (ej. un teléfono "951.91.63.89" rompe la extracción) → usar regex de fecha explícita en el XML
 
 ## Publicación (ClickOnce)
 
 Flujo completo: `bash PublicarFacturasApp.sh` (raíz del repo, WSL/Git Bash). El script:
 
-1. Copia `%APPDATA%/FacturasApp/Emisores/` → `Data/Emisores/` (los cambios del usuario quedan versionados en el repo).
-2. Publica con el perfil `ClickOnceProfile` (Release, win-x64) → `bin/Release/net10.0-windows/win-x64/app.publish/`.
-3. Copia el contenido a `Publicados en GitHub/ClickOnce/FacturasApp/` (repo `josemcaba.github.io`, rama `main`).
+0. Comprobaciones previas: rutas, `FacturasApp.exe` cerrado (si corre, aborta con el `taskkill` sugerido), MSBuild localizado y perfil `ClickOnceProfile` legible.
+1. Copia `%APPDATA%/FacturasApp/Emisores/*.xml` → `FacturasApp.Core/Data/Emisores/` (los cambios del usuario quedan versionados en el repo como recursos embebidos).
+1.5. **Versionado**: compara `<Version>` del csproj con la versión del manifest del sitio y avisa si es MENOR (los clientes no se actualizarían) o si coincide (sólo se verá el cambio por revisión). Luego incrementa `ApplicationRevision` en el `.pubxml` si `IsRevisionIncremented=False`, o deja que MSBuild lo haga y lo verifica después.
+2. Publica con el perfil `ClickOnceProfile` (Release, Any CPU) → `FacturasApp.Desktop/bin/Release/net10.0-windows/app.publish/`. Usa `MSBuild.exe -t:Publish`; **ClickOnce no se publica con `dotnet publish`**.
+3. Verifica que el manifest/setup del sitio se han refrescado y que reflejan la versión del csproj. **No hay copia**: el `PublishUrl` del perfil publica directamente en el repo del sitio.
 4. Borra versiones antiguas de `Application Files/` (conserva las 3 más recientes).
-5. Commit (`--amend` solo si el último es "Actualizada FacturasApp…") + `git push --force-with-lease`.
+5. Commit (`--amend` solo si el último es "Actualizada FacturasApp…") + `git push --force-with-lease` en la rama actual del repo `josemcaba.github.io`.
+
+Overrides para pruebas: `WIN_HOME=/ruta` fuerza el HOME de Windows y `MSBUILD_EXE=/ruta` fuerza el ejecutable de publicación.
 
 Puntos importantes:
 
-- **Manifiestos firmados** (`SignManifests=True`) con certificado autofirmado de firma de código en `Cert:\CurrentUser\My` (subject "CN=Jose M. Caballero", validez 3 años). Backup exportado a `Properties/FacturasAppClickOnce.pfx` (en `.gitignore`, no se comitea). Recrear si caduca o se rgenera:
-  `New-SelfSignedCertificate -Type CodeSigning -Subject "CN=Jose M. Caballero" -CertStoreLocation Cert:\CurrentUser\My -KeyExportPolicy Exportable`
-  y exportar el pfx. Cambiar el thumbprint en `ClickOnceProfile.pubxml`.
-- **Firma ≠ SmartScreen**: el certificado autofirmado evita "Editor desconocido" en la instalación, pero Windows SmartScreen seguirá advirtiendo si exige firma de certificado comercial/trusted.
-- **Bootstrapper runtime hardcodeado**: `Microsoft.NetCore.DesktopRuntime.10.0.x64` (10.0.10) en `ClickOnceProfile.pubxml` → actualizarlo cuando salgan parches nuevos del runtime .NET 10.
-- **Versionado**: `<Version>3.0.0</Version>` en el csproj → `AssemblyVersion`/`FileVersion` 3.0.0.0 y ClickOnce `ApplicationVersion=3.0.0.*`. **El script incrementa `ApplicationRevision` en `ClickOnceProfile.pubxml` antes de cada publicación** (Paso 1.5), garantizando que cada push sea una versión nueva que ClickOnce detecta como actualización.
-- **Auto-actualización al iniciar**: configurada en el pubxml con `UpdateEnabled=True`, `UpdateMode=Foreground`, `UpdateRequired=False`, `InstallFrom=Web`. Al arrancar, ClickOnce compara la versión del manifest del sitio con la instalada; si hay una más nueva ofrece instalarla. Si un usuario no recibe actualizaciones, revisar que la revisión de la publicación anterior sea distinta de la instalada.
-- Si no hay cambios en el sitio, el script avisa y no commitea vacío.
+- **El `.pubxml` no se versiona**: `.gitignore` tiene `*.pubxml`. Si se pierde, hay que recrearlo (perfil con `PublishProtocol=ClickOnce`, `InstallFrom=Web`, `InstallUrl=https://josemcaba.github.io/ClickOnce/FacturasApp/`, `UpdateEnabled=True`, `UpdateMode=Foreground`, `ApplicationVersion=1.0.0.*`, `<Version>` del csproj como fuente de la versión).
+- **Manifiestos sin firma**: `SignManifests=False` en el perfil actual. Si se reactiva (`True`), hace falta un certificado de firma de código en `Cert:\CurrentUser\My` (subject "CN=Jose M. Caballero") y cambiar el thumbprint en el `.pubxml`. Sin firma, Windows SmartScreen puede advertir en la instalación.
+- **Bootstrapper runtime hardcodeado**: `Microsoft.NetCore.DesktopRuntime.10.0.x64` (10.0.11) en `ClickOnceProfile.pubxml` → actualizarlo cuando salgan parches nuevos del runtime .NET 10.
+- **Versionado**: `<Version>3.0.0</Version>` en el csproj → `AssemblyVersion`/`FileVersion` 3.0.0.0. Cada publicación necesita una `ApplicationRevision` distinta: si se repite, ClickOnce no ve la actualización. El script lo garantiza (bump manual o forzado si MSBuild no lo persiste).
+- **Auto-actualización al iniciar**: configurada en el pubxml con `UpdateEnabled=True`, `UpdateMode=Foreground`, `UpdateRequired=False`, `InstallFrom=Web`. Al arrancar, ClickOnce compara la versión del manifest del sitio con la instalada; si hay una más nueva ofrece instalarla. Si un usuario no recibe actualizaciones, revisar que la versión del manifest sea MAYOR que la del csproj.
+- `plantillas_ocr.xml` (en `%APPDATA%/FacturasApp/`) ya no se copia al repo: no está versionado ni embebido.
+- Si no hay cambios en `ClickOnce/FacturasApp/`, el script avisa y no commitea vacío (ignora cambios ajenos del repo del sitio, p. ej. `index.html`).
 
