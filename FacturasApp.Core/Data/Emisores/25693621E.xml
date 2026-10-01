@@ -2,31 +2,32 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>25693621E</Nif>
   <Nombre>ARANDA GARCIA, GREGORIO</Nombre>
-  <Version>202610011551</Version>
+  <Version>202610011904</Version>
   <Identificadores>
-    <Id>25693621E</Id>
+    <Id>EMISOR</Id>
     <Id>Gregorio Aranda</Id>
+    <Id>25693621E</Id>
   </Identificadores>
   <ModoExtraccion>Simple</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Nueva carpeta\Gregorio\2607\1349.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Nueva carpeta\Gregorio\2609\R-1.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
-      <Regex>(?:Número de Factura|Invoice Number).*[\n\r]+(?:Fact-)?(\d+)</Regex>
+      <Regex>(?:N. Factura|N. Rectificativa).*\n(\S+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="Fecha">
-      <Regex>(?:Facturación|Billing Date)[\s\n\r]+(?:(?:Fecha de Vencimiento|Due Date)[\s\n\r]+)?(\d{1,2}/\d{1,2}/\d{4})</Regex>
+      <Regex>(?:N. Factura|N. Rectificativa).*\n\S+\s+(\S+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="ReceptorNombre">
-      <Regex>(?:Datos Cliente|Client Details)[\s\n\r]+(?:Datos Proveedor|Supplier Details)[\s\n\r]+?(.+)</Regex>
+      <Regex>CLIENTE.*\n+(.+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
@@ -37,19 +38,19 @@
       <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="BaseImponible">
-      <Regex>otal.*?([\d,.]+)[\n\r]*(?:VAT|IVA)\s*\([\d]+%\)</Regex>
+      <Regex>Subtotal\s+([\d.,]+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="PorcentajeIVA">
-      <Regex>otal.*?[\d,.]+[\n\r]*(?:VAT|IVA)\s*\(([\d]+)%\)</Regex>
+      <Regex>IVA\s+\(([\d]+).*\)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="TotalFactura">
-      <Regex>(?:Envío|Shipping)[\s\n\r]+(?:[\d,.\s\n\r]*)Total\s+([\d.,]+)</Regex>
+      <Regex>\bTOTAL\s+([\d.,]+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>

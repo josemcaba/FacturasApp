@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>25041071M</Nif>
   <Nombre>PESCADERIA SALVADOR</Nombre>
-  <Version>202610011551</Version>
+  <Version>202610012002</Version>
   <Identificadores>
     <Id>Salvador</Id>
     <Id>25041071-M</Id>
@@ -11,13 +11,14 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Mix\Pescaderia SALVADOR 2.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Nueva carpeta\SALVADOR\VIGO&amp;DUARTE\VIGO&amp;DUARTE_1.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>N. factura\s+([\d]+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="Fecha">
       <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
@@ -50,7 +51,6 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="TotalFactura">
       <Regex>Base.+Total\s+([-\d.,]+)</Regex>
@@ -63,10 +63,41 @@
   <PostProcesamiento>
     <Regla>
       <CondicionCampo>
+        <Campo>PorcentajeIVA</Campo>
+        <Valor>10</Valor>
+      </CondicionCampo>
+      <Accion Tipo="Establecer Valor" CampoDestino="PorcentajeIVA" Valor="1,1" CampoOrigen1="BaseImponible" Operador="+" CampoOrigen2="BaseImponible" />
+    </Regla>
+    <Regla>
+      <Accion Tipo="Calcular" CampoDestino="BaseImponible" Valor="" CampoOrigen1="TotalFactura" Operador="/" CampoOrigen2="PorcentajeIVA" />
+    </Regla>
+    <Regla>
+      <CondicionCampo>
+        <Campo>PorcentajeIVA</Campo>
+        <Valor>1,1</Valor>
+      </CondicionCampo>
+      <Accion Tipo="Establecer Valor" CampoDestino="PorcentajeIVA" Valor="10" CampoOrigen1="BaseImponible" Operador="+" CampoOrigen2="BaseImponible" />
+    </Regla>
+    <Regla>
+      <CondicionCampo>
         <Campo>ReceptorNif</Campo>
         <Valor>B93315612</Valor>
       </CondicionCampo>
       <Accion Tipo="Establecer Valor" CampoDestino="ReceptorNombre" Valor="Ramírez Sánchez S.L. 'Rest Refrectorium'" CampoOrigen1="BaseImponible" Operador="+" CampoOrigen2="BaseImponible" />
+    </Regla>
+    <Regla>
+      <CondicionCampo>
+        <Campo>ReceptorNif</Campo>
+        <Valor>26816182E</Valor>
+      </CondicionCampo>
+      <Accion Tipo="Establecer Valor" CampoDestino="ReceptorNombre" Valor="Luis Gaspar Rodríguez 'Rest. El Renge'" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+    </Regla>
+    <Regla>
+      <CondicionCampo>
+        <Campo>ReceptorNif</Campo>
+        <Valor>44595114T</Valor>
+      </CondicionCampo>
+      <Accion Tipo="Establecer Valor" CampoDestino="ReceptorNombre" Valor="Miguel Angel Vigo Gomez 'M. La Marisma'" CampoOrigen1="" Operador="+" CampoOrigen2="" />
     </Regla>
   </PostProcesamiento>
   <ZonasOcr>

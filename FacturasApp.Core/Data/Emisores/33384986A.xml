@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>33384986A</Nif>
   <Nombre>PESCADERIA MARENGO</Nombre>
-  <Version>202610011551</Version>
+  <Version>202610011942</Version>
   <Identificadores>
     <Id>Marengo</Id>
     <Id>33384986-A</Id>
@@ -11,57 +11,67 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\PYTHON\PYTHON-2025\DistiFact\DistiFact-Facturas\PESCADERIA MARENGO - ELI\Pagina_4.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Nueva carpeta\ISABEL\SACABA\SACABA_15.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>N. factura\s+([\d]+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="Fecha">
       <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNombre">
       <Regex>\[P1_Z2]:\s+(.+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNif">
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="BaseImponible">
       <Regex>Base\s+([-\d.,]+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="PorcentajeIVA">
       <ValorFijo>10</ValorFijo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="TotalFactura">
       <Regex>Base.+Total\s+([-\d.,]+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
   </Campos>
   <PostProcesamiento>
+    <Regla>
+      <CondicionCampo>
+        <Campo>PorcentajeIVA</Campo>
+        <Valor>10</Valor>
+      </CondicionCampo>
+      <Accion Tipo="Establecer Valor" CampoDestino="PorcentajeIVA" Valor="1,1" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+    </Regla>
+    <Regla>
+      <Accion Tipo="Calcular" CampoDestino="BaseImponible" Valor="" CampoOrigen1="TotalFactura" Operador="/" CampoOrigen2="PorcentajeIVA" />
+    </Regla>
+    <Regla>
+      <CondicionCampo>
+        <Campo>PorcentajeIVA</Campo>
+        <Valor>1,1</Valor>
+      </CondicionCampo>
+      <Accion Tipo="Establecer Valor" CampoDestino="PorcentajeIVA" Valor="10" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+    </Regla>
     <Regla>
       <CondicionCampo>
         <Campo>ReceptorNif</Campo>
