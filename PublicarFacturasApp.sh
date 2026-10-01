@@ -8,10 +8,12 @@
 #   1.5. Verifica el versionado (<Version> del csproj vs. versión publicada)
 #        e incrementa la revisión ClickOnce si hace falta
 #   2. Publica con el perfil ClickOnceProfile (Release, Any CPU)
-#   3. Verifica la salida en bin/Release/net10.0-windows/app.publish
-#      (PublishUrl del perfil publica directamente en el repo del sitio)
+#   3. Copia el set ClickOnce al repo del sitio y VERIFICA que coincide
+#      (MSBuild sólo rellena PublishDir; la copia a PublishUrl la hace
+#      el diálogo de Visual Studio, no MSBuild)
 #   4. Limpia versiones antiguas de Application Files (conserva las 3 últimas)
-#   5. Commit (amend si es repetición) + push con --force-with-lease
+#   5. Commit (sólo amend si es repetición y el commit aún NO está en el
+#      remoto) + push con --force-with-lease
 #   6. Resumen de la publicación
 #
 # Uso: bash PublicarFacturasApp.sh
@@ -46,11 +48,13 @@ KEEP_VERSIONS=3
 # ───────────────────────────────────────────────────────────────
 # Utilidades
 # ───────────────────────────────────────────────────────────────
-log()  { echo -e "\n\033[1;36m==>\033[0m $1"; }
-ok()   { echo -e "\033[1;32m  ✓\033[0m $1"; }
-warn() { echo -e "\033[1;33m  !\033[0m $1"; }
-err()  { echo -e "\033[1;31m  ✗ $1\033[0m"; }
-abort() { echo -e "\n\033[1;31m✗ ERROR:\033[0m $1"; read -r -p "ENTER para finalizar..." || true; exit 1; }
+# printf %s en lugar de echo -e: con -e, un valor con '\n' (p. ej.
+# PublishDir = bin\Release\net10.0-...) se interpretaba como salto de línea.
+log()  { printf '\n\033[1;36m==>\033[0m %s\n' "$1"; }
+ok()   { printf '\033[1;32m  ✓\033[0m %s\n' "$1"; }
+warn() { printf '\033[1;33m  !\033[0m %s\n' "$1"; }
+err()  { printf '\033[1;31m  ✗ %s\033[0m\n' "$1"; }
+abort() { printf '\n\033[1;31m✗ ERROR:\033[0m %s\n' "$1"; read -r -p "ENTER para finalizar..." || true; exit 1; }
 
 # 3.0.0 -> 3.0.0.0 ; 3.0.0-beta -> 3.0.0.0 ; 3 -> 3.0.0.0
 completar_version() {
@@ -61,6 +65,13 @@ completar_version() {
         [ -z "${partes[$i]:-}" ] && partes[$i]=0
     done
     printf '%s.%s.%s.%s' "${partes[0]}" "${partes[1]}" "${partes[2]}" "${partes[3]}"
+}
+
+# 3.0.0.0 -> 3.0.0  (sólo los 3 primeros componentes)
+version_base() {
+    local -a p
+    IFS='.' read -r -a p <<< "$1"
+    printf '%s.%s.%s' "${p[0]:-0}" "${p[1]:-0}" "${p[2]:-0}"
 }
 
 # devuelve "mayor" | "menor" | "igual"
@@ -91,6 +102,18 @@ log "Paso 0: Comprobaciones previas"
 [ -f "$PUBXML" ]       || abort "No se encuentra el perfil $PUBXML (está en .gitignore: hay que recrearlo si se pierde)"
 ok "Rutas correctas"
 
+# La carpeta de salida la define <PublishDir> del perfil (ej.
+# bin\Release\net10.0-windows\app.publish\). Se lee del pubxml porque la
+# ruta depende de Platform y no debe estar hardcodeada.
+PUBDIR_REL="$(leer_xml "$PUBXML" PublishDir)"
+if [ -n "$PUBDIR_REL" ]; then
+    PUBLIC_DIR="${DESKTOP_DIR}/${PUBDIR_REL//\\//}"
+    PUBLIC_DIR="${PUBLIC_DIR%/}"
+    ok "PublishDir del perfil: $PUBDIR_REL"
+else
+    warn "No se encontró <PublishDir> en el perfil: se usa la ruta por defecto"
+fi
+
 # App cerrada: si corre, el rebuild falla con MSB3026/MSB3027
 if [ -x "/mnt/c/Windows/System32/tasklist.exe" ]; then
     if "/mnt/c/Windows/System32/tasklist.exe" 2>/dev/null | grep -qi '^FacturasApp\.exe'; then
@@ -120,7 +143,7 @@ done
 ok "MSBuild: $MSBUILD"
 
 case "$(basename "$MSBUILD")" in
-    dotnet.exe) warn "Usando 'dotnet publish': sólo soporta ClickOnce si el SDK lo implementa. Si falla, usa el MSBuild de Visual Studio (2022 o 18)." ;;
+    dotnet.exe) abort "'dotnet publish' NO implementa el protocolo ClickOnce: publicaría sin manifiestos y el sitio se quedaría con la versión anterior. Usa el MSBuild de Visual Studio (forza con MSBUILD_EXE=/ruta/MSBuild.exe)." ;;
 esac
 
 if [ "$(leer_xml "$PUBXML" SignManifests)" = "True" ]; then
@@ -150,17 +173,34 @@ if [ -f "$SITIO_APP/FacturasApp.application" ]; then
                    "$SITIO_APP/FacturasApp.application" | head -1 || true)"
 fi
 
-echo "    <Version> del csproj .............. $CS_VERSION"
+echo "    <Version> del csproj .............. $CS_VERSION  (base $(version_base "$CS_VERSION"))"
 if [ -n "$SITE_VERSION" ]; then
-    echo "    versión publicada en el sitio ... $SITE_VERSION"
-    CMP="$(comparar_version "$CS_VERSION" "$SITE_VERSION")"
+    echo "    versión publicada en el sitio ... $SITE_VERSION  (base $(version_base "$SITE_VERSION"))"
+    # Se comparan sólo las 3 primeras partes: la 4ª es la REVISIÓN
+    # (contador de build, siempre creciente), no la versión de la app.
+    # Compararla entera daría falsos positivos de "csproj menor".
+    CMP="$(comparar_version "$(version_base "$CS_VERSION")" "$(version_base "$SITE_VERSION")")"
     case "$CMP" in
-        mayor) ok "La versión del csproj es MAYOR: ClickOnce verá la publicación como actualización." ;;
-        igual) warn "Coinciden. Cambia <Version> en el csproj si hay cambios en la app; si no, ClickOnce SÓLO verá la actualización por la revisión." ;;
-        menor) warn "OJO: el csproj es MENOR que la publicada ($CS_VERSION < $SITE_VERSION): los clientes instalados no se actualizarán. Sube <Version> en $CSPROJ." ;;
+        mayor) ok "Base del csproj MAYOR ($(version_base "$CS_VERSION") > $(version_base "$SITE_VERSION")): ClickOnce verá la publicación como actualización." ;;
+        igual) warn "La base de versión coincide ($(version_base "$CS_VERSION")): el cliente verá el cambio SOLO por revisión. Sube <Version> en el csproj si cambia la app." ;;
+        menor) warn "OJO: la base del csproj es MENOR que la publicada ($(version_base "$CS_VERSION") < $(version_base "$SITE_VERSION")): los clientes instalados NO se actualizarán. Sube <Version> en $CSPROJ." ;;
     esac
 else
     warn "No hay publicación previa en el sitio (primera publicación)."
+fi
+
+# ClickOnce publica <ApplicationVersion>, NO <Version> del csproj.
+# Si el pubxml fija una base distinta (ej. 1.0.0.*), el csproj se ignora
+# y la app se queda etiquetada con esa base para siempre.
+APP_VERSION="$(leer_xml "$PUBXML" ApplicationVersion)"
+echo "    <ApplicationVersion> ............. ${APP_VERSION:-<sin definir>}"
+if [ -n "$APP_VERSION" ] && [[ "$APP_VERSION" == *\* ]]; then
+    if [ "$(version_base "$APP_VERSION")" != "$(version_base "$CS_VERSION")" ]; then
+        warn "VERSIONADO PINNEADO: el pubxml publica $(version_base "$APP_VERSION").x, pero el csproj dice $CS_VERSION."
+        warn "El manifiesto del sitio reflejará $(version_base "$APP_VERSION").x — corrige <ApplicationVersion> en $PUBXML."
+    else
+        ok "<ApplicationVersion> alineada con el csproj: $(version_base "$APP_VERSION").x"
+    fi
 fi
 
 # Revisión ClickOnce: cada publicación debe llevar una revisión nueva,
@@ -194,20 +234,76 @@ else
 fi
 
 # ───────────────────────────────────────────────────────────────
-log "Paso 3: Verificando la publicación"
+log "Paso 3: Copiando el set ClickOnce al sitio"
 # ───────────────────────────────────────────────────────────────
-# El perfil publica directamente en el repo del sitio (PublishUrl), no hay copia.
+# OJO: el target Publish de MSBuild escribe en PublishDir (staging).
+# La COPIA a PublishUrl la hace el diálogo de Publicar de Visual Studio,
+# NO MSBuild. Sin este paso el sitio se queda con la versión anterior
+# (pasó el 5-sep: el manifiesto seguía apuntando a _1_0_0_0).
 [ -d "$PUBLIC_DIR" ] || abort "No se generó $PUBLIC_DIR tras publicar"
 
-for f in FacturasApp.application setup.exe Publish.html; do
-    [ -f "$SITIO_APP/$f" ] || abort "Falta $f en el sitio tras publicar: revisa <PublishUrl> en $PUBXML"
-done
-ok "Manifiestos y setup presentes en $SITIO_APP"
+BUILT_APP="$PUBLIC_DIR/FacturasApp.application"
+[ -f "$BUILT_APP" ] || abort "No hay FacturasApp.application en $PUBLIC_DIR: ¿se publicó con el perfil ClickOnceProfile?"
+[ -f "$PUBLIC_DIR/setup.exe" ] || abort "No hay setup.exe en $PUBLIC_DIR"
+[ -f "$PUBLIC_DIR/Publish.html" ] || abort "No hay Publish.html en $PUBLIC_DIR"
 
-if grep -qP '<assemblyIdentity name="FacturasApp\.exe" version="'"$CS_VERSION"'"' "$SITIO_APP/FacturasApp.application"; then
-    ok "Manifest del sitio actualizado a la versión $CS_VERSION"
-else
-    warn "El manifest del sitio NO refleja $CS_VERSION. Revisa <Version> del csproj y <ApplicationVersion> del pubxml."
+BUILT_VER="$(grep -oP '(?<=<assemblyIdentity name="FacturasApp\.exe" version=")[^"]*' "$BUILT_APP" | head -1)"
+[ -n "$BUILT_VER" ] || abort "No se pudo leer la versión del manifest construido"
+
+BUILT_CB="$(grep -oP '(?<=codebase="Application Files)[^"]*' "$BUILT_APP" | head -1 | tr '\\' '/')"
+[ -n "$BUILT_CB" ] || abort "El manifest construido no apunta a Application Files/"
+BUILT_CB="${BUILT_CB%/*}"        # el codebase incluye el .manifest: se queda sólo la carpeta
+[ -n "$BUILT_CB" ] && [ "$BUILT_CB" != "." ] || abort "No se pudo aislar la carpeta de versión del manifest construido"
+[[ "$BUILT_CB" == /* ]] || BUILT_CB="/$BUILT_CB"    # el codebase usa '\' o '/' indistintamente
+BUILT_DIR="$PUBLIC_DIR/Application Files$BUILT_CB"
+[ -d "$BUILT_DIR" ] || abort "Falta la carpeta de versión construida: $BUILT_DIR"
+
+echo "    Versión construida ............. $BUILT_VER"
+echo "    Carpeta de versión ............. Application Files$BUILT_CB"
+
+mkdir -p "$SITIO_APP/Application Files"
+cp -f "$BUILT_APP" "$PUBLIC_DIR/setup.exe" "$PUBLIC_DIR/Publish.html" "$SITIO_APP/"
+rm -rf "$SITIO_APP/Application Files$BUILT_CB"
+cp -r "$BUILT_DIR" "$SITIO_APP/Application Files$BUILT_CB"
+ok "Set ClickOnce copiado (raíz + carpeta de versión)"
+
+# ── Verificación estricta: el sitio DEBE servir lo recién construido ──
+for f in FacturasApp.application setup.exe Publish.html; do
+    if ! cmp -s "$PUBLIC_DIR/$f" "$SITIO_APP/$f"; then
+        warn "Copia manual: cp \"$PUBLIC_DIR/$f\" \"$SITIO_APP/\""
+        abort "$f del sitio no coincide con lo recién publicado."
+    fi
+done
+
+SITE_VER="$(grep -oP '(?<=<assemblyIdentity name="FacturasApp\.exe" version=")[^"]*' "$SITIO_APP/FacturasApp.application" | head -1)"
+if [ "$SITE_VER" != "$BUILT_VER" ]; then
+    warn "Copia manual: cp \"$BUILT_APP\" \"$SITIO_APP/\""
+    abort "El manifiesto del sitio sirve $SITE_VER pero se construyó $BUILT_VER: el sitio NO se actualizó."
+fi
+
+SITE_DIR="$SITIO_APP/Application Files$BUILT_CB"
+[ -d "$SITE_DIR" ] || abort "El sitio no tiene la carpeta Application Files$BUILT_CB"
+diff -rq "$BUILT_DIR" "$SITE_DIR" >/dev/null \
+    || abort "Application Files$BUILT_CB difiere entre build y sitio. Comprueba la copia."
+ok "Verificado: el sitio sirve $BUILT_VER desde Application Files$BUILT_CB"
+
+# La raíz del sitio debe contener sólo el set ClickOnce; los DLL sueltos
+# (copiados a mano para "actualizar emisores") no los referencia ningún
+# manifiesto y ClickOnce los ignora al instalar.
+ALLOWED="Application Files FacturasApp.application Publish.html setup.exe"
+for f in "$SITIO_APP"/*; do          # sólo ficheros visibles (nunca ocultos)
+    [ -e "$f" ] || continue
+    nombre="$(basename "$f")"
+    case " $ALLOWED " in
+        *" $nombre "*) ;;
+        *) warn "Borrando fichero suelto no referenciado: $nombre"
+           rm -rf "$f" ;;
+    esac
+done
+
+# Aviso si la versión publicada no sigue al csproj (base <major>.<minor>.<patch>)
+if [ "$(version_base "$SITE_VER")" != "$(version_base "$CS_VERSION")" ]; then
+    warn "La versión publicada ($SITE_VER) no sigue la base del csproj ($CS_VERSION): revisa <ApplicationVersion> en $PUBXML"
 fi
 
 # La revisión debe haber cambiado: si no, la próxima publicación repetirá versión
@@ -262,8 +358,11 @@ if [ -z "$CAMBIOS" ]; then
 else
     git add ClickOnce/FacturasApp/
     PREV=$(git log -1 --pretty=%s 2>/dev/null || true)
-    if [[ "$PREV" == Actualizada* ]]; then
-        ok "Commit actualizado (amend): $MENSAJE"
+    # Sólo se enmenda si es una repetición Y el commit todavía NO está en
+    # el remoto: enmendar algo ya pusheado reescribe la historia publicada.
+    SIN_PUSHEAR=$(git rev-list --count "@{u}..HEAD" 2>/dev/null || echo "?")
+    if [[ "$PREV" == Actualizada* ]] && [ "$SIN_PUSHEAR" -gt 0 ] 2>/dev/null; then
+        ok "Commit actualizado (amend, aún sin push): $MENSAJE"
         git commit --amend -m "$MENSAJE"
     else
         ok "Nuevo commit: $MENSAJE"
@@ -281,6 +380,6 @@ echo    "  Revisión ........... ${REV_FINAL:-?}"
 echo    "  Sitio .............. $(leer_xml "$PUBXML" InstallUrl)"
 echo
 echo -e "  Emisores modificados en el repo del proyecto (commit aparte):"
-git -C "$PROYECTO_DIR" status --porcelain -- FacturasApp.Core/Data/Emisores | sed 's/^/    /' || true
+git -C "$PROYECTO_DIR" status --porcelain -- FacturasApp.Core/Data/Emisores 2>/dev/null | sed 's/^/    /' || true
 echo
 read -r -p "ENTER para finalizar..." || true
