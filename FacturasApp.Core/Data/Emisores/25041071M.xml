@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>25041071M</Nif>
   <Nombre>PESCADERIA SALVADOR</Nombre>
-  <Version>202610012002</Version>
+  <Version>202610020114</Version>
   <Identificadores>
     <Id>Salvador</Id>
     <Id>25041071-M</Id>
@@ -51,6 +51,7 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
+      <CamposSuma />
     </Campo>
     <Campo Nombre="TotalFactura">
       <Regex>Base.+Total\s+([-\d.,]+)</Regex>
@@ -66,7 +67,7 @@
         <Campo>PorcentajeIVA</Campo>
         <Valor>10</Valor>
       </CondicionCampo>
-      <Accion Tipo="Establecer Valor" CampoDestino="PorcentajeIVA" Valor="1,1" CampoOrigen1="BaseImponible" Operador="+" CampoOrigen2="BaseImponible" />
+      <Accion Tipo="Establecer Valor" CampoDestino="PorcentajeIVA" Valor="1,1" CampoOrigen1="" Operador="+" CampoOrigen2="" />
     </Regla>
     <Regla>
       <Accion Tipo="Calcular" CampoDestino="BaseImponible" Valor="" CampoOrigen1="TotalFactura" Operador="/" CampoOrigen2="PorcentajeIVA" />
