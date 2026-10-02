@@ -1,4 +1,5 @@
 using System.Drawing.Drawing2D;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using FacturasApp.Core.Models;
 using FacturasApp.Core.Models.EmisoresConfig;
@@ -32,6 +33,7 @@ public partial class GestionEmisoresForm : Form
     private bool _esNuevo;
     private bool _saltarCambioSeleccion;
     private bool _cargandoPostProc;
+    private bool _refrescandoCuadroPostProc;
     private bool _cargandoLinea;
 
     public GestionEmisoresForm()
@@ -45,6 +47,13 @@ public partial class GestionEmisoresForm : Form
         CargarEmisores();
         if (lstEmisores.Items.Count > 0)
             lstEmisores.SelectedIndex = 0;
+        else
+        {
+            // Sin emisores: el panel de post-procesamiento arranca en blanco
+            // (controles condicionales ocultos y deshabilitados).
+            lstPostProc.Items.Clear();
+            LimpiarPanelPostProc();
+        }
         Load += (_, _) => PanelCentral_Resize(null, EventArgs.Empty);
         FormClosing += (_, args) =>
         {
@@ -723,6 +732,10 @@ public partial class GestionEmisoresForm : Form
         lstPostProc.Items.Clear();
         foreach (var r in config.PostProcesamiento)
             lstPostProc.Items.Add(r);
+        // Sin selección y panel en blanco: evita que queden valores del emisor anterior
+        // (el evento no se dispara si no había selección previa).
+        lstPostProc.SelectedIndex = -1;
+        LimpiarPanelPostProc();
 
         dgvZonas.Rows.Clear();
         if (config.ZonasOcr != null)
@@ -741,6 +754,27 @@ public partial class GestionEmisoresForm : Form
         ActualizarVistaPreviaZonal();
         ActualizarTablaValoresExtraidos();
         ActualizarIndicadorIdentificadores();
+        ActualizarVersionXml();
+    }
+
+    /// <summary>
+    /// Muestra junto al botón Guardar la versión (&lt;Version&gt;, timestamp yyyyMMddHHmm)
+    /// del XML del emisor que se está trabajando. Sin versión (1) o sin emisor → "—".
+    /// </summary>
+    private void ActualizarVersionXml()
+    {
+        long version = _emisorActual?.Version ?? 1;
+        if (version <= 1)
+        {
+            lblVersionXml.Text = "Versión XML: —";
+            return;
+        }
+
+        var texto = version.ToString();
+        lblVersionXml.Text = DateTime.TryParseExact(texto, "yyyyMMddHHmm",
+            CultureInfo.InvariantCulture, DateTimeStyles.None, out var fecha)
+            ? $"Versión XML: {texto} ({fecha:dd/MM/yyyy HH:mm})"
+            : $"Versión XML: {texto}";
     }
 
     private void ActualizarItemsCmbCampoNombre()
@@ -897,9 +931,17 @@ public partial class GestionEmisoresForm : Form
 
         _configuracion.Eliminar(_emisorActual.Nif);
         _emisorActual = null;
+        ActualizarVersionXml();
         CargarEmisores();
         if (lstEmisores.Items.Count > 0)
             lstEmisores.SelectedIndex = 0;
+        else
+        {
+            // Se eliminó el último emisor: la lista de reglas y el panel de detalle
+            // no deben conservar los datos del emisor borrado.
+            lstPostProc.Items.Clear();
+            LimpiarPanelPostProc();
+        }
     }
 
     private void ClonarEmisor()
@@ -1012,6 +1054,17 @@ public partial class GestionEmisoresForm : Form
             return;
         }
 
+        var (errorPostProc, campoPostProc) = ValidarReglasPostProc();
+        if (errorPostProc != null)
+        {
+            tabs.SelectedTab = tabMultiLinea;
+            MessageBox.Show(errorPostProc,
+                "Post-procesamiento incompleto", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            // Foco al dato que falta, una vez cerrado el aviso.
+            campoPostProc?.Focus();
+            return;
+        }
+
         SincronizarUIaConfig();
 
         _emisorActual.Identificadores = ObtenerIdentificadores();
@@ -1052,6 +1105,7 @@ public partial class GestionEmisoresForm : Form
                     break;
                 }
             }
+            ActualizarVersionXml();
             MessageBox.Show("Emisor guardado correctamente.",
                 "Guardado", MessageBoxButtons.OK, MessageBoxIcon.Information);
             ActualizarTablaValoresExtraidos();
@@ -1253,9 +1307,26 @@ public partial class GestionEmisoresForm : Form
 
     private void LstPostProc_SelectedIndexChanged(object? sender, EventArgs e)
     {
-        if (lstPostProc.SelectedItem is not PostProcesamientoConfig regla)
-            return;
+        // Refresco del cuadro (volver a insertar los ítems): no tocar el panel,
+        // que ya muestra los valores que acaban de escribirse en la regla.
+        if (_refrescandoCuadroPostProc) return;
 
+        if (lstPostProc.SelectedItem is not PostProcesamientoConfig regla)
+        {
+            // Sin selección: el panel queda en blanco y actúa como formulario
+            // de alta de una nueva regla (campos activos).
+            LimpiarPanelPostProc();
+            return;
+        }
+
+        MostrarReglaEnPanel(regla);
+    }
+
+    /// <summary>
+    /// Vuelca la regla en el panel de detalle.
+    /// </summary>
+    private void MostrarReglaEnPanel(PostProcesamientoConfig regla)
+    {
         _cargandoPostProc = true;
 
         var tipo = regla.Accion?.Tipo;
@@ -1289,19 +1360,42 @@ public partial class GestionEmisoresForm : Form
         _cargandoPostProc = false;
     }
 
+    /// <summary>
+    /// Pone el panel de detalle en blanco: es el formulario de alta de una regla
+    /// (sin selección en la lista), con todos sus campos activos para cumplimentar.
+    /// </summary>
+    private void LimpiarPanelPostProc()
+    {
+        _cargandoPostProc = true;
+        cmbPostProcTipo.SelectedIndex = -1;
+        txtPostProcCondicion.Text = "";
+        cmbPostCondCampo.SelectedIndex = -1;
+        txtPostCondValor.Text = "";
+        cmbPostAccDestino.SelectedIndex = -1;
+        txtPostAccValor.Text = "";
+        cmbPostAccOrigen1.SelectedIndex = -1;
+        cmbPostAccOperador.SelectedIndex = -1;
+        cmbPostAccOrigen2.SelectedIndex = -1;
+        ActualizarControlesAccion();
+        _cargandoPostProc = false;
+        ActualizarResumenPostProc();
+    }
+
     private void ActualizarControlesAccion()
     {
         var tipo = PostProcesamientoConfig.NormalizarTipo(cmbPostProcTipo.SelectedItem?.ToString() ?? "");
 
         var usarDestino = tipo is "establecervalor" or "calcular";
         lblPostAccDestino.Visible = usarDestino;
-        lblDestinoA.Visible = usarDestino;
+        // "a" sólo enlaza destino con valor; en "Calcular" lo sustituye el "=" de la fórmula.
+        lblDestinoA.Visible = tipo == "establecervalor";
         cmbPostAccDestino.Visible = usarDestino;
 
         var usarValor = tipo == "establecervalor";
         txtPostAccValor.Visible = usarValor;
 
         var usarFormula = tipo == "calcular";
+        lblPostAccFormula.Visible = usarFormula;
         cmbPostAccOrigen1.Visible = usarFormula;
         cmbPostAccOperador.Visible = usarFormula;
         cmbPostAccOrigen2.Visible = usarFormula;
@@ -1345,10 +1439,8 @@ public partial class GestionEmisoresForm : Form
             RellenarComboCampos(cmbPostAccOrigen2, camposNum);
             if (a1 != null && cmbPostAccOrigen1.Items.Contains(a1)) cmbPostAccOrigen1.SelectedItem = a1;
             if (a2 != null && cmbPostAccOrigen2.Items.Contains(a2)) cmbPostAccOrigen2.SelectedItem = a2;
-            if (cmbPostAccOrigen1.Items.Count > 0 && cmbPostAccOrigen1.SelectedIndex < 0)
-                cmbPostAccOrigen1.SelectedIndex = 0;
-            if (cmbPostAccOrigen2.Items.Count > 0 && cmbPostAccOrigen2.SelectedIndex < 0)
-                cmbPostAccOrigen2.SelectedIndex = 0;
+            // Sin selección automática: si la regla no tiene origen, el combo queda
+            // vacío; nunca se muestran (ni se escriben en el modelo) valores ajenos.
         }
     }
 
@@ -1359,44 +1451,141 @@ public partial class GestionEmisoresForm : Form
 
         if (!string.IsNullOrEmpty(accion.CampoDestino) && cmbPostAccDestino.Items.Contains(accion.CampoDestino))
             cmbPostAccDestino.SelectedItem = accion.CampoDestino;
+        else
+            cmbPostAccDestino.SelectedIndex = -1;
 
         txtPostAccValor.Text = accion.Valor;
 
         if (!string.IsNullOrEmpty(accion.CampoOrigen1) && cmbPostAccOrigen1.Items.Contains(accion.CampoOrigen1))
             cmbPostAccOrigen1.SelectedItem = accion.CampoOrigen1;
-        else if (cmbPostAccOrigen1.Items.Count > 0 && string.IsNullOrEmpty(accion.CampoOrigen1))
-            cmbPostAccOrigen1.SelectedIndex = 0;
+        else
+            cmbPostAccOrigen1.SelectedIndex = -1;
 
-        if (cmbPostAccOperador.Items.Contains(accion.Operador))
+        if (!string.IsNullOrEmpty(accion.Operador) && cmbPostAccOperador.Items.Contains(accion.Operador))
             cmbPostAccOperador.SelectedItem = accion.Operador;
+        else
+            cmbPostAccOperador.SelectedIndex = -1;
 
         if (!string.IsNullOrEmpty(accion.CampoOrigen2) && cmbPostAccOrigen2.Items.Contains(accion.CampoOrigen2))
             cmbPostAccOrigen2.SelectedItem = accion.CampoOrigen2;
-        else if (cmbPostAccOrigen2.Items.Count > 0 && string.IsNullOrEmpty(accion.CampoOrigen2))
-            cmbPostAccOrigen2.SelectedIndex = 0;
+        else
+            cmbPostAccOrigen2.SelectedIndex = -1;
     }
 
     private void ActualizarResumenPostProc()
     {
-        lblPostProcResumen.Text = lstPostProc.SelectedItem is PostProcesamientoConfig regla
-            ? "Resumen: " + regla
-            : "";
+        if (lstPostProc.SelectedItem is not PostProcesamientoConfig regla)
+        {
+            var total = lstPostProc.Items.Count;
+            lblPostProcResumen.ForeColor = Color.FromArgb(70, 70, 70);
+            lblPostProcResumen.Text = total == 0
+                ? "Elige el tipo y pulsa «+ Añadir» para crear una regla"
+                : $"{total} {(total == 1 ? "regla" : "reglas")} · elige el tipo para añadir otra" +
+                  " · pendiente de guardar con 💾 Guardar";
+            return;
+        }
+
+        var (error, _) = ErrorReglaPostProc(regla);
+        if (error != null)
+        {
+            lblPostProcResumen.ForeColor = Color.FromArgb(192, 0, 0);
+            lblPostProcResumen.Text = "⚠ Regla incompleta: " + error;
+        }
+        else
+        {
+            lblPostProcResumen.ForeColor = Color.FromArgb(70, 70, 70);
+            lblPostProcResumen.Text = "Resumen: " + regla;
+        }
+    }
+
+    /// <summary>
+    /// Devuelve el motivo por el que la regla no puede guardarse (o null si es válida)
+    /// y el control del panel donde falta ese dato, para poder llevarle el foco.
+    /// </summary>
+    private (string? Error, Control? Campo) ErrorReglaPostProc(PostProcesamientoConfig regla)
+    {
+        var tipo = PostProcesamientoConfig.NormalizarTipo(regla.Accion?.Tipo ?? "");
+        var accion = regla.Accion;
+
+        switch (tipo)
+        {
+            case "invertirsigno":
+                return string.IsNullOrWhiteSpace(regla.CondicionTextoContiene)
+                    ? ("falta la condición (texto que debe aparecer en la factura)", txtPostProcCondicion)
+                    : (null, null);
+
+            case "establecervalor":
+                if (regla.CondicionCampo == null || string.IsNullOrEmpty(regla.CondicionCampo.Campo))
+                    return ("falta la condición (campo y valor esperado)", cmbPostCondCampo);
+                if (string.IsNullOrEmpty(regla.CondicionCampo.Valor))
+                    return ("falta el valor esperado de la condición", txtPostCondValor);
+                if (accion == null || string.IsNullOrEmpty(accion.CampoDestino))
+                    return ("falta el campo destino", cmbPostAccDestino);
+                if (string.IsNullOrEmpty(accion.Valor))
+                    return ("falta el valor a fijar", txtPostAccValor);
+                return (null, null);
+
+            case "calcular":
+                if (accion == null || string.IsNullOrEmpty(accion.CampoDestino))
+                    return ("falta el campo destino", cmbPostAccDestino);
+                if (string.IsNullOrEmpty(accion.CampoOrigen1))
+                    return ("falta el primer campo de origen de la fórmula", cmbPostAccOrigen1);
+                if (string.IsNullOrEmpty(accion.CampoOrigen2))
+                    return ("falta el segundo campo de origen de la fórmula", cmbPostAccOrigen2);
+                return (null, null);
+
+            default:
+                return ("tipo de acción desconocido", cmbPostProcTipo);
+        }
+    }
+
+    /// <summary>
+    /// Valida todas las reglas de la lista. Si hay alguna incompleta, deja
+    /// seleccionada la primera y devuelve el mensaje y el campo a corregir
+    /// (null/null si todo vale).
+    /// </summary>
+    private (string? Error, Control? Campo) ValidarReglasPostProc()
+    {
+        for (int i = 0; i < lstPostProc.Items.Count; i++)
+        {
+            if (lstPostProc.Items[i] is not PostProcesamientoConfig regla) continue;
+
+            var (error, campo) = ErrorReglaPostProc(regla);
+            if (error == null) continue;
+
+            lstPostProc.SelectedIndex = i;
+            ActualizarResumenPostProc();
+            return ($"Post-procesamiento, regla {i + 1} de {lstPostProc.Items.Count}:\n• {error}", campo);
+        }
+
+        return (null, null);
     }
 
     private void CmbPostProcTipo_SelectedIndexChanged(object? sender, EventArgs e)
     {
         if (_cargandoPostProc) return;
-        if (lstPostProc.SelectedItem is not PostProcesamientoConfig regla) return;
+
+        if (lstPostProc.SelectedItem is not PostProcesamientoConfig regla)
+        {
+            // Modo alta: sin regla seleccionada sólo se muestran los campos que
+            // pedirá la regla nueva (activos, para cumplimentarlos).
+            _cargandoPostProc = true;
+            ActualizarControlesAccion();
+            _cargandoPostProc = false;
+            return;
+        }
 
         var tipo = cmbPostProcTipo.SelectedItem?.ToString() ?? "InvertirSigno";
         regla.Accion ??= new AccionPostProcesamiento();
         regla.Accion.Tipo = tipo;
 
-        _cargandoPostProc = true;
-        ActualizarControlesAccion();
-        _cargandoPostProc = false;
+        // Reescribe la regla desde el panel: conserva sólo los campos del tipo nuevo
+        // y descarta los que no aplican (evita condiciones heredadas ocultas).
+        PostProcDesdePanel();
+        // Y vuelca de nuevo la regla en el panel para que quede sincronizado
+        // (p. ej. el textbox de valor, que queda oculto, pasa a vacío).
+        MostrarReglaEnPanel(regla);
 
-        lstPostProc.Refresh();
         ActualizarResumenPostProc();
         MarcarModificado();
     }
@@ -1404,84 +1593,173 @@ public partial class GestionEmisoresForm : Form
     private void PostProcControl_Changed(object? sender, EventArgs e)
     {
         if (_cargandoPostProc) return;
-        if (lstPostProc.SelectedItem is not PostProcesamientoConfig regla) return;
+        if (lstPostProc.SelectedItem is not PostProcesamientoConfig) return;
 
-        var condicion = txtPostProcCondicion.Text.Trim();
-        if (!string.IsNullOrWhiteSpace(condicion))
-            regla.CondicionTextoContiene = condicion;
-
-        var condCampo = cmbPostCondCampo.SelectedItem?.ToString();
-        if (!string.IsNullOrEmpty(condCampo))
-        {
-            regla.CondicionCampo ??= new CondicionCampoPostProcesamiento();
-            regla.CondicionCampo.Campo = condCampo;
-            regla.CondicionCampo.Valor = txtPostCondValor.Text.Trim();
-        }
-
-        var accion = regla.Accion;
-        if (accion != null)
-        {
-            accion.CampoDestino = cmbPostAccDestino.SelectedItem?.ToString() ?? accion.CampoDestino;
-            accion.Valor = txtPostAccValor.Text.Trim();
-            accion.CampoOrigen1 = cmbPostAccOrigen1.SelectedItem?.ToString() ?? "";
-            accion.Operador = cmbPostAccOperador.SelectedItem?.ToString() ?? "+";
-            accion.CampoOrigen2 = cmbPostAccOrigen2.SelectedItem?.ToString() ?? "";
-        }
-
-        lstPostProc.Refresh();
+        PostProcDesdePanel();
         ActualizarResumenPostProc();
         MarcarModificado();
     }
 
-    private void TxtPostProcCondicion_Leave(object? sender, EventArgs e)
+    /// <summary>
+    /// Escribe el panel de detalle en la regla seleccionada, tocando SOLO los campos
+    /// del tipo activo y limpiando los que no aplican. Así no quedan condiciones
+    /// heredadas ocultas ni atributos huérfanos en el XML, y sí se puede borrar
+    /// una condición (null/vacío vale como ausencia).
+    /// </summary>
+    private void PostProcDesdePanel()
     {
-        if (_cargandoPostProc) return;
         if (lstPostProc.SelectedItem is not PostProcesamientoConfig regla) return;
-        if (string.IsNullOrWhiteSpace(txtPostProcCondicion.Text))
-            txtPostProcCondicion.Text = regla.CondicionTextoContiene ?? "";
+
+        PostProcARegla(regla);
+        // La regla ha cambiado: el cuadro debe reflejarlo en el acto, sin esperar
+        // a que se pulse "Guardar".
+        ActualizarCuadroPostProc();
+    }
+
+    /// <summary>
+    /// Vuelve a insertar los ítems del cuadro de reglas para que muestre los
+    /// valores actuales de cada una. El ListBox conserva el texto de cada ítem
+    /// en el momento en que se añade, así que con refrescar no basta: hay que
+    /// volver a insertarlos para que se llame de nuevo a ToString(). Se mantiene
+    /// la regla seleccionada y no se toca el panel de detalle.
+    /// </summary>
+    private void ActualizarCuadroPostProc()
+    {
+        if (lstPostProc.Items.Count == 0) return;
+
+        var seleccion = lstPostProc.SelectedIndex;
+        _refrescandoCuadroPostProc = true;
+        try
+        {
+            var reglas = lstPostProc.Items.Cast<PostProcesamientoConfig>().ToList();
+
+            lstPostProc.BeginUpdate();
+            lstPostProc.Items.Clear();
+            foreach (var regla in reglas)
+                lstPostProc.Items.Add(regla);
+            lstPostProc.EndUpdate();
+
+            if (seleccion >= 0 && seleccion < lstPostProc.Items.Count)
+                lstPostProc.SelectedIndex = seleccion;
+        }
+        finally
+        {
+            _refrescandoCuadroPostProc = false;
+        }
+    }
+
+    /// <summary>
+    /// Vuelca el panel de detalle en la regla indicada (la seleccionada, o la nueva
+    /// que se está dando de alta). Sólo se tocan los campos del tipo activo.
+    /// </summary>
+    private void PostProcARegla(PostProcesamientoConfig regla)
+    {
+        var accion = regla.Accion ??= new AccionPostProcesamiento();
+
+        var tipo = cmbPostProcTipo.SelectedItem?.ToString();
+        if (!string.IsNullOrWhiteSpace(tipo))
+            accion.Tipo = tipo;
+
+        var tipoNorm = PostProcesamientoConfig.NormalizarTipo(accion.Tipo);
+
+        // Condiciones: sólo las del tipo activo.
+        regla.CondicionTextoContiene = tipoNorm == "invertirsigno"
+            ? (string.IsNullOrWhiteSpace(txtPostProcCondicion.Text)
+                ? null
+                : txtPostProcCondicion.Text.Trim())
+            : null;
+
+        var campoCond = cmbPostCondCampo.SelectedItem?.ToString();
+        regla.CondicionCampo = tipoNorm == "establecervalor" && !string.IsNullOrEmpty(campoCond)
+            ? new CondicionCampoPostProcesamiento
+            {
+                Campo = campoCond,
+                Valor = txtPostCondValor.Text.Trim()
+            }
+            : null;
+
+        // Acción: sólo los campos del tipo activo.
+        accion.CampoDestino = tipoNorm is "establecervalor" or "calcular"
+            ? cmbPostAccDestino.SelectedItem?.ToString() ?? ""
+            : "";
+
+        switch (tipoNorm)
+        {
+            case "establecervalor":
+                accion.Valor = txtPostAccValor.Text.Trim();
+                accion.CampoOrigen1 = "";
+                accion.Operador = "+";
+                accion.CampoOrigen2 = "";
+                break;
+
+            case "calcular":
+                accion.Valor = "";
+                accion.CampoOrigen1 = cmbPostAccOrigen1.SelectedItem?.ToString() ?? "";
+                accion.Operador = cmbPostAccOperador.SelectedItem?.ToString() ?? "+";
+                accion.CampoOrigen2 = cmbPostAccOrigen2.SelectedItem?.ToString() ?? "";
+                break;
+
+            default:
+                accion.Valor = "";
+                accion.CampoOrigen1 = "";
+                accion.Operador = "+";
+                accion.CampoOrigen2 = "";
+                break;
+        }
     }
 
     private void BtnPostProcAdd_Click(object? sender, EventArgs e)
     {
-        var tipoNorm = PostProcesamientoConfig.NormalizarTipo(cmbPostProcTipo.SelectedItem?.ToString() ?? "");
-        if (tipoNorm == "invertirsigno")
+        // Si hay una regla seleccionada, el panel es su editor y no el formulario de
+        // alta: primero se vuelcan los parámetros sobre esa regla (por si el usuario
+        // los hubiera cambiado sin que se hubieran escrito) y a continuación se
+        // deselecciona para dejar el panel en blanco. Así no se duplica la regla que
+        // se veía y el siguiente clic, ya en blanco, crea la regla nueva.
+        if (lstPostProc.SelectedItem is not null)
         {
-            if (string.IsNullOrWhiteSpace(txtPostProcCondicion.Text))
-            {
-                MessageBox.Show("Para 'Invertir Signo' la condición (texto en factura) es obligatoria.",
-                    "Condición requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtPostProcCondicion.Focus();
-                return;
-            }
-        }
-        else if (tipoNorm == "establecervalor")
-        {
-            if (cmbPostCondCampo.SelectedItem == null || string.IsNullOrWhiteSpace(txtPostCondValor.Text))
-            {
-                MessageBox.Show("Para 'Establecer Valor' debes indicar el campo de la condición y el valor esperado.",
-                    "Condición requerida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                cmbPostCondCampo.Focus();
-                return;
-            }
+            PostProcDesdePanel();
+            lstPostProc.SelectedIndex = -1;   // dispara LstPostProc… → LimpiarPanelPostProc()
+            MarcarModificado();
+            cmbPostProcTipo.Focus();
+            return;
         }
 
-        var tipo = cmbPostProcTipo.SelectedItem?.ToString() ?? "InvertirSigno";
+        // El tipo es obligatorio para dar de alta una regla.
+        var tipo = cmbPostProcTipo.SelectedItem?.ToString();
+        if (string.IsNullOrWhiteSpace(tipo))
+        {
+            MessageBox.Show("Selecciona el tipo de post-procesamiento antes de añadir.",
+                "Tipo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            cmbPostProcTipo.Focus();
+            return;
+        }
+
+        // Regla nueva construida con TODO lo cumplimentado en el panel (condición
+        // y acción del tipo elegido), no sólo con el tipo.
         var regla = new PostProcesamientoConfig
         {
             Accion = new AccionPostProcesamiento { Tipo = tipo }
         };
-        if (tipoNorm == "invertirsigno")
-            regla.CondicionTextoContiene = txtPostProcCondicion.Text.Trim();
-        else if (tipoNorm == "establecervalor")
-            regla.CondicionCampo = new CondicionCampoPostProcesamiento
-            {
-                Campo = cmbPostCondCampo.SelectedItem!.ToString()!,
-                Valor = txtPostCondValor.Text.Trim()
-            };
+        PostProcARegla(regla);
+
+        // Se comprueba antes de registrarla: si falta algo, se avisa del dato
+        // concreto y se lleva el foco a su campo.
+        var (error, campo) = ErrorReglaPostProc(regla);
+        if (error != null)
+        {
+            MessageBox.Show($"No se puede añadir la regla:\n• {error}",
+                "Regla incompleta", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            campo?.Focus();
+            return;
+        }
 
         lstPostProc.Items.Add(regla);
-        lstPostProc.SelectedItem = regla;
         MarcarModificado();
+
+        // El panel vuelve a estar en blanco (también el tipo) para la siguiente alta;
+        // la regla recién añadida queda pendiente de guardar con 💾 Guardar.
+        LimpiarPanelPostProc();
+        cmbPostProcTipo.Focus();
     }
 
     private void BtnPostProcRemove_Click(object? sender, EventArgs e)
