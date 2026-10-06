@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>61970916S</Nif>
   <Nombre>ANDREA ESLAVA, NORELIS</Nombre>
-  <Version>202610062006</Version>
+  <Version>202610062250</Version>
   <Identificadores>
     <Id>Norelis Andrea Eslava</Id>
     <Id>norelis3876</Id>
@@ -17,41 +17,34 @@
       <Regex>Factura(?:\s*Rectificativa)[\r\n\s]*(.*)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="Fecha">
       <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="ReceptorNombre">
       <Regex>Cliente[\r\n\s]*(.*)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="ReceptorNif">
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="BaseImponible">
       <Regex>Base imponible\s*(.*)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="PorcentajeIVA">
       <Regex>IVA\s*(\d+)\s*%\s*de</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="TotalFactura">
       <Regex>Total:\s+(.+)\s*€</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
     </Campo>
   </Campos>
   <PostProcesamiento />

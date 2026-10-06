@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B92062603</Nif>
   <Nombre>COSTA DEL SOL BALEAR, S.A.</Nombre>
-  <Version>202610021609</Version>
+  <Version>202610062250</Version>
   <Identificadores>
     <Id>SOL BALEAR</Id>
     <Id>B92062603</Id>
@@ -17,48 +17,34 @@
       <Regex>([CN]{2}\d{9})</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="Fecha">
       <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNombre">
       <Regex>\[RECEP]:\s+(.+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNif">
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="BaseImponible">
       <Regex>[-\d.,]+\s([-\d.,]+)\s[-\d.,]+\s[-\d.,]+\s</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="PorcentajeIVA">
       <Regex>[-\d.,]+\s[-\d.,]+\s([-\d.,]+)\s[-\d.,]+\s</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="TotalFactura">
       <Regex>\[TOTAL\d]:\s+.*[\r\n]+([-\d.,]+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
   </Campos>
   <PostProcesamiento />

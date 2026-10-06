@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>A29185519</Nif>
   <Nombre>EMASA</Nombre>
-  <Version>202610011551</Version>
+  <Version>202610062250</Version>
   <Identificadores>
     <Id>emasa</Id>
     <Id>plaza general torrijos</Id>
@@ -17,32 +17,25 @@
       <Regex>FACTURA:\s*(\S+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="Fecha">
       <Regex>FECHA\sDE\sEMISIÓN:\s*(.*?)\s</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="ReceptorNombre">
       <Regex>Titular:\s*(.+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
     </Campo>
     <Campo Nombre="ReceptorNif">
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="TotalFactura">
       <Regex>TOTAL FACTURA\s+([\d.,]+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
   </Campos>
   <MultiLinea>
@@ -66,13 +59,6 @@
     <MapeoCampos />
   </MultiLinea>
   <PostProcesamiento>
-    <Regla>
-      <CondicionCampo>
-        <Campo>EmisorNombre</Campo>
-        <Valor>EMASA</Valor>
-      </CondicionCampo>
-      <Accion Tipo="Establecer Valor" CampoDestino="" Valor="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
-    </Regla>
     <Regla>
       <Accion Tipo="Calcular" CampoDestino="SubTotal" Valor="" CampoOrigen1="BaseImponible" Operador="+" CampoOrigen2="CuotaIVA" />
     </Regla>

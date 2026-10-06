@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B87438750</Nif>
   <Nombre>TRIGORICO, S.L.U.</Nombre>
-  <Version>202610011551</Version>
+  <Version>202610062250</Version>
   <Identificadores>
     <Id>reinosa</Id>
     <Id>ESB87438750</Id>
@@ -17,48 +17,34 @@
       <Regex>Fecha[\s\r\n]*(\S+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="Fecha">
       <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNombre">
       <Regex>\[P1_Z2]:\s+(.+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNif">
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="BaseImponible">
       <Regex>([\d.,]+)\s+[\d.,]+\s+[\d.,]+\s+[\d.,]+[\s\n\r]+</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="PorcentajeIVA">
       <Regex>[\d.,]+\s+([\d.,]+)\s+[\d.,]+\s+[\d.,]+[\s\n\r]+</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="TotalFactura">
       <Regex>Total\s+Factura.+?([-\d.,]+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-      <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
   </Campos>
   <PostProcesamiento>
