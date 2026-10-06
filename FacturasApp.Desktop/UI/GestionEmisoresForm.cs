@@ -1003,8 +1003,7 @@ public partial class GestionEmisoresForm : Form
     {
         Nombre = c.Nombre, Regex = c.Regex,
         ValorFijo = c.ValorFijo, UsarRegexFechaGeneral = c.UsarRegexFechaGeneral,
-        UsarRegexNifGeneral = c.UsarRegexNifGeneral, EsSuma = c.EsSuma,
-        CamposSuma = c.CamposSuma?.ToList(), FormatoFecha = c.FormatoFecha
+        UsarRegexNifGeneral = c.UsarRegexNifGeneral
     };
 
     private static PostProcesamientoConfig CopiarPostProc(PostProcesamientoConfig p)
@@ -1127,16 +1126,10 @@ public partial class GestionEmisoresForm : Form
     private void ActualizarCampoDesdeDetalle(CampoConfig campo)
     {
         var tipo = cmbCampoTipo.SelectedItem?.ToString() ?? "Regex";
-        campo.EsSuma = tipo == "Suma";
         campo.UsarRegexFechaGeneral = tipo == "RegexFechaGeneral";
         campo.UsarRegexNifGeneral = tipo == "RegexNifGeneral";
         campo.ValorFijo = tipo == "ValorFijo" ? txtCampoValorFijo.Text.Trim() : null;
         campo.Regex = tipo == "Regex" ? txtCampoRegex.Text.Trim() : null;
-        campo.FormatoFecha = string.IsNullOrWhiteSpace(txtCampoFormatoFecha.Text)
-            ? null : txtCampoFormatoFecha.Text.Trim();
-        campo.CamposSuma = tipo == "Suma" && !string.IsNullOrWhiteSpace(txtCampoCamposSuma.Text)
-            ? txtCampoCamposSuma.Text.Split(',').Select(s => s.Trim()).ToList()
-            : null;
     }
 
     private void LimpiarDetalleCampo()
@@ -1145,8 +1138,6 @@ public partial class GestionEmisoresForm : Form
         cmbCampoTipo.SelectedIndex = -1;
         txtCampoRegex.Text = "";
         txtCampoValorFijo.Text = "";
-        txtCampoFormatoFecha.Text = "";
-        txtCampoCamposSuma.Text = "";
     }
 
     private void CampoDetalle_Changed(object? sender, EventArgs e)
@@ -1213,16 +1204,13 @@ public partial class GestionEmisoresForm : Form
             if (cmbCampoNombre != null) cmbCampoNombre.Text = campo.Nombre;
             cmbCampoTipo.SelectedItem = campo.UsarRegexFechaGeneral ? "RegexFechaGeneral"
                 : campo.UsarRegexNifGeneral ? "RegexNifGeneral"
-                : campo.EsSuma ? "Suma"
                 : !string.IsNullOrEmpty(campo.ValorFijo) ? "ValorFijo"
                 : "Regex";
             txtCampoRegex.Text = campo.Regex ?? "";
             txtCampoValorFijo.Text = campo.ValorFijo ?? "";
-            txtCampoFormatoFecha.Text = campo.FormatoFecha ?? "";
-            txtCampoCamposSuma.Text = campo.CamposSuma != null ? string.Join(",", campo.CamposSuma) : "";
 
             if (!campo.UsarRegexFechaGeneral && !campo.UsarRegexNifGeneral
-                && !campo.EsSuma && string.IsNullOrEmpty(campo.ValorFijo)
+                && string.IsNullOrEmpty(campo.ValorFijo)
                 && !string.IsNullOrEmpty(txtCampoRegex.Text))
             {
                 txtRegexPattern.Text = txtCampoRegex.Text;

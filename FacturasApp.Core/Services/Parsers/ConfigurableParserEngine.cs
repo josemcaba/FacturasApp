@@ -63,20 +63,8 @@ public class ConfigurableParserEngine : BaseParser
         factura.ConceptoGasto = string.IsNullOrEmpty(_config.ConceptoGasto) ? "600" : _config.ConceptoGasto;
         factura.ConceptoIngreso = string.IsNullOrEmpty(_config.ConceptoIngreso) ? "700" : _config.ConceptoIngreso;
 
-        var camposSuma = new List<CampoConfig>();
-
         foreach (var campo in _config.Campos)
-        {
-            if (campo.EsSuma)
-            {
-                camposSuma.Add(campo);
-                continue;
-            }
             ExtraerYAsignarCampo(factura, campo, texto);
-        }
-
-        foreach (var campo in camposSuma)
-            AsignarSuma(factura, campo);
 
         AplicarPostProcesamiento(factura, texto);
         factura.Estado = FacturaEstado.Determinar(factura);
@@ -110,16 +98,8 @@ public class ConfigurableParserEngine : BaseParser
                         .Select(m => m.Nombre),
                     StringComparer.OrdinalIgnoreCase);
 
-                var camposSuma = new List<CampoConfig>();
-
                 foreach (var campo in _config.Campos)
                 {
-                    if (campo.EsSuma)
-                    {
-                        camposSuma.Add(campo);
-                        continue;
-                    }
-
                     if (esCampoLinea.Contains(campo.Nombre))
                         continue;
 
@@ -131,11 +111,8 @@ public class ConfigurableParserEngine : BaseParser
                     if (mapeo.Grupo >= match.Groups.Count) continue;
                     var valor = match.Groups[mapeo.Grupo].Value.Trim();
                     if (!string.IsNullOrEmpty(valor))
-                        AsignarCampo(factura, mapeo.Nombre, valor, campoFormatoFecha: null);
+                        AsignarCampo(factura, mapeo.Nombre, valor);
                 }
-
-                foreach (var campo in camposSuma)
-                    AsignarSuma(factura, campo);
 
                 AplicarPostProcesamiento(factura, texto);
                 factura.Estado = FacturaEstado.Determinar(factura);
@@ -222,9 +199,6 @@ public class ConfigurableParserEngine : BaseParser
             return;
         }
 
-        if (campo.EsSuma)
-            return;
-
         string? rawValue = null;
 
         if (!string.IsNullOrEmpty(campo.ValorFijo))
@@ -240,11 +214,10 @@ public class ConfigurableParserEngine : BaseParser
         }
 
         if (rawValue != null)
-            AsignarCampo(factura, campo.Nombre, rawValue, campo.FormatoFecha);
+            AsignarCampo(factura, campo.Nombre, rawValue);
     }
 
-    private void AsignarCampo(Factura factura, string nombreCampo,
-        string valorTexto, string? campoFormatoFecha)
+    private void AsignarCampo(Factura factura, string nombreCampo, string valorTexto)
     {
         if (string.IsNullOrEmpty(valorTexto)) return;
 
@@ -255,7 +228,7 @@ public class ConfigurableParserEngine : BaseParser
                 break;
 
             case "Fecha":
-                factura.Fecha = ParsearFecha(valorTexto, campoFormatoFecha);
+                factura.Fecha = ParsearFecha(valorTexto);
                 break;
 
             case "BaseImponible":
@@ -316,37 +289,16 @@ public class ConfigurableParserEngine : BaseParser
         }
     }
 
-    private DateTime? ParsearFecha(string valorTexto, string? formatoFecha)
+    private DateTime? ParsearFecha(string valorTexto)
     {
-        if (string.IsNullOrEmpty(formatoFecha))
-        {
-            var cultura = new CultureInfo(
-                string.IsNullOrEmpty(_config.CulturaFecha) ? "es-ES" : _config.CulturaFecha);
-            if (DateTime.TryParse(valorTexto, cultura, DateTimeStyles.None, out var fecha))
-                return fecha;
-            return null;
-        }
+        if (string.IsNullOrEmpty(valorTexto)) return null;
 
-        var culturaEspecifica = new CultureInfo(
+        var cultura = new CultureInfo(
             string.IsNullOrEmpty(_config.CulturaFecha) ? "es-ES" : _config.CulturaFecha);
-        if (DateTime.TryParseExact(valorTexto, formatoFecha, culturaEspecifica,
-            DateTimeStyles.None, out var fe))
-            return fe;
+        if (DateTime.TryParse(valorTexto, cultura, DateTimeStyles.None, out var fecha))
+            return fecha;
 
         return null;
-    }
-
-    private void AsignarSuma(Factura factura, CampoConfig campo)
-    {
-        if (campo.CamposSuma == null || campo.CamposSuma.Count == 0) return;
-
-        decimal suma = 0m;
-        foreach (var nombre in campo.CamposSuma)
-        {
-            suma += ObtenerValorDecimal(factura, nombre);
-        }
-
-        AsignarDecimal(factura, campo.Nombre, suma);
     }
 
     // ── Post-procesamiento ───────────────────────────────────────────────────

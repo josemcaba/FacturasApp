@@ -12,11 +12,4 @@ public class CampoConfig
     public string? ValorFijo { get; set; }
     public bool UsarRegexFechaGeneral { get; set; }
     public bool UsarRegexNifGeneral { get; set; }
-    public bool EsSuma { get; set; }
-
-    [XmlArray("CamposSuma")]
-    [XmlArrayItem("Campo")]
-    public List<string>? CamposSuma { get; set; }
-
-    public string? FormatoFecha { get; set; }
 }

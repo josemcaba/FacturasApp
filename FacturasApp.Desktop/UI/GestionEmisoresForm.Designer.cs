@@ -71,10 +71,6 @@ partial class GestionEmisoresForm
         lblCampoRegex = new Label();
         lblCampoValorFijo = new Label();
         txtCampoValorFijo = new TextBox();
-        lblCampoFormato = new Label();
-        txtCampoFormatoFecha = new TextBox();
-        lblCampoSuma = new Label();
-        txtCampoCamposSuma = new TextBox();
         btnCampoAdd = new Button();
         btnCampoRemove = new Button();
         lblRegexPattern = new Label();
@@ -286,7 +282,7 @@ partial class GestionEmisoresForm
         tabGeneral.Controls.Add(dgvZonas);
         tabGeneral.Location = new Point(4, 29);
         tabGeneral.Name = "tabGeneral";
-        tabGeneral.Size = new Size(745, 471);
+        tabGeneral.Size = new Size(745, 443);
         tabGeneral.TabIndex = 0;
         tabGeneral.Text = "General";
         // 
@@ -454,7 +450,7 @@ partial class GestionEmisoresForm
         dataGridViewCellStyle8.WrapMode = DataGridViewTriState.True;
         dgvZonas.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
         dgvZonas.RowHeadersWidth = 51;
-        dgvZonas.Size = new Size(721, 213);
+        dgvZonas.Size = new Size(721, 185);
         dgvZonas.TabIndex = 1;
         dgvZonas.CellValueChanged += DgvCellValueChanged;
         dgvZonas.UserAddedRow += DgvUserAddedRow;
@@ -539,7 +535,7 @@ partial class GestionEmisoresForm
         tabCampos.Controls.Add(btnRegexApplyToField);
         tabCampos.Location = new Point(4, 29);
         tabCampos.Name = "tabCampos";
-        tabCampos.Size = new Size(745, 471);
+        tabCampos.Size = new Size(745, 443);
         tabCampos.TabIndex = 1;
         tabCampos.Text = "Campos";
         // 
@@ -573,10 +569,6 @@ partial class GestionEmisoresForm
         panelDetalle.Controls.Add(lblCampoRegex);
         panelDetalle.Controls.Add(lblCampoValorFijo);
         panelDetalle.Controls.Add(txtCampoValorFijo);
-        panelDetalle.Controls.Add(lblCampoFormato);
-        panelDetalle.Controls.Add(txtCampoFormatoFecha);
-        panelDetalle.Controls.Add(lblCampoSuma);
-        panelDetalle.Controls.Add(txtCampoCamposSuma);
         panelDetalle.Location = new Point(215, 38);
         panelDetalle.Name = "panelDetalle";
         panelDetalle.Size = new Size(526, 212);
@@ -605,7 +597,7 @@ partial class GestionEmisoresForm
         // cmbCampoTipo
         // 
         cmbCampoTipo.DropDownStyle = ComboBoxStyle.DropDownList;
-        cmbCampoTipo.Items.AddRange(new object[] { "Regex", "ValorFijo", "Suma", "RegexFechaGeneral", "RegexNifGeneral" });
+        cmbCampoTipo.Items.AddRange(new object[] { "Regex", "ValorFijo", "RegexFechaGeneral", "RegexNifGeneral" });
         cmbCampoTipo.Location = new Point(174, 43);
         cmbCampoTipo.Name = "cmbCampoTipo";
         cmbCampoTipo.Size = new Size(204, 28);
@@ -654,42 +646,6 @@ partial class GestionEmisoresForm
         txtCampoValorFijo.Size = new Size(204, 27);
         txtCampoValorFijo.TabIndex = 7;
         txtCampoValorFijo.TextChanged += CampoDetalle_Changed;
-        // 
-        // lblCampoFormato
-        // 
-        lblCampoFormato.AutoSize = true;
-        lblCampoFormato.Location = new Point(12, 146);
-        lblCampoFormato.Name = "lblCampoFormato";
-        lblCampoFormato.Size = new Size(108, 20);
-        lblCampoFormato.TabIndex = 8;
-        lblCampoFormato.Text = "Formato fecha:";
-        // 
-        // txtCampoFormatoFecha
-        // 
-        txtCampoFormatoFecha.Location = new Point(174, 143);
-        txtCampoFormatoFecha.Name = "txtCampoFormatoFecha";
-        txtCampoFormatoFecha.PlaceholderText = "dd/MM/yyyy (opcional)";
-        txtCampoFormatoFecha.Size = new Size(204, 27);
-        txtCampoFormatoFecha.TabIndex = 9;
-        txtCampoFormatoFecha.TextChanged += CampoDetalle_Changed;
-        // 
-        // lblCampoSuma
-        // 
-        lblCampoSuma.AutoSize = true;
-        lblCampoSuma.Location = new Point(12, 179);
-        lblCampoSuma.Name = "lblCampoSuma";
-        lblCampoSuma.Size = new Size(156, 20);
-        lblCampoSuma.TabIndex = 10;
-        lblCampoSuma.Text = "Campos suma (coma):";
-        // 
-        // txtCampoCamposSuma
-        // 
-        txtCampoCamposSuma.Location = new Point(174, 176);
-        txtCampoCamposSuma.Name = "txtCampoCamposSuma";
-        txtCampoCamposSuma.PlaceholderText = "BaseImponible,CuotaIVA";
-        txtCampoCamposSuma.Size = new Size(204, 27);
-        txtCampoCamposSuma.TabIndex = 11;
-        txtCampoCamposSuma.TextChanged += CampoDetalle_Changed;
         // 
         // btnCampoAdd
         // 
@@ -760,7 +716,7 @@ partial class GestionEmisoresForm
         dgvRegexMatches.Name = "dgvRegexMatches";
         dgvRegexMatches.ReadOnly = true;
         dgvRegexMatches.RowHeadersWidth = 51;
-        dgvRegexMatches.Size = new Size(738, 136);
+        dgvRegexMatches.Size = new Size(738, 108);
         dgvRegexMatches.TabIndex = 56;
         // 
         // btnRegexApplyToField
@@ -825,7 +781,7 @@ partial class GestionEmisoresForm
         lblMultiLineas.ForeColor = Color.Gray;
         lblMultiLineas.Location = new Point(12, 8);
         lblMultiLineas.Name = "lblMultiLineas";
-        lblMultiLineas.Size = new Size(246, 20);
+        lblMultiLineas.Size = new Size(215, 20);
         lblMultiLineas.TabIndex = 1;
         lblMultiLineas.Text = "━━━━━━ MULTILÍNEA ━━━━━━";
         // 
@@ -836,7 +792,7 @@ partial class GestionEmisoresForm
         lstMultiLineas.FormattingEnabled = true;
         lstMultiLineas.Location = new Point(12, 34);
         lstMultiLineas.Name = "lstMultiLineas";
-        lstMultiLineas.Size = new Size(340, 140);
+        lstMultiLineas.Size = new Size(340, 144);
         lstMultiLineas.TabIndex = 2;
         lstMultiLineas.SelectedIndexChanged += LstMultiLineas_SelectedIndexChanged;
         // 
@@ -890,9 +846,9 @@ partial class GestionEmisoresForm
         lblMultiLineaRegex.AutoSize = true;
         lblMultiLineaRegex.Location = new Point(368, 8);
         lblMultiLineaRegex.Name = "lblMultiLineaRegex";
-        lblMultiLineaRegex.Size = new Size(336, 20);
+        lblMultiLineaRegex.Size = new Size(355, 20);
         lblMultiLineaRegex.TabIndex = 7;
-        lblMultiLineaRegex.Text = "Regex de la línea seleccionada (match = Factura):";
+        lblMultiLineaRegex.Text = "Regex de líneas seleccionadas (1 match = 1 factura):";
         // 
         // txtMultiLineaRegex
         // 
@@ -960,14 +916,14 @@ partial class GestionEmisoresForm
         lstPostProc.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         lstPostProc.Location = new Point(12, 246);
         lstPostProc.Name = "lstPostProc";
-        lstPostProc.Size = new Size(340, 118);
+        lstPostProc.Size = new Size(340, 124);
         lstPostProc.TabIndex = 1;
         lstPostProc.SelectedIndexChanged += LstPostProc_SelectedIndexChanged;
         // 
         // btnPostProcAdd
         // 
         btnPostProcAdd.FlatStyle = FlatStyle.Flat;
-        btnPostProcAdd.Location = new Point(12, 372);
+        btnPostProcAdd.Location = new Point(12, 374);
         btnPostProcAdd.Name = "btnPostProcAdd";
         btnPostProcAdd.Size = new Size(79, 30);
         btnPostProcAdd.TabIndex = 8;
@@ -978,7 +934,7 @@ partial class GestionEmisoresForm
         // btnPostProcRemove
         // 
         btnPostProcRemove.FlatStyle = FlatStyle.Flat;
-        btnPostProcRemove.Location = new Point(99, 372);
+        btnPostProcRemove.Location = new Point(99, 374);
         btnPostProcRemove.Name = "btnPostProcRemove";
         btnPostProcRemove.Size = new Size(79, 30);
         btnPostProcRemove.TabIndex = 9;
@@ -989,7 +945,7 @@ partial class GestionEmisoresForm
         // btnPostProcUp
         // 
         btnPostProcUp.FlatStyle = FlatStyle.Flat;
-        btnPostProcUp.Location = new Point(186, 372);
+        btnPostProcUp.Location = new Point(186, 374);
         btnPostProcUp.Name = "btnPostProcUp";
         btnPostProcUp.Size = new Size(79, 30);
         btnPostProcUp.TabIndex = 20;
@@ -1000,7 +956,7 @@ partial class GestionEmisoresForm
         // btnPostProcDown
         // 
         btnPostProcDown.FlatStyle = FlatStyle.Flat;
-        btnPostProcDown.Location = new Point(273, 372);
+        btnPostProcDown.Location = new Point(273, 374);
         btnPostProcDown.Name = "btnPostProcDown";
         btnPostProcDown.Size = new Size(79, 30);
         btnPostProcDown.TabIndex = 21;
@@ -1063,7 +1019,7 @@ partial class GestionEmisoresForm
         // 
         lblPostCondCampo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         lblPostCondCampo.AutoSize = true;
-        lblPostCondCampo.Location = new Point(368, 314);
+        lblPostCondCampo.Location = new Point(368, 282);
         lblPostCondCampo.Name = "lblPostCondCampo";
         lblPostCondCampo.Size = new Size(21, 20);
         lblPostCondCampo.TabIndex = 40;
@@ -1074,7 +1030,7 @@ partial class GestionEmisoresForm
         cmbPostCondCampo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         cmbPostCondCampo.DropDownStyle = ComboBoxStyle.DropDownList;
         cmbPostCondCampo.Items.AddRange(new object[] { "PorcentajeIRPF" });
-        cmbPostCondCampo.Location = new Point(458, 310);
+        cmbPostCondCampo.Location = new Point(458, 278);
         cmbPostCondCampo.Name = "cmbPostCondCampo";
         cmbPostCondCampo.Size = new Size(150, 28);
         cmbPostCondCampo.TabIndex = 6;
@@ -1084,7 +1040,7 @@ partial class GestionEmisoresForm
         // 
         lblPostCondValor.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         lblPostCondValor.AutoSize = true;
-        lblPostCondValor.Location = new Point(616, 314);
+        lblPostCondValor.Location = new Point(616, 282);
         lblPostCondValor.Name = "lblPostCondValor";
         lblPostCondValor.Size = new Size(23, 20);
         lblPostCondValor.TabIndex = 41;
@@ -1093,7 +1049,7 @@ partial class GestionEmisoresForm
         // txtPostCondValor
         // 
         txtPostCondValor.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        txtPostCondValor.Location = new Point(647, 310);
+        txtPostCondValor.Location = new Point(647, 278);
         txtPostCondValor.Name = "txtPostCondValor";
         txtPostCondValor.PlaceholderText = "Ej: 0";
         txtPostCondValor.Size = new Size(86, 27);
@@ -1104,7 +1060,7 @@ partial class GestionEmisoresForm
         // 
         lblPostAccDestino.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         lblPostAccDestino.AutoSize = true;
-        lblPostAccDestino.Location = new Point(368, 346);
+        lblPostAccDestino.Location = new Point(368, 314);
         lblPostAccDestino.Name = "lblPostAccDestino";
         lblPostAccDestino.Size = new Size(37, 20);
         lblPostAccDestino.TabIndex = 10;
@@ -1115,7 +1071,7 @@ partial class GestionEmisoresForm
         cmbPostAccDestino.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         cmbPostAccDestino.DropDownStyle = ComboBoxStyle.DropDownList;
         cmbPostAccDestino.Items.AddRange(new object[] { "ConceptoIngreso", "ConceptoGasto" });
-        cmbPostAccDestino.Location = new Point(458, 342);
+        cmbPostAccDestino.Location = new Point(458, 310);
         cmbPostAccDestino.Name = "cmbPostAccDestino";
         cmbPostAccDestino.Size = new Size(150, 28);
         cmbPostAccDestino.TabIndex = 11;
@@ -1124,7 +1080,7 @@ partial class GestionEmisoresForm
         // txtPostAccValor
         // 
         txtPostAccValor.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        txtPostAccValor.Location = new Point(647, 342);
+        txtPostAccValor.Location = new Point(647, 310);
         txtPostAccValor.Name = "txtPostAccValor";
         txtPostAccValor.PlaceholderText = "123,45";
         txtPostAccValor.Size = new Size(86, 27);
@@ -1135,18 +1091,28 @@ partial class GestionEmisoresForm
         // 
         lblDestinoA.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         lblDestinoA.AutoSize = true;
-        lblDestinoA.Location = new Point(616, 346);
+        lblDestinoA.Location = new Point(616, 314);
         lblDestinoA.Name = "lblDestinoA";
-        lblDestinoA.Size = new Size(14, 20);
+        lblDestinoA.Size = new Size(17, 20);
         lblDestinoA.TabIndex = 42;
         lblDestinoA.Text = "a";
         lblDestinoA.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // lblPostAccFormula
+        // 
+        lblPostAccFormula.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        lblPostAccFormula.Location = new Point(368, 282);
+        lblPostAccFormula.Name = "lblPostAccFormula";
+        lblPostAccFormula.Size = new Size(82, 20);
+        lblPostAccFormula.TabIndex = 43;
+        lblPostAccFormula.Text = "=";
+        lblPostAccFormula.TextAlign = ContentAlignment.MiddleRight;
         // 
         // cmbPostAccOrigen1
         // 
         cmbPostAccOrigen1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         cmbPostAccOrigen1.DropDownStyle = ComboBoxStyle.DropDownList;
-        cmbPostAccOrigen1.Location = new Point(458, 374);
+        cmbPostAccOrigen1.Location = new Point(458, 278);
         cmbPostAccOrigen1.Name = "cmbPostAccOrigen1";
         cmbPostAccOrigen1.Size = new Size(111, 28);
         cmbPostAccOrigen1.TabIndex = 15;
@@ -1157,7 +1123,7 @@ partial class GestionEmisoresForm
         cmbPostAccOperador.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         cmbPostAccOperador.DropDownStyle = ComboBoxStyle.DropDownList;
         cmbPostAccOperador.Items.AddRange(new object[] { "+", "-", "*", "/", "%" });
-        cmbPostAccOperador.Location = new Point(575, 374);
+        cmbPostAccOperador.Location = new Point(575, 278);
         cmbPostAccOperador.Name = "cmbPostAccOperador";
         cmbPostAccOperador.Size = new Size(40, 28);
         cmbPostAccOperador.TabIndex = 16;
@@ -1167,21 +1133,11 @@ partial class GestionEmisoresForm
         // 
         cmbPostAccOrigen2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         cmbPostAccOrigen2.DropDownStyle = ComboBoxStyle.DropDownList;
-        cmbPostAccOrigen2.Location = new Point(621, 374);
+        cmbPostAccOrigen2.Location = new Point(621, 278);
         cmbPostAccOrigen2.Name = "cmbPostAccOrigen2";
         cmbPostAccOrigen2.Size = new Size(112, 28);
         cmbPostAccOrigen2.TabIndex = 17;
         cmbPostAccOrigen2.SelectedIndexChanged += PostProcControl_Changed;
-        // 
-        // lblPostAccFormula
-        // 
-        lblPostAccFormula.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        lblPostAccFormula.Location = new Point(368, 378);
-        lblPostAccFormula.Name = "lblPostAccFormula";
-        lblPostAccFormula.Size = new Size(82, 20);
-        lblPostAccFormula.TabIndex = 43;
-        lblPostAccFormula.Text = "=";
-        lblPostAccFormula.TextAlign = ContentAlignment.MiddleRight;
         // 
         // cmbModoExtraccion
         // 
@@ -1250,7 +1206,7 @@ partial class GestionEmisoresForm
         lblVersionXml.ForeColor = Color.Gray;
         lblVersionXml.Location = new Point(155, 677);
         lblVersionXml.Name = "lblVersionXml";
-        lblVersionXml.Size = new Size(140, 20);
+        lblVersionXml.Size = new Size(110, 20);
         lblVersionXml.TabIndex = 2;
         lblVersionXml.Text = "Versión XML: —";
         lblVersionXml.TextAlign = ContentAlignment.MiddleLeft;
@@ -1389,10 +1345,6 @@ partial class GestionEmisoresForm
     private TextBox txtCampoRegex;
     private Label lblCampoValorFijo;
     private TextBox txtCampoValorFijo;
-    private Label lblCampoFormato;
-    private TextBox txtCampoFormatoFecha;
-    private Label lblCampoSuma;
-    private TextBox txtCampoCamposSuma;
     private Button btnCampoAdd;
     private Button btnCampoRemove;
     private TabPage tabMultiLinea;

@@ -1,73 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Nif>B92062603</Nif>
-  <Nombre>COSTA DEL SOL BALEAR, S.A.</Nombre>
-  <Version>202610021609</Version>
+  <Nif>61970916S</Nif>
+  <Nombre>ANDREA ESLAVA, NORELIS</Nombre>
+  <Version>202610062006</Version>
   <Identificadores>
-    <Id>SOL BALEAR</Id>
-    <Id>B92062603</Id>
+    <Id>Norelis Andrea Eslava</Id>
+    <Id>norelis3876</Id>
   </Identificadores>
-  <ModoExtraccion>Simple</ModoExtraccion>
+  <ModoExtraccion>Ordenado</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Mix\COSTA DEL SOL BALEAR.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\Norelis\20260706__000042026.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
-      <Regex>([CN]{2}\d{9})</Regex>
+      <Regex>Factura(?:\s*Rectificativa)[\r\n\s]*(.*)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="Fecha">
       <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNombre">
-      <Regex>\[RECEP]:\s+(.+)</Regex>
+      <Regex>Cliente[\r\n\s]*(.*)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="ReceptorNif">
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="BaseImponible">
-      <Regex>[-\d.,]+\s([-\d.,]+)\s[-\d.,]+\s[-\d.,]+\s</Regex>
+      <Regex>Base imponible\s*(.*)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="PorcentajeIVA">
-      <Regex>[-\d.,]+\s[-\d.,]+\s([-\d.,]+)\s[-\d.,]+\s</Regex>
+      <Regex>IVA\s*(\d+)\s*%\s*de</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
     <Campo Nombre="TotalFactura">
-      <Regex>\[TOTAL\d]:\s+.*[\r\n]+([-\d.,]+)</Regex>
+      <Regex>Total:\s+(.+)\s*€</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
       <EsSuma>false</EsSuma>
-      <CamposSuma />
     </Campo>
   </Campos>
   <PostProcesamiento />
   <ZonasOcr>
-    <Zona Campo="RECEP" Pagina="1" X="56.5" Y="7.1" Ancho="39.6" Alto="10.4" />
-    <Zona Campo="FACT" Pagina="1" X="22" Y="24.7" Ancho="74.5" Alto="5.4" />
-    <Zona Campo="IMP1" Pagina="1" X="3.9" Y="86" Ancho="62.1" Alto="4.2" />
-    <Zona Campo="TOTAL1" Pagina="1" X="81.1" Y="86" Ancho="14.1" Alto="4.2" />
-    <Zona Campo="IMP2" Pagina="2" X="3.9" Y="86" Ancho="62.1" Alto="4.2" />
-    <Zona Campo="TOTAL2" Pagina="2" X="81.1" Y="86" Ancho="14.1" Alto="4.2" />
+    <Zona Campo="P1_Z1" Pagina="1" X="68" Y="1.3" Ancho="29.5" Alto="12.4" />
+    <Zona Campo="P1_Z2" Pagina="1" X="59.5" Y="19.7" Ancho="38.5" Alto="10.8" />
+    <Zona Campo="P1_Z3" Pagina="1" X="53.6" Y="39.3" Ancho="44.4" Alto="55.5" />
   </ZonasOcr>
 </Emisor>
