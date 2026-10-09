@@ -71,7 +71,7 @@ The project uses a mix of styles — match the existing convention for the direc
 ## Conventions
 
 - Code in Spanish (names, comments, files)
-- Commitear es responsabilidad del usuario: no hacer commits ni estar pendiente de asuntos de commit
+- Cuando estimes que es necesario commitear y sincronizar repositorio local y remoto, pídeme permiso para hacerlo explicéndome brevemente el motivo
 - `Proveedor` and `Cliente` are empty subclasses of `Empresa` (semantic clarity only)
 - Nullable enable, ImplicitUsings enabled
 - WinForms with Designer files (`*.Designer.cs`, `*.resx`)

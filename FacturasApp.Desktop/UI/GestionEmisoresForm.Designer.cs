@@ -1059,7 +1059,7 @@ partial class GestionEmisoresForm
         // 
         lblPostAccDestino.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         lblPostAccDestino.AutoSize = true;
-        lblPostAccDestino.Location = new Point(368, 384);
+        lblPostAccDestino.Location = new Point(368, 314);
         lblPostAccDestino.Name = "lblPostAccDestino";
         lblPostAccDestino.Size = new Size(37, 20);
         lblPostAccDestino.TabIndex = 10;
