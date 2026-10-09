@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>25041071M</Nif>
   <Nombre>PESCADERIA SALVADOR</Nombre>
-  <Version>202610062250</Version>
+  <Version>202610082046</Version>
   <Identificadores>
     <Id>Salvador</Id>
     <Id>25041071-M</Id>
@@ -11,7 +11,7 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Nueva carpeta\SALVADOR\VIGO&amp;DUARTE\VIGO&amp;DUARTE_1.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\SALVADOR\EL ENVERO\EL ENVERO_1.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>N. factura\s+([\d]+)</Regex>

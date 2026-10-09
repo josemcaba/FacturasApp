@@ -30,6 +30,7 @@ public class PostProcesamientoConfig
             "invertirsigno" => $"{cond}Invertir signo de los importes",
             "establecervalor" => $"{cond}{accion.CampoDestino} = {accion.Valor}",
             "calcular" => $"{cond}{accion.CampoDestino} = {accion.CampoOrigen1} {accion.Operador} {accion.CampoOrigen2}",
+            "sustituir" => $"{cond}Sustituir \"{accion.Valor}\" por \"{accion.Sustituto}\" en {accion.CampoDestino}",
             _ => $"{cond}{accion.Tipo}"
         };
     }
@@ -52,6 +53,10 @@ public class AccionPostProcesamiento
 
     [XmlAttribute("Valor")]
     public string Valor { get; set; } = string.Empty;
+
+    /// <summary>Cadena por la que se sustituye <see cref="Valor"/> (tipo "Sustituir").</summary>
+    [XmlAttribute("Sustituto")]
+    public string Sustituto { get; set; } = string.Empty;
 
     [XmlAttribute("CampoOrigen1")]
     public string CampoOrigen1 { get; set; } = string.Empty;

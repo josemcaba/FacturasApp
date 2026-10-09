@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>A29185519</Nif>
   <Nombre>EMASA</Nombre>
-  <Version>202610062250</Version>
+  <Version>202610091839</Version>
   <Identificadores>
     <Id>emasa</Id>
     <Id>plaza general torrijos</Id>
@@ -64,10 +64,10 @@
     </Regla>
     <Regla>
       <CondicionCampo>
-        <Campo>EmisorNombre</Campo>
-        <Valor>EMASA</Valor>
+        <Campo>EmisorNif</Campo>
+        <Valor>A29185519</Valor>
       </CondicionCampo>
-      <Accion Tipo="Establecer Valor" CampoDestino="EmisorNombre" Valor="EMPRESA MUNICIPAL AGUAS DE MALAGA S.A." CampoOrigen1="BaseImponible" Operador="%" CampoOrigen2="PorcentajeIVA" />
+      <Accion Tipo="Establecer Valor" CampoDestino="EmisorNombre" Valor="EMPRESA MUNICIPAL AGUAS DE MALAGA S.A." CampoOrigen1="" Operador="+" CampoOrigen2="" />
     </Regla>
   </PostProcesamiento>
   <ZonasOcr />

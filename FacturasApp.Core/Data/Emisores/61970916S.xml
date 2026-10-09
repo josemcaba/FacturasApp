@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>61970916S</Nif>
   <Nombre>ANDREA ESLAVA, NORELIS</Nombre>
-  <Version>202610062250</Version>
+  <Version>202610091813</Version>
   <Identificadores>
     <Id>Norelis Andrea Eslava</Id>
     <Id>norelis3876</Id>
@@ -14,7 +14,7 @@
   <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\Norelis\20260706__000042026.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
-      <Regex>Factura(?:\s*Rectificativa)[\r\n\s]*(.*)</Regex>
+      <Regex>Factura(?:\s*Rectificativa|)[\r\n\s]*(.*)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>

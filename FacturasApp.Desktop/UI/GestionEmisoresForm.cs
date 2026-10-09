@@ -1021,6 +1021,7 @@ public partial class GestionEmisoresForm : Form
                 Tipo = p.Accion.Tipo,
                 CampoDestino = p.Accion.CampoDestino,
                 Valor = p.Accion.Valor,
+                Sustituto = p.Accion.Sustituto,
                 CampoOrigen1 = p.Accion.CampoOrigen1,
                 Operador = p.Accion.Operador,
                 CampoOrigen2 = p.Accion.CampoOrigen2
@@ -1364,6 +1365,8 @@ public partial class GestionEmisoresForm : Form
         cmbPostAccOrigen1.SelectedIndex = -1;
         cmbPostAccOperador.SelectedIndex = -1;
         cmbPostAccOrigen2.SelectedIndex = -1;
+        txtPostSustBuscar.Text = "";
+        txtPostSustPor.Text = "";
         ActualizarControlesAccion();
         _cargandoPostProc = false;
         ActualizarResumenPostProc();
@@ -1373,11 +1376,22 @@ public partial class GestionEmisoresForm : Form
     {
         var tipo = PostProcesamientoConfig.NormalizarTipo(cmbPostProcTipo.SelectedItem?.ToString() ?? "");
 
-        var usarDestino = tipo is "establecervalor" or "calcular";
+        // "Fijar" y el combo destino conservan SIEMPRE su posición del Designer
+        // (sólo cambia el texto de la etiqueta en "Sustituir": "En <campo>").
+        var esSustituir = tipo == "sustituir";
+        var usarDestino = tipo is "establecervalor" or "calcular" or "sustituir";
         lblPostAccDestino.Visible = usarDestino;
+        lblPostAccDestino.Text = esSustituir ? "En" : "Fijar";
         // "a" sólo enlaza destino con valor; en "Calcular" lo sustituye el "=" de la fórmula.
         lblDestinoA.Visible = tipo == "establecervalor";
         cmbPostAccDestino.Visible = usarDestino;
+
+        // Parámetros propios de "Sustituir" (cadena a buscar y su sustituto).
+        // Van en las filas 278 y 342, dejando la 310 para el combo destino.
+        lblPostSustBuscar.Visible = esSustituir;
+        txtPostSustBuscar.Visible = esSustituir;
+        lblPostSustPor.Visible = esSustituir;
+        txtPostSustPor.Visible = esSustituir;
 
         var usarValor = tipo == "establecervalor";
         txtPostAccValor.Visible = usarValor;
@@ -1411,6 +1425,9 @@ public partial class GestionEmisoresForm : Form
             var campos = tipo switch
             {
                 "calcular" => CamposDisponibles().Where(ConfigurableParserEngine.EsCampoNumerico).ToList(),
+                // La sustitución sólo tiene sentido en campos de texto (el motor no
+                // acepta campos numéricos ni personalizados para este tipo).
+                "sustituir" => CamposDisponibles().Where(ConfigurableParserEngine.EsCampoTexto).ToList(),
                 _ => CamposDisponibles()
             };
             RellenarComboCampos(cmbPostAccDestino, campos);
@@ -1458,6 +1475,9 @@ public partial class GestionEmisoresForm : Form
             cmbPostAccOrigen2.SelectedItem = accion.CampoOrigen2;
         else
             cmbPostAccOrigen2.SelectedIndex = -1;
+
+        txtPostSustBuscar.Text = accion.Valor;
+        txtPostSustPor.Text = accion.Sustituto;
     }
 
     private void ActualizarResumenPostProc()
@@ -1520,6 +1540,13 @@ public partial class GestionEmisoresForm : Form
                     return ("falta el primer campo de origen de la fórmula", cmbPostAccOrigen1);
                 if (string.IsNullOrEmpty(accion.CampoOrigen2))
                     return ("falta el segundo campo de origen de la fórmula", cmbPostAccOrigen2);
+                return (null, null);
+
+            case "sustituir":
+                if (accion == null || string.IsNullOrEmpty(accion.CampoDestino))
+                    return ("falta el campo destino", cmbPostAccDestino);
+                if (string.IsNullOrEmpty(accion.Valor))
+                    return ("falta la cadena a buscar", txtPostSustBuscar);
                 return (null, null);
 
             default:
@@ -1667,9 +1694,13 @@ public partial class GestionEmisoresForm : Form
             : null;
 
         // Acción: sólo los campos del tipo activo.
-        accion.CampoDestino = tipoNorm is "establecervalor" or "calcular"
+        accion.CampoDestino = tipoNorm is "establecervalor" or "calcular" or "sustituir"
             ? cmbPostAccDestino.SelectedItem?.ToString() ?? ""
             : "";
+
+        // "Sustituto" sólo existe en "Sustituir"; se limpia en el resto de tipos.
+        // Sin Trim(): en una sustitución los espacios pueden ser parte de la cadena.
+        accion.Sustituto = tipoNorm == "sustituir" ? txtPostSustPor.Text : "";
 
         switch (tipoNorm)
         {
@@ -1685,6 +1716,13 @@ public partial class GestionEmisoresForm : Form
                 accion.CampoOrigen1 = cmbPostAccOrigen1.SelectedItem?.ToString() ?? "";
                 accion.Operador = cmbPostAccOperador.SelectedItem?.ToString() ?? "+";
                 accion.CampoOrigen2 = cmbPostAccOrigen2.SelectedItem?.ToString() ?? "";
+                break;
+
+            case "sustituir":
+                accion.Valor = txtPostSustBuscar.Text;
+                accion.CampoOrigen1 = "";
+                accion.Operador = "+";
+                accion.CampoOrigen2 = "";
                 break;
 
             default:

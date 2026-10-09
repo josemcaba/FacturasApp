@@ -332,6 +332,10 @@ public class ConfigurableParserEngine : BaseParser
                 case "calcular":
                     CalcularCampo(factura, accion);
                     break;
+
+                case "sustituir":
+                    SustituirTexto(factura, accion);
+                    break;
             }
         }
     }
@@ -387,6 +391,24 @@ public class ConfigurableParserEngine : BaseParser
             _ => a
         };
         AsignarDecimal(factura, accion.CampoDestino, resultado);
+    }
+
+    /// <summary>
+    /// Sustituye todas las ocurrencias exactas de <see cref="AccionPostProcesamiento.Valor"/>
+    /// por <see cref="AccionPostProcesamiento.Sustituto"/> en el campo destino
+    /// (sólo campos de texto; "Sustituto" vacío borra la cadena buscada).
+    /// </summary>
+    private static void SustituirTexto(Factura factura, AccionPostProcesamiento accion)
+    {
+        var destino = accion.CampoDestino;
+        if (string.IsNullOrEmpty(destino) || string.IsNullOrEmpty(accion.Valor)) return;
+        if (!EsCampoTexto(destino)) return;
+
+        var actual = ObtenerValorTexto(factura, destino);
+        if (string.IsNullOrEmpty(actual) || !actual.Contains(accion.Valor, StringComparison.Ordinal)) return;
+
+        AsignarTexto(factura, destino,
+            actual.Replace(accion.Valor, accion.Sustituto, StringComparison.Ordinal));
     }
 
     private static string? ObtenerValorTexto(Factura factura, string nombreCampo)

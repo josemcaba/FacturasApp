@@ -1,31 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Nif>25693621E</Nif>
-  <Nombre>ARANDA GARCIA, GREGORIO</Nombre>
-  <Version>202610082047</Version>
+  <Nif>N0032575C</Nif>
+  <Nombre>VISTAPRINT B.V.</Nombre>
+  <Version>202610082035</Version>
   <Identificadores>
-    <Id>EMISOR</Id>
-    <Id>Gregorio Aranda</Id>
-    <Id>25693621E</Id>
+    <Id>Vistaprint B.V.</Id>
+    <Id>N0032575C</Id>
   </Identificadores>
   <ModoExtraccion>Simple</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\Gregorio\2609\1439.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Desktop\Nueva carpeta\Facturas recibidas\07 julio\factura carpetas y tarjetas.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
-      <Regex>(?:N. Factura|N. Rectificativa).*\n(\S+)</Regex>
+      <Regex>Número de factura:\s*(\d+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="Fecha">
-      <Regex>(?:N. Factura|N. Rectificativa).*\n\S+\s+(\S+)</Regex>
-      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="ReceptorNombre">
-      <Regex>CLIENTE.*\n+(.+)</Regex>
+      <Regex>Facturado a:[\n\r\s]+(.*)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
@@ -34,17 +32,17 @@
       <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="BaseImponible">
-      <Regex>Subtotal\s+([\d.,]+)</Regex>
+      <Regex>Subtotal \(IVA no incl.\)(.*)€</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="PorcentajeIVA">
-      <Regex>IVA\s+\(([\d]+).*\)</Regex>
+      <Regex>(\d+)% Importe total de IVA</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="TotalFactura">
-      <Regex>\bTOTAL\s+([\d.,]+)</Regex>
+      <Regex>Total([\d.,\s]+)€</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
@@ -52,10 +50,10 @@
   <PostProcesamiento>
     <Regla>
       <CondicionCampo>
-        <Campo>ReceptorNif</Campo>
-        <Valor>B93522266</Valor>
+        <Campo>ReceptorNombre</Campo>
+        <Valor>CARMEN VIANA PRIETO</Valor>
       </CondicionCampo>
-      <Accion Tipo="Establecer Valor" CampoDestino="ReceptorNombre" Valor="Estudio Jurídico Fernández Navarro, SLP" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+      <Accion Tipo="Establecer Valor" CampoDestino="ReceptorNif" Valor="28598773K" CampoOrigen1="" Operador="+" CampoOrigen2="" />
     </Regla>
   </PostProcesamiento>
   <ZonasOcr />

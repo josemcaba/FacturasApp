@@ -93,7 +93,6 @@ partial class GestionEmisoresForm
         dataGridViewComboBoxColumn1 = new DataGridViewComboBoxColumn();
         dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
         lblSeparadorPostProc = new Label();
-        lstPostProc = new ListBox();
         btnPostProcAdd = new Button();
         btnPostProcRemove = new Button();
         btnPostProcUp = new Button();
@@ -115,6 +114,11 @@ partial class GestionEmisoresForm
         cmbPostAccOrigen1 = new ComboBox();
         cmbPostAccOperador = new ComboBox();
         cmbPostAccOrigen2 = new ComboBox();
+        lblPostSustBuscar = new Label();
+        txtPostSustBuscar = new TextBox();
+        lblPostSustPor = new Label();
+        txtPostSustPor = new TextBox();
+        lstPostProc = new ListBox();
         cmbModoExtraccion = new ComboBox();
         lblGeneralModo = new Label();
         lblSeparadorRegex = new Label();
@@ -571,7 +575,7 @@ partial class GestionEmisoresForm
         panelDetalle.Controls.Add(txtCampoValorFijo);
         panelDetalle.Location = new Point(215, 38);
         panelDetalle.Name = "panelDetalle";
-        panelDetalle.Size = new Size(526, 212);
+        panelDetalle.Size = new Size(526, 198);
         panelDetalle.TabIndex = 2;
         // 
         // lblCampoNombre
@@ -746,7 +750,6 @@ partial class GestionEmisoresForm
         tabMultiLinea.Controls.Add(lblMultiLineaMapeo);
         tabMultiLinea.Controls.Add(dgvMultiLineaMapeo);
         tabMultiLinea.Controls.Add(lblSeparadorPostProc);
-        tabMultiLinea.Controls.Add(lstPostProc);
         tabMultiLinea.Controls.Add(btnPostProcAdd);
         tabMultiLinea.Controls.Add(btnPostProcRemove);
         tabMultiLinea.Controls.Add(btnPostProcUp);
@@ -768,6 +771,11 @@ partial class GestionEmisoresForm
         tabMultiLinea.Controls.Add(cmbPostAccOrigen1);
         tabMultiLinea.Controls.Add(cmbPostAccOperador);
         tabMultiLinea.Controls.Add(cmbPostAccOrigen2);
+        tabMultiLinea.Controls.Add(lblPostSustBuscar);
+        tabMultiLinea.Controls.Add(txtPostSustBuscar);
+        tabMultiLinea.Controls.Add(lblPostSustPor);
+        tabMultiLinea.Controls.Add(txtPostSustPor);
+        tabMultiLinea.Controls.Add(lstPostProc);
         tabMultiLinea.Location = new Point(4, 29);
         tabMultiLinea.Name = "tabMultiLinea";
         tabMultiLinea.Size = new Size(745, 443);
@@ -911,15 +919,6 @@ partial class GestionEmisoresForm
         lblSeparadorPostProc.TabIndex = 37;
         lblSeparadorPostProc.Text = "━━━━━━ POST-PROCESAMIENTO ━━━━━━";
         // 
-        // lstPostProc
-        // 
-        lstPostProc.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-        lstPostProc.Location = new Point(12, 246);
-        lstPostProc.Name = "lstPostProc";
-        lstPostProc.Size = new Size(340, 124);
-        lstPostProc.TabIndex = 1;
-        lstPostProc.SelectedIndexChanged += LstPostProc_SelectedIndexChanged;
-        // 
         // btnPostProcAdd
         // 
         btnPostProcAdd.FlatStyle = FlatStyle.Flat;
@@ -988,7 +987,7 @@ partial class GestionEmisoresForm
         // 
         cmbPostProcTipo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         cmbPostProcTipo.DropDownStyle = ComboBoxStyle.DropDownList;
-        cmbPostProcTipo.Items.AddRange(new object[] { "Invertir Signo", "Establecer Valor", "Calcular" });
+        cmbPostProcTipo.Items.AddRange(new object[] { "Invertir Signo", "Establecer Valor", "Calcular", "Sustituir" });
         cmbPostProcTipo.Location = new Point(458, 246);
         cmbPostProcTipo.Name = "cmbPostProcTipo";
         cmbPostProcTipo.Size = new Size(275, 28);
@@ -1060,7 +1059,7 @@ partial class GestionEmisoresForm
         // 
         lblPostAccDestino.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         lblPostAccDestino.AutoSize = true;
-        lblPostAccDestino.Location = new Point(368, 314);
+        lblPostAccDestino.Location = new Point(368, 384);
         lblPostAccDestino.Name = "lblPostAccDestino";
         lblPostAccDestino.Size = new Size(37, 20);
         lblPostAccDestino.TabIndex = 10;
@@ -1138,6 +1137,55 @@ partial class GestionEmisoresForm
         cmbPostAccOrigen2.Size = new Size(112, 28);
         cmbPostAccOrigen2.TabIndex = 17;
         cmbPostAccOrigen2.SelectedIndexChanged += PostProcControl_Changed;
+        // 
+        // lblPostSustBuscar
+        // 
+        lblPostSustBuscar.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        lblPostSustBuscar.AutoSize = true;
+        lblPostSustBuscar.Location = new Point(368, 282);
+        lblPostSustBuscar.Name = "lblPostSustBuscar";
+        lblPostSustBuscar.Size = new Size(55, 20);
+        lblPostSustBuscar.TabIndex = 44;
+        lblPostSustBuscar.Text = "Buscar:";
+        // 
+        // txtPostSustBuscar
+        // 
+        txtPostSustBuscar.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        txtPostSustBuscar.Location = new Point(458, 278);
+        txtPostSustBuscar.Name = "txtPostSustBuscar";
+        txtPostSustBuscar.PlaceholderText = "Texto a buscar";
+        txtPostSustBuscar.Size = new Size(275, 27);
+        txtPostSustBuscar.TabIndex = 45;
+        txtPostSustBuscar.TextChanged += PostProcControl_Changed;
+        // 
+        // lblPostSustPor
+        // 
+        lblPostSustPor.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        lblPostSustPor.AutoSize = true;
+        lblPostSustPor.Location = new Point(368, 346);
+        lblPostSustPor.Name = "lblPostSustPor";
+        lblPostSustPor.Size = new Size(92, 20);
+        lblPostSustPor.TabIndex = 46;
+        lblPostSustPor.Text = "Sustituir por:";
+        // 
+        // txtPostSustPor
+        // 
+        txtPostSustPor.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        txtPostSustPor.Location = new Point(458, 342);
+        txtPostSustPor.Name = "txtPostSustPor";
+        txtPostSustPor.PlaceholderText = "Texto por el que se sustituye (vacío = borrar)";
+        txtPostSustPor.Size = new Size(275, 27);
+        txtPostSustPor.TabIndex = 47;
+        txtPostSustPor.TextChanged += PostProcControl_Changed;
+        // 
+        // lstPostProc
+        // 
+        lstPostProc.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        lstPostProc.Location = new Point(12, 246);
+        lstPostProc.Name = "lstPostProc";
+        lstPostProc.Size = new Size(340, 124);
+        lstPostProc.TabIndex = 1;
+        lstPostProc.SelectedIndexChanged += LstPostProc_SelectedIndexChanged;
         // 
         // cmbModoExtraccion
         // 
@@ -1378,6 +1426,10 @@ partial class GestionEmisoresForm
     private ComboBox cmbPostAccOrigen1;
     private ComboBox cmbPostAccOperador;
     private ComboBox cmbPostAccOrigen2;
+    private Label lblPostSustBuscar;
+    private TextBox txtPostSustBuscar;
+    private Label lblPostSustPor;
+    private TextBox txtPostSustPor;
     private Label lblPostProcResumen;
     private Button btnPostProcAdd;
     private Button btnPostProcRemove;
