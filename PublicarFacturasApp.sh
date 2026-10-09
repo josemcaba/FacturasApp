@@ -405,7 +405,13 @@ if [ "${AUTO_REV:-True}" != "False" ] && [ "$REV_DESPUES" = "$REV_ANTES" ]; then
     warn "Forzada a $NEW_REV en el perfil para que la próxima publicación no repita versión."
     REV_FINAL="$NEW_REV"
 elif [ "$REV_DESPUES" != "$REV_ANTES" ]; then
-    ok "Revisión en el perfil: ${REV_ANTES:-?} → $REV_DESPUES (incrementada por MSBuild)"
+    # Con IsRevisionIncremented=False la subió el propio script (Paso 1.5)
+    # antes de publicar; con True la habría subido MSBuild.
+    if [ "${AUTO_REV:-True}" = "False" ]; then
+        ok "Revisión en el perfil: ${REV_ANTES:-?} → $REV_DESPUES (incrementada por el script)"
+    else
+        ok "Revisión en el perfil: ${REV_ANTES:-?} → $REV_DESPUES (incrementada por MSBuild)"
+    fi
     REV_FINAL="$REV_DESPUES"
 else
     REV_FINAL="${REV_DESPUES:-?}"
