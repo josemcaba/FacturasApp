@@ -71,7 +71,7 @@ The project uses a mix of styles — match the existing convention for the direc
 ## Conventions
 
 - Code in Spanish (names, comments, files)
-- Cuando estimes que es necesario commitear y sincronizar repositorio local y remoto, pídeme permiso para hacerlo explicéndome brevemente el motivo
+- Cuando estimes que es necesario commitear, pídeme permiso para hacerlo explicándome brevemente el motivo. Si me autoriza a commitear, hago también el `push` al remoto sin preguntar de nuevo (a menos que indique lo contrario). Aseguraté de commitear el working tree aunque ya haya algo en el stage.
 - `Proveedor` and `Cliente` are empty subclasses of `Empresa` (semantic clarity only)
 - Nullable enable, ImplicitUsings enabled
 - WinForms with Designer files (`*.Designer.cs`, `*.resx`)
