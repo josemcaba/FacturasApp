@@ -364,3 +364,6 @@ FodyWeavers.xsd
 
 # OpenCode local config (contiene tokens)
 opencode.json
+
+# Informes de la comprobación quincenal de paquetes NuGet
+Scripts/informes/
