@@ -72,6 +72,7 @@ The project uses a mix of styles — match the existing convention for the direc
 
 - Code in Spanish (names, comments, files)
 - Cuando estimes que es necesario commitear, pídeme permiso para hacerlo explicándome brevemente el motivo. Si me autoriza a commitear, hago también el `push` al remoto sin preguntar de nuevo (a menos que indique lo contrario). Aseguraté de commitear el working tree aunque ya haya algo en el stage.
+- **«Publicar» ≠ «push»**: en este proyecto **publicar significa desplegar una nueva versión a los clientes** ejecutando `PublicarFacturasApp.sh` (ClickOnce → josemcaba.github.io). Si el usuario dice «no publiques» está pidiendo **no ejecutar el despliegue ClickOnce**, NO omitir el `push` de git: el push tras un commit autorizado se hace igualmente. Sólo abstenerse de push si dice explícitamente «no hagas push».
 - `Proveedor` and `Cliente` are empty subclasses of `Empresa` (semantic clarity only)
 - Nullable enable, ImplicitUsings enabled
 - WinForms with Designer files (`*.Designer.cs`, `*.resx`)
