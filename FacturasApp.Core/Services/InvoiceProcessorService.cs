@@ -103,7 +103,8 @@ namespace FacturasApp.Core.Services
             {
                 if (esPdfSeleccionable)
                 {
-                    textoExtraido = _textExtractor.ExtraerTextoZonal(rutaPdf, plantilla);
+                    textoExtraido = _textExtractor.ExtraerTextoZonal(rutaPdf, plantilla,
+                        parser.ModoExtraccion);
                     extraccionZonalExitosa = !string.IsNullOrEmpty(textoExtraido);
                 }
                 else
@@ -189,7 +190,8 @@ namespace FacturasApp.Core.Services
             if (UsarZonasSiempre && plantilla != null && plantilla.Zonas.Any())
             {
                 if (esPdfSeleccionable)
-                    textoExtraido = _textExtractor.ExtraerTextoZonal(rutaPdf, plantilla);
+                    textoExtraido = _textExtractor.ExtraerTextoZonal(rutaPdf, plantilla,
+                        parser.ModoExtraccion);
                 else
                     textoExtraido = _textExtractor.ExtraerTextoOcrZonal(rutaPdf, plantilla);
 

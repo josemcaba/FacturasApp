@@ -59,9 +59,16 @@ namespace FacturasApp.Services
 
         // ── NUEVA ESTRATEGIA: Extraer texto por zonas manteniendo el formato ───
 
+        /// <summary>
+        /// Extrae el texto de cada zona de la plantilla. El modo decide cómo se
+        /// reensambla el texto dentro de la zona: <see cref="ModoExtraccion.Simple"/>
+        /// conserva el orden nativo del PDF y <see cref="ModoExtraccion.Ordenado"/>
+        /// lo reordena por posición (líneas de arriba abajo).
+        /// </summary>
         public Dictionary<string, string> ExtraerZonasTexto(
             string rutaPdf,
-            PlantillaOcr plantilla)
+            PlantillaOcr plantilla,
+            ModoExtraccion modo = ModoExtraccion.Ordenado)
         {
             var resultado = new Dictionary<string, string>();
 
@@ -88,7 +95,7 @@ namespace FacturasApp.Services
 
                     var rect = ConvertirZonaAPdfRectangle(zona, tamanio.Width, tamanio.Height);
 
-                    string textoDirecto = ExtraerTextoLayoutDesdeArea(documento, indicePagina, rect);
+                    string textoDirecto = ExtraerTextoLayoutDesdeArea(documento, indicePagina, rect, modo);
 
                     resultado[zona.Campo] = textoDirecto;
                 }
@@ -131,11 +138,13 @@ namespace FacturasApp.Services
 
         /// <summary>
         /// Extrae texto de un área específica respetando el layout original.
-        /// Filtra los caracteres por su posición y los agrupa por líneas.
+        /// Filtra los caracteres por su posición dentro del área y los reensambla
+        /// según el modo: Simple conserva el orden nativo del PDF, Ordenado agrupa
+        /// por líneas y ordena de arriba abajo.
         /// PDFium usa coordenadas PDF nativas: Y desde la parte INFERIOR (0 = abajo).
         /// </summary>
         private static string ExtraerTextoLayoutDesdeArea(PdfDocument documento, int indicePagina,
-            RectangleF rect)
+            RectangleF rect, ModoExtraccion modo = ModoExtraccion.Ordenado)
         {
             var chars = documento.GetCharacterInformation(indicePagina);
 
@@ -149,7 +158,42 @@ namespace FacturasApp.Services
                     && (c.Bounds.Y + c.Bounds.Height) <= rect.Bottom)
                 .ToList();
 
-            return ReensamblarPorPosicion(charsEnArea);
+            return modo == ModoExtraccion.Simple
+                ? EnsamblarPorOrdenPdf(charsEnArea)
+                : ReensamblarPorPosicion(charsEnArea);
+        }
+
+        // ── Reensamblado en orden nativo del PDF (modo Simple) ──────────────
+        // Conserva el orden en que PDFium devuelve los caracteres (orden de
+        // contenido del PDF, el mismo que usa GetPdfText en el modo Simple de la
+        // página completa) y sólo inserta un salto de línea cuando el carácter
+        // pasa a otra línea (mismo criterio de anclas que ReensamblarPorPosicion,
+        // sin reordenar líneas ni caracteres dentro de la línea).
+        private static string EnsamblarPorOrdenPdf(List<PdfCharacterInformation> chars)
+        {
+            if (chars.Count == 0) return string.Empty;
+
+            const double toleranciaLinea = 9.2;
+
+            var sb = new StringBuilder();
+            double? anclaActual = null;
+
+            foreach (var c in chars)
+            {
+                double bottom = c.Bounds.Y + c.Bounds.Height;
+
+                if (anclaActual == null)
+                    anclaActual = bottom;
+                else if (Math.Abs(bottom - anclaActual.Value) > toleranciaLinea)
+                {
+                    sb.Append(Environment.NewLine);
+                    anclaActual = bottom;
+                }
+
+                sb.Append(c.Character);
+            }
+
+            return sb.ToString().Trim();
         }
 
         // ── Reensamblado posicional compartido ────────────────────

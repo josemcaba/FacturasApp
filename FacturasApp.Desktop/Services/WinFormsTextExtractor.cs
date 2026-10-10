@@ -33,9 +33,14 @@ namespace FacturasApp.Services
             return _ocrExtractor.ExtraerTextoConOcr(rutaPdf);
         }
 
-        public string ExtraerTextoZonal(string rutaPdf, PlantillaOcr plantilla)
+        public string ExtraerTextoZonal(string rutaPdf, PlantillaOcr plantilla,
+            ModoExtraccion modo = ModoExtraccion.Ordenado)
         {
-            var textosZonas = _pdfTextExtractor.ExtraerZonasTexto(rutaPdf, plantilla);
+            var modoPdfium = modo == ModoExtraccion.Simple
+                ? PdfTextExtractor.ModoExtraccion.Simple
+                : PdfTextExtractor.ModoExtraccion.Ordenado;
+
+            var textosZonas = _pdfTextExtractor.ExtraerZonasTexto(rutaPdf, plantilla, modoPdfium);
             var sb = new System.Text.StringBuilder();
             foreach (var zona in plantilla.Zonas)
             {

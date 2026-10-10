@@ -12,7 +12,13 @@ namespace FacturasApp.Services
 
         // ── Extracción de todas las zonas de una plantilla ────────────────────
 
-        public Dictionary<string, string> ExtraerZonas(string rutaPdf, PlantillaOcr plantilla)
+        /// <summary>
+        /// Extrae el texto de todas las zonas. El modo sólo afecta a la rama de
+        /// texto seleccionable (reensamblado de cada zona); la rama OCR de PDFs
+        /// escaneados no tiene modos, Tesseract devuelve su propio orden.
+        /// </summary>
+        public Dictionary<string, string> ExtraerZonas(string rutaPdf, PlantillaOcr plantilla,
+            PdfTextExtractor.ModoExtraccion modo = PdfTextExtractor.ModoExtraccion.Ordenado)
         {
             var resultado = new Dictionary<string, string>();
 
@@ -24,7 +30,7 @@ namespace FacturasApp.Services
             if (esSeleccionable)
             {
                 // ✅ Usar extracción de texto directo
-                return _pdfTextExtractor.ExtraerZonasTexto(rutaPdf, plantilla);
+                return _pdfTextExtractor.ExtraerZonasTexto(rutaPdf, plantilla, modo);
             }
 
             // ❌ Fallback a OCR — agrupar zonas por página

@@ -24,7 +24,11 @@ namespace FacturasApp.Core.Services
         /// <summary>
         /// Extrae texto de zonas específicas usando coordenadas (sin OCR).
         /// </summary>
-        string ExtraerTextoZonal(string rutaPdf, PlantillaOcr plantilla);
+        /// <param name="modo">Modo de extracción (Simple u Ordenado). Determina el
+        /// orden en que se reensambla el texto de cada zona; por defecto Ordenado
+        /// (reordenado por posición), que era el comportamiento histórico.</param>
+        string ExtraerTextoZonal(string rutaPdf, PlantillaOcr plantilla,
+            ModoExtraccion modo = ModoExtraccion.Ordenado);
 
         /// <summary>
         /// Extrae texto de zonas específicas usando OCR.

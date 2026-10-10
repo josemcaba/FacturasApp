@@ -241,8 +241,10 @@ public partial class GestionEmisoresForm : Form
 
     private void ActualizarVistaPreviaZonal()
     {
+        ActualizarCabeceraTextoExtraido();
         if (string.IsNullOrEmpty(_rutaPdf)) return;
 
+        var modo = ModoSeleccionado();
         string texto;
         Dictionary<string, string>? resultados = null;
         try
@@ -258,7 +260,7 @@ public partial class GestionEmisoresForm : Form
                     Emisor = "Previsualización",
                     Zonas = _zonasDibujo.ToList()
                 };
-                resultados = _ocrZonalExtractor.ExtraerZonas(_rutaPdf, plantilla);
+                resultados = _ocrZonalExtractor.ExtraerZonas(_rutaPdf, plantilla, ModoPdfium(modo));
                 texto = string.Join(Environment.NewLine,
                     resultados.Select(kv => $"[{kv.Key}]: {kv.Value}"));
             }
@@ -282,6 +284,20 @@ public partial class GestionEmisoresForm : Form
 
         txtRegexSource.Text = NormalizarSaltoLinea(texto);
         ActualizarIndicadorIdentificadores();
+    }
+
+    /// <summary>
+    /// Cabecera del cuadro «Texto Extraido»: indica si se muestran zonas o el
+    /// texto completo y qué modo de extracción se ha aplicado.
+    /// </summary>
+    private void ActualizarCabeceraTextoExtraido()
+    {
+        if (lblSeparadorRegex == null) return;
+
+        var modo = ModoSeleccionado();
+        lblSeparadorRegex.Text = _zonasDibujo.Count > 0
+            ? $"━━━ Texto Extraido · zonal ({_zonasDibujo.Count} zonas) · {modo} ━━━"
+            : $"━━━ Texto Extraido · completo · {modo} ━━━";
     }
 
     private static string NormalizarSaltoLinea(string texto)
@@ -400,17 +416,27 @@ public partial class GestionEmisoresForm : Form
             Añadir("Mensajes", f => string.Join("; ", f.MensajeError ?? new List<string>()));
     }
 
+    /// <summary>
+    /// Modo de extracción elegido en cmbModoExtraccion (por defecto Ordenado).
+    /// </summary>
+    private ModoExtraccion ModoSeleccionado() =>
+        Enum.TryParse<ModoExtraccion>(
+            cmbModoExtraccion.SelectedItem?.ToString(), true, out var modo)
+            ? modo
+            : ModoExtraccion.Ordenado;
+
+    /// <summary>
+    /// Traduce el enum de Core al enum anidado de PdfTextExtractor.
+    /// </summary>
+    private static PdfTextExtractor.ModoExtraccion ModoPdfium(ModoExtraccion modo) =>
+        modo == ModoExtraccion.Simple
+            ? PdfTextExtractor.ModoExtraccion.Simple
+            : PdfTextExtractor.ModoExtraccion.Ordenado;
+
     private string ExtraerTextoConModoSeleccionado()
     {
         if (string.IsNullOrEmpty(_rutaPdf)) return "";
-        var modo = Enum.TryParse<ModoExtraccion>(
-            cmbModoExtraccion.SelectedItem?.ToString(), true, out var modoParsed)
-            ? modoParsed
-            : ModoExtraccion.Ordenado;
-
-        var modoPdfium = modo == ModoExtraccion.Simple
-            ? PdfTextExtractor.ModoExtraccion.Simple
-            : PdfTextExtractor.ModoExtraccion.Ordenado;
+        var modoPdfium = ModoPdfium(ModoSeleccionado());
 
         try
         {
@@ -426,10 +452,19 @@ public partial class GestionEmisoresForm : Form
     private void CmbModoExtraccion_SelectedIndexChanged(object? sender, EventArgs e)
     {
         if (_cargando || cmbModoExtraccion.SelectedIndex < 0) return;
+
+        // El modo se aplica también con zonas: se refleja ya en la config en
+        // memoria para que la tabla «Valores extraídos» lo tenga en cuenta
+        // aunque todavía no se haya pulsado Guardar.
+        if (_emisorActual != null)
+            _emisorActual.ModoExtraccion = cmbModoExtraccion.SelectedItem?.ToString() ?? "Ordenado";
+
         MarcarModificado();
-        if (string.IsNullOrEmpty(_rutaPdf)) return;
-        txtRegexSource.Text = ExtraerTextoConModoSeleccionado();
-        ActualizarIndicadorIdentificadores();
+        // Refresca cabecera, texto de la vista previa e indicador de emisor.
+        ActualizarVistaPreviaZonal();
+        // Y la tabla se recalcula con el modo nuevo (si hay PDF de muestra).
+        if (!string.IsNullOrEmpty(_rutaPdf))
+            ActualizarTablaValoresExtraidos();
     }
 
     private void TabPaginas_SelectedIndexChanged(object? sender, EventArgs e)
