@@ -13,6 +13,9 @@ namespace FacturasApp.UI;
 public partial class GestionEmisoresForm : Form
 {
     private readonly ConfiguracionEmisores _configuracion = new();
+    // Lista completa de emisores (sin filtrar); lstEmisores sólo muestra los que
+    // cumplen el filtro de txtBuscarEmisor.
+    private readonly List<EmisorListItem> _todosEmisores = new();
     private EmisorConfig? _emisorActual;
     private bool _modificado;
     private bool _cargando;
@@ -646,17 +649,55 @@ public partial class GestionEmisoresForm : Form
     private void CargarEmisores()
     {
         _cargando = true;
-        lstEmisores.Items.Clear();
+        _todosEmisores.Clear();
         var todos = _configuracion.CargarTodos();
         foreach (var kvp in todos.OrderBy(e => e.Key))
-            lstEmisores.Items.Add(new EmisorListItem(kvp.Value));
+            _todosEmisores.Add(new EmisorListItem(kvp.Value));
         _cargando = false;
         FiltrarEmisores();
     }
 
     private void FiltrarEmisores()
     {
-        lstEmisores.Refresh();
+        var filtro = txtBuscarEmisor.Text.Trim();
+        var nifSeleccionado = (lstEmisores.SelectedItem as EmisorListItem)?.Config.Nif;
+
+        // Al vaciar/recargarse los ítems se dispara SelectedIndexChanged: la bandera
+        // evita el aviso "¿Descartar nuevo?" mientras el usuario teclea el filtro.
+        _saltarCambioSeleccion = true;
+        lstEmisores.SuspendLayout();
+        lstEmisores.Items.Clear();
+        foreach (var item in _todosEmisores)
+        {
+            if (string.IsNullOrEmpty(filtro) ||
+                item.Config.Nif.Contains(filtro, StringComparison.OrdinalIgnoreCase) ||
+                item.Config.Nombre.Contains(filtro, StringComparison.OrdinalIgnoreCase))
+            {
+                lstEmisores.Items.Add(item);
+            }
+        }
+        // Conserva la selección si el emisor sigue visible; si el filtro lo oculta,
+        // el panel de detalle lo mantiene cargado para no perder ediciones.
+        if (nifSeleccionado != null)
+            SeleccionarEmisorPorNif(nifSeleccionado);
+        lstEmisores.ResumeLayout();
+        _saltarCambioSeleccion = false;
+    }
+
+    private bool SeleccionarEmisorPorNif(string? nif)
+    {
+        if (string.IsNullOrEmpty(nif)) return false;
+
+        for (int i = 0; i < lstEmisores.Items.Count; i++)
+        {
+            if (string.Equals(((EmisorListItem)lstEmisores.Items[i]).Config.Nif, nif,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                lstEmisores.SelectedIndex = i;
+                return true;
+            }
+        }
+        return false;
     }
 
     private void LstEmisores_SelectedIndexChanged(object? sender, EventArgs e)
@@ -1096,14 +1137,12 @@ public partial class GestionEmisoresForm : Form
             _modificado = false;
             btnGuardar.Enabled = false;
             CargarEmisores();
-            // Find and select the saved emitter in the refreshed list
-            for (int i = 0; i < lstEmisores.Items.Count; i++)
+            // Selecciona el emisor guardado en la lista refrescada; si el filtro
+            // activo lo oculta, se limpia la búsqueda para que vuelva a aparecer.
+            if (!SeleccionarEmisorPorNif(_emisorActual.Nif))
             {
-                if (((EmisorListItem)lstEmisores.Items[i]).Config.Nif == _emisorActual.Nif)
-                {
-                    lstEmisores.SelectedIndex = i;
-                    break;
-                }
+                txtBuscarEmisor.Clear();
+                SeleccionarEmisorPorNif(_emisorActual.Nif);
             }
             ActualizarVersionXml();
             MessageBox.Show("Emisor guardado correctamente.",
