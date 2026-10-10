@@ -302,11 +302,13 @@ partial class GestionEmisoresForm
         // txtNombre
         // 
         txtNombre.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        txtNombre.CharacterCasing = CharacterCasing.Upper;
         txtNombre.Location = new Point(16, 39);
         txtNombre.Name = "txtNombre";
         txtNombre.Size = new Size(545, 27);
         txtNombre.TabIndex = 1;
         txtNombre.TextChanged += ControlModificado;
+        txtNombre.TextChanged += TxtMayusculas_TextChanged;
         // 
         // lblGeneralNif
         // 
@@ -321,11 +323,13 @@ partial class GestionEmisoresForm
         // txtNif
         // 
         txtNif.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        txtNif.CharacterCasing = CharacterCasing.Upper;
         txtNif.Location = new Point(567, 39);
         txtNif.Name = "txtNif";
         txtNif.Size = new Size(170, 27);
         txtNif.TabIndex = 2;
         txtNif.TextChanged += ControlModificado;
+        txtNif.TextChanged += TxtMayusculas_TextChanged;
         // 
         // lblGeneralIds
         // 

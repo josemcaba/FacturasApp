@@ -86,6 +86,27 @@ public partial class GestionEmisoresForm : Form
         if (_cargandoLinea) return;
         MarcarModificado();
     }
+
+    // El CharacterCasing.Upper del Designer convierte lo tecleado; este handler
+    // cubre además el pegado y el arrastre de texto, que no pasan por esa
+    // conversión. Se aplica también al cargar: si el XML tenía minúsculas, el
+    // campo queda en mayúsculas y se persiste así al guardar.
+    private bool _convirtiendoMayusculas;
+
+    private void TxtMayusculas_TextChanged(object? sender, EventArgs e)
+    {
+        if (_convirtiendoMayusculas || sender is not TextBox tb) return;
+        var texto = tb.Text;
+        var mayusculas = texto.ToUpperInvariant();
+        if (texto == mayusculas) return;
+        // Asignar Text dispara de nuevo TextChanged: la bandera evita la recursión.
+        _convirtiendoMayusculas = true;
+        var caret = tb.SelectionStart;
+        tb.Text = mayusculas;
+        tb.SelectionStart = Math.Min(caret, tb.Text.Length);
+        _convirtiendoMayusculas = false;
+    }
+
     private void TxtBuscarEmisor_TextChanged(object? sender, EventArgs e) => FiltrarEmisores();
     private void BtnNuevo_Click(object? sender, EventArgs e) => NuevoEmisor();
     private void BtnEliminar_Click(object? sender, EventArgs e) => EliminarEmisor();
