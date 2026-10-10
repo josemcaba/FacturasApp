@@ -101,8 +101,19 @@ public class ConfiguracionEmisores
         using var stream = File.Create(ruta);
         _serializer.Serialize(stream, config);
 
-        _cache ??= new Dictionary<string, EmisorConfig>(StringComparer.OrdinalIgnoreCase);
-        _cache[config.Nif] = config;
+        // La caché la comparten todas las instancias (static): si el NIF cambió,
+        // hay que quitar la clave ANTIGUA o el emisor aparecería duplicado en
+        // CargarTodos() hasta reiniciar (el fichero en disco sí se renombra bien).
+        if (_cache != null)
+        {
+            if (nifAnterior != null &&
+                !string.Equals(nifAnterior, config.Nif, StringComparison.OrdinalIgnoreCase))
+            {
+                _cache.Remove(nifAnterior);
+                _cache.Remove(SanitizarNombreArchivo(nifAnterior));
+            }
+            _cache[config.Nif] = config;
+        }
     }
 
     public void Eliminar(string nif)
