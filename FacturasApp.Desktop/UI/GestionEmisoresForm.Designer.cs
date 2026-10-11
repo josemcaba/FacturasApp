@@ -41,6 +41,7 @@ partial class GestionEmisoresForm
         txtNombre = new TextBox();
         lblGeneralNif = new Label();
         txtNif = new TextBox();
+        btnViesValidar = new Button();
         lblGeneralIds = new Label();
         txtIdentificadores = new TextBox();
         lblIndicadorEmisor = new Label();
@@ -259,6 +260,7 @@ partial class GestionEmisoresForm
         tabGeneral.Controls.Add(txtNombre);
         tabGeneral.Controls.Add(lblGeneralNif);
         tabGeneral.Controls.Add(txtNif);
+        tabGeneral.Controls.Add(btnViesValidar);
         tabGeneral.Controls.Add(lblGeneralIds);
         tabGeneral.Controls.Add(txtIdentificadores);
         tabGeneral.Controls.Add(lblIndicadorEmisor);
@@ -292,7 +294,7 @@ partial class GestionEmisoresForm
         txtNombre.Location = new Point(16, 39);
         txtNombre.MaxLength = 40;
         txtNombre.Name = "txtNombre";
-        txtNombre.Size = new Size(545, 27);
+        txtNombre.Size = new Size(369, 27);
         txtNombre.TabIndex = 1;
         txtNombre.TextChanged += TxtNombre_TextChanged;
         // 
@@ -300,7 +302,7 @@ partial class GestionEmisoresForm
         // 
         lblGeneralNif.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         lblGeneralNif.AutoSize = true;
-        lblGeneralNif.Location = new Point(567, 16);
+        lblGeneralNif.Location = new Point(391, 16);
         lblGeneralNif.Name = "lblGeneralNif";
         lblGeneralNif.Size = new Size(34, 20);
         lblGeneralNif.TabIndex = 2;
@@ -310,11 +312,22 @@ partial class GestionEmisoresForm
         // 
         txtNif.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         txtNif.CharacterCasing = CharacterCasing.Upper;
-        txtNif.Location = new Point(567, 39);
+        txtNif.Location = new Point(391, 39);
         txtNif.Name = "txtNif";
         txtNif.Size = new Size(170, 27);
         txtNif.TabIndex = 2;
         txtNif.TextChanged += TxtMayusculas_TextChanged;
+        // 
+        // btnViesValidar
+        // 
+        btnViesValidar.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        btnViesValidar.Location = new Point(567, 39);
+        btnViesValidar.Name = "btnViesValidar";
+        btnViesValidar.Size = new Size(170, 27);
+        btnViesValidar.TabIndex = 3;
+        btnViesValidar.Text = "Verificar VIES";
+        btnViesValidar.UseVisualStyleBackColor = true;
+        btnViesValidar.Click += BtnViesValidar_Click;
         // 
         // lblGeneralIds
         // 
@@ -1361,6 +1374,7 @@ partial class GestionEmisoresForm
     private TextBox txtNombre;
     private Label lblGeneralNif;
     private TextBox txtNif;
+    private Button btnViesValidar;
     private Label lblGeneralIds;
     private TextBox txtIdentificadores;
     private Label lblIndicadorEmisor;

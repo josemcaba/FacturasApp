@@ -38,6 +38,10 @@ public partial class GestionEmisoresForm : Form
     private bool _cargandoPostProc;
     private bool _refrescandoCuadroPostProc;
     private bool _cargandoLinea;
+    // Última consulta VIES en memoria, claveada por el NIF exacto consultado:
+    // evita repetir la llamada a la red al guardar tras pulsar "Verificar VIES".
+    private string? _viesNifConsultado;
+    private ViesResultado? _viesUltimoResultado;
 
     public GestionEmisoresForm()
     {
@@ -790,15 +794,15 @@ public partial class GestionEmisoresForm : Form
         return false;
     }
 
-    private void LstEmisores_SelectedIndexChanged(object? sender, EventArgs e)
+    private async void LstEmisores_SelectedIndexChanged(object? sender, EventArgs e)
     {
         if (_cargando || _saltarCambioSeleccion) return;
 
-        // El destino se captura al entrar: tras guardar, GuardarCambios recarga
-        // la lista y reselecciona el emisor guardado, moviendo la selección.
+        // El destino se captura al entrar: tras guardar, GuardarCambiosAsync
+        // recarga la lista y reselecciona el emisor guardado, moviendo la selección.
         var nifDestino = (lstEmisores.SelectedItem as EmisorListItem)?.Config.Nif;
 
-        if (!ConfirmarCambiosPendientes("Cambiar de emisor"))
+        if (!await ConfirmarCambiosPendientesAsync("Cambiar de emisor"))
         {
             RestaurarSeleccionPrevia();
             return;
@@ -849,6 +853,10 @@ public partial class GestionEmisoresForm : Form
         // proceso, además de hacer imposible descartarlos de verdad.
         _emisorActual = CopiarConfig(config);
         btnGuardar.Enabled = false;
+        // La verificación VIES en memoria es del emisor anterior: al cargar
+        // otro se olvida para que no se herede su resultado.
+        _viesNifConsultado = null;
+        _viesUltimoResultado = null;
 
         txtNombre.Text = config.Nombre;
         txtNif.Text = config.Nif;
@@ -1039,7 +1047,7 @@ public partial class GestionEmisoresForm : Form
     /// se puede continuar (cambios guardados o descartados) y false si el
     /// usuario cancela o el guardado no pasa la validación.
     /// </summary>
-    private bool ConfirmarCambiosPendientes(string accion)
+    private async Task<bool> ConfirmarCambiosPendientesAsync(string accion)
     {
         if (!_modificado) return true;
 
@@ -1054,9 +1062,9 @@ public partial class GestionEmisoresForm : Form
 
         if (r == DialogResult.Yes)
         {
-            // Si la validación falla, GuardarCambios ya ha mostrado el aviso y
-            // el foco va al dato culpable: se sigue editando sin cambiar nada.
-            return GuardarCambios();
+            // Si la validación falla, GuardarCambiosAsync ya ha mostrado el aviso
+            // y el foco va al dato culpable: se sigue editando sin cambiar nada.
+            return await GuardarCambiosAsync();
         }
 
         if (r == DialogResult.No)
@@ -1087,9 +1095,9 @@ public partial class GestionEmisoresForm : Form
             CargarEmisorEnUI(limpio);
     }
 
-    private void NuevoEmisor()
+    private async void NuevoEmisor()
     {
-        if (!ConfirmarCambiosPendientes("Crear otro emisor nuevo")) return;
+        if (!await ConfirmarCambiosPendientesAsync("Crear otro emisor nuevo")) return;
 
         var nuevo = new EmisorConfig
         {
@@ -1192,7 +1200,9 @@ public partial class GestionEmisoresForm : Form
                 }).ToList()
         },
         PostProcesamiento = o.PostProcesamiento.Select(CopiarPostProc).ToList(),
-        ZonasOcr = o.ZonasOcr?.Select(CopiarZona).ToList()
+        ZonasOcr = o.ZonasOcr?.Select(CopiarZona).ToList(),
+        ViesFechaVerificacion = o.ViesFechaVerificacion,
+        ViesEstado = o.ViesEstado
     };
 
     private static List<MapeoCampoLinea> CopiarMapeos(List<MapeoCampoLinea> mapeos) =>
@@ -1247,11 +1257,113 @@ public partial class GestionEmisoresForm : Form
         };
     }
 
+    // ── VIES ───────────────────────────────────────────────────────────────────
+
+    private async void BtnViesValidar_Click(object? sender, EventArgs e)
+    {
+        var nif = txtNif.Text.Trim();
+        if (string.IsNullOrWhiteSpace(nif))
+        {
+            MessageBox.Show("Introduzca primero un NIF-IVA.", "VIES",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
+        if (ViesValidator.ObtenerPrefijoPais(nif) == "GB")
+        {
+            MessageBox.Show(
+                "Los NIF británicos (GB) dejaron de verificarse en VIES el " +
+                "1/1/2021 por el Brexit.\nDeben comprobarse en la HMRC británica.",
+                "VIES", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+
+        btnViesValidar.Enabled = false;
+        btnViesValidar.Text = "Consultando...";
+        try
+        {
+            var resultado = await ViesValidator.VerificarAsync(nif);
+            GuardarResultadoVies(nif, resultado);
+            MessageBox.Show(DescribirResultadoVies(resultado, nif), "VIES",
+                MessageBoxButtons.OK,
+                resultado.Disponible && !resultado.Valido
+                    ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
+        }
+        finally
+        {
+            btnViesValidar.Enabled = true;
+            btnViesValidar.Text = "Verificar VIES";
+        }
+    }
+
+    /// <summary>Guarda en memoria el resultado de una consulta VIES para no
+    /// repetirla al guardar. La caché se limpia al cargar otro emisor y sólo
+    /// se usa si el NIF consultado sigue siendo el mismo.</summary>
+    private void GuardarResultadoVies(string nif, ViesResultado resultado)
+    {
+        _viesNifConsultado = nif.Trim().ToUpperInvariant();
+        _viesUltimoResultado = resultado;
+    }
+
+    private ViesResultado? ViesResultadoPara(string nif) =>
+        _viesUltimoResultado != null &&
+        string.Equals(_viesNifConsultado, nif.Trim().ToUpperInvariant(),
+            StringComparison.OrdinalIgnoreCase)
+            ? _viesUltimoResultado : null;
+
+    /// <summary>Consulta VIES sin bloquear la UI, inhabilitando los controles
+    /// que podrían reentrar en un guardado mientras la llamada está en vuelo.
+    /// El resultado queda cacheado para el guardado posterior.</summary>
+    private async Task<ViesResultado> ConsultarViesAsync(string nif)
+    {
+        btnGuardar.Enabled = false;
+        lstEmisores.Enabled = false;
+        btnNuevo.Enabled = false;
+        try
+        {
+            var resultado = await ViesValidator.VerificarAsync(nif);
+            GuardarResultadoVies(nif, resultado);
+            return resultado;
+        }
+        finally
+        {
+            lstEmisores.Enabled = true;
+            btnNuevo.Enabled = true;
+            btnGuardar.Enabled = _modificado;
+        }
+    }
+
+    private static string DescribirResultadoVies(ViesResultado r, string nif)
+    {
+        if (!r.Disponible)
+        {
+            return $"No se pudo consultar VIES para el NIF {nif}.\n" +
+                   $"Motivo: {r.MensajeError}\n\n" +
+                   "El servicio puede estar en mantenimiento (cada estado miembro " +
+                   "puede caerse de forma independiente). Inténtelo más tarde.";
+        }
+
+        var texto = r.Valido
+            ? $"VÁLIDO en VIES: el NIF-IVA {nif} está registrado como válido\n" +
+              "para operaciones intracomunitarias."
+            : $"NO VÁLIDO en VIES: el NIF-IVA {nif} no consta como válido\n" +
+              "para operaciones intracomunitarias.";
+        if (r.CodigoError != null)
+            texto += $"\n({r.MensajeError})";
+        if (r.Nombre != null)
+            texto += $"\n\nTitular: {r.Nombre}";
+        if (r.Direccion != null)
+            texto += $"\nDirección: {r.Direccion}";
+        texto += $"\nConsulta: {r.FechaConsulta:dd/MM/yyyy HH:mm}";
+        return texto;
+    }
+
     // ── GUARDAR ────────────────────────────────────────────────────────────────
 
     /// <summary>Guarda el emisor en disco. Devuelve false si la validación
-    /// falla o se produce un error (el aviso ya se ha mostrado).</summary>
-    private bool GuardarCambios()
+    /// falla, el usuario cancela ante un NIF-IVA no válido en VIES o se
+    /// produce un error (el aviso ya se ha mostrado).</summary>
+    private async Task<bool> GuardarCambiosAsync()
     {
         if (_emisorActual == null) return false;
 
@@ -1283,6 +1395,62 @@ public partial class GestionEmisoresForm : Form
             // Foco al dato que falta, una vez cerrado el aviso.
             campoPostProc?.Focus();
             return false;
+        }
+
+        // VIES: sólo para NIF-IVA comunitarios (con prefijo de estado miembro)
+        // y sólo si no hay ya un resultado en caché para ese mismo NIF. Un NIF
+        // español sin prefijo no dispara ninguna llamada de red al guardar.
+        if (ViesValidator.EsNifComunitario(nifNuevo))
+        {
+            var resultadoVies = ViesResultadoPara(nifNuevo)
+                ?? await ConsultarViesAsync(nifNuevo);
+            if (IsDisposed) return false;
+
+            if (!resultadoVies.Disponible)
+            {
+                MessageBox.Show(
+                    $"No se pudo consultar VIES para {nifNuevo}: " +
+                    $"{resultadoVies.MensajeError}\n\n" +
+                    "El emisor se guardará con estado de verificación 'NoDisponible'.",
+                    "VIES no disponible", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else if (!resultadoVies.Valido)
+            {
+                var r = MessageBox.Show(
+                    $"VIES no da por válido el NIF-IVA {nifNuevo}\n" +
+                    "para operaciones intracomunitarias." +
+                    (resultadoVies.CodigoError != null
+                        ? $"\n({resultadoVies.MensajeError})" : "") +
+                    "\n\n¿Guardar el emisor de todos modos?",
+                    "NIF-IVA no válido en VIES",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (r != DialogResult.Yes)
+                {
+                    txtNif.Focus();
+                    return false;
+                }
+            }
+
+            // Los tres estados (válido, inválido o no disponible) quedan
+            // registrados con su fecha en el XML del emisor.
+            _emisorActual.ViesEstado = resultadoVies.Estado;
+            _emisorActual.ViesFechaVerificacion = resultadoVies.FechaConsulta;
+        }
+        // NIF sin prefijo comunitario: se valida el formato español aquí, porque
+        // el procesamiento ya NO valida el NIF del emisor (se validó en el alta).
+        // El emisor "General" es un caso especial con NIF ficticio.
+        else if (!string.Equals(nifNuevo, "General", StringComparison.OrdinalIgnoreCase) &&
+                 !NifValidator.ValidarNif(nifNuevo))
+        {
+            var r = MessageBox.Show(
+                $"El NIF {nifNuevo} no tiene formato de NIF español válido (DNI/NIE/CIF).\n\n" +
+                "¿Guardar el emisor de todos modos?",
+                "NIF no válido", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (r != DialogResult.Yes)
+            {
+                txtNif.Focus();
+                return false;
+            }
         }
 
         SincronizarUIaConfig();
@@ -1337,9 +1505,9 @@ public partial class GestionEmisoresForm : Form
         }
     }
 
-    private void BtnGuardar_Click(object? sender, EventArgs e)
+    private async void BtnGuardar_Click(object? sender, EventArgs e)
     {
-        GuardarCambios();
+        await GuardarCambiosAsync();
     }
 
     // ── EVENTOS CAMPOS ─────────────────────────────────────────────────────────
@@ -2095,7 +2263,16 @@ public partial class GestionEmisoresForm : Form
     private class EmisorListItem
     {
         public EmisorConfig Config { get; }
-        public string DisplayText => $"{Config.Nif} - {Config.Nombre}";
+        public string DisplayText => $"{Config.Nif} - {Config.Nombre}{MarcaVies}";
         public EmisorListItem(EmisorConfig config) => Config = config;
+
+        /// <summary>Marca de la última verificación VIES guardada en el XML;
+        /// sin estado o "NoDisponible" no se muestra nada.</summary>
+        private string MarcaVies => Config.ViesEstado switch
+        {
+            "Valido" => " ✓",
+            "Invalido" => " ✗",
+            _ => string.Empty
+        };
     }
 }

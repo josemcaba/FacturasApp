@@ -20,24 +20,23 @@ namespace FacturasApp.Core.Services
                 return EstadoFactura.Revisar;
             }
 
-            // 3. Validación de NIFs — si no son válidos → Error
-            if (!NifValidator.ValidarNif(f.Emisor.NIF))
-            {
-                f.MensajeError.Add("NIF del Emisor no válido");
-                return EstadoFactura.Error;
-            }
+            // 3. Validación del NIF del receptor — si no es válido → Error.
+            // El NIF del emisor NO se valida aquí: se comprueba al dar de alta el
+            // emisor (español por formato, comunitario contra VIES), de modo que
+            // todas sus facturas heredan un emisor ya validado.
             if (!NifValidator.ValidarNif(f.Receptor.NIF))
             {
                 f.MensajeError.Add("NIF del Cliente no válido");
                 return EstadoFactura.Error;
             }
 
-            // 4.Campos obligatorios — si falta alguno → RevisiónManual
+            // 4.Campos obligatorios — si falta alguno → RevisiónManual. El NIF
+            // del emisor tampoco se exige: al igual que su formato, forma parte
+            // de la validación del alta.
             bool camposObligatoriosOk =
                 !string.IsNullOrEmpty(f.NumeroFactura) &&
                 f.Fecha.HasValue &&
                 !string.IsNullOrEmpty(f.Emisor.Nombre) &&
-                !string.IsNullOrEmpty(f.Emisor.NIF) &&
                 !string.IsNullOrEmpty(f.Receptor.Nombre) &&
                 !string.IsNullOrEmpty(f.Receptor.NIF) &&
                 f.ImporteVerificacion != 0.0m;
