@@ -46,17 +46,20 @@ public partial class GestionEmisoresForm : Form
 
         InitializeComponent();
 
+        // InitializeComponent puede disparar handlers de controles (p. ej.
+        // CellValueChanged al fijar HeaderText de las columnas de dgvZonas) con
+        // _cargando todavía a false; sin este reset el formulario se abriría
+        // "modificado" y preguntaría por cambios pendientes sin haber entrado.
+        _modificado = false;
+        btnGuardar.Enabled = false;
+
         panelCentral.Resize += PanelCentral_Resize;
         CargarEmisores();
-        if (lstEmisores.Items.Count > 0)
-            lstEmisores.SelectedIndex = 0;
-        else
-        {
-            // Sin emisores: el panel de post-procesamiento arranca en blanco
-            // (controles condicionales ocultos y deshabilitados).
-            lstPostProc.Items.Clear();
-            LimpiarPanelPostProc();
-        }
+        // Al entrar no se selecciona ningún emisor: el usuario elige cuál abrir
+        // de la lista o pulsa "+ Nuevo". El panel de detalle queda vacío (los
+        // controles arrancan así en blanco) y el post-procesamiento en blanco.
+        lstPostProc.Items.Clear();
+        LimpiarPanelPostProc();
         Load += (_, _) => PanelCentral_Resize(null, EventArgs.Empty);
         FormClosing += (_, args) =>
         {
@@ -75,10 +78,11 @@ public partial class GestionEmisoresForm : Form
 
     private void MarcarModificado()
     {
-        if (_cargando) return;
+        // Sin emisor cargado no hay nada que guardar: evita que teclear en el
+        // panel vacío deje la ventana "modificada" y dispare el aviso al cerrar.
+        if (_cargando || _emisorActual == null) return;
         _modificado = true;
-        if (_emisorActual != null)
-            btnGuardar.Enabled = true;
+        btnGuardar.Enabled = true;
     }
 
     private void ControlModificado(object? sender, EventArgs e)
@@ -106,6 +110,34 @@ public partial class GestionEmisoresForm : Form
         tb.SelectionStart = Math.Min(caret, tb.Text.Length);
         _convirtiendoMayusculas = false;
     }
+
+    // Igual que TxtMayusculas_TextChanged pero específico del nombre del emisor:
+    // además de mayúsculas quita las tildes de las vocales (no se admiten
+    // vocales acentuadas), conservando la ñ y otros diacríticos no vocales.
+    // El límite de 40 caracteres lo impone el MaxLength del Designer (bloquea
+    // tecleo y pegado); aquí se recorta además por si acaso, porque asignar
+    // Text por código no respeta MaxLength (cubre la carga de XMLs antiguos).
+    private bool _normalizandoNombre;
+
+    private void TxtNombre_TextChanged(object? sender, EventArgs e)
+    {
+        if (_normalizandoNombre || sender is not TextBox tb) return;
+        var texto = QuitarTildesVocales(tb.Text.ToUpperInvariant());
+        if (texto.Length > 40) texto = texto[..40];
+        if (texto == tb.Text) return;
+        // Asignar Text dispara de nuevo TextChanged: la bandera evita la recursión.
+        _normalizandoNombre = true;
+        var caret = tb.SelectionStart;
+        tb.Text = texto;
+        tb.SelectionStart = Math.Min(caret, tb.Text.Length);
+        _normalizandoNombre = false;
+    }
+
+    private static string QuitarTildesVocales(string texto) => texto
+        .Replace('Á', 'A').Replace('É', 'E').Replace('Í', 'I')
+        .Replace('Ó', 'O').Replace('Ú', 'U').Replace('Ü', 'U')
+        .Replace('á', 'a').Replace('é', 'e').Replace('í', 'i')
+        .Replace('ó', 'o').Replace('ú', 'u').Replace('ü', 'u');
 
     private void TxtBuscarEmisor_TextChanged(object? sender, EventArgs e) => FiltrarEmisores();
     private void BtnNuevo_Click(object? sender, EventArgs e) => NuevoEmisor();
@@ -677,7 +709,10 @@ public partial class GestionEmisoresForm : Form
     }
     private void DgvCellValueChanged(object? sender, DataGridViewCellEventArgs e)
     {
-        if (_sincronizando || _cargando) return;
+        // RowIndex < 0 = celda de CABECERA (p. ej. asignar HeaderText en el
+        // InitializeComponent, que ya trae las columnas añadidas a la rejilla):
+        // no es una edición de datos y no debe marcar el emisor como modificado.
+        if (_sincronizando || _cargando || e.RowIndex < 0) return;
         MarcarModificado();
         SincronizarZonasDesdeDgv();
         picFactura.Invalidate();
@@ -719,7 +754,7 @@ public partial class GestionEmisoresForm : Form
         var nifSeleccionado = (lstEmisores.SelectedItem as EmisorListItem)?.Config.Nif;
 
         // Al vaciar/recargarse los ítems se dispara SelectedIndexChanged: la bandera
-        // evita el aviso "¿Descartar nuevo?" mientras el usuario teclea el filtro.
+        // evita la confirmación de cambios pendientes mientras teclea el filtro.
         _saltarCambioSeleccion = true;
         lstEmisores.SuspendLayout();
         lstEmisores.Items.Clear();
@@ -760,32 +795,60 @@ public partial class GestionEmisoresForm : Form
     {
         if (_cargando || _saltarCambioSeleccion) return;
 
-        if (_esNuevo && _modificado)
+        // El destino se captura al entrar: tras guardar, GuardarCambios recarga
+        // la lista y reselecciona el emisor guardado, moviendo la selección.
+        var nifDestino = (lstEmisores.SelectedItem as EmisorListItem)?.Config.Nif;
+
+        if (!ConfirmarCambiosPendientes("Cambiar de emisor"))
         {
-            var r = MessageBox.Show(
-                "Hay un emisor nuevo sin guardar. ¿Descartarlo y cargar el seleccionado?",
-                "Descartar nuevo",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-            if (r != DialogResult.Yes)
+            RestaurarSeleccionPrevia();
+            return;
+        }
+
+        // Si tras guardar la selección ha vuelto al emisor recién guardado, se
+        // fuerza el destino (con el mismo criterio que al guardar: si el filtro
+        // activo lo oculta, se limpia la búsqueda para que vuelva a aparecer).
+        var nifSeleccionado = (lstEmisores.SelectedItem as EmisorListItem)?.Config.Nif;
+        if (nifDestino != null &&
+            !string.Equals(nifSeleccionado, nifDestino, StringComparison.OrdinalIgnoreCase))
+        {
+            if (!SeleccionarEmisorPorNif(nifDestino))
             {
-                _saltarCambioSeleccion = true;
-                lstEmisores.SelectedIndex = -1;
-                _saltarCambioSeleccion = false;
-                return;
+                txtBuscarEmisor.Clear();
+                SeleccionarEmisorPorNif(nifDestino);
             }
-            _esNuevo = false;
-            _modificado = false;
+            // SelectedIndexChanged se vuelve a disparar con el destino ya
+            // seleccionado y es ese disparo el que lo carga en la UI.
+            return;
         }
 
         if (lstEmisores.SelectedItem is EmisorListItem item)
             CargarEmisorEnUI(item.Config);
     }
 
+    /// <summary>
+    /// Vuelve a marcar en la lista el emisor cargado en la UI (o ninguno si es
+    /// un emisor nuevo, que todavía no está en la lista). Se usa cuando el
+    /// usuario cancela el cambio de selección: la selección ya se había movido
+    /// al pulsar otro emisor. La bandera evita reentrar en el handler.
+    /// </summary>
+    private void RestaurarSeleccionPrevia()
+    {
+        _saltarCambioSeleccion = true;
+        if (_esNuevo || _emisorActual == null || !SeleccionarEmisorPorNif(_emisorActual.Nif))
+            lstEmisores.ClearSelected();
+        _saltarCambioSeleccion = false;
+    }
+
     private void CargarEmisorEnUI(EmisorConfig config)
     {
         _cargando = true;
         _modificado = false;
-        _emisorActual = config;
+        // Se trabaja SIEMPRE sobre una copia: los objetos EmisorConfig viven en
+        // una caché estática compartida con los parsers (ConfiguracionEmisores)
+        // y mutarlos en sitio filtraría los cambios "sin guardar" al resto del
+        // proceso, además de hacer imposible descartarlos de verdad.
+        _emisorActual = CopiarConfig(config);
         btnGuardar.Enabled = false;
 
         txtNombre.Text = config.Nombre;
@@ -971,16 +1034,64 @@ public partial class GestionEmisoresForm : Form
 
     // ── CRUD ───────────────────────────────────────────────────────────────────
 
+    /// <summary>
+    /// Pregunta qué hacer con los cambios pendientes antes de una acción que
+    /// perdería (cambiar de emisor, crear uno nuevo, clonar). Devuelve true si
+    /// se puede continuar (cambios guardados o descartados) y false si el
+    /// usuario cancela o el guardado no pasa la validación.
+    /// </summary>
+    private bool ConfirmarCambiosPendientes(string accion)
+    {
+        if (!_modificado) return true;
+
+        var msg = _esNuevo
+            ? $"Hay un emisor nuevo sin guardar. ¿{accion}?\n\n" +
+              "Sí = guardarlo · No = descartarlo · Cancelar = seguir editando"
+            : $"Hay cambios sin guardar en '{_emisorActual?.Nombre}'. ¿{accion}?\n\n" +
+              "Sí = guardarlos · No = descartarlos · Cancelar = seguir editando";
+
+        var r = MessageBox.Show(msg, "Cambios sin guardar",
+            MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+
+        if (r == DialogResult.Yes)
+        {
+            // Si la validación falla, GuardarCambios ya ha mostrado el aviso y
+            // el foco va al dato culpable: se sigue editando sin cambiar nada.
+            return GuardarCambios();
+        }
+
+        if (r == DialogResult.No)
+        {
+            DescartarCambiosPendientes();
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Descarta las ediciones en memoria. La UI trabaja sobre una copia
+    /// (ver CargarEmisorEnUI), así que el objeto de la caché intacto basta
+    /// para restaurar el estado guardado; se recarga el emisor desde esa
+    /// caché para que la descartada sea visible y, por ejemplo, ClonarEmisor
+    /// no clone ediciones ya descartadas.
+    /// </summary>
+    private void DescartarCambiosPendientes()
+    {
+        var nifDescartado = _esNuevo ? null : _emisorActual?.Nif;
+        var limpio = nifDescartado == null ? null : _configuracion.ObtenerPorNif(nifDescartado);
+
+        _esNuevo = false;
+        _modificado = false;
+        btnGuardar.Enabled = false;
+
+        if (limpio != null)
+            CargarEmisorEnUI(limpio);
+    }
+
     private void NuevoEmisor()
     {
-        if (_esNuevo && _modificado)
-        {
-            var r = MessageBox.Show(
-                "Hay un emisor nuevo sin guardar. ¿Descartarlo y crear otro?",
-                "Descartar nuevo",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-            if (r != DialogResult.Yes) return;
-        }
+        if (!ConfirmarCambiosPendientes("Crear otro emisor nuevo")) return;
 
         var nuevo = new EmisorConfig
         {
@@ -1028,6 +1139,11 @@ public partial class GestionEmisoresForm : Form
 
         _configuracion.Eliminar(_emisorActual.Nif);
         _emisorActual = null;
+        // Los cambios pendientes se descartan con el propio emisor: sin esto,
+        // el salto a SelectedIndex = 0 dispararía la confirmación de cambios.
+        _esNuevo = false;
+        _modificado = false;
+        btnGuardar.Enabled = false;
         ActualizarVersionXml();
         CargarEmisores();
         if (lstEmisores.Items.Count > 0)
@@ -1045,47 +1161,17 @@ public partial class GestionEmisoresForm : Form
     {
         if (_emisorActual == null) return;
 
-        if (_esNuevo && _modificado)
-        {
-            var r = MessageBox.Show(
-                "Hay un emisor nuevo sin guardar. ¿Descartarlo y clonar el emisor actual?",
-                "Descartar nuevo",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-            if (r != DialogResult.Yes) return;
-        }
+        if (!ConfirmarCambiosPendientes("Clonar el emisor actual")) return;
 
         SincronizarUIaConfig();
 
-        var clon = new EmisorConfig
-        {
-            Nif = _emisorActual.Nif + "_COPY",
-            Nombre = _emisorActual.Nombre + " (Copia)",
-            Identificadores = new List<string>(_emisorActual.Identificadores),
-            ModoExtraccion = _emisorActual.ModoExtraccion,
-            ConceptoIngreso = _emisorActual.ConceptoIngreso,
-            ConceptoGasto = _emisorActual.ConceptoGasto,
-            CulturaFecha = _emisorActual.CulturaFecha,
-            Campos = _emisorActual.Campos.Select(CopiarCampo).ToList(),
-            MultiLinea = _emisorActual.MultiLinea != null ? new MultiLineaConfig
-            {
-                RegexLinea = _emisorActual.MultiLinea.RegexLinea,
-                MapeoCampos = _emisorActual.MultiLinea.MapeoCampos
-                    .Select(m => new MapeoCampoLinea { Nombre = m.Nombre, Grupo = m.Grupo }).ToList(),
-                Lineas = _emisorActual.MultiLinea.Lineas
-                    .Select(l => new LineaConfig
-                    {
-                        Regex = l.Regex,
-                        MapeoCampos = l.MapeoCampos
-                            .Select(m => new MapeoCampoLinea { Nombre = m.Nombre, Grupo = m.Grupo }).ToList()
-                    }).ToList()
-            } : null,
-            PostProcesamiento = _emisorActual.PostProcesamiento.Select(CopiarPostProc).ToList(),
-            ZonasOcr = _emisorActual.ZonasOcr?.Select(z => new ZonaOcrConfig
-            {
-                Campo = z.Campo, NumPagina = z.NumPagina,
-                X = z.X, Y = z.Y, Ancho = z.Ancho, Alto = z.Alto
-            }).ToList()
-        };
+        // Copia profunda + identidad nueva; el clon arranca sin versión (se
+        // calcula al guardar) y sin PDF de muestra, como hasta ahora.
+        var clon = CopiarConfig(_emisorActual);
+        clon.Nif = _emisorActual.Nif + "_COPY";
+        clon.Nombre = _emisorActual.Nombre + " (Copia)";
+        clon.Version = 1;
+        clon.RutaPdfMuestra = string.Empty;
         _esNuevo = true;
         _emisorActual = clon;
         CargarEmisorEnUI(clon);
@@ -1095,6 +1181,61 @@ public partial class GestionEmisoresForm : Form
         lstEmisores.ClearSelected();
         _saltarCambioSeleccion = false;
     }
+
+    /// <summary>
+    /// Copia profunda de un emisor. La usa <see cref="CargarEmisorEnUI"/> para
+    /// aislar la edición de la caché compartida con los parsers; los objetos
+    /// anidados (que también se mutan en sitio desde la UI) los copian
+    /// CopiarMapeos/CopiarCampo/CopiarPostProc/CopiarZona.
+    /// </summary>
+    private static EmisorConfig CopiarConfig(EmisorConfig o) => new()
+    {
+        Nif = o.Nif,
+        Nombre = o.Nombre,
+        Version = o.Version,
+        ModoExtraccion = o.ModoExtraccion,
+        ConceptoIngreso = o.ConceptoIngreso,
+        ConceptoGasto = o.ConceptoGasto,
+        CulturaFecha = o.CulturaFecha,
+        RutaPdfMuestra = o.RutaPdfMuestra,
+        Identificadores = new List<string>(o.Identificadores),
+        Campos = o.Campos.Select(CopiarCampo).ToList(),
+        MultiLinea = o.MultiLinea == null ? null : new MultiLineaConfig
+        {
+            RegexLinea = o.MultiLinea.RegexLinea,
+            MapeoCampos = CopiarMapeos(o.MultiLinea.MapeoCampos),
+            Lineas = o.MultiLinea.Lineas
+                .Select(l => new LineaConfig
+                {
+                    Regex = l.Regex,
+                    MapeoCampos = CopiarMapeos(l.MapeoCampos)
+                }).ToList()
+        },
+        PostProcesamiento = o.PostProcesamiento.Select(CopiarPostProc).ToList(),
+        ZonasOcr = o.ZonasOcr?.Select(CopiarZona).ToList()
+    };
+
+    private static List<MapeoCampoLinea> CopiarMapeos(List<MapeoCampoLinea> mapeos) =>
+        mapeos.Select(m => new MapeoCampoLinea { Nombre = m.Nombre, Grupo = m.Grupo }).ToList();
+
+    private static ZonaOcrConfig CopiarZona(ZonaOcrConfig z) => new()
+    {
+        Campo = z.Campo,
+        NumPagina = z.NumPagina,
+        X = z.X, Y = z.Y, Ancho = z.Ancho, Alto = z.Alto,
+        Preprocesamiento = z.Preprocesamiento == null ? null : new PreprocesamientoOcr
+        {
+            EscalaGrises = z.Preprocesamiento.EscalaGrises,
+            Binarizacion = z.Preprocesamiento.Binarizacion,
+            UmbralBinarizacion = z.Preprocesamiento.UmbralBinarizacion,
+            Redimensionar = z.Preprocesamiento.Redimensionar,
+            FactorEscala = z.Preprocesamiento.FactorEscala,
+            EliminarRuido = z.Preprocesamiento.EliminarRuido,
+            InvertirColores = z.Preprocesamiento.InvertirColores,
+            AutoRecortar = z.Preprocesamiento.AutoRecortar,
+            PaddingAutoRecorte = z.Preprocesamiento.PaddingAutoRecorte
+        }
+    };
 
     private static CampoConfig CopiarCampo(CampoConfig c) => new()
     {
@@ -1128,16 +1269,18 @@ public partial class GestionEmisoresForm : Form
 
     // ── GUARDAR ────────────────────────────────────────────────────────────────
 
-    private void GuardarCambios()
+    /// <summary>Guarda el emisor en disco. Devuelve false si la validación
+    /// falla o se produce un error (el aviso ya se ha mostrado).</summary>
+    private bool GuardarCambios()
     {
-        if (_emisorActual == null) return;
+        if (_emisorActual == null) return false;
 
         var nifNuevo = txtNif.Text.Trim();
         if (string.IsNullOrWhiteSpace(nifNuevo))
         {
             MessageBox.Show("El NIF no puede estar vacío.", "Validación",
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            return;
+            return false;
         }
 
         // Validate NIF uniqueness (exclude self for existing emitters)
@@ -1148,7 +1291,7 @@ public partial class GestionEmisoresForm : Form
         {
             MessageBox.Show($"Ya existe un emisor con NIF '{nifNuevo}'.\nEl NIF debe ser único.",
                 "NIF duplicado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            return;
+            return false;
         }
 
         var (errorPostProc, campoPostProc) = ValidarReglasPostProc();
@@ -1159,7 +1302,7 @@ public partial class GestionEmisoresForm : Form
                 "Post-procesamiento incompleto", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             // Foco al dato que falta, una vez cerrado el aviso.
             campoPostProc?.Focus();
-            return;
+            return false;
         }
 
         SincronizarUIaConfig();
@@ -1204,11 +1347,13 @@ public partial class GestionEmisoresForm : Form
             MessageBox.Show("Emisor guardado correctamente.",
                 "Guardado", MessageBoxButtons.OK, MessageBoxIcon.Information);
             ActualizarTablaValoresExtraidos();
+            return true;
         }
         catch (Exception ex)
         {
             MessageBox.Show($"Error al guardar:\n{ex.Message}",
                 "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return false;
         }
     }
 

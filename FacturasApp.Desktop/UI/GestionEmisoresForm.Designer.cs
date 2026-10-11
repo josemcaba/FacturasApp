@@ -304,11 +304,12 @@ partial class GestionEmisoresForm
         txtNombre.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         txtNombre.CharacterCasing = CharacterCasing.Upper;
         txtNombre.Location = new Point(16, 39);
+        txtNombre.MaxLength = 40;
         txtNombre.Name = "txtNombre";
         txtNombre.Size = new Size(545, 27);
         txtNombre.TabIndex = 1;
         txtNombre.TextChanged += ControlModificado;
-        txtNombre.TextChanged += TxtMayusculas_TextChanged;
+        txtNombre.TextChanged += TxtNombre_TextChanged;
         // 
         // lblGeneralNif
         // 
