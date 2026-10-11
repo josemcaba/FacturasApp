@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Nif>B84443985</Nif>
+  <Nombre>ESPRINET IBERICA, S.L.U.</Nombre>
+  <Version>202610110151</Version>
+  <Identificadores>
+    <Id>Esprinet Ibérica, S.L. Sociedad Unipersonal</Id>
+    <Id>B-84443985</Id>
+  </Identificadores>
+  <ModoExtraccion>Simple</ModoExtraccion>
+  <ConceptoIngreso>700</ConceptoIngreso>
+  <ConceptoGasto>600</ConceptoGasto>
+  <CulturaFecha>es-ES</CulturaFecha>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\ARANDA GARCIA, GREGORIO - Gastos\2607\Esprinet_FAT_K75318_V10_V326043425_07072026.PDF</RutaPdfMuestra>
+  <Campos>
+    <Campo Nombre="NumeroFactura">
+      <Regex>\[FACTU].*\s*(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="Fecha">
+      <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNombre">
+      <Regex>BILL TO:\s*(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNif">
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="BaseImponible">
+      <Regex>([\d.,]+)\s+[\d.,]+\s+[\d.,]+\s+</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="PorcentajeIVA">
+      <Regex>[\d.,]+\s+([\d.,]+)\s+[\d.,]+\s+</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="TotalFactura">
+      <Regex>[\d.,]+\s+[\d.,]+\s+[\d.,]+\s+EUR\s+([\d.,]+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+  </Campos>
+  <PostProcesamiento />
+  <ZonasOcr>
+    <Zona Campo="FACTU" Pagina="1" X="74.8" Y="23.6" Ancho="11.8" Alto="4" />
+    <Zona Campo="FECHA" Pagina="1" X="63.7" Y="23.5" Ancho="10.9" Alto="4" />
+    <Zona Campo="NOMB" Pagina="1" X="43" Y="8.4" Ancho="26.7" Alto="5.7" />
+    <Zona Campo="NIF" Pagina="1" X="16.1" Y="16" Ancho="13.7" Alto="2.9" />
+    <Zona Campo="NUMB" Pagina="1" X="58.7" Y="66.7" Ancho="34" Alto="10.5" />
+  </ZonasOcr>
+</Emisor>
