@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B23709892</Nif>
   <Nombre>PETROPRIX ENERGIA S.L.</Nombre>
-  <Version>202610111155</Version>
+  <Version>202610112127</Version>
   <Identificadores>
     <Id>PETROPRIX ENERGIA S.L.</Id>
     <Id>B23709892</Id>
@@ -53,4 +53,5 @@
     <Zona Campo="P1_Z2" Pagina="1" X="48.6" Y="12.3" Ancho="45" Alto="11.5" />
     <Zona Campo="P1_Z3" Pagina="1" X="6.1" Y="71.1" Ancho="87.9" Alto="21.3" />
   </ZonasOcr>
+  <NifEstado>Valido</NifEstado>
 </Emisor>

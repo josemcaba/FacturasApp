@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B92719707</Nif>
   <Nombre>LAS PALMERAS DEL GUADALHORCE, S.L.</Nombre>
-  <Version>202610091857</Version>
+  <Version>202610112109</Version>
   <Identificadores>
     <Id>LAS PALMERAS DEL GUADALHORCE</Id>
     <Id>B92719707</Id>
@@ -11,7 +11,7 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>624</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\Rodulfo\2026_T14640.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra />
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>FACTURA\s*:(.+)</Regex>
@@ -61,4 +61,5 @@
     <Zona Campo="P1_Z3" Pagina="1" X="1.4" Y="38.6" Ancho="96.9" Alto="43.4" />
     <Zona Campo="P1_Z4" Pagina="1" X="35.4" Y="32.5" Ancho="10.7" Alto="5.7" />
   </ZonasOcr>
+  <NifEstado>Valido</NifEstado>
 </Emisor>

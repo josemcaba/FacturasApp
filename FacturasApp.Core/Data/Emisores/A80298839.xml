@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>A80298839</Nif>
   <Nombre>REPSOL SOLUCIONES ENERGETICAS, S.A.</Nombre>
-  <Version>202610091742</Version>
+  <Version>202610112129</Version>
   <Identificadores>
     <Id>Repsol Soluciones Energéticas, S.A.</Id>
     <Id>A-80298839</Id>
@@ -11,7 +11,7 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>624</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\Rodulfo\DOC-20261006-WA0006.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra />
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>N.\s+Factura:(.+)</Regex>
@@ -53,4 +53,5 @@
     <Zona Campo="P1_Z2" Pagina="1" X="3.3" Y="27.3" Ancho="92.9" Alto="8.3" />
     <Zona Campo="P1_Z3" Pagina="1" X="3.6" Y="48.3" Ancho="93.9" Alto="49.1" />
   </ZonasOcr>
+  <NifEstado>Valido</NifEstado>
 </Emisor>

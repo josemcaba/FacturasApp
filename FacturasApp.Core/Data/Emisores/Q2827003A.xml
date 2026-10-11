@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>Q2827003A</Nif>
   <Nombre>TESORERIA SEG. SOC. (ING)</Nombre>
-  <Version>202610091139</Version>
+  <Version>202610112112</Version>
   <Identificadores>
     <Id>Recibos Seguridad Social</Id>
     <Id>ING BANK NV</Id>
@@ -45,8 +45,9 @@
         <Campo>ReceptorNombre</Campo>
         <Valor>MARIA DEL CARMEN VIANA PRIETO</Valor>
       </CondicionCampo>
-      <Accion Tipo="Establecer Valor" CampoDestino="ReceptorNif" Valor="28598773K" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+      <Accion Tipo="Establecer Valor" CampoDestino="ReceptorNif" Valor="28598773K" Sustituto="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
     </Regla>
   </PostProcesamiento>
   <ZonasOcr />
+  <NifEstado>Valido</NifEstado>
 </Emisor>

@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>W0185696B</Nif>
   <Nombre>AMAZON WEB SERVICES EMEA SARL</Nombre>
-  <Version>202610102225</Version>
+  <Version>202610112112</Version>
   <Identificadores>
     <Id>AMAZON WEB SERVICES EMEA SARL</Id>
     <Id>W0185696B</Id>
@@ -54,4 +54,5 @@
     <Zona Campo="P1_Z2" Pagina="1" X="4" Y="11.6" Ancho="30.6" Alto="21.6" />
     <Zona Campo="P1_Z3" Pagina="1" X="4.3" Y="38.4" Ancho="92.5" Alto="18.2" />
   </ZonasOcr>
+  <NifEstado>Valido</NifEstado>
 </Emisor>

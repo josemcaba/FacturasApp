@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>CY99000146W</Nif>
   <Nombre>3CX LTD.</Nombre>
-  <Version>202610111420</Version>
+  <Version>202610112122</Version>
   <Identificadores>
     <Id>3CX Ltd.</Id>
     <Id>CY99000146W</Id>
@@ -50,4 +50,5 @@
   </Campos>
   <PostProcesamiento />
   <ZonasOcr />
+  <NifEstado>Valido</NifEstado>
 </Emisor>

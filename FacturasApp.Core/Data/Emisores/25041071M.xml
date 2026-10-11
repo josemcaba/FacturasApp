@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>25041071M</Nif>
   <Nombre>PESCADERIA SALVADOR</Nombre>
-  <Version>202610111313</Version>
+  <Version>202610112043</Version>
   <Identificadores>
     <Id>Salvador</Id>
     <Id>25041071-M</Id>
@@ -92,4 +92,5 @@
     <Zona Campo="P1_Z2" Pagina="1" X="50" Y="24.8" Ancho="41" Alto="8.2" />
     <Zona Campo="P1_Z3" Pagina="1" X="3.3" Y="67.7" Ancho="90.5" Alto="30" />
   </ZonasOcr>
+  <NifEstado>Valido</NifEstado>
 </Emisor>

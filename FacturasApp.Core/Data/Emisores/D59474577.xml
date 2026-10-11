@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>D59474577</Nif>
   <Nombre>BAUHAUS</Nombre>
-  <Version>202610111318</Version>
+  <Version>202610112123</Version>
   <Identificadores>
     <Id>BAUHAUS 805 Malaga</Id>
   </Identificadores>
@@ -61,4 +61,5 @@
     <Zona Campo="NOMB" Pagina="1" X="61.3" Y="17.7" Ancho="35.2" Alto="8.6" />
     <Zona Campo="IMP" Pagina="1" X="5" Y="45.9" Ancho="90.5" Alto="48.7" />
   </ZonasOcr>
+  <NifEstado>Valido</NifEstado>
 </Emisor>

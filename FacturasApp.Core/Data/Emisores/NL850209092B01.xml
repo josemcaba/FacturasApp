@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>NL850209092B01</Nif>
   <Nombre>BIRD B.V.</Nombre>
-  <Version>202610110333</Version>
+  <Version>202610112054</Version>
   <Identificadores>
     <Id>Bird B.V.</Id>
     <Id>NL850209092B01</Id>
@@ -50,4 +50,5 @@
   </Campos>
   <PostProcesamiento />
   <ZonasOcr />
+  <NifEstado>Valido</NifEstado>
 </Emisor>

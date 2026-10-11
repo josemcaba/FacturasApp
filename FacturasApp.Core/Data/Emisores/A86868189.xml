@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>A86868189</Nif>
   <Nombre>RENFE VIAJEROS S.M.E., S.A.</Nombre>
-  <Version>202610111603</Version>
+  <Version>202610112128</Version>
   <Identificadores>
     <Id>RENFE VIAJEROS S.M.E., S.A.</Id>
     <Id>ESA86868189</Id>
@@ -50,4 +50,5 @@
   </Campos>
   <PostProcesamiento />
   <ZonasOcr />
+  <NifEstado>Valido</NifEstado>
 </Emisor>

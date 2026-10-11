@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B56480387</Nif>
   <Nombre>GR LOQUI MAD S.L.</Nombre>
-  <Version>202610111619</Version>
+  <Version>202610112126</Version>
   <Identificadores>
     <Id>Gr Loqui Mad SL</Id>
     <Id>B56480387</Id>
@@ -54,4 +54,5 @@
     <Zona Campo="P1_Z3" Pagina="1" X="16.5" Y="49.8" Ancho="11.3" Alto="25" />
     <Zona Campo="P1_Z4" Pagina="1" X="55.6" Y="49.9" Ancho="40.8" Alto="42.3" />
   </ZonasOcr>
+  <NifEstado>Valido</NifEstado>
 </Emisor>

@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B58728585</Nif>
   <Nombre>TD SYNNEX SPAIN, S.L.U.</Nombre>
-  <Version>202610110218</Version>
+  <Version>202610112125</Version>
   <Identificadores>
     <Id>TD SYNNEX Spain,S.L.UNIP.</Id>
     <Id>ESB58728585</Id>
@@ -50,4 +50,5 @@
   </Campos>
   <PostProcesamiento />
   <ZonasOcr />
+  <NifEstado>Valido</NifEstado>
 </Emisor>

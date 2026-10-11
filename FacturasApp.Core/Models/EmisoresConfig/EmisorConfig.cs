@@ -44,30 +44,8 @@ public class EmisorConfig
     [XmlArrayItem("Zona")]
     public List<ZonaOcrConfig>? ZonasOcr { get; set; }
 
-    /// <summary>Momento de la última consulta al servicio VIES (null = nunca
-    /// verificado).</summary>
-    /// <remarks>
-    /// Se serializa vía <see cref="ViesFechaVerificacionTexto"/>: XmlSerializer
-    /// escribe un &lt;xsi:nil&gt; para los DateTime? vacíos, lo que añadiría ruido
-    /// a los XML de los emisores sin verificar.
-    /// </remarks>
-    [XmlIgnore]
-    public DateTime? ViesFechaVerificacion { get; set; }
-
-    /// <summary>Serialización de <see cref="ViesFechaVerificacion"/> como texto
-    /// ISO. Un string null no se serializa, así que el elemento sólo aparece
-    /// cuando hay una verificación real guardada.</summary>
-    [XmlElement("ViesFechaVerificacion")]
-    public string? ViesFechaVerificacionTexto
-    {
-        get => ViesFechaVerificacion?.ToString("yyyy-MM-ddTHH:mm:ss",
-            System.Globalization.CultureInfo.InvariantCulture);
-        set => ViesFechaVerificacion =
-            DateTime.TryParse(value, System.Globalization.CultureInfo.InvariantCulture,
-                System.Globalization.DateTimeStyles.None, out var fecha) ? fecha : null;
-    }
-
-    /// <summary>Resultado de la última consulta VIES: "Valido", "Invalido" o
-    /// "NoDisponible" (null = nunca verificado).</summary>
-    public string? ViesEstado { get; set; }
+    /// <summary>Último estado verificado del NIF del emisor: "Valido", "Invalido"
+    /// o "NoDisponible" (null = nunca verificado). Se registra con el botón
+    /// «Verificar NIF» (NIF español en local, comunitario contra VIES).</summary>
+    public string? NifEstado { get; set; }
 }

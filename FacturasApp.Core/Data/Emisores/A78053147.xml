@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>A78053147</Nif>
   <Nombre>TELEFONICA SOLUCIONES DE ESPAÑA S.A.U.</Nombre>
-  <Version>202610110026</Version>
+  <Version>202610112129</Version>
   <Identificadores>
     <Id>TELEFÓNICA SOLUCIONES DE INFORMÁTICA Y COMUNICACIONES DE ESPAÑA S.A.U.</Id>
     <Id>A78053147</Id>
@@ -50,4 +50,5 @@
   </Campos>
   <PostProcesamiento />
   <ZonasOcr />
+  <NifEstado>Valido</NifEstado>
 </Emisor>

@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B84443985</Nif>
   <Nombre>ESPRINET IBERICA, S.L.U.</Nombre>
-  <Version>202610110151</Version>
+  <Version>202610112125</Version>
   <Identificadores>
     <Id>Esprinet Ibérica, S.L. Sociedad Unipersonal</Id>
     <Id>B-84443985</Id>
@@ -55,4 +55,5 @@
     <Zona Campo="NIF" Pagina="1" X="16.1" Y="16" Ancho="13.7" Alto="2.9" />
     <Zona Campo="NUMB" Pagina="1" X="58.7" Y="66.7" Ancho="34" Alto="10.5" />
   </ZonasOcr>
+  <NifEstado>Valido</NifEstado>
 </Emisor>

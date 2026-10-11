@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>IE9692928F</Nif>
   <Nombre>META PLATFORMS IRELAND LIMITED</Nombre>
-  <Version>202610111231</Version>
+  <Version>202610112123</Version>
   <Identificadores>
     <Id>Meta Platforms Ireland Limited</Id>
     <Id>IE9692928F</Id>
@@ -75,4 +75,5 @@
     <Zona Campo="PAGO" Pagina="1" X="68.2" Y="14.9" Ancho="25.8" Alto="11.4" />
     <Zona Campo="P1_Z4" Pagina="1" X="6.8" Y="91.9" Ancho="51.9" Alto="3.6" />
   </ZonasOcr>
+  <NifEstado>Valido</NifEstado>
 </Emisor>

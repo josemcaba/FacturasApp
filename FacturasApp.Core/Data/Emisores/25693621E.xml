@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>25693621E</Nif>
   <Nombre>ARANDA GARCIA, GREGORIO</Nombre>
-  <Version>202610082047</Version>
+  <Version>202610112113</Version>
   <Identificadores>
     <Id>EMISOR</Id>
     <Id>Gregorio Aranda</Id>
@@ -12,7 +12,7 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\Gregorio\2609\1439.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra />
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>(?:N. Factura|N. Rectificativa).*\n(\S+)</Regex>
@@ -55,8 +55,9 @@
         <Campo>ReceptorNif</Campo>
         <Valor>B93522266</Valor>
       </CondicionCampo>
-      <Accion Tipo="Establecer Valor" CampoDestino="ReceptorNombre" Valor="Estudio Jurídico Fernández Navarro, SLP" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+      <Accion Tipo="Establecer Valor" CampoDestino="ReceptorNombre" Valor="Estudio Jurídico Fernández Navarro, SLP" Sustituto="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
     </Regla>
   </PostProcesamiento>
   <ZonasOcr />
+  <NifEstado>Valido</NifEstado>
 </Emisor>

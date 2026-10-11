@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B56255862</Nif>
   <Nombre>COMUNICACIONES Y SOLUCIONES CLOUD, S.L.</Nombre>
-  <Version>202610111550</Version>
+  <Version>202610112127</Version>
   <Identificadores>
     <Id>Comunicaciones y Soluciones Cloud, S.L.</Id>
     <Id>B56255862</Id>
@@ -50,4 +50,5 @@
   </Campos>
   <PostProcesamiento />
   <ZonasOcr />
+  <NifEstado>Valido</NifEstado>
 </Emisor>

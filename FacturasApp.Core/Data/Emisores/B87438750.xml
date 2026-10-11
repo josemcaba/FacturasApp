@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B87438750</Nif>
   <Nombre>TRIGORICO, S.L.U.</Nombre>
-  <Version>202610062250</Version>
+  <Version>202610112124</Version>
   <Identificadores>
     <Id>reinosa</Id>
     <Id>ESB87438750</Id>
@@ -11,7 +11,7 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Mix\Trigorico 2.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra />
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>Fecha[\s\r\n]*(\S+)</Regex>
@@ -50,7 +50,7 @@
   <PostProcesamiento>
     <Regla>
       <CondicionTextoContiene>ABONO</CondicionTextoContiene>
-      <Accion Tipo="Invertir Signo" CampoDestino="" Valor="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+      <Accion Tipo="Invertir Signo" CampoDestino="" Valor="" Sustituto="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
     </Regla>
   </PostProcesamiento>
   <ZonasOcr>
@@ -62,4 +62,5 @@
     <Zona Campo="P2_Z1" Pagina="2" X="30.9" Y="73.4" Ancho="64" Alto="6.8" />
     <Zona Campo="P2_Z2" Pagina="2" X="30.9" Y="80.2" Ancho="64" Alto="4" />
   </ZonasOcr>
+  <NifEstado>Valido</NifEstado>
 </Emisor>

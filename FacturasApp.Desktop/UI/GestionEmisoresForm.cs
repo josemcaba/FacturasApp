@@ -922,6 +922,7 @@ public partial class GestionEmisoresForm : Form
         ActualizarTablaValoresExtraidos();
         ActualizarIndicadorIdentificadores();
         ActualizarVersionXml();
+        ActualizarColorBotonVerificar();
     }
 
     /// <summary>
@@ -1201,8 +1202,7 @@ public partial class GestionEmisoresForm : Form
         },
         PostProcesamiento = o.PostProcesamiento.Select(CopiarPostProc).ToList(),
         ZonasOcr = o.ZonasOcr?.Select(CopiarZona).ToList(),
-        ViesFechaVerificacion = o.ViesFechaVerificacion,
-        ViesEstado = o.ViesEstado
+        NifEstado = o.NifEstado
     };
 
     private static List<MapeoCampoLinea> CopiarMapeos(List<MapeoCampoLinea> mapeos) =>
@@ -1257,42 +1257,111 @@ public partial class GestionEmisoresForm : Form
         };
     }
 
-    // ── VIES ───────────────────────────────────────────────────────────────────
+    // ── VERIFICACIÓN NIF (local + VIES) ───────────────────────────────────────
 
-    private async void BtnViesValidar_Click(object? sender, EventArgs e)
+    private async void BtnVerificarNif_Click(object? sender, EventArgs e)
     {
+        if (_emisorActual == null)
+        {
+            MessageBox.Show("Seleccione o cree un emisor antes de verificar su NIF.",
+                "Verificar NIF", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+
         var nif = txtNif.Text.Trim();
         if (string.IsNullOrWhiteSpace(nif))
         {
-            MessageBox.Show("Introduzca primero un NIF-IVA.", "VIES",
+            MessageBox.Show("Introduzca primero un NIF.", "Verificar NIF",
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
-        if (ViesValidator.ObtenerPrefijoPais(nif) == "GB")
+        if (string.Equals(nif, "General", StringComparison.OrdinalIgnoreCase))
         {
             MessageBox.Show(
-                "Los NIF británicos (GB) dejaron de verificarse en VIES el " +
-                "1/1/2021 por el Brexit.\nDeben comprobarse en la HMRC británica.",
-                "VIES", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                "El emisor 'General' usa un NIF ficticio; no hay nada que verificar.",
+                "Verificar NIF", MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
         }
 
-        btnViesValidar.Enabled = false;
-        btnViesValidar.Text = "Consultando...";
+        btnVerificarNif.Enabled = false;
+        btnVerificarNif.Text = "Verificando...";
         try
         {
-            var resultado = await ViesValidator.VerificarAsync(nif);
-            GuardarResultadoVies(nif, resultado);
-            MessageBox.Show(DescribirResultadoVies(resultado, nif), "VIES",
-                MessageBoxButtons.OK,
-                resultado.Disponible && !resultado.Valido
-                    ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
+            string estado;
+            string mensaje;
+            if (NifValidator.ValidarNif(nif))
+            {
+                // NIF español: se resuelve en local, sin consultar la red.
+                estado = "Valido";
+                mensaje = $"VÁLIDO: {nif} es un NIF español válido (DNI/NIE/CIF)\n" +
+                          "(verificación local, sin consulta a VIES).";
+            }
+            else if (ViesValidator.ObtenerPrefijoPais(nif) == "GB")
+            {
+                estado = "NoDisponible";
+                mensaje = "Los NIF británicos (GB) dejaron de verificarse en VIES el " +
+                          "1/1/2021 por el Brexit.\nDeben comprobarse en la HMRC británica.";
+            }
+            else if (ViesValidator.EsNifComunitario(nif))
+            {
+                var resultado = await ViesValidator.VerificarAsync(nif);
+                GuardarResultadoVies(nif, resultado);
+                if (IsDisposed) return;
+                estado = resultado.Estado;
+                mensaje = DescribirResultadoVies(resultado, nif);
+            }
+            else
+            {
+                estado = "Invalido";
+                mensaje = $"NO VÁLIDO: {nif} no es un NIF español válido (DNI/NIE/CIF)\n" +
+                          "ni un NIF-IVA comunitario con prefijo de estado miembro.";
+            }
+
+            // El estado se registra en el emisor como cualquier otra edición:
+            // queda PENDIENTE de guardar y el XML sólo se escribe al pulsar
+            // Guardar (con su correspondiente subida de <Version>).
+            _emisorActual.NifEstado = estado;
+            MarcarModificado();
+            ActualizarColorBotonVerificar();
+            mensaje += $"\n\nEstado '{estado}' registrado como pendiente de guardar.";
+
+            MessageBox.Show(mensaje, "Verificar NIF", MessageBoxButtons.OK,
+                estado == "Invalido" ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
         }
         finally
         {
-            btnViesValidar.Enabled = true;
-            btnViesValidar.Text = "Verificar VIES";
+            btnVerificarNif.Enabled = true;
+            btnVerificarNif.Text = "Verificar NIF";
+        }
+    }
+
+    /// <summary>
+    /// Pinta el botón «Verificar NIF» según el estado NIF del emisor cargado:
+    /// verde claro = válido, rojo claro = inválido, amarillo claro = no
+    /// disponible y color original si nunca se ha verificado. UseVisualStyleBackColor
+    /// hay que apagarlo al pintar, o el botón ignora el BackColor.
+    /// </summary>
+    private void ActualizarColorBotonVerificar()
+    {
+        switch (_emisorActual?.NifEstado)
+        {
+            case "Valido":
+                btnVerificarNif.UseVisualStyleBackColor = false;
+                btnVerificarNif.BackColor = Color.LightGreen;
+                break;
+            case "Invalido":
+                btnVerificarNif.UseVisualStyleBackColor = false;
+                // Color.LightRed no existe en System.Drawing: rojo claro por RGB
+                btnVerificarNif.BackColor = Color.FromArgb(255, 170, 170);
+                break;
+            case "NoDisponible":
+                btnVerificarNif.UseVisualStyleBackColor = false;
+                btnVerificarNif.BackColor = Color.LightYellow;
+                break;
+            default:
+                btnVerificarNif.UseVisualStyleBackColor = true;
+                break;
         }
     }
 
@@ -1432,9 +1501,9 @@ public partial class GestionEmisoresForm : Form
             }
 
             // Los tres estados (válido, inválido o no disponible) quedan
-            // registrados con su fecha en el XML del emisor.
-            _emisorActual.ViesEstado = resultadoVies.Estado;
-            _emisorActual.ViesFechaVerificacion = resultadoVies.FechaConsulta;
+            // registrados en el XML del emisor.
+            _emisorActual.NifEstado = resultadoVies.Estado;
+            ActualizarColorBotonVerificar();
         }
         // NIF sin prefijo comunitario: se valida el formato español aquí, porque
         // el procesamiento ya NO valida el NIF del emisor (se validó en el alta).
@@ -2263,12 +2332,12 @@ public partial class GestionEmisoresForm : Form
     private class EmisorListItem
     {
         public EmisorConfig Config { get; }
-        public string DisplayText => $"{Config.Nif} - {Config.Nombre}{MarcaVies}";
+        public string DisplayText => $"{Config.Nif} - {Config.Nombre}{MarcaNif}";
         public EmisorListItem(EmisorConfig config) => Config = config;
 
-        /// <summary>Marca de la última verificación VIES guardada en el XML;
+        /// <summary>Marca del último estado NIF guardado en el XML del emisor;
         /// sin estado o "NoDisponible" no se muestra nada.</summary>
-        private string MarcaVies => Config.ViesEstado switch
+        private string MarcaNif => Config.NifEstado switch
         {
             "Valido" => " ✓",
             "Invalido" => " ✗",

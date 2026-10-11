@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>IE6364992H</Nif>
   <Nombre>ADOBE SYSTEMS SOFTWARE IRELAND LTD</Nombre>
-  <Version>202610102256</Version>
+  <Version>202610112117</Version>
   <Identificadores>
     <Id>Adobe Systems Software Ireland Ltd</Id>
     <Id>IE6364992H</Id>
@@ -45,4 +45,5 @@
   </Campos>
   <PostProcesamiento />
   <ZonasOcr />
+  <NifEstado>Valido</NifEstado>
 </Emisor>

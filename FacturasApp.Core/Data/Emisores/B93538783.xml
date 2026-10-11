@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B93538783</Nif>
   <Nombre>INVERSIONES CERRO EL PLOMO S.L.</Nombre>
-  <Version>202610102118</Version>
+  <Version>202610112124</Version>
   <Identificadores>
     <Id>INVERSIONES CERRO EL PLOMO S.L.</Id>
     <Id>B93538783</Id>
@@ -54,4 +54,5 @@
   </Campos>
   <PostProcesamiento />
   <ZonasOcr />
+  <NifEstado>Valido</NifEstado>
 </Emisor>

@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B73619215</Nif>
   <Nombre>SEWAN ESPAÑA S.L.U.</Nombre>
-  <Version>202610110204</Version>
+  <Version>202610112125</Version>
   <Identificadores>
     <Id>SEWAN ESPAÑA S.L.U.</Id>
     <Id>B73619215</Id>
@@ -54,4 +54,5 @@
     <Zona Campo="NOMB" Pagina="1" X="52" Y="14.1" Ancho="40.2" Alto="9.8" />
     <Zona Campo="P1_Z3" Pagina="1" X="52.6" Y="39.6" Ancho="43.3" Alto="31.4" />
   </ZonasOcr>
+  <NifEstado>Valido</NifEstado>
 </Emisor>

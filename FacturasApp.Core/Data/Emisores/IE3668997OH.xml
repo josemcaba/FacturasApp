@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>IE3668997OH</Nif>
   <Nombre>GOOGLE CLOUD EMEA LIMITED</Nombre>
-  <Version>202610110145</Version>
+  <Version>202610112130</Version>
   <Identificadores>
     <Id>Google Cloud EMEA Limited</Id>
     <Id>IE3668997OH</Id>
@@ -50,4 +50,5 @@
   </Campos>
   <PostProcesamiento />
   <ZonasOcr />
+  <NifEstado>Valido</NifEstado>
 </Emisor>

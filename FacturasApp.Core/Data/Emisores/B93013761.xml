@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B93013761</Nif>
   <Nombre>ARNOLD CALLE TELECOM S.L.</Nombre>
-  <Version>202610102348</Version>
+  <Version>202610112124</Version>
   <Identificadores>
     <Id>FOBOS Telecom</Id>
     <Id>Arnold Calle Telecom, S.L.</Id>
@@ -51,4 +51,5 @@
   </Campos>
   <PostProcesamiento />
   <ZonasOcr />
+  <NifEstado>Valido</NifEstado>
 </Emisor>

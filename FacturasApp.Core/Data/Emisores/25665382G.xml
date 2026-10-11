@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>25665382G</Nif>
   <Nombre>FRANCES SANCHEZ, JOSE IGNACIO</Nombre>
-  <Version>202610082043</Version>
+  <Version>202610112113</Version>
   <Identificadores>
     <Id>ES96 0182 5876 5002 0162 8560</Id>
   </Identificadores>
@@ -58,4 +58,5 @@
   </Campos>
   <PostProcesamiento />
   <ZonasOcr />
+  <NifEstado>Valido</NifEstado>
 </Emisor>

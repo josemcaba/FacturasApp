@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B09784570</Nif>
   <Nombre>DEYA GLOBAL INVESTMENT S.L.</Nombre>
-  <Version>202610102039</Version>
+  <Version>202610112128</Version>
   <Identificadores>
     <Id>DEYA GLOBAL INVESTMENT S.L.</Id>
     <Id>B09784570</Id>
@@ -54,4 +54,5 @@
     <Zona Campo="RECEP" Pagina="1" X="69.6" Y="18" Ancho="21.4" Alto="5.5" />
     <Zona Campo="P1_Z4" Pagina="1" X="62.4" Y="72.3" Ancho="28.7" Alto="10.4" />
   </ZonasOcr>
+  <NifEstado>Valido</NifEstado>
 </Emisor>

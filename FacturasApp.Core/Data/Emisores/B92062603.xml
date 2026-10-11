@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B92062603</Nif>
   <Nombre>COSTA DEL SOL BALEAR, S.A.</Nombre>
-  <Version>202610062250</Version>
+  <Version>202610112124</Version>
   <Identificadores>
     <Id>SOL BALEAR</Id>
     <Id>B92062603</Id>
@@ -11,7 +11,7 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Mix\COSTA DEL SOL BALEAR.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra />
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>([CN]{2}\d{9})</Regex>
@@ -56,4 +56,5 @@
     <Zona Campo="IMP2" Pagina="2" X="3.9" Y="86" Ancho="62.1" Alto="4.2" />
     <Zona Campo="TOTAL2" Pagina="2" X="81.1" Y="86" Ancho="14.1" Alto="4.2" />
   </ZonasOcr>
+  <NifEstado>Valido</NifEstado>
 </Emisor>

@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>N0032575C</Nif>
   <Nombre>VISTAPRINT B.V.</Nombre>
-  <Version>202610082035</Version>
+  <Version>202610112122</Version>
   <Identificadores>
     <Id>Vistaprint B.V.</Id>
     <Id>N0032575C</Id>
@@ -53,8 +53,9 @@
         <Campo>ReceptorNombre</Campo>
         <Valor>CARMEN VIANA PRIETO</Valor>
       </CondicionCampo>
-      <Accion Tipo="Establecer Valor" CampoDestino="ReceptorNif" Valor="28598773K" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+      <Accion Tipo="Establecer Valor" CampoDestino="ReceptorNif" Valor="28598773K" Sustituto="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
     </Regla>
   </PostProcesamiento>
   <ZonasOcr />
+  <NifEstado>Valido</NifEstado>
 </Emisor>
