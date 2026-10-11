@@ -1098,7 +1098,14 @@ public partial class GestionEmisoresForm : Form
             ModoExtraccion = "Ordenado",
             CulturaFecha = "es-ES",
             ConceptoIngreso = "700",
-            ConceptoGasto = "600"
+            ConceptoGasto = "600",
+            Campos = new List<CampoConfig>
+            {
+                new() { Nombre = "NumeroFactura", Regex = "FACTURA(.+)" },
+                new() { Nombre = "Fecha", UsarRegexFechaGeneral = true },
+                new() { Nombre = "ReceptorNombre", Regex = "CLIENTE(.+)" },
+                new() { Nombre = "ReceptorNif", UsarRegexNifGeneral = true }
+            }
         };
         _esNuevo = true;
         _emisorActual = nuevo;

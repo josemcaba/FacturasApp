@@ -221,9 +221,9 @@ partial class GestionEmisoresForm
         // 
         btnEliminar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
         btnEliminar.FlatStyle = FlatStyle.Flat;
-        btnEliminar.Location = new Point(121, 252);
+        btnEliminar.Location = new Point(167, 252);
         btnEliminar.Name = "btnEliminar";
-        btnEliminar.Size = new Size(104, 30);
+        btnEliminar.Size = new Size(150, 30);
         btnEliminar.TabIndex = 4;
         btnEliminar.Text = "− Eliminar";
         btnEliminar.UseVisualStyleBackColor = true;
@@ -235,7 +235,7 @@ partial class GestionEmisoresForm
         btnNuevo.FlatStyle = FlatStyle.Flat;
         btnNuevo.Location = new Point(11, 252);
         btnNuevo.Name = "btnNuevo";
-        btnNuevo.Size = new Size(104, 30);
+        btnNuevo.Size = new Size(150, 30);
         btnNuevo.TabIndex = 3;
         btnNuevo.Text = "+ Nuevo";
         btnNuevo.UseVisualStyleBackColor = true;
@@ -294,7 +294,6 @@ partial class GestionEmisoresForm
         txtNombre.Name = "txtNombre";
         txtNombre.Size = new Size(545, 27);
         txtNombre.TabIndex = 1;
-        txtNombre.TextChanged += ControlModificado;
         txtNombre.TextChanged += TxtNombre_TextChanged;
         // 
         // lblGeneralNif
@@ -315,7 +314,6 @@ partial class GestionEmisoresForm
         txtNif.Name = "txtNif";
         txtNif.Size = new Size(170, 27);
         txtNif.TabIndex = 2;
-        txtNif.TextChanged += ControlModificado;
         txtNif.TextChanged += TxtMayusculas_TextChanged;
         // 
         // lblGeneralIds
