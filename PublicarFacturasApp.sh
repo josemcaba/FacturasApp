@@ -471,18 +471,20 @@ else
 fi
 
 # ───────────────────────────────────────────────────────────────
-log "Paso 5.5: Etiqueta del proyecto (v$(version_base "$CS_VERSION"))"
+log "Paso 5.5: Etiqueta del proyecto (v$BUILT_VER)"
 # ───────────────────────────────────────────────────────────────
-# Convención: CADA publicación queda marcada en el repo del proyecto con un
-# tag anotado vMAJOR.MINOR.PATCH (sin la revisión ClickOnce, que es sólo un
-# contador de build), para poder recuperar el código exacto de cada release.
-# El tag nunca se mueve: si ya existe, se avisa y no se toca.
+# Convención (fijada por el usuario): CADA revisión publicada queda marcada en
+# el repo del proyecto con un tag anotado vMAJOR.MINOR.PATCH.REVISION (la
+# ApplicationVersion completa construida, p. ej. v3.2.1.15), para poder
+# recuperar el código exacto de cada release. Los tags antiguos de 3
+# componentes (vMAJOR.MINOR.PATCH) se conservan y no se mueven; los nuevos
+# tampoco se mueven: si ya existe, se avisa y no se toca.
 cd "$PROYECTO_DIR"
-TAG="v$(version_base "$CS_VERSION")"
+TAG="v$BUILT_VER"
 if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null 2>&1; then
     warn "El tag $TAG ya existe (apunta a $(git rev-parse --short "$TAG")): no se toca"
 else
-    git tag -a "$TAG" -m "FacturasApp $CS_VERSION (publicación $(date +'%d-%m-%Y'))"
+    git tag -a "$TAG" -m "FacturasApp $BUILT_VER (publicación $(date +'%d-%m-%Y'))"
     ok "Tag creado: $TAG → $(git rev-parse --short HEAD)"
     if git push origin "$TAG"; then
         ok "Tag $TAG pusheado"

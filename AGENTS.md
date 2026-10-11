@@ -123,7 +123,7 @@ Flujo completo: `bash PublicarFacturasApp.sh` (raíz del repo, WSL/Git Bash). Co
 3. **Copia el set ClickOnce al sitio y verifica**: `FacturasApp.application` + `setup.exe` + `Publish.html` + `Application Files/<versión construida>/`, y borra de la raíz cualquier fichero suelto no referenciado (los DLL copiados a mano se ignoran al instalar).
 4. Borra versiones antiguas de `Application Files/` (conserva las 3 más recientes).
 5. Commit + `git push --force-with-lease` en la rama actual del repo `josemcaba.github.io`. `--amend` sólo si el último commit empieza por "Actualizada FacturasApp…" **y todavía no está en el remoto** (así no se reescribe historia publicada).
-5.5. **Etiqueta el commit del repo del proyecto** con un tag anotado `vMAJOR.MINOR.PATCH` (la base de `ApplicationVersion`, sin la revisión ClickOnce) y lo pushea: **convención fijada por el usuario — toda publicación queda etiquetada con su versión**. Si el tag ya existe no se mueve (sólo avisa); si quedan cambios sin commitear los lista, ya que NO quedan dentro del tag.
+5.5. **Etiqueta el commit del repo del proyecto** con un tag anotado `vMAJOR.MINOR.PATCH.REVISION` (la `ApplicationVersion` completa construida, p. ej. `v3.2.1.15`) y lo pushea: **convención fijada por el usuario — toda revisión publicada queda etiquetada con su versión completa** (antes solo se etiquetaba la base `vMAJOR.MINOR.PATCH`; los tags antiguos de 3 componentes se conservan). Si el tag ya existe no se mueve (sólo avisa); si quedan cambios sin commitear los lista, ya que NO quedan dentro del tag.
 
 Overrides para pruebas: `WIN_HOME=/ruta` fuerza el HOME de Windows y `MSBUILD_EXE=/ruta` fuerza el ejecutable de publicación.
 
