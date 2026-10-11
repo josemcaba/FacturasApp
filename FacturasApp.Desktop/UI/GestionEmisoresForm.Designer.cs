@@ -34,7 +34,6 @@ partial class GestionEmisoresForm
         dataGridViewTextBoxColumn11 = new DataGridViewTextBoxColumn();
         txtBuscarEmisor = new TextBox();
         btnEliminar = new Button();
-        btnClonar = new Button();
         btnNuevo = new Button();
         tabs = new TabControl();
         tabGeneral = new TabPage();
@@ -163,7 +162,6 @@ partial class GestionEmisoresForm
         panelIzquierdo.Controls.Add(txtBuscarEmisor);
         panelIzquierdo.Controls.Add(lstEmisores);
         panelIzquierdo.Controls.Add(btnEliminar);
-        panelIzquierdo.Controls.Add(btnClonar);
         panelIzquierdo.Controls.Add(btnNuevo);
         panelIzquierdo.Dock = DockStyle.Left;
         panelIzquierdo.Location = new Point(0, 0);
@@ -230,18 +228,6 @@ partial class GestionEmisoresForm
         btnEliminar.Text = "− Eliminar";
         btnEliminar.UseVisualStyleBackColor = true;
         btnEliminar.Click += BtnEliminar_Click;
-        // 
-        // btnClonar
-        // 
-        btnClonar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-        btnClonar.FlatStyle = FlatStyle.Flat;
-        btnClonar.Location = new Point(231, 252);
-        btnClonar.Name = "btnClonar";
-        btnClonar.Size = new Size(104, 30);
-        btnClonar.TabIndex = 5;
-        btnClonar.Text = "◎ Clonar";
-        btnClonar.UseVisualStyleBackColor = true;
-        btnClonar.Click += BtnClonar_Click;
         // 
         // btnNuevo
         // 
@@ -1448,7 +1434,6 @@ partial class GestionEmisoresForm
     private Label lblRegexResultados;
     private DataGridView dgvRegexMatches;
     private Button btnRegexApplyToField;
-    protected Button btnClonar;
     private Panel panelDerecho;
     private Panel panelCentral;
     private Button btnCargarPdfMuestra;

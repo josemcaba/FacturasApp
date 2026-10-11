@@ -142,7 +142,6 @@ public partial class GestionEmisoresForm : Form
     private void TxtBuscarEmisor_TextChanged(object? sender, EventArgs e) => FiltrarEmisores();
     private void BtnNuevo_Click(object? sender, EventArgs e) => NuevoEmisor();
     private void BtnEliminar_Click(object? sender, EventArgs e) => EliminarEmisor();
-    private void BtnClonar_Click(object? sender, EventArgs e) => ClonarEmisor();
     private void BtnCancelar_Click(object? sender, EventArgs e) => Close();
 
     private void TxtIdentificadores_TextChanged(object? sender, EventArgs e)
@@ -1036,7 +1035,7 @@ public partial class GestionEmisoresForm : Form
 
     /// <summary>
     /// Pregunta qué hacer con los cambios pendientes antes de una acción que
-    /// perdería (cambiar de emisor, crear uno nuevo, clonar). Devuelve true si
+    /// perdería (cambiar de emisor o crear uno nuevo). Devuelve true si
     /// se puede continuar (cambios guardados o descartados) y false si el
     /// usuario cancela o el guardado no pasa la validación.
     /// </summary>
@@ -1073,8 +1072,7 @@ public partial class GestionEmisoresForm : Form
     /// Descarta las ediciones en memoria. La UI trabaja sobre una copia
     /// (ver CargarEmisorEnUI), así que el objeto de la caché intacto basta
     /// para restaurar el estado guardado; se recarga el emisor desde esa
-    /// caché para que la descartada sea visible y, por ejemplo, ClonarEmisor
-    /// no clone ediciones ya descartadas.
+    /// caché para que el descarte sea visible en la UI.
     /// </summary>
     private void DescartarCambiosPendientes()
     {
@@ -1155,31 +1153,6 @@ public partial class GestionEmisoresForm : Form
             lstPostProc.Items.Clear();
             LimpiarPanelPostProc();
         }
-    }
-
-    private void ClonarEmisor()
-    {
-        if (_emisorActual == null) return;
-
-        if (!ConfirmarCambiosPendientes("Clonar el emisor actual")) return;
-
-        SincronizarUIaConfig();
-
-        // Copia profunda + identidad nueva; el clon arranca sin versión (se
-        // calcula al guardar) y sin PDF de muestra, como hasta ahora.
-        var clon = CopiarConfig(_emisorActual);
-        clon.Nif = _emisorActual.Nif + "_COPY";
-        clon.Nombre = _emisorActual.Nombre + " (Copia)";
-        clon.Version = 1;
-        clon.RutaPdfMuestra = string.Empty;
-        _esNuevo = true;
-        _emisorActual = clon;
-        CargarEmisorEnUI(clon);
-        _modificado = true;
-        btnGuardar.Enabled = true;
-        _saltarCambioSeleccion = true;
-        lstEmisores.ClearSelected();
-        _saltarCambioSeleccion = false;
     }
 
     /// <summary>
