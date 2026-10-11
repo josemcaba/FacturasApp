@@ -14,6 +14,8 @@
 #   4. Limpia versiones antiguas de Application Files (conserva las 3 últimas)
 #   5. Commit (sólo amend si es repetición y el commit aún NO está en el
 #      remoto) + push con --force-with-lease
+#   5.5. Etiqueta el commit del repo del proyecto con v<versión base>
+#        (convención: cada publicación queda etiquetada con su versión)
 #   6. Resumen de la publicación
 #
 # Uso: bash PublicarFacturasApp.sh
@@ -466,6 +468,35 @@ else
     fi
     git push origin "$RAMA" --force-with-lease
     ok "Push completado ($RAMA)"
+fi
+
+# ───────────────────────────────────────────────────────────────
+log "Paso 5.5: Etiqueta del proyecto (v$(version_base "$CS_VERSION"))"
+# ───────────────────────────────────────────────────────────────
+# Convención: CADA publicación queda marcada en el repo del proyecto con un
+# tag anotado vMAJOR.MINOR.PATCH (sin la revisión ClickOnce, que es sólo un
+# contador de build), para poder recuperar el código exacto de cada release.
+# El tag nunca se mueve: si ya existe, se avisa y no se toca.
+cd "$PROYECTO_DIR"
+TAG="v$(version_base "$CS_VERSION")"
+if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null 2>&1; then
+    warn "El tag $TAG ya existe (apunta a $(git rev-parse --short "$TAG")): no se toca"
+else
+    git tag -a "$TAG" -m "FacturasApp $CS_VERSION (publicación $(date +'%d-%m-%Y'))"
+    ok "Tag creado: $TAG → $(git rev-parse --short HEAD)"
+    if git push origin "$TAG"; then
+        ok "Tag $TAG pusheado"
+    else
+        warn "No se pudo pushear $TAG — súbelo a mano: git push origin $TAG"
+    fi
+fi
+
+# Aviso honesto: el tag apunta a HEAD, así que si quedan cambios sin commitear
+# (p. ej. los emisores sincronizados en el Paso 1) NO están dentro del tag.
+PENDIENTES="$(git status --porcelain)"
+if [ -n "$PENDIENTES" ]; then
+    warn "El repo del proyecto tiene cambios sin commitear, que NO quedan dentro del tag $TAG:"
+    printf '%s\n' "$PENDIENTES" | sed 's/^/      /'
 fi
 
 # ───────────────────────────────────────────────────────────────

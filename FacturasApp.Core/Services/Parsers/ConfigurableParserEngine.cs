@@ -182,7 +182,7 @@ public class ConfigurableParserEngine : BaseParser
     {
         if (campo.UsarRegexFechaGeneral && campo.Nombre == "Fecha")
         {
-            factura.Fecha = ExtraerFecha(texto);
+            factura.Fecha = ExtraerFecha(texto, _config.CulturaFecha);
             return;
         }
 
@@ -293,12 +293,12 @@ public class ConfigurableParserEngine : BaseParser
     {
         if (string.IsNullOrEmpty(valorTexto)) return null;
 
-        var cultura = new CultureInfo(
-            string.IsNullOrEmpty(_config.CulturaFecha) ? "es-ES" : _config.CulturaFecha);
+        var cultura = ObtenerCulturaFecha(_config.CulturaFecha);
         if (DateTime.TryParse(valorTexto, cultura, DateTimeStyles.None, out var fecha))
             return fecha;
 
-        return null;
+        // Tolerancia a nombres de mes que TryParse rechaza ("01 Sept 2026" en en-US)
+        return ParsearFechaConNombreMes(valorTexto, cultura);
     }
 
     // ── Post-procesamiento ───────────────────────────────────────────────────
