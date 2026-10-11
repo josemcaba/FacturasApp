@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Nif>CY99000146W</Nif>
+  <Nombre>3CX LTD.</Nombre>
+  <Version>202610111420</Version>
+  <Identificadores>
+    <Id>3CX Ltd.</Id>
+    <Id>CY99000146W</Id>
+  </Identificadores>
+  <ModoExtraccion>Simple</ModoExtraccion>
+  <ConceptoIngreso>700</ConceptoIngreso>
+  <ConceptoGasto>600</ConceptoGasto>
+  <CulturaFecha>es-ES</CulturaFecha>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\ARANDA GARCIA, GREGORIO - Gastos\2609\3ccx_Invoice362517.pdf</RutaPdfMuestra>
+  <Campos>
+    <Campo Nombre="NumeroFactura">
+      <Regex>Invoice Number(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="Fecha">
+      <Regex>Invoice Date(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNombre">
+      <Regex>To:\s+(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNif">
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="BaseImponible">
+      <Regex>Sub-Total(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="CuotaIVA">
+      <ValorFijo>0</ValorFijo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="TotalFactura">
+      <Regex>Total €(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+  </Campos>
+  <PostProcesamiento />
+  <ZonasOcr />
+</Emisor>

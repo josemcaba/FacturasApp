@@ -72,6 +72,7 @@ The project uses a mix of styles — match the existing convention for the direc
 
 - Code in Spanish (names, comments, files)
 - Cuando estimes que es necesario commitear, pídeme permiso para hacerlo explicándome brevemente el motivo. Si me autoriza a commitear, hago también el `push` al remoto sin preguntar de nuevo (a menos que indique lo contrario). Aseguraté de commitear el working tree aunque ya haya algo en el stage.
+- **Todo commit+push incluye siempre los XML de emisores**: antes de commitear, sincroniza `%APPDATA%/FacturasApp/Emisores/*.xml` → `FacturasApp.Core/Data/Emisores/` (Paso 1 del script de publicación, o `bash ActualizarEmisores.sh`) y verifica en `git status` que los XML pendientes queden dentro del commit; nunca hacer add selectivo que los deje fuera.
 - **«Publicar» ≠ «push»**: en este proyecto **publicar significa desplegar una nueva versión a los clientes** ejecutando `PublicarFacturasApp.sh` (ClickOnce → josemcaba.github.io). Si el usuario dice «no publiques» está pidiendo **no ejecutar el despliegue ClickOnce**, NO omitir el `push` de git: el push tras un commit autorizado se hace igualmente. Sólo abstenerse de push si dice explícitamente «no hagas push».
 - `Proveedor` and `Cliente` are empty subclasses of `Empresa` (semantic clarity only)
 - Nullable enable, ImplicitUsings enabled

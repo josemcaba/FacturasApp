@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Nif>A86868189</Nif>
+  <Nombre>RENFE VIAJEROS S.M.E., S.A.</Nombre>
+  <Version>202610111603</Version>
+  <Identificadores>
+    <Id>RENFE VIAJEROS S.M.E., S.A.</Id>
+    <Id>ESA86868189</Id>
+  </Identificadores>
+  <ModoExtraccion>Simple</ModoExtraccion>
+  <ConceptoIngreso>700</ConceptoIngreso>
+  <ConceptoGasto>600</ConceptoGasto>
+  <CulturaFecha>es-ES</CulturaFecha>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\ARANDA GARCIA, GREGORIO - Gastos\2609\Renfe_Sevilla_2026-09-03T15-44 Transacción n.º 28425440310477284-28499235366431113.pdf</RutaPdfMuestra>
+  <Campos>
+    <Campo Nombre="NumeroFactura">
+      <Regex>FACTURA NÚMERO:(.+?)\s</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="Fecha">
+      <Regex>MADRID,(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNombre">
+      <Regex>www.renfe.com\s+(.*)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNif">
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="BaseImponible">
+      <Regex>([\d.,]+)\s+[\d.,]+\s+[\d.,]+</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="PorcentajeIVA">
+      <Regex>[\d.,]+\s+([\d.,]+)\s+[\d.,]+</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="TotalFactura">
+      <Regex>Total Factura\s+([\d.,]+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+  </Campos>
+  <PostProcesamiento />
+  <ZonasOcr />
+</Emisor>

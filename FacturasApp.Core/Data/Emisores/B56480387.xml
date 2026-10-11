@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Nif>B56480387</Nif>
+  <Nombre>GR LOQUI MAD S.L.</Nombre>
+  <Version>202610111619</Version>
+  <Identificadores>
+    <Id>Gr Loqui Mad SL</Id>
+    <Id>B56480387</Id>
+  </Identificadores>
+  <ModoExtraccion>Simple</ModoExtraccion>
+  <ConceptoIngreso>700</ConceptoIngreso>
+  <ConceptoGasto>600</ConceptoGasto>
+  <CulturaFecha>es-ES</CulturaFecha>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\ARANDA GARCIA, GREGORIO - Gastos\2609\tablet_invoice-45494.pdf</RutaPdfMuestra>
+  <Campos>
+    <Campo Nombre="NumeroFactura">
+      <Regex>Factura\s+#(.+?)\s</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="Fecha">
+      <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNombre">
+      <Regex>Dirección de facturación\s+(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNif">
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="BaseImponible">
+      <Regex>Total \(Imp. excl.\)(.+)€</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="PorcentajeIVA">
+      <Regex>impuesto\s+(.+)%</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="TotalFactura">
+      <Regex>Total([ \d.,]+)€</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+  </Campos>
+  <PostProcesamiento />
+  <ZonasOcr>
+    <Zona Campo="P1_Z1" Pagina="1" X="3.9" Y="32.5" Ancho="36.2" Alto="5.7" />
+    <Zona Campo="P1_Z2" Pagina="1" X="47.7" Y="12.3" Ancho="47.2" Alto="18.8" />
+    <Zona Campo="P1_Z3" Pagina="1" X="16.5" Y="49.8" Ancho="11.3" Alto="25" />
+    <Zona Campo="P1_Z4" Pagina="1" X="55.6" Y="49.9" Ancho="40.8" Alto="42.3" />
+  </ZonasOcr>
+</Emisor>

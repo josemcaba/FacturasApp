@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Nif>B82846825</Nif>
+  <Nombre>ENERGIA XXI COMERCIALIZADORA S.L.U.</Nombre>
+  <Version>202610111141</Version>
+  <Identificadores>
+    <Id>Energía XXI Comercializadora de Referencia S.L.Unipersonal</Id>
+    <Id>B82846825</Id>
+  </Identificadores>
+  <ModoExtraccion>Simple</ModoExtraccion>
+  <ConceptoIngreso>700</ConceptoIngreso>
+  <ConceptoGasto>600</ConceptoGasto>
+  <CulturaFecha>es-ES</CulturaFecha>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\ARANDA GARCIA, GREGORIO - Gastos\2608\luz_1788364510157.pdf</RutaPdfMuestra>
+  <Campos>
+    <Campo Nombre="NumeroFactura">
+      <Regex>Nº factura:(.+)emitida</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="Fecha">
+      <Regex>emitida el(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNombre">
+      <Regex>Titular del contrato:(.+)NIF:</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNif">
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="BaseImponible">
+      <Regex>IVA normal:.+%[ s/]+(\S+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="PorcentajeIVA">
+      <Regex>IVA normal:(.+)%[ s/]+[\d,]+</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="TotalFactura">
+      <Regex>TOTAL IMPORTE FACTURA(.+)€</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+  </Campos>
+  <PostProcesamiento />
+  <ZonasOcr />
+</Emisor>

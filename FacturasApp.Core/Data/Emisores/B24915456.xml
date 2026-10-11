@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Nif>B24915456</Nif>
+  <Nombre>ISALCRIS HOTELERA, S.L.</Nombre>
+  <Version>202610111539</Version>
+  <Identificadores>
+    <Id>ISALCRIS HOTELERA, S.L.</Id>
+    <Id>B24915456</Id>
+  </Identificadores>
+  <ModoExtraccion>Simple</ModoExtraccion>
+  <ConceptoIngreso>700</ConceptoIngreso>
+  <ConceptoGasto>600</ConceptoGasto>
+  <CulturaFecha>es-ES</CulturaFecha>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\ARANDA GARCIA, GREGORIO - Gastos\2609\Alojamiento_Sevilla_3261427 GREGORIO ARANDA GARCIA.pdf</RutaPdfMuestra>
+  <Campos>
+    <Campo Nombre="NumeroFactura">
+      <Regex>]:(.+)\s+FACTURA/Invoice:</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="Fecha">
+      <Regex>(.+)\s+FECHA/Date:</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNombre">
+      <Regex>\[P1_Z2]:(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNif">
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="BaseImponible">
+      <Regex>I.V.A./VAT\s+[\d.,]+\s*%\s+s/\s*([\d.,]+)\s+[\d.,]+</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="PorcentajeIVA">
+      <Regex>I.V.A./VAT\s+([\d.,]+)\s*%\s+s/\s*[\d.,]+\s+[\d.,]+</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="TotalFactura">
+      <Regex>Total de la Factura/Total.*?(\d[\d.,]+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+  </Campos>
+  <PostProcesamiento />
+  <ZonasOcr>
+    <Zona Campo="P1_Z1" Pagina="1" X="6.2" Y="12.4" Ancho="32.9" Alto="4.7" />
+    <Zona Campo="P1_Z2" Pagina="1" X="57.3" Y="12.6" Ancho="34.9" Alto="15.9" />
+    <Zona Campo="P1_Z3" Pagina="1" X="44.3" Y="33.6" Ancho="49.2" Alto="54.7" />
+  </ZonasOcr>
+</Emisor>

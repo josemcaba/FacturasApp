@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Nif>IE9692928F</Nif>
+  <Nombre>META PLATFORMS IRELAND LIMITED</Nombre>
+  <Version>202610111231</Version>
+  <Identificadores>
+    <Id>Meta Platforms Ireland Limited</Id>
+    <Id>IE9692928F</Id>
+  </Identificadores>
+  <ModoExtraccion>Ordenado</ModoExtraccion>
+  <ConceptoIngreso>700</ConceptoIngreso>
+  <ConceptoGasto>600</ConceptoGasto>
+  <CulturaFecha>es-ES</CulturaFecha>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\ARANDA GARCIA, GREGORIO - Gastos\2609\2026-09-02T17-27 Transacción n.º 28560170077004307-28440861512268503.pdf</RutaPdfMuestra>
+  <Campos>
+    <Campo Nombre="NumeroFactura">
+      <Regex>Factura número(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="Fecha">
+      <Regex>Fecha de la factura.*\n(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNombre">
+      <Regex>\[DATOS]:(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNif">
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="BaseImponible">
+      <Regex>Pagado\s+(.+)€</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="PorcentajeIVA">
+      <ValorFijo>21</ValorFijo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="TotalFactura">
+      <Regex>Pagado\s+(.+)€</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ConceptoGasto">
+      <Regex>(El cliente tiene que liquidar la IVA)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+  </Campos>
+  <PostProcesamiento>
+    <Regla>
+      <CondicionCampo>
+        <Campo>ConceptoGasto</Campo>
+        <Valor>El cliente tiene que liquidar la IVA</Valor>
+      </CondicionCampo>
+      <Accion Tipo="Establecer Valor" CampoDestino="PorcentajeIVA" Valor="0" Sustituto="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+    </Regla>
+    <Regla>
+      <CondicionCampo>
+        <Campo>ConceptoGasto</Campo>
+        <Valor>El cliente tiene que liquidar la IVA</Valor>
+      </CondicionCampo>
+      <Accion Tipo="Establecer Valor" CampoDestino="ConceptoGasto" Valor="600" Sustituto="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+    </Regla>
+  </PostProcesamiento>
+  <ZonasOcr>
+    <Zona Campo="FECHA" Pagina="1" X="5.7" Y="11.4" Ancho="23" Alto="4.6" />
+    <Zona Campo="DATOS" Pagina="1" X="62.9" Y="83.3" Ancho="30.6" Alto="9.7" />
+    <Zona Campo="PAGO" Pagina="1" X="68.2" Y="14.9" Ancho="25.8" Alto="11.4" />
+    <Zona Campo="P1_Z4" Pagina="1" X="6.8" Y="91.9" Ancho="51.9" Alto="3.6" />
+  </ZonasOcr>
+</Emisor>
