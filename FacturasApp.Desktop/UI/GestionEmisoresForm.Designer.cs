@@ -131,6 +131,7 @@ partial class GestionEmisoresForm
         txtRegexSource = new TextBox();
         btnGuardar = new Button();
         lblVersionXml = new Label();
+        lblMuestraEscaneada = new Label();
         btnCargarPdfMuestra = new Button();
         tabPaginas = new TabControl();
         picFactura = new PictureBox();
@@ -234,11 +235,14 @@ partial class GestionEmisoresForm
         // 
         // btnEliminar
         // 
+        // Misma anchura que btnNuevo y bordes exactamente sobre los de
+        // dgvValoresExtraidos (11…335, hueco de 6 px entre ambos: 11+159=170,
+        // 176+159=335).
         btnEliminar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
         btnEliminar.FlatStyle = FlatStyle.Flat;
-        btnEliminar.Location = new Point(167, 252);
+        btnEliminar.Location = new Point(176, 252);
         btnEliminar.Name = "btnEliminar";
-        btnEliminar.Size = new Size(150, 30);
+        btnEliminar.Size = new Size(159, 30);
         btnEliminar.TabIndex = 4;
         btnEliminar.Text = "− Eliminar";
         btnEliminar.UseVisualStyleBackColor = true;
@@ -250,7 +254,7 @@ partial class GestionEmisoresForm
         btnNuevo.FlatStyle = FlatStyle.Flat;
         btnNuevo.Location = new Point(11, 252);
         btnNuevo.Name = "btnNuevo";
-        btnNuevo.Size = new Size(150, 30);
+        btnNuevo.Size = new Size(159, 30);
         btnNuevo.TabIndex = 3;
         btnNuevo.Text = "+ Nuevo";
         btnNuevo.UseVisualStyleBackColor = true;
@@ -1310,6 +1314,22 @@ partial class GestionEmisoresForm
         lblVersionXml.Text = "Versión XML: —";
         lblVersionXml.TextAlign = ContentAlignment.MiddleLeft;
         // 
+        // lblMuestraEscaneada
+        // 
+        // Marca de que el PDF de muestra cargado en este editor no tiene capa
+        // de texto y el motor lo extrae con OCR. Se oculta si no hay muestra;
+        // el texto/visibilidad lo decide ActualizarAyudasMuestra().
+        lblMuestraEscaneada.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+        lblMuestraEscaneada.AutoSize = true;
+        lblMuestraEscaneada.ForeColor = Color.FromArgb(180, 110, 0);
+        lblMuestraEscaneada.Location = new Point(500, 677);
+        lblMuestraEscaneada.Name = "lblMuestraEscaneada";
+        lblMuestraEscaneada.Size = new Size(165, 20);
+        lblMuestraEscaneada.TabIndex = 3;
+        lblMuestraEscaneada.Text = "▨ Muestra escaneada (OCR)";
+        lblMuestraEscaneada.TextAlign = ContentAlignment.MiddleLeft;
+        lblMuestraEscaneada.Visible = false;
+        // 
         // btnCargarPdfMuestra
         // 
         btnCargarPdfMuestra.Anchor = AnchorStyles.Top;
@@ -1360,6 +1380,7 @@ partial class GestionEmisoresForm
         panelDerecho.Controls.Add(tabs);
         panelDerecho.Controls.Add(btnGuardar);
         panelDerecho.Controls.Add(lblVersionXml);
+        panelDerecho.Controls.Add(lblMuestraEscaneada);
         panelDerecho.Dock = DockStyle.Fill;
         panelDerecho.Location = new Point(585, 0);
         panelDerecho.Name = "panelDerecho";
@@ -1420,6 +1441,7 @@ partial class GestionEmisoresForm
     private Label lblGeneralNombre;
     private Button btnGuardar;
     private Label lblVersionXml;
+    private Label lblMuestraEscaneada;
     private TextBox txtNombre;
     private Label lblGeneralNif;
     private TextBox txtNif;

@@ -331,6 +331,12 @@ public partial class GestionEmisoresForm : Form
         ActualizarVistaPreviaZonal();
         ActualizarIndicadorIdentificadores();
 
+        // Cargar un PDF de muestra cambia <RutaPdfMuestra>: es un cambio más a
+        // guardar (si no se marcaba, al cambiar de emisor se perdía en silencio).
+        // Las cargas automáticas al abrir/descartar un emisor no llegan aquí
+        // marcadas: MarcarModificado no hace nada mientras _cargando está a true.
+        MarcarModificado();
+
         return true;
     }
 
@@ -498,6 +504,7 @@ public partial class GestionEmisoresForm : Form
         {
             dgvValoresExtraidos.Rows.Clear();
             dgvValoresExtraidos.Rows.Add("Error", ex.Message);
+            SinSeleccion();
             return;
         }
 
@@ -545,6 +552,20 @@ public partial class GestionEmisoresForm : Form
         Añadir("Estado", f => f.Estado);
         if (facturas.Any(f => f.MensajeError?.Count > 0))
             Añadir("Mensajes", f => string.Join("; ", f.MensajeError ?? new List<string>()));
+
+        SinSeleccion();
+    }
+
+    /// <summary>
+    /// Deja la tabla «Valores extraídos» sin ninguna fila marcada: al añadir
+    /// filas la primera queda seleccionada y con celda actual, y el usuario
+    /// quiere verla inicialmente limpia (no hay ninguna acción sobre la
+    /// selección que dependa de esto).
+    /// </summary>
+    private void SinSeleccion()
+    {
+        dgvValoresExtraidos.ClearSelection();
+        dgvValoresExtraidos.CurrentCell = null;
     }
 
     /// <summary>
@@ -828,6 +849,92 @@ public partial class GestionEmisoresForm : Form
             _todosEmisores.Add(new EmisorListItem(kvp.Value));
         _cargando = false;
         FiltrarEmisores();
+        ActualizarMarcasEscaneados();
+    }
+
+    // ── DETECCIÓN DE PDF DE MUESTRA ESCANEADO ─────────────────────────────────
+
+    /// <summary>
+    /// Caché de la comprobación «¿este PDF carece de capa de texto?» por
+    /// fichero (ruta + tamaño + fecha de modificación): abrir y parsear el
+    /// documento cuesta, la lista de emisores se reconstruye con cada guardado
+    /// y hay 43 muestras, muchas fuera del disco local. Vive toda la sesión.
+    /// </summary>
+    private static readonly Dictionary<string, (long Tam, long Mtime, bool Escaneado)> _cacheEscaneados = new();
+
+    /// <summary>
+    /// true si el PDF de muestra no tiene capa de texto seleccionable y el
+    /// motor tendría que recurrir al OCR. Es el mismo criterio de la extracción
+    /// (<see cref="PdfTextExtractor.EsSeleccionable"/>, umbral de 30 caracteres)
+    /// y NO corre OCR. Sin fichero o ilegible → false: mejor sin marca que con
+    /// una marca falsa.
+    /// </summary>
+    private static bool EsPdfEscaneado(string? ruta)
+    {
+        if (string.IsNullOrWhiteSpace(ruta) || !File.Exists(ruta)) return false;
+
+        try
+        {
+            var info = new FileInfo(ruta);
+            long mtime = info.LastWriteTimeUtc.Ticks;
+            long tam = info.Length;
+
+            lock (_cacheEscaneados)
+            {
+                if (_cacheEscaneados.TryGetValue(info.FullName, out var guardado) &&
+                    guardado.Tam == tam && guardado.Mtime == mtime)
+                    return guardado.Escaneado;
+            }
+
+            bool escaneado = !new PdfTextExtractor().EsSeleccionable(ruta);
+
+            lock (_cacheEscaneados)
+                _cacheEscaneados[info.FullName] = (tam, mtime, escaneado);
+
+            return escaneado;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Rellena la marca «▨» (entre el NIF y el nombre) de los ítems de la
+    /// lista. Los PDFs se
+    /// abren FUERA del hilo de la UI (algunas muestras están en unidades
+    /// lentas); los ya cacheados sólo cuestan un par de estadísticas. Si algo
+    /// cambia, se vuelve a montar la lista cuando termina —el ListBox sólo
+    /// pinta los ítems al insertarlos—, conservando la selección como hace
+    /// FiltrarEmisores().
+    /// </summary>
+    private void ActualizarMarcasEscaneados()
+    {
+        var captura = _todosEmisores.ToList();
+
+        _ = Task.Run(() =>
+        {
+            bool cambio = false;
+            foreach (var item in captura)
+            {
+                bool escaneado = EsPdfEscaneado(item.Config.RutaPdfMuestra);
+                if (item.Escaneado == escaneado) continue;
+                item.Escaneado = escaneado;
+                cambio = true;
+            }
+
+            if (!cambio || IsDisposed || !IsHandleCreated) return;
+
+            try
+            {
+                BeginInvoke((Action)FiltrarEmisores);
+            }
+            catch (InvalidOperationException)
+            {
+                // Formulario cerrado entre la comprobación y el repintado
+                // (ObjectDisposedException deriva de InvalidOperationException).
+            }
+        });
     }
 
     private void FiltrarEmisores()
@@ -1989,7 +2096,7 @@ public partial class GestionEmisoresForm : Form
         else if (existente != null)
         {
             btnCampoAdd.Enabled = false;
-            lblEstadoCampo.Text = $"Editando «{existente.Nombre}» — cambios al instante";
+            lblEstadoCampo.Text = $"Editando «{existente.Nombre}»";
             lblEstadoCampo.ForeColor = Color.FromArgb(0, 128, 0);
         }
         else
@@ -2027,7 +2134,8 @@ public partial class GestionEmisoresForm : Form
 
         var (texto, color) = (cmbCampoTipo.SelectedItem?.ToString()) switch
         {
-            "Regex" => ("El valor se toma del Grupo 1: lo capturado entre paréntesis.", Color.DimGray),
+            // «Regex» ya no lleva coletilla propia («El valor se toma del Grupo 1…»,
+            // retirada a petición del usuario): cae en el caso por defecto de abajo.
             "ValorFijo" => ("Valor fijo para todas las facturas; la expresión se ignora.", Color.DimGray),
             "RegexFechaGeneral" => ("Detector general de fechas; sólo vale para «Fecha».", Color.DimGray),
             "RegexNifGeneral" => ("Detector general de NIF; sólo para ReceptorNif/EmisorNif.", Color.DimGray),
@@ -2364,7 +2472,8 @@ public partial class GestionEmisoresForm : Form
 
     /// <summary>
     /// Ayuda que depende del PDF de muestra: el aviso «carga un PDF» de la
-    /// pestaña Campos.
+    /// pestaña Campos y la marca de muestra escaneada (misma comprobación —y
+    /// caché— que la lista de emisores, sin pasar por el OCR).
     /// </summary>
     private void ActualizarAyudasMuestra()
     {
@@ -2372,6 +2481,9 @@ public partial class GestionEmisoresForm : Form
 
         if (lblSinPdf != null)
             lblSinPdf.Visible = !hayPdf;
+
+        if (lblMuestraEscaneada != null)
+            lblMuestraEscaneada.Visible = hayPdf && EsPdfEscaneado(_rutaPdf);
     }
 
     // ── EVENTOS POST-PROCESAMIENTO ─────────────────────────────────────────────
@@ -2979,16 +3091,20 @@ public partial class GestionEmisoresForm : Form
     private class EmisorListItem
     {
         public EmisorConfig Config { get; }
-        public string DisplayText => $"{Config.Nif} - {Config.Nombre}{MarcaNif}";
         public EmisorListItem(EmisorConfig config) => Config = config;
 
-        /// <summary>Marca del último estado NIF guardado en el XML del emisor;
-        /// sin estado o "NoDisponible" no se muestra nada.</summary>
-        private string MarcaNif => Config.NifEstado switch
-        {
-            "Valido" => " ✓",
-            "Invalido" => " ✗",
-            _ => string.Empty
-        };
+        /// <summary>true si el PDF de muestra de este emisor carece de capa de
+        /// texto y se extrae con OCR. Se precalcula en
+        /// <see cref="ActualizarMarcasEscaneados"/>: el DisplayMember del
+        /// ListBox pinta a menudo y no debe abrir ficheros.</summary>
+        public bool Escaneado { get; set; }
+
+        // La marca va ENTRE el NIF y el nombre («A17001231 - ▨ NOMBRE») para
+        // que se vea siempre sin hacer scroll: al final de filas largas se
+        // iría fuera de pantalla (el ListBox tiene scrollbar horizontal).
+        // Ningún código parsea esta cadena: la selección siempre se resuelve
+        // con SelectedItem → Config.Nif.
+        public string DisplayText =>
+            $"{Config.Nif} - " + (Escaneado ? "▨ " : "") + Config.Nombre;
     }
 }

@@ -2,13 +2,13 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>25665382G</Nif>
   <Nombre>FRANCES SANCHEZ, JOSE IGNACIO</Nombre>
-  <Version>202610112113</Version>
+  <Version>202610121426</Version>
   <Identificadores>
     <Id>ES96 0182 5876 5002 0162 8560</Id>
   </Identificadores>
   <ModoExtraccion>Simple</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
-  <ConceptoGasto>600</ConceptoGasto>
+  <ConceptoGasto>621</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
   <RutaPdfMuestra>C:\Users\Jose\Desktop\Nueva carpeta\Facturas recibidas\03 Marzo 2026\FACTURA 5 MARIA DEL CARMEN PSICOLOGA FACTURA 5 MARZO 2026.pdf</RutaPdfMuestra>
   <Campos>

@@ -2,14 +2,14 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B23709892</Nif>
   <Nombre>PETROPRIX ENERGIA S.L.</Nombre>
-  <Version>202610112127</Version>
+  <Version>202610121555</Version>
   <Identificadores>
     <Id>PETROPRIX ENERGIA S.L.</Id>
     <Id>B23709892</Id>
   </Identificadores>
   <ModoExtraccion>Ordenado</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
-  <ConceptoGasto>600</ConceptoGasto>
+  <ConceptoGasto>624</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
   <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\ARANDA GARCIA, GREGORIO - Gastos\2608\Petropix_269001115028.pdf</RutaPdfMuestra>
   <Campos>

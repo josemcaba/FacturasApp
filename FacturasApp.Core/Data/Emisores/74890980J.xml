@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>74890980J</Nif>
   <Nombre>ARIAS MERINO, OSCAR</Nombre>
-  <Version>202610062250</Version>
+  <Version>202610121528</Version>
   <Identificadores>
     <Id>Oscar Arias Merino</Id>
     <Id>74890980-j</Id>
@@ -12,7 +12,7 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Mix\Oscar Arias 2.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\fixture\Oscar Arias 1.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>FACTURA[\s\n\r]*(FV\d{5})\b</Regex>
@@ -54,15 +54,16 @@
         <Campo>PorcentajeIVA</Campo>
         <Valor>11,4</Valor>
       </CondicionCampo>
-      <Accion Tipo="Establecer Valor" CampoDestino="PorcentajeRE" Valor="1,4" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+      <Accion Tipo="Establecer Valor" CampoDestino="PorcentajeRE" Valor="1,4" Sustituto="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
     </Regla>
     <Regla>
       <CondicionCampo>
         <Campo>PorcentajeIVA</Campo>
         <Valor>11,4</Valor>
       </CondicionCampo>
-      <Accion Tipo="Establecer Valor" CampoDestino="PorcentajeIVA" Valor="10" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+      <Accion Tipo="Establecer Valor" CampoDestino="PorcentajeIVA" Valor="10" Sustituto="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
     </Regla>
   </PostProcesamiento>
   <ZonasOcr />
+  <NifEstado>Valido</NifEstado>
 </Emisor>

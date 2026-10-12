@@ -2,14 +2,14 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B09784570</Nif>
   <Nombre>DEYA GLOBAL INVESTMENT S.L.</Nombre>
-  <Version>202610112128</Version>
+  <Version>202610121552</Version>
   <Identificadores>
     <Id>DEYA GLOBAL INVESTMENT S.L.</Id>
     <Id>B09784570</Id>
   </Identificadores>
   <ModoExtraccion>Ordenado</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
-  <ConceptoGasto>600</ConceptoGasto>
+  <ConceptoGasto>629</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
   <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\ARANDA GARCIA, GREGORIO - Gastos\2607\Alojamiento_Valencia_FRACZ43GREGORIO.pdf</RutaPdfMuestra>
   <Campos>

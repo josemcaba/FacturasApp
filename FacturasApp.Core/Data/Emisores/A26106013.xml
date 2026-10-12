@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>A26106013</Nif>
   <Nombre>SECURITAS DIRECT ESPAÑA S.A.U.</Nombre>
-  <Version>202610112133</Version>
+  <Version>202610121529</Version>
   <Identificadores>
     <Id>verisure</Id>
     <Id>Securitas Direct España</Id>
@@ -10,7 +10,7 @@
   </Identificadores>
   <ModoExtraccion>Ordenado</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
-  <ConceptoGasto>600</ConceptoGasto>
+  <ConceptoGasto>629</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
   <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\ARANDA GARCIA, GREGORIO - Gastos\2607\Verisure_Factura_2607C00126755.pdf</RutaPdfMuestra>
   <Campos>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B93013761</Nif>
-  <Nombre>ARNOLD CALLE TELECOM S.L.</Nombre>
-  <Version>202610112124</Version>
+  <Nombre>FOBOS TELECOM</Nombre>
+  <Version>202610121939</Version>
   <Identificadores>
     <Id>FOBOS Telecom</Id>
     <Id>Arnold Calle Telecom, S.L.</Id>
@@ -10,7 +10,7 @@
   </Identificadores>
   <ModoExtraccion>Simple</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
-  <ConceptoGasto>600</ConceptoGasto>
+  <ConceptoGasto>G17</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
   <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\ARANDA GARCIA, GREGORIO - Gastos\2607\Fobos_T-2601979.pdf</RutaPdfMuestra>
   <Campos>
@@ -48,8 +48,21 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
+    <Campo Nombre="EmisorNombre">
+      <ValorFijo>ARNOLD CALLE TELECOM S.L.</ValorFijo>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
   </Campos>
-  <PostProcesamiento />
+  <PostProcesamiento>
+    <Regla>
+      <CondicionCampo>
+        <Campo>EmisorNombre</Campo>
+        <Valor>FOBOS TELECOM</Valor>
+      </CondicionCampo>
+      <Accion Tipo="Establecer Valor" CampoDestino="EmisorNombre" Valor="ARNOLD CALLE TELECOM S.L." Sustituto="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+    </Regla>
+  </PostProcesamiento>
   <ZonasOcr />
   <NifEstado>Valido</NifEstado>
 </Emisor>

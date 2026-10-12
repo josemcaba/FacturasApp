@@ -2,14 +2,14 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>A29185519</Nif>
   <Nombre>EMASA</Nombre>
-  <Version>202610121157</Version>
+  <Version>202610121531</Version>
   <Identificadores>
     <Id>emasa</Id>
     <Id>plaza general torrijos</Id>
   </Identificadores>
   <ModoExtraccion>Simple</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
-  <ConceptoGasto>628</ConceptoGasto>
+  <ConceptoGasto>G15</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
   <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\fixture\EMASA.pdf</RutaPdfMuestra>
   <Campos>

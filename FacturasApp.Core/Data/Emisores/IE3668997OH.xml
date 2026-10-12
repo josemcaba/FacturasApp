@@ -2,14 +2,14 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>IE3668997OH</Nif>
   <Nombre>GOOGLE CLOUD EMEA LIMITED</Nombre>
-  <Version>202610112130</Version>
+  <Version>202610121952</Version>
   <Identificadores>
     <Id>Google Cloud EMEA Limited</Id>
     <Id>IE3668997OH</Id>
   </Identificadores>
   <ModoExtraccion>Simple</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
-  <ConceptoGasto>600</ConceptoGasto>
+  <ConceptoGasto>629</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
   <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\ARANDA GARCIA, GREGORIO - Gastos\2607\Google_5653315691.pdf</RutaPdfMuestra>
   <Campos>

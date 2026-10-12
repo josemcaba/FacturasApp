@@ -2,16 +2,16 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B92719707</Nif>
   <Nombre>LAS PALMERAS DEL GUADALHORCE, S.L.</Nombre>
-  <Version>202610112109</Version>
+  <Version>202610121916</Version>
   <Identificadores>
     <Id>LAS PALMERAS DEL GUADALHORCE</Id>
     <Id>B92719707</Id>
   </Identificadores>
-  <ModoExtraccion>Simple</ModoExtraccion>
+  <ModoExtraccion>Ordenado</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>624</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra />
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\DIAZ GONZALEZ, RODULFO\2026_T14640.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>FACTURA\s*:(.+)</Regex>

@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>A60195278</Nif>
   <Nombre>LIDL SUPERMERCADOS S.A.U.</Nombre>
-  <Version>202610062250</Version>
+  <Version>202610122017</Version>
   <Identificadores>
     <Id>LIDL</Id>
     <Id>NIF A60195278</Id>
@@ -11,7 +11,7 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Mix\LIDL.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\fixture\LIDL.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>Barcelona\s+(\d+)</Regex>
@@ -50,4 +50,5 @@
   </Campos>
   <PostProcesamiento />
   <ZonasOcr />
+  <NifEstado>Valido</NifEstado>
 </Emisor>

@@ -2,14 +2,14 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>N0032575C</Nif>
   <Nombre>VISTAPRINT B.V.</Nombre>
-  <Version>202610112122</Version>
+  <Version>202610122003</Version>
   <Identificadores>
     <Id>Vistaprint B.V.</Id>
     <Id>N0032575C</Id>
   </Identificadores>
   <ModoExtraccion>Simple</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
-  <ConceptoGasto>600</ConceptoGasto>
+  <ConceptoGasto>628</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
   <RutaPdfMuestra>C:\Users\Jose\Desktop\Nueva carpeta\Facturas recibidas\07 julio\factura carpetas y tarjetas.pdf</RutaPdfMuestra>
   <Campos>

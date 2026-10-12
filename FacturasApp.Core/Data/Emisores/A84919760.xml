@@ -2,14 +2,14 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>A84919760</Nif>
   <Nombre>DIGI SPAIN TELECOM, S.A.U.</Nombre>
-  <Version>202610112128</Version>
+  <Version>202610121552</Version>
   <Identificadores>
     <Id>DIGI Spain Telecom, S.A.U.</Id>
     <Id>Tº. 23.521, Fº. 112, Sección 8</Id>
   </Identificadores>
   <ModoExtraccion>Simple</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
-  <ConceptoGasto>600</ConceptoGasto>
+  <ConceptoGasto>G17</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
   <RutaPdfMuestra>C:\Users\Jose\Desktop\Nueva carpeta\Facturas recibidas\01 Enero 2026\DGFC2602675668.pdf</RutaPdfMuestra>
   <Campos>

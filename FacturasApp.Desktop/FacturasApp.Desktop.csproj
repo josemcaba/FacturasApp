@@ -58,4 +58,31 @@
 		</EmbeddedResource>
 	</ItemGroup>
 
+	<!-- Versionado de publicación: al publicar, el pubxml se importa (sólo con
+	     -p:PublishProfile=... o desde el diálogo Publicar de Visual Studio) y
+	     trae ApplicationVersion (3.2.1.*) + ApplicationRevision. Entonces se
+	     hornea la versión COMPLETA de la publicación en FileVersion y
+	     InformationalVersion, para que la ventana principal muestre los cuatro
+	     niveles (3.2.1.16) en lugar de «3.2.1».
+	     Fuera de una publicación no se toca nada: los builds normales siguen
+	     con FileVersion 3.2.1.0.
+	     El enganche va ANTES de GetAssemblyVersion porque ese target sólo
+	     rellena FileVersion/InformationalVersion si están vacíos y, a la vez,
+	     GetAssemblyAttributes (que emite los atributos) depende de él. -->
+	<Target Name="FijarVersionDePublicacion"
+	        BeforeTargets="GetAssemblyVersion"
+	        Condition="'$(ApplicationVersion)' != '' and '$(ApplicationRevision)' != ''">
+		<PropertyGroup>
+			<!-- El asterisco queda sustituido por la revisión; sin asterisco se
+			     le añade, igual que hace la tarea FormatVersion de ClickOnce. -->
+			<_VersionPublicacion>$([System.String]::Copy('$(ApplicationVersion)').Replace('*', '$(ApplicationRevision)'))</_VersionPublicacion>
+			<_VersionPublicacion Condition="!$([System.Text.RegularExpressions.Regex]::IsMatch('$(_VersionPublicacion)', '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'))">$(_VersionPublicacion).$(ApplicationRevision)</_VersionPublicacion>
+		</PropertyGroup>
+		<PropertyGroup>
+			<FileVersion>$(_VersionPublicacion)</FileVersion>
+			<!-- Puede seguir con «+sha» (SourceRevision): MainForm lo divide. -->
+			<InformationalVersion>$(_VersionPublicacion)</InformationalVersion>
+		</PropertyGroup>
+	</Target>
+
 </Project>

@@ -2,14 +2,14 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>IE9692928F</Nif>
   <Nombre>META PLATFORMS IRELAND LIMITED</Nombre>
-  <Version>202610112123</Version>
+  <Version>202610122001</Version>
   <Identificadores>
     <Id>Meta Platforms Ireland Limited</Id>
     <Id>IE9692928F</Id>
   </Identificadores>
   <ModoExtraccion>Ordenado</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
-  <ConceptoGasto>600</ConceptoGasto>
+  <ConceptoGasto>629</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
   <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\ARANDA GARCIA, GREGORIO - Gastos\2609\2026-09-02T17-27 Transacción n.º 28560170077004307-28440861512268503.pdf</RutaPdfMuestra>
   <Campos>

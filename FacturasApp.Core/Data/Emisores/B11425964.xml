@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B11425964</Nif>
   <Nombre>DULCERIA 17, S.L.</Nombre>
-  <Version>202610112127</Version>
+  <Version>202610121944</Version>
   <Identificadores>
     <Id>40.0015231/CA</Id>
     <Id>40.080372/CA</Id>
@@ -11,7 +11,7 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra />
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\fixture\Dulceria 2.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>Número[\s\n\r]+(\S+)</Regex>

@@ -2,14 +2,14 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>61970916S</Nif>
   <Nombre>ANDREA ESLAVA, NORELIS</Nombre>
-  <Version>202610091813</Version>
+  <Version>202610122019</Version>
   <Identificadores>
     <Id>Norelis Andrea Eslava</Id>
     <Id>norelis3876</Id>
   </Identificadores>
   <ModoExtraccion>Ordenado</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
-  <ConceptoGasto>600</ConceptoGasto>
+  <ConceptoGasto>629</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
   <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\Norelis\20260706__000042026.pdf</RutaPdfMuestra>
   <Campos>
@@ -53,4 +53,5 @@
     <Zona Campo="P1_Z2" Pagina="1" X="59.5" Y="19.7" Ancho="38.5" Alto="10.8" />
     <Zona Campo="P1_Z3" Pagina="1" X="53.6" Y="39.3" Ancho="44.4" Alto="55.5" />
   </ZonasOcr>
+  <NifEstado>Valido</NifEstado>
 </Emisor>

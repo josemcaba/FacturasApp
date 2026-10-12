@@ -21,7 +21,7 @@ namespace FacturasApp.UI
 
             InitializeComponent();
 
-            this.Text = $"Gestión de Facturas V{Application.ProductVersion.Split('+')[0]}";
+            this.Text = $"Gestión de Facturas V{VersionPublicada()}";
 
             // Make these controls adapt to the window width
             dgvFacturas.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -31,6 +31,28 @@ namespace FacturasApp.UI
 
             ConfigurarDataGridView();
             ConfigurarComboEstado();
+        }
+
+        /// <summary>
+        /// Versión de la publicación en sus cuatro niveles (p. ej. 3.2.1.16)
+        /// para el título de la ventana. Application.ProductVersion es
+        /// &lt;InformationalVersion&gt;: en un build normal viene «3.2.1+&lt;sha&gt;»
+        /// (sólo tres niveles) y al publicar el csproj hornea la
+        /// ApplicationVersion completa con la revisión ClickOnce; aquí sólo
+        /// hace falta normalizar —quitar el «+», cortar a cuatro componentes y
+        /// rellenar los que falten con 0— para que SIEMPRE salgan cuatro.
+        /// </summary>
+        private static string VersionPublicada()
+        {
+            var componentes = Application.ProductVersion.Split('+')[0].Split('.');
+
+            var niveles = new string[4];
+            for (int i = 0; i < niveles.Length; i++)
+                niveles[i] = i < componentes.Length && componentes[i].Length > 0
+                    ? componentes[i]
+                    : "0";
+
+            return string.Join('.', niveles);
         }
 
         // ── Configuración centralizada del procesador ─────────────────────────
