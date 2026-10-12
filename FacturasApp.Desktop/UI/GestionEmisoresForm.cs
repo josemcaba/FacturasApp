@@ -31,8 +31,6 @@ public partial class GestionEmisoresForm : Form
     private bool _cargandoCampo;
     private CampoConfig? _campoAnterior;
     private readonly InvoiceProcessorService _invoiceService;
-    private readonly PdfTextExtractor _textExtractor = new();
-    private readonly OcrZonalExtractor _ocrZonalExtractor = new();
     private bool _esNuevo;
     private bool _saltarCambioSeleccion;
     private bool _cargandoPostProc;
@@ -42,6 +40,24 @@ public partial class GestionEmisoresForm : Form
     // evita repetir la llamada a la red al guardar tras pulsar "Verificar VIES".
     private string? _viesNifConsultado;
     private ViesResultado? _viesUltimoResultado;
+    // La pestaña «Campos» trabaja en modo ALTA cuando el nombre elegido en la
+    // combo todavía no está definido para el emisor, y en modo EDICIÓN cuando
+    // ya lo está (la lista queda seleccionada con ese campo).
+    private bool _campoEnAlta;
+    // Texto extraído del PDF de muestra, tal y como lo ve el motor (zonal si
+    // hay zonas, completo si no). El OCR sólo depende del PDF, del modo y de
+    // las zonas — no de las expresiones—, así que se cachea con esa firma y se
+    // reutiliza tanto en la consola del probador como en la tabla «Valores
+    // extraídos»: iterar sobre una regex no vuelve a lanzar Tesseract.
+    private (string Texto, bool ViaOcr, bool Zonal)? _textoMuestra;
+    private string? _firmaTextoMuestra;
+    // Refrescos pendientes que resuelve el mismo temporizador de 500 ms:
+    // «previa» re-extrae el texto (puede correr OCR) y «tabla» sólo lo reparsea.
+    private bool _pendientePrevia;
+    private bool _pendienteTabla;
+    // Aviso transitorio (se muestra en lblTipoAyuda) cuando el tipo de
+    // extracción guardado o elegido no es válido para el nombre del campo.
+    private string? _avisoTipoPendiente;
 
     public GestionEmisoresForm()
     {
@@ -161,11 +177,39 @@ public partial class GestionEmisoresForm : Form
             .Where(l => l.Length > 0)
             .ToList();
 
+    /// <summary>
+    /// Copia la expresión probada (txtRegexPattern) al campo que se está
+    /// editando o definiendo. Es el único camino «probador → campo»: así se
+    /// puede experimentar sin alterar el campo por tecleo accidental, y si no
+    /// hay campo o el tipo no admite regex se avisa en lugar de no hacer nada.
+    /// </summary>
     private void BtnRegexApplyToField_Click(object? sender, EventArgs e)
     {
-        if (string.IsNullOrEmpty(txtRegexPattern.Text)) return;
-        if (lstCampos.SelectedItem is CampoConfig campo)
-            txtCampoRegex.Text = txtRegexPattern.Text;
+        var patron = txtRegexPattern.Text;
+        if (string.IsNullOrWhiteSpace(patron)) return;
+
+        if (lstCampos.SelectedItem == null && !_campoEnAlta)
+        {
+            MessageBox.Show(
+                "Elige primero un nombre en «Nombre»: podrás editar un campo " +
+                "ya definido o dar de alta uno nuevo con ese nombre.",
+                "Ningún campo seleccionado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            cmbCampoNombre.Focus();
+            return;
+        }
+
+        if (cmbCampoTipo.SelectedItem?.ToString() != "Regex")
+        {
+            MessageBox.Show(
+                "La expresión sólo puede asignarse a campos con tipo de extracción «Regex».\n\n" +
+                "«RegexFechaGeneral» y «RegexNifGeneral» usan detectores predefinidos " +
+                "y «ValorFijo» no usa expresión.",
+                "Tipo de extracción no compatible", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+
+        // CampoDetalle_Changed aplica el valor al campo (o lo deja listo si es alta).
+        txtCampoRegex.Text = patron;
     }
 
     private bool _ajustando;
@@ -230,6 +274,12 @@ public partial class GestionEmisoresForm : Form
             if (mostrarErrores)
                 MessageBox.Show($"Error al contar páginas:\n{ex.Message}",
                     "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            // Sin PDF de muestra utilizable: la vista previa y el probador de
+            // regex quedan como al inicio (sin fuente de texto).
+            _rutaPdf = null;
+            ActualizarAyudasMuestra();
+            ActualizarVistaPreviaZonal();
+            ActualizarIndicadorIdentificadores();
             return false;
         }
 
@@ -254,6 +304,10 @@ public partial class GestionEmisoresForm : Form
                     if (mostrarErrores)
                         MessageBox.Show($"Error al renderizar página {i + 1}:\n{ex.Message}",
                             "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _rutaPdf = null;
+                    ActualizarAyudasMuestra();
+                    ActualizarVistaPreviaZonal();
+                    ActualizarIndicadorIdentificadores();
                     return false;
                 }
             }
@@ -268,58 +322,96 @@ public partial class GestionEmisoresForm : Form
         MostrarPaginaActual();
         picFactura.Invalidate();
 
+        // El texto del PDF de muestra se extrae UNA sola vez y queda cacheado:
+        // la consola del probador y la tabla «Valores extraídos» se alimentan
+        // de esa caché, de forma que editar expresiones ya no vuelve a correr
+        // el OCR (antes había dos pasadas de Tesseract por cada carga).
+        ActualizarAyudasMuestra();
+
         ActualizarVistaPreviaZonal();
-        ActualizarTablaValoresExtraidos();
+        ActualizarIndicadorIdentificadores();
 
         return true;
     }
 
+    /// <summary>
+    /// Refresca la consola «Texto Extraido» (la fuente del probador) y la tabla
+    /// «Valores extraídos», todo a partir del texto cacheado del motor. Al
+    /// terminar la tabla ya está al día, así que no hace falta recalcularla
+    /// aparte.
+    /// </summary>
     private void ActualizarVistaPreviaZonal()
     {
         ActualizarCabeceraTextoExtraido();
-        if (string.IsNullOrEmpty(_rutaPdf)) return;
 
-        var modo = ModoSeleccionado();
-        string texto;
-        Dictionary<string, string>? resultados = null;
+        if (string.IsNullOrEmpty(_rutaPdf) || _emisorActual == null)
+        {
+            // Sin PDF de muestra el probador se queda sin fuente de texto
+            // (antes podía seguir mostrando la del emisor anterior).
+            _textoMuestra = null;
+            _firmaTextoMuestra = null;
+            txtRegexSource.Clear();
+            ActualizarTablaValoresExtraidos();
+            return;
+        }
+
+        string texto = "";
         try
         {
-            if (_zonasDibujo.Count == 0)
-            {
-                texto = ExtraerTextoConModoSeleccionado();
-            }
-            else
-            {
-                var plantilla = new PlantillaOcr
-                {
-                    Emisor = "Previsualización",
-                    Zonas = _zonasDibujo.ToList()
-                };
-                resultados = _ocrZonalExtractor.ExtraerZonas(_rutaPdf, plantilla, ModoPdfium(modo));
-                texto = string.Join(Environment.NewLine,
-                    resultados.Select(kv => $"[{kv.Key}]: {kv.Value}"));
-            }
+            texto = ObtenerTextoMuestra().Texto;
         }
         catch
         {
-            texto = _invoiceService.ExtraerTexto(_rutaPdf);
-            resultados = null;
+            // El motivo aparece en «Valores extraídos» al refrescar la tabla.
         }
 
-        _sincronizando = true;
-        foreach (DataGridViewRow r in dgvZonas.Rows)
-        {
-            if (r.Cells.Count < 7) continue;
-            var campo = r.Cells[0].Value?.ToString() ?? "";
-            r.Cells[6].Value = resultados != null && resultados.TryGetValue(campo, out var textoZona)
-                ? NormalizarSaltoLinea(textoZona)
-                : "";
-        }
-        _sincronizando = false;
-
+        // La consola prueba exactamente contra el texto que va a parsear
+        // ConfigurableParserEngine (mismos «[Campo]: valor»), de forma que lo
+        // que salga aquí es lo que saldrá en la tabla.
         txtRegexSource.Text = NormalizarSaltoLinea(texto);
-        ActualizarIndicadorIdentificadores();
+        ActualizarTablaValoresExtraidos();
     }
+
+    /// <summary>
+    /// Texto del PDF de muestra tal y como lo ve el motor (zonal si hay zonas,
+    /// completo si no). Se cachea contra la firma de lo que lo determina —ruta,
+    /// modo y zonas— para que sólo se vuelva a extraer (OCR incluido) cuando
+    /// cambia alguno de esos datos.
+    /// </summary>
+    private (string Texto, bool ViaOcr, bool Zonal) ObtenerTextoMuestra()
+    {
+        if (_emisorActual == null || string.IsNullOrEmpty(_rutaPdf))
+            return ("", false, false);
+
+        var firma = FirmaTextoMuestra();
+        if (_textoMuestra.HasValue && firma == _firmaTextoMuestra)
+            return _textoMuestra.Value;
+
+        var resultado = _invoiceService.ExtraerTextoMuestra(_emisorActual, _rutaPdf, PlantillaDeZonas());
+        _textoMuestra = resultado;
+        _firmaTextoMuestra = firma;
+        return resultado;
+    }
+
+    private string FirmaTextoMuestra() =>
+        // Modo: el de la config (lo que usa el motor) y el de la combo (lo que
+        // se muestra); coinciden, pero cambiar cualquiera de los dos invalida.
+        $"{_rutaPdf}|{_emisorActual?.ModoExtraccion}|{ModoSeleccionado()}|" +
+        string.Join(";", _zonasDibujo.Select(z =>
+            $"{z.Campo}|{z.NumPagina}|{z.X}|{z.Y}|{z.Ancho}|{z.Alto}"));
+
+    /// <summary>
+    /// Plantilla con las zonas que hay AHORA en la rejilla (todavía sin
+    /// guardarse en el XML): así la extracción de la muestra ve las mismas zonas
+    /// que se están dibujando, igual que la vista previa. Con la rejilla vacía
+    /// devuelve una plantilla SIN zonas para que no se cuelen las del XML (p. ej.
+    /// al borrar todas antes de guardar).
+    /// </summary>
+    private PlantillaOcr PlantillaDeZonas() => new()
+    {
+        Emisor = _emisorActual?.Nombre ?? "Previsualización",
+        Zonas = _zonasDibujo.ToList()
+    };
 
     /// <summary>
     /// Cabecera del cuadro «Texto Extraido»: indica si se muestran zonas o el
@@ -396,7 +488,11 @@ public partial class GestionEmisoresForm : Form
         List<Factura> facturas;
         try
         {
-            facturas = _invoiceService.ProcesarEmisorMuestra(_emisorActual, _rutaPdf);
+            // Sólo se reparsea el texto cacheado (sin tocar el PDF ni correr
+            // OCR): por eso el refresco puede ser automático también con
+            // documentos escaneados.
+            var (texto, viaOcr, zonal) = ObtenerTextoMuestra();
+            facturas = _invoiceService.ParsearMuestra(_emisorActual, texto, viaOcr, zonal, _rutaPdf);
         }
         catch (Exception ex)
         {
@@ -460,30 +556,6 @@ public partial class GestionEmisoresForm : Form
             ? modo
             : ModoExtraccion.Ordenado;
 
-    /// <summary>
-    /// Traduce el enum de Core al enum anidado de PdfTextExtractor.
-    /// </summary>
-    private static PdfTextExtractor.ModoExtraccion ModoPdfium(ModoExtraccion modo) =>
-        modo == ModoExtraccion.Simple
-            ? PdfTextExtractor.ModoExtraccion.Simple
-            : PdfTextExtractor.ModoExtraccion.Ordenado;
-
-    private string ExtraerTextoConModoSeleccionado()
-    {
-        if (string.IsNullOrEmpty(_rutaPdf)) return "";
-        var modoPdfium = ModoPdfium(ModoSeleccionado());
-
-        try
-        {
-            return _textExtractor.ExtraerTextoSeleccionable(_rutaPdf, modoPdfium)
-                ?? _invoiceService.ExtraerTexto(_rutaPdf);
-        }
-        catch
-        {
-            return _invoiceService.ExtraerTexto(_rutaPdf);
-        }
-    }
-
     private void CmbModoExtraccion_SelectedIndexChanged(object? sender, EventArgs e)
     {
         if (_cargando || cmbModoExtraccion.SelectedIndex < 0) return;
@@ -495,11 +567,9 @@ public partial class GestionEmisoresForm : Form
             _emisorActual.ModoExtraccion = cmbModoExtraccion.SelectedItem?.ToString() ?? "Ordenado";
 
         MarcarModificado();
-        // Refresca cabecera, texto de la vista previa e indicador de emisor.
+        // El modo entra en la firma de la caché: se vuelve a extraer con el modo
+        // nuevo y ActualizarVistaPreviaZonal deja al día consola, zonas y tabla.
         ActualizarVistaPreviaZonal();
-        // Y la tabla se recalcula con el modo nuevo (si hay PDF de muestra).
-        if (!string.IsNullOrEmpty(_rutaPdf))
-            ActualizarTablaValoresExtraidos();
     }
 
     private void TabPaginas_SelectedIndexChanged(object? sender, EventArgs e)
@@ -587,7 +657,8 @@ public partial class GestionEmisoresForm : Form
 
         _rectanguloActivo = false;
         picFactura.Invalidate();
-        ActualizarVistaPreviaZonal();
+        // Igual que al editar la rejilla: la reextracción va en diferido.
+        ProgramarRefrescoVistaPrevia();
     }
 
     // ── Coordenadas ──────────────────────────────────────────────────
@@ -702,12 +773,14 @@ public partial class GestionEmisoresForm : Form
         _imagenPaginas.Clear();
         _paginaActual = 0;
         _rutaPdf = null;
+        // Sin PDF no hay texto que cachear ni refrescos pendientes que resolver.
+        _textoMuestra = null;
+        _firmaTextoMuestra = null;
+        _pendientePrevia = false;
+        _pendienteTabla = false;
+        timerRefrescoValores.Stop();
         picFactura.Image = null;
-        _sincronizando = true;
-        foreach (DataGridViewRow r in dgvZonas.Rows)
-            if (r.Cells.Count >= 7)
-                r.Cells[6].Value = "";
-        _sincronizando = false;
+        ActualizarAyudasMuestra();
         // tabPaginas remains visible (empty) to reserve layout space
     }
     private void DgvCellValueChanged(object? sender, DataGridViewCellEventArgs e)
@@ -717,9 +790,15 @@ public partial class GestionEmisoresForm : Form
         // no es una edición de datos y no debe marcar el emisor como modificado.
         if (_sincronizando || _cargando || e.RowIndex < 0) return;
         MarcarModificado();
+
+        // El mapeo multilinea no toca zonas: no debe reextraer el texto.
+        if (ReferenceEquals(sender, dgvMultiLineaMapeo)) return;
+
         SincronizarZonasDesdeDgv();
         picFactura.Invalidate();
-        ActualizarVistaPreviaZonal();
+        // Cambiar una zona obliga a reextraer el texto (OCR con escaneados):
+        // se deja en diferido para no congelar la interfaz con cada celda.
+        ProgramarRefrescoVistaPrevia();
     }
 
     private void DgvUserAddedRow(object? sender, DataGridViewRowEventArgs e) => MarcarModificado();
@@ -736,7 +815,7 @@ public partial class GestionEmisoresForm : Form
         MarcarModificado();
         SincronizarZonasDesdeDgv();
         picFactura.Invalidate();
-        ActualizarVistaPreviaZonal();
+        ProgramarRefrescoVistaPrevia();
     }
     // ── CARGA Y SELECCIÓN ──────────────────────────────────────────────────────
 
@@ -866,10 +945,18 @@ public partial class GestionEmisoresForm : Form
         txtConceptoIngreso.Text = config.ConceptoIngreso;
         txtConceptoGasto.Text = config.ConceptoGasto;
 
+        // Los campos se cargan desde la COPIA (_emisorActual) y no desde
+        // `config`, que puede ser el objeto vivo de la caché: así lo que se
+        // edite en la lista es exactamente lo que calcula la tabla «Valores
+        // extraídos», lo que se guarda al final y lo que se descarta al cancelar.
         lstCampos.Items.Clear();
-        foreach (var c in config.Campos)
+        foreach (var c in _emisorActual.Campos)
             lstCampos.Items.Add(c);
         ActualizarItemsCmbCampoNombre();
+        // El primer campo queda seleccionado: el panel arranca en modo edición
+        // con un ejemplo real en lugar de vacío y deshabilitado.
+        if (lstCampos.Items.Count > 0)
+            lstCampos.SelectedIndex = 0;
 
         lstMultiLineas.Items.Clear();
         var multi = config.MultiLinea;
@@ -909,18 +996,25 @@ public partial class GestionEmisoresForm : Form
             foreach (var z in config.ZonasOcr)
                 dgvZonas.Rows.Add(z.Campo, z.NumPagina, z.X, z.Y, z.Ancho, z.Alto);
 
+        // Sincroniza ANTES de cargar el PDF: así la extracción de la muestra ya
+        // ve las zonas del emisor y no hace falta extraer dos veces (una sin
+        // zonas y otra con ellas).
+        SincronizarZonasDesdeDgv();
+
         var rutaPdf = config.RutaPdfMuestra;
         if (string.IsNullOrWhiteSpace(rutaPdf) || !File.Exists(rutaPdf))
+        {
             LimpiarPaginas();
+            // Con PDF el indicador lo refresca CargarPdfMuestra; sin él hay que
+            // actualizarlo aquí para que no quede el resultado del emisor anterior.
+            ActualizarIndicadorIdentificadores();
+        }
         else
             CargarPdfMuestra(rutaPdf, mostrarErrores: false);
 
         _cargando = false;
-        SincronizarZonasDesdeDgv();
         picFactura.Invalidate();
         ActualizarVistaPreviaZonal();
-        ActualizarTablaValoresExtraidos();
-        ActualizarIndicadorIdentificadores();
         ActualizarVersionXml();
         ActualizarColorBotonVerificar();
     }
@@ -1029,15 +1123,25 @@ public partial class GestionEmisoresForm : Form
         _emisorActual.ConceptoGasto = txtConceptoGasto.Text.Trim();
         _emisorActual.RutaPdfMuestra = _rutaPdf ?? string.Empty;
 
-        if (lstCampos.SelectedItem is CampoConfig campoActual)
-        {
-            var nombre = cmbCampoNombre.Text.Trim();
-            if (!string.IsNullOrEmpty(nombre))
-                campoActual.Nombre = nombre;
-            ActualizarCampoDesdeDetalle(campoActual);
-        }
+        SincronizarCamposDesdeUI();
         _emisorActual.Campos = lstCampos.Items.Cast<CampoConfig>().ToList();
         _emisorActual.PostProcesamiento = lstPostProc.Items.Cast<PostProcesamientoConfig>().ToList();
+    }
+
+    /// <summary>
+    /// Vuelca en la lista del campo seleccionado lo que esté tecleado en el
+    /// panel de detalle. Se ejecuta antes de validar y de guardar: si no, el
+    /// tipo o la regex recién escritos no entrarían ni en la comprobación ni en
+    /// el XML. Sólo mueve objetos de la lista (no cambia el estado de la UI).
+    /// </summary>
+    private void SincronizarCamposDesdeUI()
+    {
+        if (lstCampos.SelectedItem is not CampoConfig campoActual) return;
+
+        var nombre = cmbCampoNombre.Text.Trim();
+        if (!string.IsNullOrEmpty(nombre))
+            campoActual.Nombre = nombre;
+        ActualizarCampoDesdeDetalle(campoActual);
     }
 
     // ── CRUD ───────────────────────────────────────────────────────────────────
@@ -1466,6 +1570,19 @@ public partial class GestionEmisoresForm : Form
             return false;
         }
 
+        // Campos: errores bloqueantes (expresión rota o tipo incompatível con el
+        // nombre) ANTES de consultar VIES o tocar el disco. Salto a la pestaña
+        // y foco al dato culpable, igual que con el post-procesamiento.
+        var (errorCampos, focoCampo) = ValidarCampos();
+        if (errorCampos != null)
+        {
+            tabs.SelectedTab = tabCampos;
+            MessageBox.Show(errorCampos,
+                "Campos incompletos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            focoCampo?.Focus();
+            return false;
+        }
+
         // VIES: sólo para NIF-IVA comunitarios (con prefijo de estado miembro)
         // y sólo si no hay ya un resultado en caché para ese mismo NIF. Un NIF
         // español sin prefijo no dispara ninguna llamada de red al guardar.
@@ -1546,12 +1663,21 @@ public partial class GestionEmisoresForm : Form
                 Alto = double.TryParse(r.Cells[5].Value?.ToString(), out var h) ? h : 0
             }).ToList();
 
+        // Avisos no bloqueantes: no impiden guardar, pero avisan de lo que hará
+        // que las facturas salgan en «Revisar» o «Error».
+        if (!ConfirmarAvisosCampos()) return false;
+
         try
         {
             _configuracion.Guardar(_emisorActual, _esNuevo ? null : nifAnterior);
             _esNuevo = false;
             _modificado = false;
             btnGuardar.Enabled = false;
+            // Guardar deja en la caché LA MISMA instancia que edita la UI: sin
+            // esta copia, las ediciones siguientes (todavía sin guardar y por
+            // tanto descartables) se colarían en los parsers al vivir en la caché.
+            _emisorActual = CopiarConfig(_emisorActual);
+            RecargarListaCampos();
             CargarEmisores();
             // Selecciona el emisor guardado en la lista refrescada; si el filtro
             // activo lo oculta, se limpia la búsqueda para que vuelva a aparecer.
@@ -1574,6 +1700,180 @@ public partial class GestionEmisoresForm : Form
         }
     }
 
+    /// <summary>
+    /// Validación de la pestaña «Campos» antes de guardar: devuelve el mensaje
+    /// del primer error bloqueante y el control a enfocar (null si todo va bien).
+    /// Los avisos no bloqueantes están en <see cref="ConfirmarAvisosCampos"/>.
+    /// </summary>
+    private (string? Error, Control? Foco) ValidarCampos()
+    {
+        // Lo tecleado en el panel del campo seleccionado todavía no está en la
+        // lista: sin sincronizar, se validaría lo anterior a lo tecleado.
+        SincronizarCamposDesdeUI();
+
+        var nombre = cmbCampoNombre.Text?.Trim() ?? "";
+        if (!string.IsNullOrEmpty(nombre) && CampoDefinido(nombre) == null)
+        {
+            return ($"El campo «{nombre}» está tecleado en el panel pero no se ha " +
+                    "añadido a la lista.\n\nPulsa «+ Añadir» para incluirlo, o vacía " +
+                    "el nombre para descartarlo.", cmbCampoNombre);
+        }
+
+        foreach (var campo in lstCampos.Items.Cast<CampoConfig>())
+        {
+            // El tipo del campo seleccionado se lee del panel (es lo que está
+            // tecleado); para el resto se deduce de lo guardado.
+            var esSeleccionado = ReferenceEquals(lstCampos.SelectedItem, campo);
+            var tipo = esSeleccionado
+                ? cmbCampoTipo.SelectedItem?.ToString()
+                : TipoDeducido(campo);
+
+            switch (tipo)
+            {
+                case "RegexFechaGeneral":
+                    if (!string.Equals(campo.Nombre, "Fecha", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Señalar el campo en la lista: al cargarlo en el panel se
+                        // corrige el tipo y se deja el aviso en lblTipoAyuda.
+                        if (!esSeleccionado) lstCampos.SelectedItem = campo;
+                        return ($"El campo «{campo.Nombre}» usa «RegexFechaGeneral», que sólo " +
+                                "funciona si el campo se llama «Fecha».\n\nSe ha vuelto a " +
+                                "poner «Regex»: revisa su expresión.", cmbCampoTipo);
+                    }
+                    continue;
+
+                case "RegexNifGeneral":
+                    if (!string.Equals(campo.Nombre, "ReceptorNif", StringComparison.OrdinalIgnoreCase) &&
+                        !string.Equals(campo.Nombre, "EmisorNif", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (!esSeleccionado) lstCampos.SelectedItem = campo;
+                        return ($"El campo «{campo.Nombre}» usa «RegexNifGeneral», que sólo " +
+                                "funciona para «ReceptorNif» o «EmisorNif».\n\nSe ha vuelto " +
+                                "a poner «Regex»: revisa su expresión.", cmbCampoTipo);
+                    }
+                    continue;
+
+                case "ValorFijo":
+                    if (!string.IsNullOrWhiteSpace(campo.ValorFijo)) continue;
+                    if (!esSeleccionado) lstCampos.SelectedItem = campo;
+                    return ($"El campo «{campo.Nombre}» está como «ValorFijo» pero no " +
+                            "tiene valor. Escribe el valor o cambia el tipo.", txtCampoValorFijo);
+
+                case null:
+                    if (!esSeleccionado) lstCampos.SelectedItem = campo;
+                    return ($"El campo «{campo.Nombre}» no tiene tipo de extracción elegido.",
+                        cmbCampoTipo);
+
+                default:   // «Regex»: la expresión es obligatoria y tiene que capturar
+                    var error = ErrorRegexCampo(campo.Regex);
+                    if (error == null) continue;
+                    if (!esSeleccionado) lstCampos.SelectedItem = campo;
+                    return ($"Campo «{campo.Nombre}»: {error}", txtCampoRegex);
+            }
+        }
+
+        return (null, null);
+    }
+
+    private static string TipoDeducido(CampoConfig campo) =>
+        campo.UsarRegexFechaGeneral ? "RegexFechaGeneral"
+        : campo.UsarRegexNifGeneral ? "RegexNifGeneral"
+        : !string.IsNullOrEmpty(campo.ValorFijo) ? "ValorFijo"
+        : "Regex";
+
+    /// <summary>
+    /// Avisos no bloqueantes sobre los campos: faltan obligatorios o, con el PDF
+    /// de muestra cargado, no se extrae nada. Devuelve false si el usuario
+    /// decide no guardar.
+    /// </summary>
+    private bool ConfirmarAvisosCampos()
+    {
+        var definidos = new HashSet<string>(
+            _emisorActual!.Campos.Select(c => c.Nombre), StringComparer.OrdinalIgnoreCase);
+
+        var obligatorios = new[]
+        {
+            "NumeroFactura", "Fecha", "ReceptorNombre", "ReceptorNif",
+            "BaseImponible", "TotalFactura"
+        };
+        var faltan = obligatorios.Where(n => !definidos.Contains(n)).ToList();
+
+        if (faltan.Count > 0)
+        {
+            var r = MessageBox.Show(
+                "Faltan campos recomendados:\n• " + string.Join("\n• ", faltan) +
+                "\n\nSin ellos las facturas quedarán en «Revisar» o «Error»." +
+                "\n\n¿Guardar el emisor de todos modos?",
+                "Campos recomendados", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (r != DialogResult.Yes) return false;
+        }
+
+        if (MuestraNoExtraeNada())
+        {
+            var r = MessageBox.Show(
+                "Con el PDF de muestra cargado no se extrae ningún dato de los campos " +
+                "definidos (ni número de factura, ni fecha, ni importes).\n\n" +
+                "Revisa las expresiones antes de dar por bueno el emisor." +
+                "\n\n¿Guardar el emisor de todos modos?",
+                "La muestra no extrae nada", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (r != DialogResult.Yes) return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// true si, con el PDF de muestra actual, ningún campo extrae datos. Sólo
+    /// reutiliza el texto cacheado: si aún no estaba extraído se extrae aquí
+    /// (una única pasada al guardar, no al editar).
+    /// </summary>
+    private bool MuestraNoExtraeNada()
+    {
+        if (_emisorActual == null || string.IsNullOrEmpty(_rutaPdf) || !File.Exists(_rutaPdf))
+            return false;
+
+        try
+        {
+            var (texto, viaOcr, zonal) = ObtenerTextoMuestra();
+            var facturas = _invoiceService.ParsearMuestra(_emisorActual, texto, viaOcr, zonal, _rutaPdf);
+            if (facturas.Count == 0) return true;
+            return facturas.All(f =>
+                string.IsNullOrEmpty(f.NumeroFactura) &&
+                !f.Fecha.HasValue &&
+                string.IsNullOrEmpty(f.Receptor?.NIF) &&
+                f.BaseImponible == 0 &&
+                f.TotalFactura == 0);
+        }
+        catch
+        {
+            // Si la muestra no se puede procesar, no es ése el motivo para frenar
+            // el guardado: el error real ya aparecería en «Valores extraídos».
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Vuelve a poblar la lista de campos desde _emisorActual conservando la
+    /// selección por nombre. Se usa tras guardar, cuando la caché se queda con
+    /// la instancia guardada y la UI necesita seguir editando una copia propia.
+    /// </summary>
+    private void RecargarListaCampos()
+    {
+        if (_emisorActual == null) return;
+
+        var seleccionado = cmbCampoNombre.Text?.Trim() ?? "";
+        _campoAnterior = null;
+        lstCampos.Items.Clear();
+        foreach (var c in _emisorActual.Campos)
+            lstCampos.Items.Add(c);
+        ActualizarItemsCmbCampoNombre();
+
+        var campo = string.IsNullOrEmpty(seleccionado) ? null : CampoDefinido(seleccionado);
+        if (campo != null)
+            lstCampos.SelectedItem = campo;
+        RefrescarModoDetalleCampo();
+    }
+
     private async void BtnGuardar_Click(object? sender, EventArgs e)
     {
         await GuardarCambiosAsync();
@@ -1592,139 +1892,486 @@ public partial class GestionEmisoresForm : Form
 
     private void LimpiarDetalleCampo()
     {
-        cmbCampoNombre.Text = "";
+        // SelectedIndex = -1 y no Text = "": en una combo DropDownList el texto
+        // sólo admite valores que estén en los ítems.
+        cmbCampoNombre.SelectedIndex = -1;
         cmbCampoTipo.SelectedIndex = -1;
         txtCampoRegex.Text = "";
         txtCampoValorFijo.Text = "";
+        // El probador refleja el detalle: sin campo no hay expresión que probar.
+        txtRegexPattern.Text = "";
+    }
+
+    /// <summary>
+    /// Campo ya definido para el emisor con ese nombre, o null si todavía no
+    /// existe. Es la pieza que decide si el panel está en modo edición o de alta.
+    /// </summary>
+    private CampoConfig? CampoDefinido(string nombre) =>
+        string.IsNullOrEmpty(nombre)
+            ? null
+            : lstCampos.Items.Cast<CampoConfig>()
+                .FirstOrDefault(c => c.Nombre.Equals(nombre, StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>
+    /// Reconstruye la lista de tipos de extracción válidos para el nombre de
+    /// campo indicado. El motor sólo aplica «RegexFechaGeneral» al campo
+    /// «Fecha» y «RegexNifGeneral» a «ReceptorNif»/«EmisorNif»: no se ofrecen
+    /// combinaciones que se ignorarían en silencio. Si <paramref name="tipoAConservar"/>
+    /// ya no es válido para el nuevo nombre, se vuelve a «Regex» dejando aviso.
+    /// </summary>
+    private void ActualizarTiposDisponibles(string nombre, string? tipoAConservar)
+    {
+        cmbCampoTipo.Items.Clear();
+        cmbCampoTipo.Items.Add("Regex");
+        cmbCampoTipo.Items.Add("ValorFijo");
+        if (string.Equals(nombre, "Fecha", StringComparison.OrdinalIgnoreCase))
+            cmbCampoTipo.Items.Add("RegexFechaGeneral");
+        if (string.Equals(nombre, "ReceptorNif", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(nombre, "EmisorNif", StringComparison.OrdinalIgnoreCase))
+            cmbCampoTipo.Items.Add("RegexNifGeneral");
+
+        if (string.IsNullOrEmpty(tipoAConservar)) return;
+
+        if (cmbCampoTipo.Items.Contains(tipoAConservar))
+        {
+            cmbCampoTipo.SelectedItem = tipoAConservar;
+        }
+        else
+        {
+            cmbCampoTipo.SelectedItem = "Regex";
+            _avisoTipoPendiente =
+                $"«{tipoAConservar}» no vale para «{nombre}» → se usa «Regex».";
+        }
+    }
+
+    /// <summary>
+    /// Pone el panel en modo alta para un nombre que todavía no está definido:
+    /// guarda los cambios pendientes del campo anterior, deselecciona la lista
+    /// (sin tocar el nombre elegido), deja tipos válidos para ese nombre y
+    /// borra los datos del campo anterior para que no se cuelen en el nuevo.
+    /// </summary>
+    private void PrepararAltaCampo(string nombre)
+    {
+        if (_campoAnterior != null)
+            ActualizarCampoDesdeDetalle(_campoAnterior);   // no se pierde lo tecleado
+        _campoAnterior = null;
+
+        _cargandoCampo = true;
+        lstCampos.SelectedItem = null;
+
+        var tipoPrevio = cmbCampoTipo.SelectedItem?.ToString();
+        ActualizarTiposDisponibles(nombre, tipoPrevio);
+        if (cmbCampoTipo.SelectedIndex < 0)
+            cmbCampoTipo.SelectedItem = "Regex";
+        txtCampoRegex.Text = "";
+        txtCampoValorFijo.Text = "";
+        txtRegexPattern.Text = "";
+        _cargandoCampo = false;
+    }
+
+    /// <summary>
+    /// Estado visible del panel de detalle: modo EDICIÓN (nombre ya definido),
+    /// modo ALTA (nombre por definir) o SIN SELECCIÓN. Habilita en consecuencia
+    /// los controles y el botón «+ Añadir», y actualiza la ayuda del tipo.
+    /// </summary>
+    private void RefrescarModoDetalleCampo()
+    {
+        var nombre = cmbCampoNombre.Text?.Trim() ?? "";
+        var existente = string.IsNullOrEmpty(nombre) ? null : CampoDefinido(nombre);
+        _campoEnAlta = !string.IsNullOrEmpty(nombre) && existente == null;
+
+        if (string.IsNullOrEmpty(nombre))
+        {
+            btnCampoAdd.Enabled = false;
+            lblEstadoCampo.Text = "Sin selección: elige un nombre de campo";
+            lblEstadoCampo.ForeColor = Color.Gray;
+        }
+        else if (existente != null)
+        {
+            btnCampoAdd.Enabled = false;
+            lblEstadoCampo.Text = $"Editando «{existente.Nombre}» — cambios al instante";
+            lblEstadoCampo.ForeColor = Color.FromArgb(0, 128, 0);
+        }
+        else
+        {
+            btnCampoAdd.Enabled = true;
+            lblEstadoCampo.Text = $"Nuevo campo «{nombre}» — define el tipo y pulsa «+ Añadir»";
+            lblEstadoCampo.ForeColor = Color.FromArgb(180, 110, 0);
+        }
+
+        // Cada tipo usa un único dato: el resto queda deshabilitado para que no
+        // se tecleen valores que el motor ignoraría.
+        var tipo = cmbCampoTipo.SelectedItem?.ToString();
+        var hayNombre = !string.IsNullOrEmpty(nombre);
+        cmbCampoTipo.Enabled = hayNombre;
+        txtCampoRegex.Enabled = hayNombre && tipo == "Regex";
+        txtCampoValorFijo.Enabled = hayNombre && tipo == "ValorFijo";
+
+        ActualizarAyudaTipoCampo();
+    }
+
+    /// <summary>
+    /// Texto de ayuda bajo el panel de detalle: explica qué dato recoge cada
+    /// tipo de extracción o, si hay uno pendiente, por qué se cambió el tipo.
+    /// </summary>
+    private void ActualizarAyudaTipoCampo()
+    {
+        if (lblTipoAyuda == null) return;
+
+        if (_avisoTipoPendiente != null)
+        {
+            lblTipoAyuda.Text = _avisoTipoPendiente;
+            lblTipoAyuda.ForeColor = Color.FromArgb(180, 110, 0);
+            return;
+        }
+
+        var (texto, color) = (cmbCampoTipo.SelectedItem?.ToString()) switch
+        {
+            "Regex" => ("El valor se toma del Grupo 1: lo capturado entre paréntesis.", Color.DimGray),
+            "ValorFijo" => ("Valor fijo para todas las facturas; la expresión se ignora.", Color.DimGray),
+            "RegexFechaGeneral" => ("Detector general de fechas; sólo vale para «Fecha».", Color.DimGray),
+            "RegexNifGeneral" => ("Detector general de NIF; sólo para ReceptorNif/EmisorNif.", Color.DimGray),
+            _ => ("", Color.DimGray)
+        };
+        lblTipoAyuda.Text = texto;
+        lblTipoAyuda.ForeColor = color;
     }
 
     private void CampoDetalle_Changed(object? sender, EventArgs e)
     {
         if (_cargandoCampo) return;
+
+        // Al cambiar de tipo deja de aplicarse el aviso de tipo incompatible.
+        if (sender == cmbCampoTipo) _avisoTipoPendiente = null;
+
         if (lstCampos.SelectedItem is CampoConfig campo)
+        {
             ActualizarCampoDesdeDetalle(campo);
-        MarcarModificado();
+            // El probador sigue al campo al instante: lo que se teclee en
+            // «Regex» se prueba solo contra el texto extraído de la muestra.
+            if (sender == txtCampoRegex)
+                txtRegexPattern.Text = txtCampoRegex.Text.Trim();
+            MarcarModificado();
+            ProgramarRefrescoValores();
+        }
+        // En modo alta no hay campo seleccionado: sólo se recalcula qué controles
+        // están disponibles (nada se modifica todavía, así que no se marca).
+        RefrescarModoDetalleCampo();
     }
 
-    private void CmbCampoNombre_TextChanged(object? sender, EventArgs e)
+    /// <summary>
+    /// Un nombre elegido en la combo decide el modo del panel: si ya está
+    /// definido para el emisor se selecciona en la lista para editarlo; si
+    /// todavía no lo está, el panel queda en modo alta para crearlo.
+    /// </summary>
+    private void CmbCampoNombre_SelectedIndexChanged(object? sender, EventArgs e)
     {
         if (_cargandoCampo) return;
 
-        var text = cmbCampoNombre.Text?.Trim() ?? "";
+        _avisoTipoPendiente = null;
+        var nombre = cmbCampoNombre.Text?.Trim() ?? "";
 
-        if (string.IsNullOrEmpty(text))
+        if (string.IsNullOrEmpty(nombre))
         {
-            if (lstCampos.SelectedItem != null)
-            {
-                if (_campoAnterior != null)
-                    ActualizarCampoDesdeDetalle(_campoAnterior);
-                _campoAnterior = null;
-                _cargandoCampo = true;
-                lstCampos.SelectedItem = null;
-                _cargandoCampo = false;
-            }
+            // Sin nombre no hay nada que editar: el panel queda inactivo.
+            DeseleccionarCampo();
+            RefrescarModoDetalleCampo();
             return;
         }
 
-        var match = lstCampos.Items.Cast<CampoConfig>()
-            .FirstOrDefault(c => c.Nombre.Equals(text, StringComparison.OrdinalIgnoreCase));
+        var existente = CampoDefinido(nombre);
+        if (existente != null)
+        {
+            // Nombre ya definido para este emisor → modo EDICIÓN.
+            SeleccionarCampoEnLista(existente);
+            return;
+        }
 
-        if (match != null)
-        {
-            if (lstCampos.SelectedItem != match)
-                lstCampos.SelectedItem = match;
-        }
-        else
-        {
-            if (lstCampos.SelectedItem != null)
-            {
-                if (_campoAnterior != null)
-                    ActualizarCampoDesdeDetalle(_campoAnterior);
-                _campoAnterior = null;
-                _cargandoCampo = true;
-                lstCampos.SelectedItem = null;
-                cmbCampoNombre.Text = text;
-                _cargandoCampo = false;
-            }
-        }
+        // Nombre todavía no definido → modo ALTA (el nombre elegido se conserva).
+        PrepararAltaCampo(nombre);
+        RefrescarModoDetalleCampo();
     }
 
     private void LstCampos_SelectedIndexChanged(object? sender, EventArgs e)
     {
-        if (_campoAnterior != null)
-            ActualizarCampoDesdeDetalle(_campoAnterior);
-
-        _cargandoCampo = true;
-        _campoAnterior = lstCampos.SelectedItem as CampoConfig;
+        // Sólo el clic del usuario en la lista: los cambios programáticos de
+        // selección (combo de nombres, alta/baja de campo, guardado) los gestiona
+        // cada uno en su sitio a través de SeleccionarCampoEnLista.
+        if (_cargandoCampo) return;
 
         if (lstCampos.SelectedItem is CampoConfig campo)
         {
-            if (cmbCampoNombre != null) cmbCampoNombre.Text = campo.Nombre;
-            cmbCampoTipo.SelectedItem = campo.UsarRegexFechaGeneral ? "RegexFechaGeneral"
-                : campo.UsarRegexNifGeneral ? "RegexNifGeneral"
-                : !string.IsNullOrEmpty(campo.ValorFijo) ? "ValorFijo"
-                : "Regex";
-            txtCampoRegex.Text = campo.Regex ?? "";
-            txtCampoValorFijo.Text = campo.ValorFijo ?? "";
+            SeleccionarCampoEnLista(campo);
+            return;
+        }
 
-            if (!campo.UsarRegexFechaGeneral && !campo.UsarRegexNifGeneral
-                && string.IsNullOrEmpty(campo.ValorFijo)
-                && !string.IsNullOrEmpty(txtCampoRegex.Text))
-            {
-                txtRegexPattern.Text = txtCampoRegex.Text;
-            }
-        }
-        else
-        {
-            LimpiarDetalleCampo();
-        }
+        DeseleccionarCampo();
+        RefrescarModoDetalleCampo();
+    }
+
+    /// <summary>
+    /// Señala un campo en la lista y lo vuelca en el panel de detalle. Es el
+    /// único camino «campo seleccionado», venga de la lista o de la combo de
+    /// nombres, así ambos controles quedan siempre sincronizados.
+    /// </summary>
+    private void SeleccionarCampoEnLista(CampoConfig campo)
+    {
+        // Los cambios pendientes del campo anterior se guardan en él; el nuevo
+        // no se toca, o se le colarían los valores del anterior.
+        if (_campoAnterior != null && !ReferenceEquals(_campoAnterior, campo))
+            ActualizarCampoDesdeDetalle(_campoAnterior);
+
+        _cargandoCampo = true;
+        _campoAnterior = campo;
+        lstCampos.SelectedItem = campo;
         _cargandoCampo = false;
+
+        CargarDetalleDeCampo(campo);
+        RefrescarModoDetalleCampo();
+    }
+
+    /// <summary>
+    /// Vuelca un campo en los controles del panel de detalle. Sólo toca datos
+    /// (nunca la selección de la lista), por eso sirve desde cualquier origen.
+    /// </summary>
+    private void CargarDetalleDeCampo(CampoConfig campo)
+    {
+        _cargandoCampo = true;
+
+        var tipoGuardado = campo.UsarRegexFechaGeneral ? "RegexFechaGeneral"
+            : campo.UsarRegexNifGeneral ? "RegexNifGeneral"
+            : !string.IsNullOrEmpty(campo.ValorFijo) ? "ValorFijo"
+            : "Regex";
+        // Los tipos dependen del nombre: reconstruir antes de restaurarlos.
+        ActualizarTiposDisponibles(campo.Nombre, tipoGuardado);
+        if (cmbCampoTipo.SelectedIndex < 0)
+        {
+            cmbCampoTipo.SelectedItem = "Regex";
+            _avisoTipoPendiente =
+                $"«{tipoGuardado}» guardado en el XML no vale para «{campo.Nombre}» → se usa «Regex».";
+        }
+
+        txtCampoRegex.Text = campo.Regex ?? "";
+        txtCampoValorFijo.Text = campo.ValorFijo ?? "";
+        SincronizarProbadorDesdeCampo(campo);
+        // La combo refleja el campo en edición (no-op si el cambio vino de ahí).
+        cmbCampoNombre.Text = campo.Nombre;
+
+        _cargandoCampo = false;
+    }
+
+    /// <summary>
+    /// Sin campo seleccionado: guarda los cambios pendientes del anterior y
+    /// deja el panel inactivo. La lista y la combo quedan vacías a la par.
+    /// </summary>
+    private void DeseleccionarCampo()
+    {
+        if (_campoAnterior != null)
+            ActualizarCampoDesdeDetalle(_campoAnterior);
+        _campoAnterior = null;
+
+        _cargandoCampo = true;
+        lstCampos.SelectedItem = null;
+        LimpiarDetalleCampo();
+        _cargandoCampo = false;
+    }
+
+    /// <summary>
+    /// El probador refleja el campo seleccionado: con «Regex» muestra su
+    /// expresión para probarla al instante; el resto de tipos no usan
+    /// expresión, así que queda vacío.
+    /// </summary>
+    private void SincronizarProbadorDesdeCampo(CampoConfig campo)
+    {
+        var usaRegex = !campo.UsarRegexFechaGeneral && !campo.UsarRegexNifGeneral
+                       && string.IsNullOrEmpty(campo.ValorFijo);
+        txtRegexPattern.Text = usaRegex ? campo.Regex ?? "" : "";
     }
 
     private void BtnCampoAdd_Click(object? sender, EventArgs e)
     {
         if (_emisorActual == null) return;
 
-        var nombre = cmbCampoNombre?.Text?.Trim();
+        var nombre = cmbCampoNombre.Text?.Trim() ?? "";
         if (string.IsNullOrEmpty(nombre))
         {
-            MessageBox.Show("Escribe un nombre de campo.",
+            MessageBox.Show("Elige un nombre de campo en la lista desplegable.",
                 "Campo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
-        if (lstCampos.Items.Cast<CampoConfig>().Any(c =>
-            c.Nombre.Equals(nombre, StringComparison.OrdinalIgnoreCase)))
+        if (CampoDefinido(nombre) != null)
         {
-            MessageBox.Show($"Ya existe un campo con el nombre '{nombre}'.",
-                "Duplicado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show($"El campo '{nombre}' ya está definido y se está editando en el panel.",
+                "Ya existe", MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
         }
 
-        var campo = new CampoConfig { Nombre = nombre };
-        ActualizarCampoDesdeDetalle(campo);
-        campo.Nombre = nombre;
+        var tipo = cmbCampoTipo.SelectedItem?.ToString();
+        if (tipo == null)
+        {
+            MessageBox.Show("Elige el tipo de extracción del campo.",
+                "Tipo requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            cmbCampoTipo.Focus();
+            return;
+        }
 
-        lstCampos.Items.Add(campo);
-        lstCampos.SelectedItem = campo;
+        if (tipo == "Regex")
+        {
+            var error = ErrorRegexCampo(txtCampoRegex.Text);
+            if (error != null)
+            {
+                MessageBox.Show(error, "Expresión regular", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtCampoRegex.Focus();
+                return;
+            }
+        }
+        else if (tipo == "ValorFijo" && string.IsNullOrWhiteSpace(txtCampoValorFijo.Text))
+        {
+            MessageBox.Show("Escribe el valor fijo que se asignará al campo.",
+                "Valor requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            txtCampoValorFijo.Focus();
+            return;
+        }
+
+        var nuevo = new CampoConfig { Nombre = nombre };
+        ActualizarCampoDesdeDetalle(nuevo);
+        nuevo.Nombre = nombre;
+
+        lstCampos.Items.Add(nuevo);
         ActualizarItemsCmbCampoNombre();
 
-        _cargandoCampo = true;
-        LimpiarDetalleCampo();
-        if (cmbCampoNombre != null) cmbCampoNombre.Text = nombre;
-        _cargandoCampo = false;
+        // El panel pasa a EDITAR el campo recién creado: la lista lo selecciona
+        // y su handler rellena el detalle con lo que acaba de guardarse (no se
+        // borra nada, así no se confunde con el alta de un campo siguiente).
+        lstCampos.SelectedItem = nuevo;
 
         MarcarModificado();
+        ProgramarRefrescoValores();
     }
 
     private void BtnCampoRemove_Click(object? sender, EventArgs e)
     {
-        if (lstCampos.SelectedItem is CampoConfig campo)
+        if (lstCampos.SelectedItem is not CampoConfig campo)
         {
-            lstCampos.Items.Remove(campo);
-            ActualizarItemsCmbCampoNombre();
-            MarcarModificado();
+            MessageBox.Show("Selecciona en la lista el campo que quieras quitar.",
+                "Ningún campo seleccionado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
         }
+
+        var confirmar = MessageBox.Show(
+            $"¿Quitar el campo '{campo.Nombre}' del emisor?",
+            "Quitar campo", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+        if (confirmar != DialogResult.Yes) return;
+
+        lstCampos.Items.Remove(campo);
+        ActualizarItemsCmbCampoNombre();
+
+        // Al quitar el último seleccionado la lista puede señalar otro: en ese
+        // caso el detalle ya lo ha cargado y _campoAnterior apunta a él (no se
+        // anula, o se perderían sus cambios pendientes al cambiar de campo).
+        if (lstCampos.SelectedItem == null)
+        {
+            _campoAnterior = null;
+            _cargandoCampo = true;
+            LimpiarDetalleCampo();
+            _cargandoCampo = false;
+        }
+
+        MarcarModificado();
+        RefrescarModoDetalleCampo();
+        ProgramarRefrescoValores();
+    }
+
+    /// <summary>
+    /// Comprueba una expresión de campo: debe existir y debe tener al menos un
+    /// grupo de captura, porque el motor lee el Grupo 1 y sin paréntesis no se
+    /// extraería ningún valor. Devuelve null si es válida.
+    /// </summary>
+    private static string? ErrorRegexCampo(string? regex)
+    {
+        if (string.IsNullOrWhiteSpace(regex))
+            return "El campo no tiene expresión regular.";
+
+        Regex probada;
+        try
+        {
+            probada = new Regex(regex, RegexOptions.IgnoreCase);
+        }
+        catch (RegexParseException ex)
+        {
+            return $"La expresión regular no es válida:\n{ex.Message}";
+        }
+
+        // GetGroupNumbers incluye el 0 (la coincidencia completa): hace falta
+        // al menos un número más para que exista un grupo de captura.
+        if (probada.GetGroupNumbers().Length <= 1)
+            return "La expresión no tiene ningún grupo de captura: envuelve entre " +
+                   "paréntesis lo que hay que extraer, porque el motor lee el Grupo 1.";
+
+        return null;
+    }
+
+    // ── REFRESCO EN DIFERIDO DE «VALORES EXTRAÍDOS» Y CONSOLA ─────────────────
+
+    /// <summary>
+    /// Pide recalcular sólo la tabla «Valores extraídos», dejando pasar medio
+    /// segundo de inactividad: al reparsear el texto cacheado no hay OCR, así
+    /// que sirve igual con PDFs escaneados que con seleccionables.
+    /// </summary>
+    private void ProgramarRefrescoValores()
+    {
+        if (string.IsNullOrEmpty(_rutaPdf)) return;
+        _pendienteTabla = true;
+        ArrancarTemporizadorRefresco();
+    }
+
+    /// <summary>
+    /// Pide reextraer el texto del PDF (puede correr OCR) y refrescar consola,
+    /// zonas y tabla. Se deja en diferido para que editar una zona no congele
+    /// la interfaz con cada celda que se teclea.
+    /// </summary>
+    private void ProgramarRefrescoVistaPrevia()
+    {
+        if (string.IsNullOrEmpty(_rutaPdf)) return;
+        _pendientePrevia = true;
+        ArrancarTemporizadorRefresco();
+    }
+
+    private void ArrancarTemporizadorRefresco()
+    {
+        timerRefrescoValores.Stop();
+        timerRefrescoValores.Start();
+    }
+
+    private void TimerRefrescoValores_Tick(object? sender, EventArgs e)
+    {
+        timerRefrescoValores.Stop();
+
+        bool previa = _pendientePrevia;
+        bool tabla = _pendienteTabla;
+        _pendientePrevia = false;
+        _pendienteTabla = false;
+
+        if (_emisorActual == null || string.IsNullOrEmpty(_rutaPdf)) return;
+
+        // Si hay pendiente una reextracción, ésta ya deja la tabla al día.
+        if (previa)
+            ActualizarVistaPreviaZonal();
+        else if (tabla)
+            ActualizarTablaValoresExtraidos();
+    }
+
+    /// <summary>
+    /// Ayuda que depende del PDF de muestra: el aviso «carga un PDF» de la
+    /// pestaña Campos.
+    /// </summary>
+    private void ActualizarAyudasMuestra()
+    {
+        var hayPdf = !string.IsNullOrEmpty(_rutaPdf) && File.Exists(_rutaPdf);
+
+        if (lblSinPdf != null)
+            lblSinPdf.Visible = !hayPdf;
     }
 
     // ── EVENTOS POST-PROCESAMIENTO ─────────────────────────────────────────────

@@ -4,6 +4,9 @@ partial class GestionEmisoresForm
 {
     private System.ComponentModel.IContainer components = null;
 
+    // Refresco «en diferido» de la tabla «Valores extraídos» y de la consola.
+    private System.Windows.Forms.Timer timerRefrescoValores;
+
     private System.Windows.Forms.ListBox lstEmisores;
     private System.Windows.Forms.TextBox txtBuscarEmisor;
     private System.Windows.Forms.Button btnNuevo;
@@ -73,6 +76,9 @@ partial class GestionEmisoresForm
         txtCampoValorFijo = new TextBox();
         btnCampoAdd = new Button();
         btnCampoRemove = new Button();
+        lblEstadoCampo = new Label();
+        lblTipoAyuda = new Label();
+        lblSinPdf = new Label();
         lblRegexPattern = new Label();
         txtRegexPattern = new TextBox();
         lblRegexMatchCount = new Label();
@@ -130,6 +136,8 @@ partial class GestionEmisoresForm
         picFactura = new PictureBox();
         panelDerecho = new Panel();
         panelCentral = new Panel();
+        components = new System.ComponentModel.Container();
+        timerRefrescoValores = new System.Windows.Forms.Timer(components);
         panelIzquierdo.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)dgvValoresExtraidos).BeginInit();
         tabs.SuspendLayout();
@@ -144,6 +152,11 @@ partial class GestionEmisoresForm
         panelDerecho.SuspendLayout();
         panelCentral.SuspendLayout();
         SuspendLayout();
+        // 
+        // timerRefrescoValores
+        // 
+        timerRefrescoValores.Interval = 500;
+        timerRefrescoValores.Tick += TimerRefrescoValores_Tick;
         // 
         // lstEmisores
         // 
@@ -540,6 +553,7 @@ partial class GestionEmisoresForm
         tabCampos.Controls.Add(lblRegexResultados);
         tabCampos.Controls.Add(dgvRegexMatches);
         tabCampos.Controls.Add(btnRegexApplyToField);
+        tabCampos.Controls.Add(lblSinPdf);
         tabCampos.Location = new Point(4, 29);
         tabCampos.Name = "tabCampos";
         tabCampos.Size = new Size(745, 443);
@@ -576,6 +590,8 @@ partial class GestionEmisoresForm
         panelDetalle.Controls.Add(lblCampoRegex);
         panelDetalle.Controls.Add(lblCampoValorFijo);
         panelDetalle.Controls.Add(txtCampoValorFijo);
+        panelDetalle.Controls.Add(lblEstadoCampo);
+        panelDetalle.Controls.Add(lblTipoAyuda);
         panelDetalle.Location = new Point(215, 38);
         panelDetalle.Name = "panelDetalle";
         panelDetalle.Size = new Size(526, 198);
@@ -593,13 +609,15 @@ partial class GestionEmisoresForm
         // cmbCampoNombre
         // 
         cmbCampoNombre.DropDownStyle = ComboBoxStyle.DropDownList;
-        cmbCampoNombre.Items.AddRange(new object[] { "NumeroFactura", "Fecha", "ReceptorNombre", "ReceptorNif", "BaseImponible", "PorcentajeIVA", "CuotaIVA", "PorcentajeIRPF", "CuotaIRPF", "PorcentajeRE", "CuotaRE", "TotalFactura", "ConceptoIngreso", "ConceptoGasto" });
+        cmbCampoNombre.Items.AddRange(new object[] { "NumeroFactura", "Fecha", "ReceptorNombre", "ReceptorNif", "BaseImponible", "PorcentajeIVA", "CuotaIVA", "PorcentajeIRPF", "CuotaIRPF", "PorcentajeRE", "CuotaRE", "TotalFactura", "SubTotal", "ConceptoIngreso", "ConceptoGasto" });
         cmbCampoNombre.Location = new Point(174, 9);
         cmbCampoNombre.Name = "cmbCampoNombre";
         cmbCampoNombre.Size = new Size(204, 28);
         cmbCampoNombre.TabIndex = 1;
-        cmbCampoNombre.SelectedIndexChanged += CampoDetalle_Changed;
-        cmbCampoNombre.TextChanged += CmbCampoNombre_TextChanged;
+        // El nombre elegido gobierna el modo del panel: SelectedIndexChanged es
+        // el evento canónico de una combo DropDownList (dispara al elegir en el
+        // desplegable y al escribir un valor que esté en los ítems).
+        cmbCampoNombre.SelectedIndexChanged += CmbCampoNombre_SelectedIndexChanged;
         // 
         // cmbCampoTipo
         // 
@@ -739,6 +757,36 @@ partial class GestionEmisoresForm
         btnRegexApplyToField.Text = "← Asignar";
         btnRegexApplyToField.UseVisualStyleBackColor = false;
         btnRegexApplyToField.Click += BtnRegexApplyToField_Click;
+        // 
+        // lblEstadoCampo
+        // 
+        lblEstadoCampo.AutoSize = true;
+        lblEstadoCampo.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+        lblEstadoCampo.ForeColor = Color.Gray;
+        lblEstadoCampo.Location = new Point(12, 150);
+        lblEstadoCampo.Name = "lblEstadoCampo";
+        lblEstadoCampo.Size = new Size(280, 20);
+        lblEstadoCampo.TabIndex = 58;
+        lblEstadoCampo.Text = "Sin selección: elige un nombre de campo";
+        // 
+        // lblTipoAyuda
+        // 
+        lblTipoAyuda.AutoSize = true;
+        lblTipoAyuda.ForeColor = Color.DimGray;
+        lblTipoAyuda.Location = new Point(12, 174);
+        lblTipoAyuda.Name = "lblTipoAyuda";
+        lblTipoAyuda.Size = new Size(0, 20);
+        lblTipoAyuda.TabIndex = 59;
+        // 
+        // lblSinPdf
+        // 
+        lblSinPdf.AutoSize = true;
+        lblSinPdf.ForeColor = Color.Gray;
+        lblSinPdf.Location = new Point(136, 255);
+        lblSinPdf.Name = "lblSinPdf";
+        lblSinPdf.Size = new Size(360, 20);
+        lblSinPdf.TabIndex = 60;
+        lblSinPdf.Text = "Carga un PDF de muestra para probar las expresiones";
         // 
         // tabMultiLinea
         // 
@@ -1447,6 +1495,9 @@ partial class GestionEmisoresForm
     private Label lblRegexResultados;
     private DataGridView dgvRegexMatches;
     private Button btnRegexApplyToField;
+    private Label lblEstadoCampo;
+    private Label lblTipoAyuda;
+    private Label lblSinPdf;
     private Panel panelDerecho;
     private Panel panelCentral;
     private Button btnCargarPdfMuestra;

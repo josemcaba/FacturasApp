@@ -172,7 +172,20 @@ namespace FacturasApp.Core.Services
             return facturasParseadas;
         }
 
-        public List<Factura> ProcesarEmisorMuestra(EmisorConfig config, string rutaPdf)
+        /// <summary>
+        /// Pasos 1-3 de la muestra: extrae el texto del PDF según la config del
+        /// emisor (zonal si hay zonas, completo si no). Es lo único que puede
+        /// necesitar OCR, de forma que su resultado se cachea en la interfaz y
+        /// se reutiliza: recalcular valores o probar expresiones no vuelve a
+        /// lanzar Tesseract.
+        /// </summary>
+        /// <param name="plantillaPrevia">
+        /// Plantilla de zonas ya montada por el llamante (p. ej. con las zonas
+        /// que se están dibujando en la interfaz, todavía sin guardarse en el
+        /// XML). Si es null se usa la de la configuración del emisor.
+        /// </param>
+        public (string Texto, bool ViaOcr, bool Zonal) ExtraerTextoMuestra(
+            EmisorConfig config, string rutaPdf, PlantillaOcr? plantillaPrevia = null)
         {
             var parser = new ConfigurableParserEngine(config);
 
@@ -185,7 +198,7 @@ namespace FacturasApp.Core.Services
             // ── PASO 2: Extracción zonal (solo para el emisor indicado) ───────
             string textoExtraido = "";
             bool extraccionZonalExitosa = false;
-            PlantillaOcr? plantilla = ObtenerPlantilla(parser, parser.Nombre);
+            PlantillaOcr? plantilla = plantillaPrevia ?? ObtenerPlantilla(parser, parser.Nombre);
 
             if (UsarZonasSiempre && plantilla != null && plantilla.Zonas.Any())
             {
@@ -214,18 +227,28 @@ namespace FacturasApp.Core.Services
                 }
             }
 
-            // ── PASO 4: Parsear ────────────────────────────────────────────────
-            if (string.IsNullOrEmpty(textoExtraido))
+            return (textoExtraido, usarOcr, extraccionZonalExitosa);
+        }
+
+        /// <summary>
+        /// Pasos 4-5 de la muestra: parsea un texto ya extraído (barato, sólo
+        /// regex) y añade el aviso de «Extracción zonal utilizada» si procede.
+        /// </summary>
+        public List<Factura> ParsearMuestra(EmisorConfig config, string texto,
+            bool viaOcr, bool zonal, string rutaPdf)
+        {
+            if (string.IsNullOrEmpty(texto))
                 return new List<Factura>();
 
-            var facturas = parser.ParsearMultiple(textoExtraido, rutaPdf, usarOcr);
+            var parser = new ConfigurableParserEngine(config);
+            var facturas = parser.ParsearMultiple(texto, rutaPdf, viaOcr);
 
-            foreach (var factura in facturas)
+            if (zonal)
             {
-                if (extraccionZonalExitosa)
+                foreach (var factura in facturas)
                 {
                     factura.MensajeError ??= new List<string>();
-                    factura.MensajeError.Add($"Extracción zonal utilizada ({(esPdfSeleccionable ? "coordenadas" : "OCR zonal")})");
+                    factura.MensajeError.Add($"Extracción zonal utilizada ({(viaOcr ? "OCR zonal" : "coordenadas")})");
                 }
             }
 

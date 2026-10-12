@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>A17001231</Nif>
   <Nombre>FACCSA</Nombre>
-  <Version>202610062250</Version>
+  <Version>202610121255</Version>
   <Identificadores>
     <Id>Andaluces</Id>
     <Id>Conservas</Id>
@@ -13,7 +13,7 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\Mix\FACCSA.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\fixture\FACCSA.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>FACTURA\s+(\d+)</Regex>
@@ -61,7 +61,7 @@
         <Campo>EmisorNif</Campo>
         <Valor>A17001231</Valor>
       </CondicionCampo>
-      <Accion Tipo="Establecer Valor" CampoDestino="EmisorNombre" Valor="FRIG. ANDALUCES DE CONS. DE CARNE, S.A." CampoOrigen1="" Operador="+" CampoOrigen2="" />
+      <Accion Tipo="Establecer Valor" CampoDestino="EmisorNombre" Valor="FRIG. ANDALUCES DE CONS. DE CARNE, S.A." Sustituto="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
     </Regla>
   </PostProcesamiento>
   <ZonasOcr>
@@ -70,4 +70,5 @@
     <Zona Campo="P1_Z3" Pagina="1" X="25.2" Y="73.7" Ancho="41.5" Alto="6.2" />
     <Zona Campo="P1_Z4" Pagina="1" X="66" Y="81.4" Ancho="28.9" Alto="5.2" />
   </ZonasOcr>
+  <NifEstado>Valido</NifEstado>
 </Emisor>
