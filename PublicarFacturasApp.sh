@@ -302,11 +302,20 @@ AUTO_REV="$(leer_xml "$PUBXML" IsRevisionIncremented)"
 echo "    <ApplicationRevision> ............ ${REV_ANTES:-<sin definir>} (IsRevisionIncremented=${AUTO_REV:-True})"
 
 if [ "${AUTO_REV:-True}" = "False" ]; then
-    # Sin auto-incremento hay que subirla a mano antes de publicar
+    # Sin auto-incremento hay que fijar la revisión a mano. Si al publicar
+    # cambia la BASE (mayor.menor.patch) respecto a lo publicado en el sitio,
+    # se estrena base nueva y se respeta la revisión del perfil (0 para
+    # arrancar en cero); si la base es la misma, se incrementa, o los
+    # clientes no verían la actualización.
     [ -n "$REV_ANTES" ] && [[ "$REV_ANTES" =~ ^[0-9]+$ ]] || abort "No se encontró ApplicationRevision numérico en $PUBXML"
-    NEW_REV=$((REV_ANTES + 1))
+    if [ -n "$SITE_VERSION" ] && [ "$(version_base "$APP_VERSION")" != "$(version_base "$SITE_VERSION")" ]; then
+        NEW_REV="$REV_ANTES"
+        ok "Base nueva ($(version_base "$APP_VERSION") vs $(version_base "$SITE_VERSION") publicada): se respeta la revisión del perfil ($NEW_REV)"
+    else
+        NEW_REV=$((REV_ANTES + 1))
+        ok "Revisión ClickOnce (manual): $REV_ANTES → $NEW_REV"
+    fi
     sed -i "s|<ApplicationRevision>$REV_ANTES</ApplicationRevision>|<ApplicationRevision>$NEW_REV</ApplicationRevision>|" "$PUBXML"
-    ok "Revisión ClickOnce (manual): $REV_ANTES → $NEW_REV"
 else
     ok "La revisión la incrementa MSBuild al publicar (se verifica después)"
 fi
