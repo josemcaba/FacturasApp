@@ -291,10 +291,7 @@ namespace FacturasApp.Core.Services
             foreach (var nueva in nuevas)
             {
                 var numero = (nueva.NumeroFactura ?? string.Empty).Trim();
-                string rutaNueva = (nueva.RutaArchivo ?? string.Empty).Trim();
-                string rutaNuevaFull = string.IsNullOrEmpty(rutaNueva)
-                    ? string.Empty
-                    : Path.GetFullPath(rutaNueva).ToUpperInvariant();
+                string rutaNuevaFull = RutaCompleta(nueva);
 
                 if (!string.IsNullOrEmpty(numero))
                 {
@@ -304,30 +301,22 @@ namespace FacturasApp.Core.Services
                         if (!string.Equals(fNumero, numero, StringComparison.OrdinalIgnoreCase))
                             return false;
 
-                        string rutaExistente = (f.RutaArchivo ?? string.Empty).Trim();
-                        string rutaExistenteFull = string.IsNullOrEmpty(rutaExistente)
-                            ? string.Empty
-                            : Path.GetFullPath(rutaExistente).ToUpperInvariant();
-
-                        return !string.Equals(rutaExistenteFull, rutaNuevaFull, StringComparison.OrdinalIgnoreCase);
+                        return !string.Equals(RutaCompleta(f), rutaNuevaFull, StringComparison.OrdinalIgnoreCase);
                     });
 
                     if (existente != null)
                     {
-                        nueva.MensajeError ??= new List<string>();
-                        nueva.MensajeError.Add($"Factura duplicada. Existe en: {existente.RutaArchivo}");
+                        // El duplicado se marca sobre la factura ENTERA, no
+                        // sólo sobre la línea con la que se detectó: el
+                        // Estado (y sus mensajes) es único por factura. Se
+                        // recorren todas las líneas que comparten documento y
+                        // número, tanto en la copia nueva como en la antigua.
+                        MarcarDuplicada(nueva,
+                            $"Factura duplicada. Existe en: {existente.RutaArchivo}");
 
-                        if (nueva.Estado == EstadoFactura.OK)
-                            nueva.Estado = EstadoFactura.Duplicada;
-
-                        if (existente.Estado != EstadoFactura.Duplicada)
-                        {
-                            existente.MensajeError ??= new List<string>();
-                            existente.MensajeError.Add($"Factura duplicada. Otra copia: {nueva.RutaArchivo}");
-
-                            if (existente.Estado == EstadoFactura.OK)
-                                existente.Estado = EstadoFactura.Duplicada;
-                        }
+                        foreach (var linea in acumuladas.Where(f => MismaFactura(f, existente)))
+                            MarcarDuplicada(linea,
+                                $"Factura duplicada. Otra copia: {nueva.RutaArchivo}");
 
                         acumuladas.Add(nueva);
                         continue;
@@ -336,6 +325,36 @@ namespace FacturasApp.Core.Services
 
                 acumuladas.Add(nueva);
             }
+        }
+
+        /// <summary>
+        /// Ruta absoluta en mayúsculas, o cadena vacía; para comparar el
+        /// documento al que pertenece cada línea.
+        /// </summary>
+        private static string RutaCompleta(Factura f)
+        {
+            string ruta = (f.RutaArchivo ?? string.Empty).Trim();
+            return string.IsNullOrEmpty(ruta) ? string.Empty : Path.GetFullPath(ruta).ToUpperInvariant();
+        }
+
+        /// <summary>
+        /// ¿Son líneas de la misma factura? Mismo número y mismo documento
+        /// (en facturas multilínea todas las líneas comparten ambos).
+        /// </summary>
+        private static bool MismaFactura(Factura a, Factura b) =>
+            string.Equals((a.NumeroFactura ?? string.Empty).Trim(),
+                (b.NumeroFactura ?? string.Empty).Trim(),
+                StringComparison.OrdinalIgnoreCase)
+            && string.Equals(RutaCompleta(a), RutaCompleta(b), StringComparison.OrdinalIgnoreCase);
+
+        private static void MarcarDuplicada(Factura factura, string mensaje)
+        {
+            if (factura.Estado == EstadoFactura.OK)
+                factura.Estado = EstadoFactura.Duplicada;
+
+            factura.MensajeError ??= new List<string>();
+            if (!factura.MensajeError.Contains(mensaje))
+                factura.MensajeError.Add(mensaje);
         }
 
         // ── Importación desde Excel ──────────────────────────────────────────

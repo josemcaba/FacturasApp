@@ -42,8 +42,11 @@ namespace FacturasApp.UI
                 txtReExtraido.Text = $"{_factura.PorcentajeRE.ToString("N1")} %";
                 txtCuotaReCalculada.Text = _factura.CuotaRECalculado.ToString("N2");
             }
+            // «Total Factura» es siempre el importe IMPRESO en el documento (el
+            // «extraído» del par) y «Total Calculado» es único por factura: en
+            // multilínea es la suma de los subtotales de las líneas.
             txtTotalCalculado.Text = $"{_factura.TotalCalculado.ToString("N2")} €";
-            txtTotalExtraido.Text = $"{_factura.ImporteVerificacion.ToString("N2")} €";
+            txtTotalExtraido.Text = $"{_factura.TotalFactura.ToString("N2")} €";
 
             if (!_factura.TotalesCoinciden)
             {

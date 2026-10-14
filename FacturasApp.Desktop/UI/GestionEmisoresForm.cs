@@ -547,9 +547,19 @@ public partial class GestionEmisoresForm : Form
         Añadir("% RE", f => f.PorcentajeRE);
         Añadir("Cuota RE", f => f.CuotaRE+f.CuotaRECalculado);
         Añadir("SubTotal", f => f.SubTotal);
-        Añadir("Total Calculado", f => f.TotalCalculado);
+        // En multilínea el Total Calculado es ÚNICO para la factura
+        // (Σ de los subtotales de las líneas): se muestra una sola vez.
+        if (facturas.Any(f => f.EsMultiLinea))
+            AñadirComun("Total Calculado", f => f.TotalCalculado);
+        else
+            Añadir("Total Calculado", f => f.TotalCalculado);
         AñadirComun("Total Factura", f => f.TotalFactura);
-        Añadir("Estado", f => f.Estado);
+        // En multilínea el Estado es ÚNICO para la factura (todas las líneas
+        // comparten el peor estado y los mismos mensajes): un solo valor.
+        if (facturas.Any(f => f.EsMultiLinea))
+            AñadirComun("Estado", f => f.Estado);
+        else
+            Añadir("Estado", f => f.Estado);
         if (facturas.Any(f => f.MensajeError?.Count > 0))
             Añadir("Mensajes", f => string.Join("; ", f.MensajeError ?? new List<string>()));
 

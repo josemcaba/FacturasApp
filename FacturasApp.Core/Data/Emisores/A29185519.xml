@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>A29185519</Nif>
   <Nombre>EMASA</Nombre>
-  <Version>202610121531</Version>
+  <Version>202610141753</Version>
   <Identificadores>
     <Id>emasa</Id>
     <Id>plaza general torrijos</Id>
@@ -42,11 +42,10 @@
     <RegexLinea />
     <Lineas>
       <Linea>
-        <Regex>IVA\s*\(B.I.\s*([\d.,]+)\)\s+([\d.,]+)\s*%\s+([\d.,]+)</Regex>
+        <Regex>IVA\s*\(B.I.\s*([\d.,]+)\)\s+([\d.,]+)\s*%\s+[\d.,]+</Regex>
         <MapeoCampos>
           <Mapeo Nombre="BaseImponible" Grupo="1" />
           <Mapeo Nombre="PorcentajeIVA" Grupo="2" />
-          <Mapeo Nombre="CuotaIVA" Grupo="3" />
         </MapeoCampos>
       </Linea>
       <Linea>
@@ -59,9 +58,6 @@
     <MapeoCampos />
   </MultiLinea>
   <PostProcesamiento>
-    <Regla>
-      <Accion Tipo="Calcular" CampoDestino="SubTotal" Valor="" Sustituto="" CampoOrigen1="BaseImponible" Operador="+" CampoOrigen2="CuotaIVA" />
-    </Regla>
     <Regla>
       <CondicionCampo>
         <Campo>EmisorNif</Campo>

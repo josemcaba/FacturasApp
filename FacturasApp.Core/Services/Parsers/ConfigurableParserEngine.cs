@@ -80,14 +80,12 @@ public class ConfigurableParserEngine : BaseParser
             return [ParsearUnica(texto, rutaArchivo, viaOcr)];
 
         var facturas = new List<Factura>();
-        var hayMatches = false;
 
         foreach (var linea in lineas)
         {
             var regex = new Regex(linea.Regex, RegexOptions.Compiled);
             foreach (Match match in regex.Matches(texto))
             {
-                hayMatches = true;
                 var factura = CrearFacturaBase(rutaArchivo, viaOcr);
                 factura.EsMultiLinea = true;
                 factura.ConceptoGasto = string.IsNullOrEmpty(_config.ConceptoGasto) ? "600" : _config.ConceptoGasto;
@@ -102,12 +100,18 @@ public class ConfigurableParserEngine : BaseParser
                 {
                     if (esCampoLinea.Contains(campo.Nombre))
                         continue;
+                    // En multilínea el SubTotal NUNCA se extrae: se calcula
+                    if (campo.Nombre == "SubTotal")
+                        continue;
 
                     ExtraerYAsignarCampo(factura, campo, texto);
                 }
 
                 foreach (var mapeo in linea.MapeoCampos)
                 {
+                    // En multilínea el SubTotal NUNCA se extrae: se calcula
+                    if (mapeo.Nombre == "SubTotal")
+                        continue;
                     if (mapeo.Grupo >= match.Groups.Count) continue;
                     var valor = match.Groups[mapeo.Grupo].Value.Trim();
                     if (!string.IsNullOrEmpty(valor))
@@ -115,17 +119,61 @@ public class ConfigurableParserEngine : BaseParser
                 }
 
                 AplicarPostProcesamiento(factura, texto);
-                factura.Estado = FacturaEstado.Determinar(factura);
+                CalcularSubTotalMultiLinea(factura);
+
+                // Líneas con base imponible 0 (regex demasiado suelto, línea
+                // sin importe real…): se descartan, sea cual sea el número de
+                // líneas que detecte el regex.
+                if (factura.BaseImponible == 0m)
+                    continue;
+
                 facturas.Add(factura);
             }
         }
 
-        if (!hayMatches)
+        // Ni matches ni líneas válidas (todas con base 0): se cae a factura
+        // única, como cuando el regex no encuentra nada.
+        if (facturas.Count == 0)
             return [ParsearUnica(texto, rutaArchivo, viaOcr)];
 
-        VerificarCoherenciaTotalMultiLinea(facturas);
+        // El Total Calculado es ÚNICO para toda la factura (todas las líneas
+        // comparten el mismo valor): la suma de los subtotales calculados de
+        // las líneas. Se fija ANTES de validar.
+        var totalCalculado = facturas.Sum(f => f.SubTotal);
+        foreach (var factura in facturas)
+            factura.FijarTotalCalculado(totalCalculado);
+
+        // Validación línea a línea: el paso 1 de FacturaEstado compara ese
+        // TotalCalculado único con el TotalFactura extraído del documento.
+        foreach (var factura in facturas)
+            factura.Estado = FacturaEstado.Determinar(factura);
+
+        // Sin el total del documento no hay nada que validar.
+        MarcarTotalDocumentoNoExtraido(facturas);
+
+        // El Estado también es ÚNICO para toda la factura, como el
+        // TotalCalculado: se propaga el peor de las líneas y la unión de
+        // mensajes a todas ellas.
+        UnificarEstadoMultiLinea(facturas);
 
         return facturas;
+    }
+
+    /// <summary>
+    /// Subtotal de una línea de factura multilínea: nunca se extrae del
+    /// documento, se calcula con los porcentajes de la propia línea
+    /// (Base + IVA − IRPF + RE), con el mismo redondeo que
+    /// <see cref="Factura.CuotaIVACalculado"/>.
+    /// </summary>
+    private static void CalcularSubTotalMultiLinea(Factura factura)
+    {
+        static decimal Impuesto(decimal baseImponible, decimal porcentaje) =>
+            Math.Round(baseImponible * porcentaje / 100m, 2, MidpointRounding.AwayFromZero);
+
+        factura.SubTotal = factura.BaseImponible
+            + Impuesto(factura.BaseImponible, factura.PorcentajeIVA)
+            - Impuesto(factura.BaseImponible, factura.PorcentajeIRPF)
+            + Impuesto(factura.BaseImponible, factura.PorcentajeRE);
     }
 
     private List<LineaConfig> ObtenerLineasMultiLinea()
@@ -145,35 +193,58 @@ public class ConfigurableParserEngine : BaseParser
         return multi.Lineas;
     }
 
-    private void VerificarCoherenciaTotalMultiLinea(List<Factura> facturas)
+    /// <summary>
+    /// Si el TotalFactura del documento no se pudo extraer (vale 0) no hay
+    /// nada que validar: se explica en todas las líneas y se dejan en Error
+    /// (antes se dejaban en Revisar; sin total la factura no está validada).
+    /// </summary>
+    private static void MarcarTotalDocumentoNoExtraido(List<Factura> facturas)
     {
-        // Todas las líneas comparten el mismo TotalFactura del documento
-        // (extraído sobre el texto completo), ya respetando el post-procesamiento.
-        var totalDocumento = facturas[0].TotalFactura;
-
-        if (totalDocumento == 0m)
-        {
-            foreach (var factura in facturas)
-            {
-                factura.MensajeError.Add(
-                    "No se pudo extraer el TotalFactura del documento para verificar la suma de subtotales");
-                if (factura.Estado == EstadoFactura.OK)
-                    factura.Estado = EstadoFactura.Revisar;
-            }
+        if (facturas[0].TotalFactura != 0m)
             return;
-        }
 
-        var sumaSubtotales = facturas.Sum(f => f.SubTotal);
-
-        if (Math.Abs(sumaSubtotales - totalDocumento) > 0.01m)
+        foreach (var factura in facturas)
         {
-            string mensaje = $"La suma de los subtotales de las líneas ({sumaSubtotales:N2} €) no coincide con el TotalFactura extraído ({totalDocumento:N2} €)";
-            foreach (var factura in facturas)
-            {
-                factura.MensajeError.Add(mensaje);
-                factura.Estado = EstadoFactura.Error;
-            }
+            factura.MensajeError.Add(
+                "No se pudo extraer el Total Factura del documento: no se puede validar la suma de subtotales calculados");
+            factura.Estado = EstadoFactura.Error;
         }
+    }
+
+    /// <summary>
+    /// El Estado de una factura multilínea es ÚNICO, como el TotalCalculado:
+    /// todas sus líneas pasan a compartir el peor estado entre ellas y la
+    /// unión de sus mensajes (sin repetidos, en el orden en que aparecen),
+    /// de forma que el detalle de cualquier línea explica el estado de la
+    /// factura entera.
+    /// </summary>
+    private static void UnificarEstadoMultiLinea(List<Factura> facturas)
+    {
+        var estadoUnico = facturas.Select(f => f.Estado).Aggregate(Peor);
+
+        var mensajes = facturas
+            .SelectMany(f => f.MensajeError)
+            .Distinct()
+            .ToList();
+
+        foreach (var factura in facturas)
+        {
+            factura.Estado = estadoUnico;
+            factura.MensajeError = new List<string>(mensajes);
+        }
+    }
+
+    /// <summary>
+    /// Jerarquía de gravedad de los estados: Error > Duplicada > Revisar >
+    /// OK > Pendiente.
+    /// </summary>
+    private static EstadoFactura Peor(EstadoFactura a, EstadoFactura b)
+    {
+        if (a == EstadoFactura.Error || b == EstadoFactura.Error) return EstadoFactura.Error;
+        if (a == EstadoFactura.Duplicada || b == EstadoFactura.Duplicada) return EstadoFactura.Duplicada;
+        if (a == EstadoFactura.Revisar || b == EstadoFactura.Revisar) return EstadoFactura.Revisar;
+        if (a == EstadoFactura.OK || b == EstadoFactura.OK) return EstadoFactura.OK;
+        return EstadoFactura.Pendiente;
     }
 
     // ── Extracción y asignación ──────────────────────────────────────────────
@@ -309,6 +380,12 @@ public class ConfigurableParserEngine : BaseParser
         {
             var accion = regla.Accion;
             if (accion == null || string.IsNullOrEmpty(accion.Tipo)) continue;
+
+            // En multilínea el SubTotal lo calcula el motor (nunca se extrae):
+            // una regla que intentara reescribirlo se ignora para no pelearse
+            // con él. «invertirsigno» no lleva CampoDestino, no se ve afectada.
+            if (factura.EsMultiLinea && accion.CampoDestino == "SubTotal")
+                continue;
 
             if (PostProcesamientoConfig.NormalizarTipo(accion.Tipo) == "invertirsigno" &&
                 !string.IsNullOrEmpty(regla.CondicionTextoContiene) &&

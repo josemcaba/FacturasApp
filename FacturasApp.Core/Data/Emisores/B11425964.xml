@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B11425964</Nif>
   <Nombre>DULCERIA 17, S.L.</Nombre>
-  <Version>202610121944</Version>
+  <Version>202610141410</Version>
   <Identificadores>
     <Id>40.0015231/CA</Id>
     <Id>40.080372/CA</Id>
@@ -52,9 +52,6 @@
     <MapeoCampos />
   </MultiLinea>
   <PostProcesamiento>
-    <Regla>
-      <Accion Tipo="Calcular" CampoDestino="SubTotal" Valor="" Sustituto="" CampoOrigen1="BaseImponible" Operador="+" CampoOrigen2="CuotaIVA" />
-    </Regla>
     <Regla>
       <Accion Tipo="Calcular" CampoDestino="CuotaIVA" Valor="" Sustituto="" CampoOrigen1="BaseImponible" Operador="%" CampoOrigen2="PorcentajeIVA" />
     </Regla>

@@ -35,14 +35,28 @@
         public bool CuotaRECalculadoFijada => _cuotaRECalculadaFijada.HasValue;
         public decimal TotalFactura { get; set; }
         public decimal SubTotal { get; set; }
-        public decimal TotalCalculado =>
-            BaseImponible + CuotaIVACalculado - CuotaIRPFCalculado + CuotaRECalculado;
 
-        // En facturas multilínea la verificación se hace sobre el subtotal de la línea
+        // ── Total calculado — SIEMPRE ÚNICO por factura (documento) ─────────
+        // · Factura única : Base + CuotaIVA − CuotaIRPF + CuotaRE.
+        // · Factura multilínea: suma de los subtotales CALCULADOS de las líneas
+        //   (todas las líneas de la misma factura muestran el mismo valor); la
+        //   fija el motor con FijarTotalCalculado() al terminar de parsear.
+        private decimal? _totalCalculadoMultilinea;
+        public decimal TotalCalculado => _totalCalculadoMultilinea ??
+            BaseImponible + CuotaIVACalculado - CuotaIRPFCalculado + CuotaRECalculado;
+        public void FijarTotalCalculado(decimal valor) => _totalCalculadoMultilinea = valor;
+
+        // En facturas multilínea la verificación por línea se hace sobre el
+        // subtotal de la línea (lo usa el «Importe total», la columna Total del
+        // grid y el campo obligatorio); la validación del documento es
+        // TotalCalculado (único) contra TotalFactura extraído.
         public bool EsMultiLinea { get; set; }
         public decimal ImporteVerificacion => EsMultiLinea ? SubTotal : TotalFactura;
+
+        // Comparación SIEMPRE igual: Total calculado (único de la factura)
+        // contra TotalFactura extraído del documento.
         public decimal DiferenciaTotal =>
-            Math.Abs(ImporteVerificacion - TotalCalculado);
+            Math.Abs(TotalCalculado - TotalFactura);
 
         // Tolerancia aceptable en la comparación de totales (0,01€)
         private const decimal ToleranciaTotal = 0.01m;

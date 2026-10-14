@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>IE9692928F</Nif>
   <Nombre>META PLATFORMS IRELAND LIMITED</Nombre>
-  <Version>202610122001</Version>
+  <Version>202610131149</Version>
   <Identificadores>
     <Id>Meta Platforms Ireland Limited</Id>
     <Id>IE9692928F</Id>
@@ -11,7 +11,7 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>629</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\ARANDA GARCIA, GREGORIO - Gastos\2609\2026-09-02T17-27 Transacción n.º 28560170077004307-28440861512268503.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\ARANDA GARCIA, GREGORIO - Gastos\2609\2026-09-23T13-44 Transacción n.º 28762872960067354-28756762580678393.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>Factura número(.+)</Regex>
@@ -33,7 +33,7 @@
       <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="BaseImponible">
-      <Regex>Pagado\s+(.+)€</Regex>
+      <Regex>(?:Pagado|Pendiente)\s+(.+)€</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
@@ -43,7 +43,7 @@
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="TotalFactura">
-      <Regex>Pagado\s+(.+)€</Regex>
+      <Regex>(?:Pagado|Pendiente)\s+(.+)€</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>

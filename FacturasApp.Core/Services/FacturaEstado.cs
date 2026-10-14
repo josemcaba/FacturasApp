@@ -10,10 +10,14 @@ namespace FacturasApp.Core.Services
 
         internal static EstadoFactura Determinar(Factura f)
         {
-            // 1. Verificación del total — si no coincide → Error
+            // 1. Verificación del total — Total calculado (único de la factura:
+            //    Σ subtotales en multilínea) contra el TotalFactura extraído.
+            //    Si no coincide → Error
             if (!f.TotalesCoinciden)
             {
-                f.MensajeError.Add("Totales extraido y calculado no coinciden");
+                f.MensajeError.Add(f.EsMultiLinea
+                    ? $"Total factura calculado (suma de los subtotales de las líneas: {f.TotalCalculado:N2} €) no coincide con el Total factura extraído ({f.TotalFactura:N2} €)"
+                    : "Totales extraido y calculado no coinciden");
                 return EstadoFactura.Error;
             }
 

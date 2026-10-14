@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>25665382G</Nif>
   <Nombre>FRANCES SANCHEZ, JOSE IGNACIO</Nombre>
-  <Version>202610121426</Version>
+  <Version>202610141419</Version>
   <Identificadores>
     <Id>ES96 0182 5876 5002 0162 8560</Id>
   </Identificadores>
@@ -10,7 +10,7 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>621</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Desktop\Nueva carpeta\Facturas recibidas\03 Marzo 2026\FACTURA 5 MARIA DEL CARMEN PSICOLOGA FACTURA 5 MARZO 2026.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\IBAÑEZ, IGNACIO\PAPELERIA\25_0194.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>FACTURA\s*(\d+)</Regex>

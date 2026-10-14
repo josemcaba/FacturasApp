@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Nif>B85905412</Nif>
+  <Nombre>FIESTA COLOMBINA, S.L.U.</Nombre>
+  <Version>202610141341</Version>
+  <Identificadores>
+    <Id>Fiesta Colombina S.L.U</Id>
+    <Id>B85905412</Id>
+  </Identificadores>
+  <ModoExtraccion>Ordenado</ModoExtraccion>
+  <ConceptoIngreso>700</ConceptoIngreso>
+  <ConceptoGasto>600</ConceptoGasto>
+  <CulturaFecha>es-ES</CulturaFecha>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\OSCAR ARIAS\7000100723.pdf</RutaPdfMuestra>
+  <Campos>
+    <Campo Nombre="NumeroFactura">
+      <Regex>FACTURA:(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="Fecha">
+      <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNombre">
+      <Regex>NOMBRE:(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNif">
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="TotalFactura">
+      <Regex>\sTOTAL EUR(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+  </Campos>
+  <MultiLinea>
+    <RegexLinea />
+    <Lineas>
+      <Linea>
+        <Regex>BASE IMPONIBLE EUR(.+)%(.+)</Regex>
+        <MapeoCampos>
+          <Mapeo Nombre="BaseImponible" Grupo="2" />
+          <Mapeo Nombre="PorcentajeIVA" Grupo="1" />
+        </MapeoCampos>
+      </Linea>
+    </Lineas>
+    <MapeoCampos />
+  </MultiLinea>
+  <PostProcesamiento>
+    <Regla>
+      <CondicionCampo>
+        <Campo>ReceptorNif</Campo>
+        <Valor>74890980J</Valor>
+      </CondicionCampo>
+      <Accion Tipo="Establecer Valor" CampoDestino="ReceptorNombre" Valor="OSCAR ARIAS MERINO" Sustituto="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+    </Regla>
+  </PostProcesamiento>
+  <ZonasOcr>
+    <Zona Campo="P1_Z1" Pagina="1" X="51.2" Y="2.4" Ancho="32.3" Alto="6.5" />
+    <Zona Campo="P1_Z2" Pagina="1" X="0" Y="11.1" Ancho="45.3" Alto="16.1" />
+    <Zona Campo="P1_Z3" Pagina="1" X="45.3" Y="76.3" Ancho="43.9" Alto="21.3" />
+  </ZonasOcr>
+  <NifEstado>Valido</NifEstado>
+</Emisor>

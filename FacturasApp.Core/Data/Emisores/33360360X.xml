@@ -2,14 +2,14 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>33360360X</Nif>
   <Nombre>IBAÑEZ PACHECO, IGNACIO</Nombre>
-  <Version>202610121444</Version>
+  <Version>202610141420</Version>
   <Identificadores>
     <Id>33.360.360-X</Id>
     <Id>servinfotec</Id>
   </Identificadores>
-  <ModoExtraccion>Simple</ModoExtraccion>
+  <ModoExtraccion>Ordenado</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
-  <ConceptoGasto>629</ConceptoGasto>
+  <ConceptoGasto>G22</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
   <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\fixture\Ignacio Servinfotec.pdf</RutaPdfMuestra>
   <Campos>
