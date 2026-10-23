@@ -45,10 +45,24 @@ namespace FacturasApp.Core.Services
                 return EstadoFactura.Error;
             }
 
-            // 4. Validación del NIF del receptor — si no es válido → Error.
-            if (!NifValidator.ValidarNif(f.Receptor.NIF))
+            // 4. Validación del NIF del receptor — mismo criterio que el del
+            //    emisor (NifVerificador): primero NIF español en local y, si
+            //    no lo es, VIES para los comunitarios. No válido → Error;
+            //    VIES no disponible (o GB, excluido por el Brexit) → Revisar.
+            //    La caché VIES dura la sesión de procesado: sin reintentos.
+            var (estadoNifReceptor, detalleNifReceptor) =
+                NifVerificador.Verificar(f.Receptor.NIF);
+            if (estadoNifReceptor == "NoDisponible")
             {
-                f.MensajeError.Add("NIF del Cliente no válido");
+                f.MensajeError.Add(
+                    $"NIF del Cliente sin verificar ({detalleNifReceptor})");
+                return EstadoFactura.Revisar;
+            }
+            if (estadoNifReceptor != "Valido")
+            {
+                f.MensajeError.Add(detalleNifReceptor == null
+                    ? "NIF del Cliente no válido"
+                    : $"NIF del Cliente no válido ({detalleNifReceptor})");
                 return EstadoFactura.Error;
             }
 

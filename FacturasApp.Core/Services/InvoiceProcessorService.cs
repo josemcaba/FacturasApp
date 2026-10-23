@@ -154,7 +154,7 @@ namespace FacturasApp.Core.Services
 
             // ── PASO 5: Parsear el texto extraído ──────────────────────────────
             if (string.IsNullOrEmpty(textoExtraido))
-                throw new InvalidOperationException("No se pudo extraer texto del PDF");
+                throw new InvalidOperationException("No se pudo extraer texto del archivo");
 
             List<Factura> facturasParseadas = parser is BaseParser baseParser
                 ? baseParser.ParsearMultiple(textoExtraido, rutaPdf, usarOcr)
@@ -376,6 +376,11 @@ namespace FacturasApp.Core.Services
             string? rutaExcel = null,
             IProgress<(int actual, int total, string archivo)>? progreso = null)
         {
+            // Una pulsación de «Procesar» es una sesión nueva de verificación
+            // VIES: los NIF de receptor se revisan desde cero (la caché de
+            // NifVerificador no arrastra resultados del lote anterior).
+            NifVerificador.LimpiarCache();
+
             var facturas = new List<Factura>();
             var clavesVistas = new HashSet<string>(StringComparer.Ordinal);
 
@@ -419,8 +424,10 @@ namespace FacturasApp.Core.Services
         {
             var sb = new System.Text.StringBuilder();
 
+            bool esImagen = FormatosDocumento.EsImagen(rutaPdf);
             bool tieneTexto = _textExtractor.EsSeleccionable(rutaPdf);
-            sb.AppendLine($"PDF: {Path.GetFileName(rutaPdf)}");
+            sb.AppendLine($"Documento: {Path.GetFileName(rutaPdf)}");
+            sb.AppendLine($"Formato: {(esImagen ? "Imagen (OCR directo)" : "PDF")}");
             sb.AppendLine($"Texto seleccionable: {(tieneTexto ? "SÍ" : "NO")}");
 
             string textoRapido = tieneTexto
@@ -439,7 +446,7 @@ namespace FacturasApp.Core.Services
             }
             else if (FallbackATextoCompleto)
             {
-                sb.AppendLine($"Se usará extracción COMPLETA ({(tieneTexto ? "texto nativo" : "OCR completo")})");
+                sb.AppendLine($"Se usará extracción COMPLETA ({(tieneTexto ? "texto nativo" : esImagen ? "OCR sobre imagen" : "OCR completo")})");
             }
 
             return sb.ToString();

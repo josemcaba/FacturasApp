@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B85905412</Nif>
   <Nombre>FIESTA COLOMBINA, S.L.U.</Nombre>
-  <Version>202610141341</Version>
+  <Version>202610230600</Version>
   <Identificadores>
     <Id>Fiesta Colombina S.L.U</Id>
     <Id>B85905412</Id>
@@ -11,7 +11,7 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\OSCAR ARIAS\7000100723.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\OSCAR ARIAS 1\7000100723.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>FACTURA:(.+)</Regex>

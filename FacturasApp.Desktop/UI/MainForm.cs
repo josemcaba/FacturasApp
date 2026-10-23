@@ -76,14 +76,14 @@ namespace FacturasApp.UI
             return service;
         }
 
-        // ── Selección de archivos PDF ─────────────────────────────────────────
+        // ── Selección de archivos (PDF e imágenes) ───────────────────────────
 
         private void btnSeleccionarArchivos_Click(object sender, EventArgs e)
         {
             using var dialogo = new OpenFileDialog
             {
-                Title = "Seleccionar facturas PDF",
-                Filter = "Archivos PDF (*.pdf)|*.pdf",
+                Title = "Seleccionar facturas (PDF o imagen)",
+                Filter = FormatosDocumento.FiltroDialogo,
                 Multiselect = true,
                 InitialDirectory = Environment.GetFolderPath(
                                        Environment.SpecialFolder.MyDocuments)
@@ -103,16 +103,18 @@ namespace FacturasApp.UI
         {
             using var dialogo = new FolderBrowserDialog
             {
-                Description = "Seleccionar carpeta con facturas PDF",
+                Description = "Seleccionar carpeta con facturas (PDF o imagen)",
                 UseDescriptionForTitle = true
             };
 
             if (dialogo.ShowDialog() != DialogResult.OK) return;
 
-            var pdfs = Directory.GetFiles(
-                dialogo.SelectedPath, "*.pdf", SearchOption.AllDirectories);
+            var facturas = Directory
+                .GetFiles(dialogo.SelectedPath, "*.*", SearchOption.AllDirectories)
+                .Where(FormatosDocumento.EsFactura)
+                .OrderBy(r => r, StringComparer.OrdinalIgnoreCase);
 
-            foreach (string ruta in pdfs)
+            foreach (string ruta in facturas)
                 if (!lstArchivos.Items.Contains(ruta))
                     lstArchivos.Items.Add(ruta);
 

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Nif>B98613540</Nif>
+  <Nombre>SUGARLAND FOODS, S.L.U.</Nombre>
+  <Version>202610230605</Version>
+  <Identificadores>
+    <Id>SUGAR</Id>
+  </Identificadores>
+  <ModoExtraccion>Ordenado</ModoExtraccion>
+  <ConceptoIngreso>700</ConceptoIngreso>
+  <ConceptoGasto>600</ConceptoGasto>
+  <CulturaFecha>es-ES</CulturaFecha>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\OSCAR ARIAS 2\Gastos\Contabilizados\2026-07-09_SUGARLAND_FOODS_S.L.U._A_2604463.pdf</RutaPdfMuestra>
+  <Campos>
+    <Campo Nombre="NumeroFactura">
+      <Regex>Factura(.+)Fecha</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="Fecha">
+      <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNombre">
+      <Regex>\d{8}.\s*(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNif">
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="BaseImponible">
+      <Regex>\s*—\s*([\d.,]+)\s+[\d.,]+\s+—\s*[\d.,]+\s+[\d.,]+\s</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="PorcentajeIVA">
+      <Regex>\s*—\s*[\d.,]+\s+([\d.,]+)\s+—\s*[\d.,]+\s+[\d.,]+\s</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="TotalFactura">
+      <Regex>TOTAL FACTURA.*\s([\d.,]+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+  </Campos>
+  <PostProcesamiento />
+  <ZonasOcr>
+    <Zona Campo="P1_Z1" Pagina="1" X="9.8" Y="12" Ancho="41.9" Alto="4.3" />
+    <Zona Campo="P1_Z2" Pagina="1" X="7.6" Y="15.8" Ancho="42.7" Alto="11.2" />
+    <Zona Campo="P1_Z3" Pagina="1" X="34.8" Y="66" Ancho="43.2" Alto="12" />
+    <Zona Campo="P1_Z4" Pagina="1" X="71.1" Y="79.3" Ancho="22.2" Alto="7.4" />
+  </ZonasOcr>
+  <NifEstado>Valido</NifEstado>
+</Emisor>

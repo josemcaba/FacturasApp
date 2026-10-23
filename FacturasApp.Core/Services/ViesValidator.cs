@@ -205,6 +205,15 @@ namespace FacturasApp.Core.Services
             }
         }
 
+        /// <summary>
+        /// Versión síncrona de <see cref="VerificarAsync"/> para el procesado
+        /// en segundo plano (FacturaEstado corre dentro de un Task.Run, sin
+        /// contexto de sincronización: no hay riesgo de deadlock). No debe
+        /// llamarse desde el hilo de la UI, que sí se bloquearía hasta 20 s.
+        /// </summary>
+        public static ViesResultado Verificar(string? nif) =>
+            VerificarAsync(nif).GetAwaiter().GetResult();
+
         /// <summary>Quita espacios, guiones y pasa a mayúsculas (el campo
         /// CharacterCasing.Upper de la GUI ya lo hace, pero el servicio no
         /// debe depender de eso).</summary>

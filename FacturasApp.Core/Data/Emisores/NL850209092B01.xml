@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>NL850209092B01</Nif>
   <Nombre>BIRD B.V.</Nombre>
-  <Version>202610122006</Version>
+  <Version>202610231315</Version>
   <Identificadores>
     <Id>Bird B.V.</Id>
     <Id>NL850209092B01</Id>
@@ -11,20 +11,20 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>G17</ConceptoGasto>
   <CulturaFecha>en-US</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\ARANDA GARCIA, GREGORIO - Gastos\2609\Bird_invoice-2026.63343.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\ARANDA GARCIA, GREGORIO - Gastos\2608\Bird_Invoice_NL26080000138369.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
-      <Regex>Invoice number:(.+)</Regex>
+      <Regex>Invoice (?:N|n)umber:(.+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="Fecha">
-      <Regex>Invoice date(?::|)(.*)</Regex>
+      <Regex>Invoice (?:D|d)ate(?::|)(.*)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="ReceptorNombre">
-      <Regex>Invoice to:(.+)</Regex>
+      <Regex>Invoice (?:T|t)o:(.+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>

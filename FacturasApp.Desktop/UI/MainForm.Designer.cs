@@ -49,7 +49,7 @@ namespace FacturasApp.UI
             btnSeleccionarArchivos.Name = "btnSeleccionarArchivos";
             btnSeleccionarArchivos.Size = new Size(140, 34);
             btnSeleccionarArchivos.TabIndex = 0;
-            btnSeleccionarArchivos.Text = "📄 Archivos PDF";
+            btnSeleccionarArchivos.Text = "📄 Facturas (PDF/imagen)";
             btnSeleccionarArchivos.UseVisualStyleBackColor = false;
             btnSeleccionarArchivos.Click += btnSeleccionarArchivos_Click;
             // 
@@ -62,7 +62,7 @@ namespace FacturasApp.UI
             btnSeleccionarCarpeta.Name = "btnSeleccionarCarpeta";
             btnSeleccionarCarpeta.Size = new Size(140, 34);
             btnSeleccionarCarpeta.TabIndex = 1;
-            btnSeleccionarCarpeta.Text = "📁 Carpeta PDF";
+            btnSeleccionarCarpeta.Text = "📁 Carpeta facturas";
             btnSeleccionarCarpeta.UseVisualStyleBackColor = false;
             btnSeleccionarCarpeta.Click += btnSeleccionarCarpeta_Click;
             // 

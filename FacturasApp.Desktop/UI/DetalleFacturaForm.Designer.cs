@@ -635,7 +635,7 @@
             btnAbrirArchivoPDF.Name = "btnAbrirArchivoPDF";
             btnAbrirArchivoPDF.Size = new Size(190, 29);
             btnAbrirArchivoPDF.TabIndex = 1;
-            btnAbrirArchivoPDF.Text = "📄 Abrir Factura PDF";
+            btnAbrirArchivoPDF.Text = "📄 Abrir Factura";
             btnAbrirArchivoPDF.UseVisualStyleBackColor = false;
             btnAbrirArchivoPDF.Click += btnAbrirArchivoPDF_Click;
             // 

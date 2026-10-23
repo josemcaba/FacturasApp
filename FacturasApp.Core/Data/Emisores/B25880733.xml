@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Nif>B25880733</Nif>
+  <Nombre>IMPULSO SARIGABO, SLU</Nombre>
+  <Version>202610230458</Version>
+  <Identificadores>
+    <Id>IMPULSO SARIGABO, SLU</Id>
+    <Id>B25880733</Id>
+    <Id>LEKKERLAND</Id>
+  </Identificadores>
+  <ModoExtraccion>Ordenado</ModoExtraccion>
+  <ConceptoIngreso>700</ConceptoIngreso>
+  <ConceptoGasto>600</ConceptoGasto>
+  <CulturaFecha>es-ES</CulturaFecha>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\OSCAR ARIAS 2\Gastos\Contabilizados\2026-07-07_Impulso_Sarigabo_SLU_FVR26070884.pdf</RutaPdfMuestra>
+  <Campos>
+    <Campo Nombre="NumeroFactura">
+      <Regex>Factura (F.+?)\s</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="Fecha">
+      <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNombre">
+      <Regex>LEKKERLAND\s+(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNif">
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="BaseImponible">
+      <Regex>Tot.+porte(.+)€</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="TotalFactura">
+      <Regex>Importe RE\s*[\d.,]+€\s+\d+%\s+[\d.,]+€\s*[\S\s]*?([\d.,]+)€</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="PorcentajeIVA">
+      <Regex>Importe RE\s*[\d.,]+€\s+(\d+)%\s+[\d.,]+€\s*[\S\s]*?[\d.,]+€</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+  </Campos>
+  <MultiLinea>
+    <RegexLinea />
+    <Lineas>
+      <Linea>
+        <Regex>Nueva línea (regex)</Regex>
+        <MapeoCampos>
+          <Mapeo Nombre="BaseImponible" Grupo="1" />
+          <Mapeo Nombre="PorcentajeIVA" Grupo="1" />
+        </MapeoCampos>
+      </Linea>
+    </Lineas>
+    <MapeoCampos />
+  </MultiLinea>
+  <PostProcesamiento>
+    <Regla>
+      <CondicionCampo>
+        <Campo>ReceptorNif</Campo>
+        <Valor>74898980</Valor>
+      </CondicionCampo>
+      <Accion Tipo="Establecer Valor" CampoDestino="ReceptorNif" Valor="74898980J" Sustituto="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+    </Regla>
+  </PostProcesamiento>
+  <ZonasOcr />
+  <NifEstado>Valido</NifEstado>
+</Emisor>

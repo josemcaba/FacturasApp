@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>25693621E</Nif>
   <Nombre>ARANDA GARCIA, GREGORIO</Nombre>
-  <Version>202610141419</Version>
+  <Version>202610231519</Version>
   <Identificadores>
     <Id>EMISOR</Id>
     <Id>Gregorio Aranda</Id>
@@ -12,7 +12,7 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>G22</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\ARANDA GARCIA, GREGORIO - Ingresos\2609\1435.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\ARANDA GARCIA, GREGORIO - Ingresos\2609\1438.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>(?:N. Factura|N. Rectificativa).*\n(\S+)</Regex>
@@ -30,8 +30,9 @@
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="ReceptorNif">
+      <Regex>NIF:(.+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
-      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="BaseImponible">
       <Regex>Subtotal\s+([\d.,]+)</Regex>
@@ -58,6 +59,10 @@
       <Accion Tipo="Establecer Valor" CampoDestino="ReceptorNombre" Valor="Estudio Jurídico Fernández Navarro, SLP" Sustituto="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
     </Regla>
   </PostProcesamiento>
-  <ZonasOcr />
+  <ZonasOcr>
+    <Zona Campo="P1_Z1" Pagina="1" X="28.9" Y="15" Ancho="43.8" Alto="9.7" />
+    <Zona Campo="P1_Z2" Pagina="1" X="49.2" Y="25" Ancho="46" Alto="25" />
+    <Zona Campo="P1_Z3" Pagina="1" X="46.1" Y="64.4" Ancho="48.6" Alto="16.4" />
+  </ZonasOcr>
   <NifEstado>Valido</NifEstado>
 </Emisor>

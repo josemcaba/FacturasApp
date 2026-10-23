@@ -249,8 +249,8 @@ public partial class GestionEmisoresForm : Form
     {
         using var dialogo = new OpenFileDialog
         {
-            Title = "Seleccionar PDF de muestra",
-            Filter = "Archivos PDF (*.pdf)|*.pdf"
+            Title = "Seleccionar PDF o imagen de muestra",
+            Filter = FormatosDocumento.FiltroDialogo
         };
         if (dialogo.ShowDialog() != DialogResult.OK) return;
 
@@ -262,53 +262,75 @@ public partial class GestionEmisoresForm : Form
         LimpiarPaginas();
         _rutaPdf = rutaPdf;
 
-        int numPaginas;
-        PdfDocument documento;
-        try
+        if (FormatosDocumento.EsImagen(rutaPdf))
         {
-            documento = PdfDocument.Load(rutaPdf);
-            numPaginas = documento.PageCount;
-        }
-        catch (Exception ex)
-        {
-            if (mostrarErrores)
-                MessageBox.Show($"Error al contar páginas:\n{ex.Message}",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            // Sin PDF de muestra utilizable: la vista previa y el probador de
-            // regex quedan como al inicio (sin fuente de texto).
-            _rutaPdf = null;
-            ActualizarAyudasMuestra();
-            ActualizarVistaPreviaZonal();
-            ActualizarIndicadorIdentificadores();
-            return false;
-        }
-
-        using (documento)
-        {
-            for (int i = 0; i < numPaginas; i++)
+            // JPG/PNG: la imagen es la única «página»; las zonas en % y la
+            // caché de texto funcionan igual que con un PDF escaneado.
+            var bitmap = OcrBase.CargarImagen(rutaPdf);
+            if (bitmap == null)
             {
-                try
+                if (mostrarErrores)
+                    MessageBox.Show("No se pudo cargar la imagen de muestra.",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _rutaPdf = null;
+                ActualizarAyudasMuestra();
+                ActualizarVistaPreviaZonal();
+                ActualizarIndicadorIdentificadores();
+                return false;
+            }
+
+            _imagenPaginas.Add(bitmap);
+        }
+        else
+        {
+            int numPaginas;
+            PdfDocument documento;
+            try
+            {
+                documento = PdfDocument.Load(rutaPdf);
+                numPaginas = documento.PageCount;
+            }
+            catch (Exception ex)
+            {
+                if (mostrarErrores)
+                    MessageBox.Show($"Error al contar páginas:\n{ex.Message}",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Sin PDF de muestra utilizable: la vista previa y el probador
+                // de regex quedan como al inicio (sin fuente de texto).
+                _rutaPdf = null;
+                ActualizarAyudasMuestra();
+                ActualizarVistaPreviaZonal();
+                ActualizarIndicadorIdentificadores();
+                return false;
+            }
+
+            using (documento)
+            {
+                for (int i = 0; i < numPaginas; i++)
                 {
-                    SizeF tamano = documento.PageSizes[i];
-                    int ancho = (int)Math.Ceiling(tamano.Width * 300 / 72f);
-                    int alto = (int)Math.Ceiling(tamano.Height * 300 / 72f);
-                    var imagen = documento.Render(
-                        i, ancho, alto, 300, 300, PdfRenderFlags.ForPrinting);
-                    if (imagen is Bitmap bitmap)
-                        _imagenPaginas.Add(bitmap);
-                    else
-                        imagen.Dispose();
-                }
-                catch (Exception ex)
-                {
-                    if (mostrarErrores)
-                        MessageBox.Show($"Error al renderizar página {i + 1}:\n{ex.Message}",
-                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    _rutaPdf = null;
-                    ActualizarAyudasMuestra();
-                    ActualizarVistaPreviaZonal();
-                    ActualizarIndicadorIdentificadores();
-                    return false;
+                    try
+                    {
+                        SizeF tamano = documento.PageSizes[i];
+                        int ancho = (int)Math.Ceiling(tamano.Width * 300 / 72f);
+                        int alto = (int)Math.Ceiling(tamano.Height * 300 / 72f);
+                        var imagen = documento.Render(
+                            i, ancho, alto, 300, 300, PdfRenderFlags.ForPrinting);
+                        if (imagen is Bitmap bitmapPagina)
+                            _imagenPaginas.Add(bitmapPagina);
+                        else
+                            imagen.Dispose();
+                    }
+                    catch (Exception ex)
+                    {
+                        if (mostrarErrores)
+                            MessageBox.Show($"Error al renderizar página {i + 1}:\n{ex.Message}",
+                                "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        _rutaPdf = null;
+                        ActualizarAyudasMuestra();
+                        ActualizarVistaPreviaZonal();
+                        ActualizarIndicadorIdentificadores();
+                        return false;
+                    }
                 }
             }
         }
@@ -448,7 +470,7 @@ public partial class GestionEmisoresForm : Form
         if (string.IsNullOrEmpty(_rutaPdf) || !File.Exists(_rutaPdf))
         {
             lblIndicadorEmisor.ForeColor = Color.Gray;
-            lblIndicadorEmisor.Text = "Cargue un PDF de muestra para verificar los identificadores";
+            lblIndicadorEmisor.Text = "Cargue un PDF o imagen de muestra para verificar los identificadores";
             return;
         }
 
@@ -456,7 +478,7 @@ public partial class GestionEmisoresForm : Form
         if (ids.Count == 0)
         {
             lblIndicadorEmisor.ForeColor = Color.Gray;
-            lblIndicadorEmisor.Text = "Sin identificadores (no detecta ningún PDF)";
+            lblIndicadorEmisor.Text = "Sin identificadores (no detecta ningún documento)";
             return;
         }
 
@@ -469,7 +491,7 @@ public partial class GestionEmisoresForm : Form
         catch
         {
             lblIndicadorEmisor.ForeColor = Color.FromArgb(192, 0, 0);
-            lblIndicadorEmisor.Text = "✗ No se pudo leer el PDF";
+            lblIndicadorEmisor.Text = "✗ No se pudo leer el documento";
             return;
         }
 
@@ -480,8 +502,8 @@ public partial class GestionEmisoresForm : Form
 
         lblIndicadorEmisor.ForeColor = coincide ? Color.FromArgb(0, 128, 0) : Color.FromArgb(192, 0, 0);
         lblIndicadorEmisor.Text = coincide
-            ? "✓ El PDF pertenece al emisor"
-            : "✗ El PDF no pertenece al emisor";
+            ? "✓ El documento pertenece al emisor"
+            : "✗ El documento no pertenece al emisor";
     }
 
     private void ActualizarTablaValoresExtraidos()
@@ -1928,7 +1950,7 @@ public partial class GestionEmisoresForm : Form
         if (MuestraNoExtraeNada())
         {
             var r = MessageBox.Show(
-                "Con el PDF de muestra cargado no se extrae ningún dato de los campos " +
+                "Con el documento de muestra cargado no se extrae ningún dato de los campos " +
                 "definidos (ni número de factura, ni fecha, ni importes).\n\n" +
                 "Revisa las expresiones antes de dar por bueno el emisor." +
                 "\n\n¿Guardar el emisor de todos modos?",
@@ -2414,7 +2436,9 @@ public partial class GestionEmisoresForm : Form
         Regex probada;
         try
         {
-            probada = new Regex(regex, RegexOptions.IgnoreCase);
+            // Mismas opciones que el motor: case-sensitive, para que validar
+            // en la GUI refleje exactamente lo que se extraerá al procesar.
+            probada = new Regex(regex, RegexOptions.Compiled);
         }
         catch (RegexParseException ex)
         {
@@ -3065,7 +3089,11 @@ public partial class GestionEmisoresForm : Form
 
         try
         {
-            var regex = new Regex(patron, RegexOptions.IgnoreCase | RegexOptions.Multiline);
+            // El tester usa EXACTAMENTE las opciones del motor (case-sensitive
+            // y sin Multiline): lo que enseña aquí es lo que se extraerá al
+            // procesar. Para tolerancia a mayúsculas o anclas por línea hay
+            // que llevarlo en el patrón ((?i), (?m)).
+            var regex = new Regex(patron, RegexOptions.Compiled);
             var matches = regex.Matches(texto);
 
             lblRegexMatchCount.Text = $"{matches.Count} match(es)";

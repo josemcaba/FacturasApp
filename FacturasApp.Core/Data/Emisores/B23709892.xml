@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B23709892</Nif>
   <Nombre>PETROPRIX ENERGIA S.L.</Nombre>
-  <Version>202610121555</Version>
+  <Version>202610200413</Version>
   <Identificadores>
     <Id>PETROPRIX ENERGIA S.L.</Id>
     <Id>B23709892</Id>
@@ -11,7 +11,7 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>624</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\ARANDA GARCIA, GREGORIO - Gastos\2608\Petropix_269001115028.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\OSCAR ARIAS 2\Gastos\Contabilizados\2026-07-31_Petroprix_265000217085.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>FACTURA(.+)</Regex>
@@ -23,7 +23,7 @@
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="ReceptorNombre">
-      <Regex>Nombre :(.+)</Regex>
+      <Regex>Nombre\s*:\s*(.+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
@@ -49,8 +49,8 @@
   </Campos>
   <PostProcesamiento />
   <ZonasOcr>
-    <Zona Campo="P1_Z1" Pagina="1" X="5.4" Y="6" Ancho="87.6" Alto="7.5" />
-    <Zona Campo="P1_Z2" Pagina="1" X="48.6" Y="12.3" Ancho="45" Alto="11.5" />
+    <Zona Campo="P1_Z1" Pagina="1" X="3.8" Y="6" Ancho="87.6" Alto="8.3" />
+    <Zona Campo="P1_Z2" Pagina="1" X="48.6" Y="12.3" Ancho="45" Alto="13.3" />
     <Zona Campo="P1_Z3" Pagina="1" X="6.1" Y="71.1" Ancho="87.9" Alto="21.3" />
   </ZonasOcr>
   <NifEstado>Valido</NifEstado>

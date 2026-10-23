@@ -377,7 +377,7 @@ partial class GestionEmisoresForm
         lblIndicadorEmisor.Name = "lblIndicadorEmisor";
         lblIndicadorEmisor.Size = new Size(423, 20);
         lblIndicadorEmisor.TabIndex = 9;
-        lblIndicadorEmisor.Text = "Cargue un PDF de muestra para verificar los identificadores";
+        lblIndicadorEmisor.Text = "Cargue un PDF o imagen de muestra para verificar los identificadores";
         lblIndicadorEmisor.TextAlign = ContentAlignment.MiddleLeft;
         // 
         // lblGeneralCultura
@@ -790,7 +790,7 @@ partial class GestionEmisoresForm
         lblSinPdf.Name = "lblSinPdf";
         lblSinPdf.Size = new Size(360, 20);
         lblSinPdf.TabIndex = 60;
-        lblSinPdf.Text = "Carga un PDF de muestra para probar las expresiones";
+        lblSinPdf.Text = "Carga un PDF o imagen de muestra para probar las expresiones";
         // 
         // tabMultiLinea
         // 
@@ -1340,7 +1340,7 @@ partial class GestionEmisoresForm
         btnCargarPdfMuestra.Name = "btnCargarPdfMuestra";
         btnCargarPdfMuestra.Size = new Size(225, 32);
         btnCargarPdfMuestra.TabIndex = 0;
-        btnCargarPdfMuestra.Text = "Cargar PDF de muestra";
+        btnCargarPdfMuestra.Text = "Cargar PDF o imagen de muestra";
         btnCargarPdfMuestra.UseVisualStyleBackColor = false;
         btnCargarPdfMuestra.Click += BtnCargarPdfMuestra_Click;
         // 

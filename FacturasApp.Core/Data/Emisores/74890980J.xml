@@ -2,20 +2,19 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>74890980J</Nif>
   <Nombre>ARIAS MERINO, OSCAR</Nombre>
-  <Version>202610121528</Version>
+  <Version>202610230600</Version>
   <Identificadores>
-    <Id>Oscar Arias Merino</Id>
-    <Id>74890980-j</Id>
-    <Id>deudor</Id>
+    <Id>Óscar Arias Merino</Id>
+    <Id>74890989-J</Id>
   </Identificadores>
-  <ModoExtraccion>Simple</ModoExtraccion>
+  <ModoExtraccion>Ordenado</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\fixture\Oscar Arias 1.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\OSCAR ARIAS 2\Ingresos septiembre 2026\Contabilizados\F260003_Castillo_Sempere_SL_Romeral.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
-      <Regex>FACTURA[\s\n\r]*(FV\d{5})\b</Regex>
+      <Regex>FACTURA #(.+?)\s</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
@@ -24,7 +23,7 @@
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="ReceptorNombre">
-      <Regex>CLIENTE[\s\r\n]*(.+)</Regex>
+      <Regex>FACTURA.+\s+(.+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
@@ -33,37 +32,34 @@
       <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="BaseImponible">
-      <Regex>([-\d.,]+).+[\r\n]+IVA</Regex>
+      <Regex>BASE IMPONIBLE(.+)€</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="PorcentajeIVA">
-      <Regex>IVA\s*(?:\+\s*RE|)\s*\(([\d.,]+)\s*%</Regex>
+      <Regex>IVA(.+)%</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="TotalFactura">
-      <Regex>TOTAL\s+([-\d.,]+)</Regex>
+      <Regex>TOTAL(.+)€</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="PorcentajeRE">
+      <Regex>REC(.+)%</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
   </Campos>
-  <PostProcesamiento>
-    <Regla>
-      <CondicionCampo>
-        <Campo>PorcentajeIVA</Campo>
-        <Valor>11,4</Valor>
-      </CondicionCampo>
-      <Accion Tipo="Establecer Valor" CampoDestino="PorcentajeRE" Valor="1,4" Sustituto="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
-    </Regla>
-    <Regla>
-      <CondicionCampo>
-        <Campo>PorcentajeIVA</Campo>
-        <Valor>11,4</Valor>
-      </CondicionCampo>
-      <Accion Tipo="Establecer Valor" CampoDestino="PorcentajeIVA" Valor="10" Sustituto="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
-    </Regla>
-  </PostProcesamiento>
-  <ZonasOcr />
+  <PostProcesamiento />
+  <ZonasOcr>
+    <Zona Campo="P1_Z1" Pagina="1" X="4.5" Y="14.6" Ancho="22.8" Alto="8.8" />
+    <Zona Campo="P1_Z2" Pagina="1" X="74.5" Y="14.4" Ancho="20.5" Alto="4.8" />
+    <Zona Campo="P1_Z3" Pagina="1" X="61.5" Y="29.8" Ancho="34.2" Alto="65.1" />
+    <Zona Campo="P2_Z1" Pagina="2" X="61.5" Y="17.6" Ancho="34.2" Alto="77.4" />
+    <Zona Campo="P3_Z1" Pagina="3" X="61.5" Y="17.6" Ancho="34.2" Alto="77.4" />
+    <Zona Campo="P4_Z1" Pagina="4" X="61.5" Y="17.6" Ancho="34.2" Alto="77.4" />
+  </ZonasOcr>
   <NifEstado>Valido</NifEstado>
 </Emisor>

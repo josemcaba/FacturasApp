@@ -278,7 +278,11 @@ public class ConfigurableParserEngine : BaseParser
         }
         else if (!string.IsNullOrEmpty(campo.Regex))
         {
-            var regex = new Regex(campo.Regex, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            // Case-sensitive: la regex del XML se evalúa con la capitalización
+            // exacta del patrón (igual que las regex de línea multilínea).
+            // Si un campo necesita tolerancia a mayúsculas, se lleva dentro
+            // del propio patrón con (?i) / (?i:…).
+            var regex = new Regex(campo.Regex, RegexOptions.Compiled);
             var match = regex.Match(texto);
             if (match.Success && match.Groups.Count > 1)
                 rawValue = match.Groups[1].Value.Trim();

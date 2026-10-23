@@ -1,4 +1,5 @@
 ﻿using FacturasApp.Core.Models;
+using FacturasApp.Core.Services;
 
 namespace FacturasApp.UI
 {
@@ -10,12 +11,11 @@ namespace FacturasApp.UI
             _factura = factura;
             InitializeComponent();
             CargarDatos();
-            // Habilitar el botón para abrir el archivo PDF
-            // solo si la ruta del archivo no está vacía y
-            // se trata de un PDF
-            btnAbrirArchivoPDF.Enabled = !string.IsNullOrEmpty(_factura.RutaArchivo) && 
-                                          Path.GetExtension(_factura.RutaArchivo).Equals(".pdf", 
-                                          StringComparison.OrdinalIgnoreCase);
+            // Habilitar el botón para abrir el archivo original
+            // solo si la ruta no está vacía y es un formato que la
+            // app procesa (PDF o imagen admitida)
+            btnAbrirArchivoPDF.Enabled = !string.IsNullOrEmpty(_factura.RutaArchivo) &&
+                                          FormatosDocumento.EsFactura(_factura.RutaArchivo);
         }
 
         private void CargarDatos()
@@ -63,7 +63,7 @@ namespace FacturasApp.UI
         {
             if (!File.Exists(_factura.RutaArchivo))
             {
-                MessageBox.Show("No se encuentra el archivo PDF.", 
+                MessageBox.Show("No se encuentra el archivo.", 
                     "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }

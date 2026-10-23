@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using FacturasApp.Core.Models;
+using FacturasApp.Core.Services;
 using PdfiumViewer;
 
 namespace FacturasApp.Services
@@ -17,6 +18,11 @@ namespace FacturasApp.Services
         public string? ExtraerTextoSeleccionable(string rutaPdf,
             ModoExtraccion modo = ModoExtraccion.Simple)
         {
+            // Una imagen no tiene capa de texto: sin tocar PDFium se trata
+            // como «no seleccionable», que es lo que empuja el pipeline al OCR.
+            if (FormatosDocumento.EsImagen(rutaPdf))
+                return null;
+
             var textoTotal = new System.Text.StringBuilder();
 
             using var documento = PdfDocument.Load(rutaPdf);
@@ -72,6 +78,15 @@ namespace FacturasApp.Services
         {
             var resultado = new Dictionary<string, string>();
 
+            // Imagen: no hay texto nativo que recortar por coordenadas; la
+            // rama OCR (OcrZonalExtractor) es la que sabe tratarlas.
+            if (FormatosDocumento.EsImagen(rutaPdf))
+            {
+                foreach (var z in plantilla.Zonas)
+                    resultado[z.Campo] = string.Empty;
+                return resultado;
+            }
+
             using var documento = PdfDocument.Load(rutaPdf);
 
             // Precachear páginas necesarias por número de página (1-based)
@@ -116,6 +131,10 @@ namespace FacturasApp.Services
         public string? ExtraerTextoZonal(string rutaPdf, ZonaOcr zona)
         {
             if (zona == null) return null;
+
+            // Imagen: sin capa de texto; null para que el llamante use OCR.
+            if (FormatosDocumento.EsImagen(rutaPdf))
+                return null;
 
             try
             {

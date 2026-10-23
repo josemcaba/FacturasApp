@@ -202,6 +202,10 @@ namespace FacturasApp.Core.Services.Parsers
         /// Si el patrón numérico no encuentra nada, se intenta fechas con nombre de mes
         /// generadas desde la propia cultura: "01 Ago 2026" / "1 de agosto de 2026"
         /// en es-ES, "01 Aug 2026" / "August 1, 2026" en en-US.
+        /// La ambigüedad se resuelve sobre la FECHA resuelta, no sobre el texto: formas
+        /// distintas de expresar el mismo día ("1/8/2026" y "01 Ago 2026") SÍ se aceptan;
+        /// sólo se devuelve null si alguna no parsea o si hay 2+ días distintos
+        /// (un teléfono "951.91.63.89" sigue rompiéndola → regex de fecha explícita).
         /// </summary>
         protected DateTime? ExtraerFecha(string texto, string? cultura = null)
         {
@@ -216,22 +220,32 @@ namespace FacturasApp.Core.Services.Parsers
             if (m.Count == 0)
                 return ExtraerFechaConNombreMes(texto, cultureInfo);
 
-            // Comprobamos si todas las coincidencias encontradas son iguales.
-            // Si es así, continuamos. Si no, devolvemos null por ambigüedad.
-            if (m.Count > 1 && !m.All(match => match.Value == m[0].Value))
+            // Aplanamos todas las fechas candidatas: puede haber varias dentro de un
+            // mismo match (p. ej. un regex externo que captura la línea entera).
+            var candidatos = m
+                .SelectMany(match => RegexFechaFormateada.Matches(match.Value))
+                .ToList();
+
+            if (candidatos.Count == 0)
                 return null;
 
-            Regex RegexFechaFormateada = new(
-                @"\b(\d{1,4})\s*[\/\.-]\s*((?:\d{1,2}|\D{3}))\s*[\/\.-]\s*(\d{1,4})\b",
-                RegexOptions.Compiled);
+            return UnificarFechas(candidatos, match => ConstruirFechaNumerica(match, cultureInfo));
+        }
 
-            m = RegexFechaFormateada.Matches(m[0].Value);
-            if (m.Count != 1)
-                return null;
+        private static readonly Regex RegexFechaFormateada = new(
+            @"\b(\d{1,4})\s*[\/\.-]\s*((?:\d{1,2}|\D{3}))\s*[\/\.-]\s*(\d{1,4})\b",
+            RegexOptions.Compiled);
 
-            string g1 = m[0].Groups[1].Value;
-            string g2 = m[0].Groups[2].Value;
-            string g3 = m[0].Groups[3].Value;
+        /// <summary>
+        /// Convierte un match de <see cref="RegexFechaFormateada"/> en DateTime.
+        /// Si el año va de 4 dígitos al final se normaliza a aaaa/MM/dd; en cualquier
+        /// otro caso se lee siempre como dd/MM/aaaa.
+        /// </summary>
+        private static DateTime? ConstruirFechaNumerica(Match m, CultureInfo cultura)
+        {
+            string g1 = m.Groups[1].Value;
+            string g2 = m.Groups[2].Value;
+            string g3 = m.Groups[3].Value;
 
             string fechaParseo = g3.Length == 4
                 ? $"{g3}/{g2}/{g1}"
@@ -239,8 +253,28 @@ namespace FacturasApp.Core.Services.Parsers
 
             return DateTime.TryParse(
                 fechaParseo,
-                cultureInfo,
+                cultura,
                 DateTimeStyles.None, out var f) ? f : null;
+        }
+
+        /// <summary>
+        /// Regla única de ambigüedad (numéricas y nombre de mes): parsea cada candidato
+        /// y devuelve la fecha sólo si TODAS resuelven al mismo día. Si alguna no parsea
+        /// o hay 2+ días distintos, devuelve null.
+        /// </summary>
+        private static DateTime? UnificarFechas(IEnumerable<Match> candidatos, Func<Match, DateTime?> parsear)
+        {
+            DateTime? fecha = null;
+
+            foreach (var candidato in candidatos)
+            {
+                var f = parsear(candidato);
+                if (f == null) return null;                       // alguna no parsea
+                if (fecha == null) fecha = f;
+                else if (fecha.Value != f.Value) return null;     // días distintos
+            }
+
+            return fecha;
         }
 
         // ── Fechas con nombre de mes (según la cultura del emisor) ───────────
@@ -293,7 +327,9 @@ namespace FacturasApp.Core.Services.Parsers
 
         /// <summary>
         /// Busca fechas con nombre de mes en el texto. Misma regla de ambigüedad que
-        /// con las numéricas: si hay 2+ coincidencias distintas, devuelve null.
+        /// con las numéricas (ver <see cref="UnificarFechas"/>): formas distintas del
+        /// mismo día ("01 Ago 2026" y "1 de agosto de 2026") se aceptan; si alguna no
+        /// parsea o hay 2+ días distintos, devuelve null.
         /// </summary>
         private static DateTime? ExtraerFechaConNombreMes(string texto, CultureInfo cultura)
         {
@@ -301,10 +337,7 @@ namespace FacturasApp.Core.Services.Parsers
             if (matches.Count == 0)
                 return null;
 
-            if (matches.Count > 1 && !matches.All(m => m.Value == matches[0].Value))
-                return null;
-
-            return CrearFechaDesdeMes(matches[0], cultura);
+            return UnificarFechas(matches, m => CrearFechaDesdeMes(m, cultura));
         }
 
         /// <summary>

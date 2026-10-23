@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Nif>A08806994</Nif>
+  <Nombre>DISGO, S.A.</Nombre>
+  <Version>202610200504</Version>
+  <Identificadores>
+    <Id>DISGO, S.A.</Id>
+    <Id>A08806994</Id>
+  </Identificadores>
+  <ModoExtraccion>Ordenado</ModoExtraccion>
+  <ConceptoIngreso>700</ConceptoIngreso>
+  <ConceptoGasto>600</ConceptoGasto>
+  <CulturaFecha>es-ES</CulturaFecha>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\OSCAR ARIAS 2\Gastos\Contabilizados\disgo_3212_26__Factura_1-26-3212_OSCAR_ARIAS_MERINO.pdf</RutaPdfMuestra>
+  <Campos>
+    <Campo Nombre="NumeroFactura">
+      <Regex>\b(\d{4}/\d{2})\b</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="Fecha">
+      <Regex>Fecha\s+Cliente\s*.*?\s+(.+?)\s</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNombre">
+      <Regex>\[P1_Z2]:(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNif">
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="TotalFactura">
+      <Regex>TOTAL FACTURA.+\s*([\d.,]+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+  </Campos>
+  <MultiLinea>
+    <RegexLinea />
+    <Lineas>
+      <Linea>
+        <Regex>([\d.]+,\d{2})\s+([\d]+,\d{2})\s+([\d.]+,\d{2})\s+</Regex>
+        <MapeoCampos>
+          <Mapeo Nombre="BaseImponible" Grupo="1" />
+          <Mapeo Nombre="PorcentajeIVA" Grupo="2" />
+        </MapeoCampos>
+      </Linea>
+    </Lineas>
+    <MapeoCampos />
+  </MultiLinea>
+  <PostProcesamiento />
+  <ZonasOcr>
+    <Zona Campo="P1_Z1" Pagina="1" X="2.8" Y="13.9" Ancho="38.7" Alto="13.5" />
+    <Zona Campo="P1_Z2" Pagina="1" X="44.9" Y="9.5" Ancho="43.5" Alto="12.1" />
+    <Zona Campo="P2_Z1" Pagina="2" X="34.9" Y="71.4" Ancho="37.4" Alto="7.9" />
+    <Zona Campo="P3_Z1" Pagina="3" X="34.6" Y="73.4" Ancho="38.8" Alto="7.1" />
+    <Zona Campo="P3_Z2" Pagina="3" X="73.1" Y="73.4" Ancho="21" Alto="10.5" />
+    <Zona Campo="P2_Z2" Pagina="2" X="72" Y="71.5" Ancho="22" Alto="12.4" />
+  </ZonasOcr>
+  <NifEstado>Valido</NifEstado>
+</Emisor>
