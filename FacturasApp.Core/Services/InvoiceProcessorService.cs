@@ -59,13 +59,15 @@ namespace FacturasApp.Core.Services
         /// flujo normal: extrae texto rápido (u OCR si está escaneado) y delega
         /// en ParserFactory.ObtenerParser.
         /// </summary>
-        public IInvoiceParser? IdentificarEmisor(string rutaPdf) =>
-            IdentificarEmisor(rutaPdf, _textExtractor.ExtraerTextoSeleccionable(rutaPdf, ModoExtraccion.Simple));
+        public IInvoiceParser? IdentificarEmisor(string rutaPdf, EmisorConfig? configPreferida = null) =>
+            IdentificarEmisor(rutaPdf, _textExtractor.ExtraerTextoSeleccionable(rutaPdf, ModoExtraccion.Simple),
+                configPreferida);
 
-        private IInvoiceParser? IdentificarEmisor(string rutaPdf, string? textoRapido) =>
+        private IInvoiceParser? IdentificarEmisor(string rutaPdf, string? textoRapido,
+            EmisorConfig? configPreferida = null) =>
             textoRapido != null
-                ? _parserFactory.ObtenerParser(textoRapido)
-                : _parserFactory.ObtenerParser(_textExtractor.ExtraerTextoOcrIdentificacion(rutaPdf));
+                ? _parserFactory.ObtenerParser(textoRapido, configPreferida)
+                : _parserFactory.ObtenerParser(_textExtractor.ExtraerTextoOcrIdentificacion(rutaPdf), configPreferida);
 
         /// <summary>
         /// Extrae el texto de un PDF usando el pipeline completo

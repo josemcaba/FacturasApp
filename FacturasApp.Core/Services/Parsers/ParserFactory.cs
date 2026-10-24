@@ -27,9 +27,18 @@ namespace FacturasApp.Core.Services.Parsers
                 return new ConfigurableParserEngine(configPreferida);
             }
 
-            // 1. XML configs con identificadores → motor XML
+            // 1. XML configs con identificadores → motor XML. La copia en caché
+            //    de la config preferida (la que se está editando en la UI) no
+            //    compite: refleja la última versión guardada, no la edición actual.
             foreach (var config in configs.Values)
             {
+                if (configPreferida != null &&
+                    string.Equals(config.Nif?.Trim(), configPreferida.Nif?.Trim(),
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
                 if (CoincideConIdentificadores(config, texto))
                 {
                     return new ConfigurableParserEngine(config);

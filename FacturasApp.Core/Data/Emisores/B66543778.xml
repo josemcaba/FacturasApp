@@ -2,12 +2,12 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B66543778</Nif>
   <Nombre>HOLDED TECHNOLOGIES S.L.</Nombre>
-  <Version>202610241606</Version>
+  <Version>202610241711</Version>
   <Identificadores>
     <Id>Holded Technologies S.L</Id>
     <Id>B66543778</Id>
   </Identificadores>
-  <ModoExtraccion>Simple</ModoExtraccion>
+  <ModoExtraccion>Ordenado</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
@@ -43,16 +43,12 @@
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="TotalFactura">
-      <Regex>TOTAL(.+)€</Regex>
+      <Regex>BASE IMPONIBLE.+\s*.+\s*TOTAL(.+)€</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
   </Campos>
   <PostProcesamiento />
-  <ZonasOcr>
-    <Zona Campo="P1_Z1" Pagina="1" X="5.6" Y="10.7" Ancho="35.7" Alto="18.7" />
-    <Zona Campo="P1_Z2" Pagina="1" X="75" Y="11.1" Ancho="20.2" Alto="6.8" />
-    <Zona Campo="P1_Z3" Pagina="1" X="60.7" Y="36.5" Ancho="34.2" Alto="55.1" />
-  </ZonasOcr>
+  <ZonasOcr />
   <NifEstado>Valido</NifEstado>
 </Emisor>

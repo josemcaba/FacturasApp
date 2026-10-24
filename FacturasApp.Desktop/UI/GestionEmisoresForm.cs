@@ -482,11 +482,20 @@ public partial class GestionEmisoresForm : Form
             return;
         }
 
-        // Mismo procedimiento que el flujo normal: detectar emisor y ver si es el actual
+        // Mismo procedimiento que el flujo normal: detectar emisor y ver si es el actual.
+        // Se identifica con la config EN EDICIÓN (los identificadores tecleados en el
+        // textbox, quizá aún sin guardar): así el ✓/✗ refleja lo que se está editando,
+        // no la última versión guardada en caché.
         IInvoiceParser? parser;
         try
         {
-            parser = _invoiceService.IdentificarEmisor(_rutaPdf);
+            EmisorConfig? configEditada = null;
+            if (_emisorActual != null)
+            {
+                configEditada = CopiarConfig(_emisorActual);
+                configEditada.Identificadores = ids;
+            }
+            parser = _invoiceService.IdentificarEmisor(_rutaPdf, configEditada);
         }
         catch
         {
@@ -1837,6 +1846,11 @@ public partial class GestionEmisoresForm : Form
             MessageBox.Show("Emisor guardado correctamente.",
                 "Guardado", MessageBoxButtons.OK, MessageBoxIcon.Information);
             ActualizarTablaValoresExtraidos();
+            // Refresca el indicador de identificadores: CargarEmisores() reconstruye
+            // la lista con _saltarCambioSeleccion, sin llegar a CargarEmisorEnUI,
+            // así que sin esta llamada el mensaje se quedaría desactualizado hasta
+            // salir del emisor y volver a entrar.
+            ActualizarIndicadorIdentificadores();
             return true;
         }
         catch (Exception ex)
