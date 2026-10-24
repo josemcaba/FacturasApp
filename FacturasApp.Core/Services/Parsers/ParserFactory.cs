@@ -5,67 +5,18 @@ namespace FacturasApp.Core.Services.Parsers
 {
     public class ParserFactory
     {
-        private readonly List<IInvoiceParser> _parsers;
-        private readonly GenericParser _genericParser = new();
         private readonly ConfiguracionEmisores _configuracionEmisores = new();
 
-        public ParserFactory()
-        {
-            _parsers =
-            [
-                new AmazonAwsParser(),
-                // new AndresCazallaParser(),
-                new AutomotorPremiumParser(),
-                new BixpeParser(),
-                new CathedralSwParser(),
-                new CocinArteParser(),
-                new ComunicacionesCloudParser(),
-                new CostaSolBalearParser(),
-                new DisgoParser(),
-                // new DulceriaParser(),
-                new EasorParser(),
-                // new EMASA(),
-                new EnergiaXxiParser(),
-                new EsprinetParser(),
-                new EurocabosParser(),
-                new EuroDepotParser(),
-                new FACCSA(),
-                new FasaworldParser(),
-                new FiestaParser(),
-                new FobosParser(),
-                // new GregorioArandaParser(),
-                new GruasJuandiParser(),
-                new HostaliaParser(),
-                // new IgnacioIbanezParser(),
-                new InstantByteParser(),
-                new InversionesCerroPlomoParser(),
-                new IonosParser(),
-                new JuanLucasParser(),
-                new LidlParser(),
-                // new MercadonaParser(),
-                new MoncayoParser(),
-                new NorelisParser(),
-                new OnaCorpParser(),
-                // new OscarAriasParser(),
-                // new PescaderiaMarengoParser(),
-                // new PescaderiaSalvadorParser(),
-                new PetroprixParser(),
-                // new PlenergyParser(),
-                new RangnyValenciaParser(),
-                new RyanairDacParser(),
-                new SarigaboParser(),
-                new SewanParser(),
-                new SimyoParser(),
-                new TdSynnexParser(),
-                // new TrigoricoParser(),
-                new VerisureParser(),
-            ];
-        }
-
-        public IInvoiceParser ObtenerParser(string texto) =>
+        public IInvoiceParser? ObtenerParser(string texto) =>
             ObtenerParser(texto, null);
 
-        public IInvoiceParser ObtenerParser(string texto, EmisorConfig? configPreferida)
+        /// <summary>
+        /// Devuelve el parser XML (<see cref="ConfigurableParserEngine"/>) del emisor
+        /// identificado por sus &lt;Identificadores&gt;, o <c>null</c> si ningún XML
+        /// identifica el documento: no hay parsers C# de respaldo, la extracción es
+        /// XML-only y sin config el llamante debe marcar el documento en Error.
+        /// </summary>
+        public IInvoiceParser? ObtenerParser(string texto, EmisorConfig? configPreferida)
         {
             var configs = _configuracionEmisores.CargarTodos();
 
@@ -76,7 +27,7 @@ namespace FacturasApp.Core.Services.Parsers
                 return new ConfigurableParserEngine(configPreferida);
             }
 
-            // 1. XML configs con identificadores → prioridad
+            // 1. XML configs con identificadores → motor XML
             foreach (var config in configs.Values)
             {
                 if (CoincideConIdentificadores(config, texto))
@@ -85,17 +36,13 @@ namespace FacturasApp.Core.Services.Parsers
                 }
             }
 
-            // 2. Hardcoded C# parsers
-            var hardcoded = _parsers.FirstOrDefault(p => p.PuedeParsar(texto));
-            if (hardcoded != null)
-                return hardcoded;
-
-            // 3. Fallback: General.xml (editable por el usuario)
+            // 2. Fallback XML: General.xml (si el usuario lo ha creado, cubre
+            //    cualquier documento no identificado)
             if (configs.TryGetValue("General", out var generalConfig))
                 return new ConfigurableParserEngine(generalConfig);
 
-            // 4. Fallback último: GenericParser C#
-            return _genericParser;
+            // 3. Sin config XML → null: no se extrae nada (el pipeline marca Error)
+            return null;
         }
 
         private static bool CoincideConIdentificadores(EmisorConfig config, string texto) =>
@@ -103,18 +50,9 @@ namespace FacturasApp.Core.Services.Parsers
             config.Identificadores.All(id =>
                 texto.Contains(id, StringComparison.OrdinalIgnoreCase));
 
-        public IReadOnlyList<string> ParsersDisponibles
-        {
-            get
-            {
-                var nombres = _parsers.Select(p => p.Nombre).ToList();
-                foreach (var config in _configuracionEmisores.CargarTodos().Values)
-                {
-                    if (!string.IsNullOrEmpty(config.Nombre) && !nombres.Contains(config.Nombre))
-                        nombres.Add(config.Nombre);
-                }
-                return nombres;
-            }
-        }
+        public IReadOnlyList<string> ParsersDisponibles =>
+            [.. _configuracionEmisores.CargarTodos().Values
+                .Where(config => !string.IsNullOrEmpty(config.Nombre))
+                .Select(config => config.Nombre)];
     }
 }

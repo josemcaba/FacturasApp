@@ -2,8 +2,9 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B66543778</Nif>
   <Nombre>HOLDED TECHNOLOGIES S.L.</Nombre>
-  <Version>202610230600</Version>
+  <Version>202610241606</Version>
   <Identificadores>
+    <Id>Holded Technologies S.L</Id>
     <Id>B66543778</Id>
   </Identificadores>
   <ModoExtraccion>Simple</ModoExtraccion>
@@ -13,7 +14,7 @@
   <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\OSCAR ARIAS 2\Gastos\No contabilizadas\2026-08-19_holded_F260420683.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
-      <Regex>FACTURA #(.+?)\s</Regex>
+      <Regex>FACTURA\s*#(.+?)\s</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
@@ -27,7 +28,7 @@
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="ReceptorNif">
-      <ValorFijo>74890989J</ValorFijo>
+      <ValorFijo>74890980J</ValorFijo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
@@ -49,9 +50,9 @@
   </Campos>
   <PostProcesamiento />
   <ZonasOcr>
-    <Zona Campo="P1_Z1" Pagina="1" X="5" Y="12.2" Ancho="28.4" Alto="15.4" />
-    <Zona Campo="P1_Z2" Pagina="1" X="70.7" Y="12.4" Ancho="24.1" Alto="4" />
-    <Zona Campo="P1_Z3" Pagina="1" X="61.3" Y="37.7" Ancho="34.3" Alto="10.7" />
+    <Zona Campo="P1_Z1" Pagina="1" X="5.6" Y="10.7" Ancho="35.7" Alto="18.7" />
+    <Zona Campo="P1_Z2" Pagina="1" X="75" Y="11.1" Ancho="20.2" Alto="6.8" />
+    <Zona Campo="P1_Z3" Pagina="1" X="60.7" Y="36.5" Ancho="34.2" Alto="55.1" />
   </ZonasOcr>
   <NifEstado>Valido</NifEstado>
 </Emisor>

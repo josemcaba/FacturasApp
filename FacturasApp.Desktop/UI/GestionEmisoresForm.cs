@@ -483,7 +483,7 @@ public partial class GestionEmisoresForm : Form
         }
 
         // Mismo procedimiento que el flujo normal: detectar emisor y ver si es el actual
-        IInvoiceParser parser;
+        IInvoiceParser? parser;
         try
         {
             parser = _invoiceService.IdentificarEmisor(_rutaPdf);
@@ -492,6 +492,14 @@ public partial class GestionEmisoresForm : Form
         {
             lblIndicadorEmisor.ForeColor = Color.FromArgb(192, 0, 0);
             lblIndicadorEmisor.Text = "✗ No se pudo leer el documento";
+            return;
+        }
+
+        if (parser == null)
+        {
+            // Sin config XML que identifique el documento no hay extracción posible
+            lblIndicadorEmisor.ForeColor = Color.FromArgb(192, 0, 0);
+            lblIndicadorEmisor.Text = "✗ Ningún XML identifica el documento (sin config no se extrae)";
             return;
         }
 

@@ -4,8 +4,8 @@
     {
         public string NumeroFactura { get; set; } = string.Empty;
         public DateTime? Fecha { get; set; }
-        public Empresa Emisor { get; set; } = new Proveedor();
-        public Empresa Receptor { get; set; } = new Cliente();
+        public Empresa Emisor { get; set; } = new Empresa();
+        public Empresa Receptor { get; set; } = new Empresa();
         public string ConceptoIngreso { get; set; } = "700"; // Código contable por defecto
         public string ConceptoGasto { get; set; } = "600"; // Código contable por defecto
         public decimal BaseImponible { get; set; }

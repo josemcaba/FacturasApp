@@ -59,10 +59,10 @@ namespace FacturasApp.Core.Services
         /// flujo normal: extrae texto rápido (u OCR si está escaneado) y delega
         /// en ParserFactory.ObtenerParser.
         /// </summary>
-        public IInvoiceParser IdentificarEmisor(string rutaPdf) =>
+        public IInvoiceParser? IdentificarEmisor(string rutaPdf) =>
             IdentificarEmisor(rutaPdf, _textExtractor.ExtraerTextoSeleccionable(rutaPdf, ModoExtraccion.Simple));
 
-        private IInvoiceParser IdentificarEmisor(string rutaPdf, string? textoRapido) =>
+        private IInvoiceParser? IdentificarEmisor(string rutaPdf, string? textoRapido) =>
             textoRapido != null
                 ? _parserFactory.ObtenerParser(textoRapido)
                 : _parserFactory.ObtenerParser(_textExtractor.ExtraerTextoOcrIdentificacion(rutaPdf));
@@ -90,7 +90,15 @@ namespace FacturasApp.Core.Services
             bool usarOcr = !esPdfSeleccionable;
 
             // ── PASO 2: Identificar emisor (con método rápido) ──────────────
-            IInvoiceParser parser = IdentificarEmisor(rutaPdf, textoRapido);
+            IInvoiceParser? parser = IdentificarEmisor(rutaPdf, textoRapido);
+
+            // Sin config XML de emisor no hay extracción (el sistema es XML-only):
+            // se lanza con mensaje claro y ProcesarLote lo convierte en Error.
+            if (parser == null)
+                throw new InvalidOperationException(
+                    "Sin configuración XML para este emisor: " +
+                    "ningún <Identificadores> de %APPDATA%\\FacturasApp\\Emisores\\ coincide con el documento. " +
+                    "Crea su XML desde Gestión de Emisores para poder extraerlo.");
 
             string nombreEmisor = parser.Nombre;
 
@@ -435,6 +443,12 @@ namespace FacturasApp.Core.Services
                 : _textExtractor.ExtraerTextoOcrCompleto(rutaPdf);
 
             var parser = _parserFactory.ObtenerParser(textoRapido);
+            if (parser == null)
+            {
+                sb.AppendLine("Emisor detectado: NINGUNO (sin config XML de emisor)");
+                sb.AppendLine("→ No se extraerá nada: crea el XML del emisor en Gestión de Emisores.");
+                return sb.ToString();
+            }
             sb.AppendLine($"Emisor detectado: {parser.Nombre}");
 
             PlantillaOcr? plantilla = ObtenerPlantilla(parser, parser.Nombre);

@@ -111,8 +111,8 @@ namespace FacturasApp.Core.Services
             var factura = new Factura
             {
                 ExtractedByOcr = false, // viene de Excel, no de OCR
-                Emisor = new Proveedor(),
-                Receptor = new Cliente(),
+                Emisor = new Empresa(),
+                Receptor = new Empresa(),
                 RutaArchivo = $"{rutaExcel} (fila {numFila})"
             };
 

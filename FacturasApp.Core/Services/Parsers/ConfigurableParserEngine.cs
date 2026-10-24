@@ -25,14 +25,6 @@ public class ConfigurableParserEngine : BaseParser
             ? modo
             : ModoExtraccion.Ordenado;
 
-    public override bool PuedeParsar(string texto)
-    {
-        if (_config.Identificadores == null || _config.Identificadores.Count == 0)
-            return false;
-        return _config.Identificadores
-            .All(id => texto.Contains(id, StringComparison.OrdinalIgnoreCase));
-    }
-
     public override Factura Parsear(string texto, string rutaArchivo, bool viaOcr)
     {
         if (TieneMultiLinea())

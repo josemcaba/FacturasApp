@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Text;
 using System.Text.RegularExpressions;
 using FacturasApp.Core.Models;
 using System.Globalization;
@@ -16,19 +15,10 @@ namespace FacturasApp.Core.Services.Parsers
             ModoExtraccion.Ordenado;
 
         // Implementación base: devuelve lista con una sola factura
-        // MercadonaParser (y cualquier otro que lo necesite) lo sobreescribe
+        // ConfigurableParserEngine la sobreescribe cuando la config declara <MultiLinea>
         public virtual List<Factura> ParsearMultiple(
             string texto, string rutaArchivo, bool viaOcr) =>
                 [Parsear(texto, rutaArchivo, viaOcr)];
-
-        // ── PuedeParsar: template method ──────────────────────────────────
-
-        protected virtual string[] Identificadores => [];
-
-        public virtual bool PuedeParsar(string texto) =>
-            Identificadores.Length > 0 &&
-            Identificadores.All(id =>
-                texto.Contains(id, StringComparison.OrdinalIgnoreCase));
 
         // ── Expresiones regulares genéricas (pueden ser sobrescritas) ────────
 
@@ -60,72 +50,6 @@ namespace FacturasApp.Core.Services.Parsers
             factura.Emisor.NIF = Nif;
             factura.Emisor.Nombre = Nombre;
             return factura;
-        }
-
-        protected static string EliminarDuplicadosNoNumericos(string texto)
-        {
-            if (string.IsNullOrEmpty(texto))
-                return texto;
-
-            var resultado = new StringBuilder();
-            char? ultimoCaracter = null;
-
-            foreach (char c in texto)
-            {
-                bool esNumero = c >= '0' && c <= '9';
-
-                if (esNumero)
-                {
-                    resultado.Append(c);
-                    ultimoCaracter = c;
-                }
-                else
-                {
-                    if (!ultimoCaracter.HasValue || c != ultimoCaracter.Value)
-                    {
-                        resultado.Append(c);
-                        ultimoCaracter = c;
-                    }
-                }
-            }
-
-            return resultado.ToString();
-        }
-
-        protected static string EliminarDuplicadosNumericos(string texto)
-        {
-            if (string.IsNullOrEmpty(texto))
-                return texto;
-
-            var resultado = new StringBuilder();
-            char? ultimoCaracter = null;
-
-            foreach (char c in texto)
-            {
-                bool esNumero = c >= '0' && c <= '9';
-
-                if (!esNumero)
-                {
-                    resultado.Append(c);
-                    ultimoCaracter = c;
-                }
-                else
-                {
-                    if (!ultimoCaracter.HasValue || c != ultimoCaracter.Value)
-                    {
-                        resultado.Append(c);
-                        ultimoCaracter = c;
-                    }
-                }
-            }
-
-            return resultado.ToString();
-        }
-
-        protected static string ExtraerGrupo(Regex regex, string texto, int grupo)
-        {
-            var m = regex.Match(texto);
-            return m.Success ? m.Groups[grupo].Value.Trim() : string.Empty;
         }
 
         protected string ExtraerNif(string texto)
@@ -168,13 +92,6 @@ namespace FacturasApp.Core.Services.Parsers
             }
 
             return string.Empty;
-        }
-
-        protected static decimal ExtraerDecimal(Regex regex, string texto, int grupo)
-        {
-            var m = regex.Match(texto);
-            if (!m.Success) return 0m;
-            return ParsearDecimal(m.Groups[grupo].Value);
         }
 
         protected static decimal ParsearDecimal(string valor)
