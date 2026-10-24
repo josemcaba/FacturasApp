@@ -59,15 +59,39 @@ namespace FacturasApp.Core.Services
         /// flujo normal: extrae texto rápido (u OCR si está escaneado) y delega
         /// en ParserFactory.ObtenerParser.
         /// </summary>
-        public IInvoiceParser? IdentificarEmisor(string rutaPdf, EmisorConfig? configPreferida = null) =>
-            IdentificarEmisor(rutaPdf, _textExtractor.ExtraerTextoSeleccionable(rutaPdf, ModoExtraccion.Simple),
-                configPreferida);
+        public IInvoiceParser? IdentificarEmisor(string rutaPdf) =>
+            IdentificarTexto(ExtraerTextoIdentificacion(rutaPdf));
 
-        private IInvoiceParser? IdentificarEmisor(string rutaPdf, string? textoRapido,
-            EmisorConfig? configPreferida = null) =>
+        private IInvoiceParser? IdentificarEmisor(string rutaPdf, string? textoRapido) =>
             textoRapido != null
-                ? _parserFactory.ObtenerParser(textoRapido, configPreferida)
-                : _parserFactory.ObtenerParser(_textExtractor.ExtraerTextoOcrIdentificacion(rutaPdf), configPreferida);
+                ? _parserFactory.ObtenerParser(textoRapido)
+                : _parserFactory.ObtenerParser(_textExtractor.ExtraerTextoOcrIdentificacion(rutaPdf));
+
+        /// <summary>
+        /// Extrae el texto con el que se identifica al emisor: capa de texto en
+        /// modo Simple y, si no la hay (escaneado/imagen), OCR del tercio superior
+        /// de la página 1. Base común para identificar y para detectar colisiones
+        /// sin tener que extraer el documento dos veces.
+        /// </summary>
+        public string ExtraerTextoIdentificacion(string rutaPdf) =>
+            _textExtractor.ExtraerTextoSeleccionable(rutaPdf, ModoExtraccion.Simple)
+            ?? _textExtractor.ExtraerTextoOcrIdentificacion(rutaPdf);
+
+        /// <summary>
+        /// Identifica el emisor a partir de texto ya extraído (mismo camino que
+        /// <see cref="IdentificarEmisor(string)"/>, con una config preferida —
+        /// p. ej. la que se está editando en la UI — con prioridad).
+        /// </summary>
+        public IInvoiceParser? IdentificarTexto(string texto, EmisorConfig? configPreferida = null) =>
+            _parserFactory.ObtenerParser(texto, configPreferida);
+
+        /// <summary>
+        /// Config de TODOS los emisores cuyos identificadores detectan el texto
+        /// (varias configs pueden reclamar el mismo documento): lo usa la UI de
+        /// Gestión de Emisores para avisar de colisiones.
+        /// </summary>
+        public IReadOnlyList<EmisorConfig> EmisoresQueIdentifican(string texto) =>
+            _parserFactory.ObtenerConfigsQueIdentifican(texto);
 
         /// <summary>
         /// Extrae el texto de un PDF usando el pipeline completo

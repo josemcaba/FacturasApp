@@ -483,10 +483,12 @@ public partial class GestionEmisoresForm : Form
         }
 
         // Mismo procedimiento que el flujo normal: detectar emisor y ver si es el actual.
-        // Se identifica con la config EN EDICIÓN (los identificadores tecleados en el
-        // textbox, quizá aún sin guardar): así el ✓/✗ refleja lo que se está editando,
-        // no la última versión guardada en caché.
+        // El texto se extrae UNA sola vez y sirve tanto para identificar (con la config
+        // EN EDICIÓN: los identificadores tecleados en el textbox, quizá aún sin guardar)
+        // como para detectar si OTRO XML distinto del actual identifica también el
+        // documento de muestra (colisión de identificadores).
         IInvoiceParser? parser;
+        IReadOnlyList<EmisorConfig> otrosQueIdentifican;
         try
         {
             EmisorConfig? configEditada = null;
@@ -495,12 +497,38 @@ public partial class GestionEmisoresForm : Form
                 configEditada = CopiarConfig(_emisorActual);
                 configEditada.Identificadores = ids;
             }
-            parser = _invoiceService.IdentificarEmisor(_rutaPdf, configEditada);
+
+            var texto = _invoiceService.ExtraerTextoIdentificacion(_rutaPdf);
+            parser = _invoiceService.IdentificarTexto(texto, configEditada);
+            // Otros emisores = los que identifican el documento con NIF distinto
+            // del actual (la copia ya guardada del propio emisor no cuenta).
+            otrosQueIdentifican = _invoiceService.EmisoresQueIdentifican(texto)
+                .Where(c => !string.Equals(c.Nif?.Trim(), _emisorActual?.Nif?.Trim(),
+                    StringComparison.OrdinalIgnoreCase))
+                .ToList();
         }
         catch
         {
             lblIndicadorEmisor.ForeColor = Color.FromArgb(192, 0, 0);
             lblIndicadorEmisor.Text = "✗ No se pudo leer el documento";
+            return;
+        }
+
+        // Colisión: otro XML (anterior o posterior al actual en el directorio de
+        // emisores) reclama el documento de muestra. Aviso con prioridad sobre el
+        // ✓/✗, que se recupera en cuanto la colisión desaparece.
+        if (otrosQueIdentifican.Count > 0)
+        {
+            var primero = otrosQueIdentifican[0];
+            var etiqueta = !string.IsNullOrEmpty(primero.Nombre)
+                ? (string.IsNullOrEmpty(primero.Nif) ? primero.Nombre : $"{primero.Nombre} ({primero.Nif})")
+                : primero.Nif ?? "";
+            var extra = otrosQueIdentifican.Count > 1
+                ? $" … y {otrosQueIdentifican.Count - 1} más"
+                : "";
+            lblIndicadorEmisor.ForeColor = Color.FromArgb(192, 0, 0);
+            lblIndicadorEmisor.Text =
+                $"✗ Otro emisor identifica también este documento: {etiqueta}{extra}";
             return;
         }
 

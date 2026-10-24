@@ -59,6 +59,17 @@ namespace FacturasApp.Core.Services.Parsers
             config.Identificadores.All(id =>
                 texto.Contains(id, StringComparison.OrdinalIgnoreCase));
 
+        /// <summary>
+        /// Devuelve la config de TODOS los XML cuyos identificadores coinciden
+        /// con el texto (no sólo el primero, y sin importar el orden de ficheros):
+        /// lo usa la UI de Gestión de Emisores para avisar cuando otra config
+        /// distinta de la que se está editando identifica también el documento.
+        /// </summary>
+        public IReadOnlyList<EmisorConfig> ObtenerConfigsQueIdentifican(string texto) =>
+            _configuracionEmisores.CargarTodos().Values
+                .Where(config => CoincideConIdentificadores(config, texto))
+                .ToList();
+
         public IReadOnlyList<string> ParsersDisponibles =>
             [.. _configuracionEmisores.CargarTodos().Values
                 .Where(config => !string.IsNullOrEmpty(config.Nombre))
