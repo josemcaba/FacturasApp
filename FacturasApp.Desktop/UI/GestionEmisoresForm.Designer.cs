@@ -21,6 +21,7 @@ partial class GestionEmisoresForm
 
     private void InitializeComponent()
     {
+        components = new System.ComponentModel.Container();
         DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
         DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
         DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
@@ -74,17 +75,17 @@ partial class GestionEmisoresForm
         lblCampoRegex = new Label();
         lblCampoValorFijo = new Label();
         txtCampoValorFijo = new TextBox();
-        btnCampoAdd = new Button();
-        btnCampoRemove = new Button();
         lblEstadoCampo = new Label();
         lblTipoAyuda = new Label();
-        lblSinPdf = new Label();
+        btnCampoAdd = new Button();
+        btnCampoRemove = new Button();
         lblRegexPattern = new Label();
         txtRegexPattern = new TextBox();
         lblRegexMatchCount = new Label();
         lblRegexResultados = new Label();
         dgvRegexMatches = new DataGridView();
         btnRegexApplyToField = new Button();
+        lblSinPdf = new Label();
         tabMultiLinea = new TabPage();
         lblMultiLineas = new Label();
         lstMultiLineas = new ListBox();
@@ -125,6 +126,13 @@ partial class GestionEmisoresForm
         lblPostSustPor = new Label();
         txtPostSustPor = new TextBox();
         lstPostProc = new ListBox();
+        tabColumnasExcel = new TabPage();
+        dgvColumnasExcel = new DataGridView();
+        dataGridViewTextBoxColumnColumnasCampo = new DataGridViewTextBoxColumn();
+        dataGridViewTextBoxColumnColumnasCabeceras = new DataGridViewTextBoxColumn();
+        panelColumnasBotones = new Panel();
+        btnGuardarColumnas = new Button();
+        btnRestaurarColumnas = new Button();
         cmbModoExtraccion = new ComboBox();
         lblGeneralModo = new Label();
         lblSeparadorRegex = new Label();
@@ -137,7 +145,6 @@ partial class GestionEmisoresForm
         picFactura = new PictureBox();
         panelDerecho = new Panel();
         panelCentral = new Panel();
-        components = new System.ComponentModel.Container();
         timerRefrescoValores = new System.Windows.Forms.Timer(components);
         panelIzquierdo.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)dgvValoresExtraidos).BeginInit();
@@ -149,15 +156,13 @@ partial class GestionEmisoresForm
         ((System.ComponentModel.ISupportInitialize)dgvRegexMatches).BeginInit();
         tabMultiLinea.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)dgvMultiLineaMapeo).BeginInit();
+        tabColumnasExcel.SuspendLayout();
+        ((System.ComponentModel.ISupportInitialize)dgvColumnasExcel).BeginInit();
+        panelColumnasBotones.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)picFactura).BeginInit();
         panelDerecho.SuspendLayout();
         panelCentral.SuspendLayout();
         SuspendLayout();
-        // 
-        // timerRefrescoValores
-        // 
-        timerRefrescoValores.Interval = 500;
-        timerRefrescoValores.Tick += TimerRefrescoValores_Tick;
         // 
         // lstEmisores
         // 
@@ -235,9 +240,6 @@ partial class GestionEmisoresForm
         // 
         // btnEliminar
         // 
-        // Misma anchura que btnNuevo y bordes exactamente sobre los de
-        // dgvValoresExtraidos (11…335, hueco de 6 px entre ambos: 11+159=170,
-        // 176+159=335).
         btnEliminar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
         btnEliminar.FlatStyle = FlatStyle.Flat;
         btnEliminar.Location = new Point(176, 252);
@@ -266,6 +268,7 @@ partial class GestionEmisoresForm
         tabs.Controls.Add(tabGeneral);
         tabs.Controls.Add(tabCampos);
         tabs.Controls.Add(tabMultiLinea);
+        tabs.Controls.Add(tabColumnasExcel);
         tabs.Location = new Point(6, 3);
         tabs.Name = "tabs";
         tabs.SelectedIndex = 0;
@@ -375,7 +378,7 @@ partial class GestionEmisoresForm
         lblIndicadorEmisor.ForeColor = Color.Gray;
         lblIndicadorEmisor.Location = new Point(130, 84);
         lblIndicadorEmisor.Name = "lblIndicadorEmisor";
-        lblIndicadorEmisor.Size = new Size(423, 20);
+        lblIndicadorEmisor.Size = new Size(492, 20);
         lblIndicadorEmisor.TabIndex = 9;
         lblIndicadorEmisor.Text = "Cargue un PDF o imagen de muestra para verificar los identificadores";
         lblIndicadorEmisor.TextAlign = ContentAlignment.MiddleLeft;
@@ -618,9 +621,6 @@ partial class GestionEmisoresForm
         cmbCampoNombre.Name = "cmbCampoNombre";
         cmbCampoNombre.Size = new Size(204, 28);
         cmbCampoNombre.TabIndex = 1;
-        // El nombre elegido gobierna el modo del panel: SelectedIndexChanged es
-        // el evento canónico de una combo DropDownList (dispara al elegir en el
-        // desplegable y al escribir un valor que esté en los ítems).
         cmbCampoNombre.SelectedIndexChanged += CmbCampoNombre_SelectedIndexChanged;
         // 
         // cmbCampoTipo
@@ -675,6 +675,26 @@ partial class GestionEmisoresForm
         txtCampoValorFijo.Size = new Size(204, 27);
         txtCampoValorFijo.TabIndex = 7;
         txtCampoValorFijo.TextChanged += CampoDetalle_Changed;
+        // 
+        // lblEstadoCampo
+        // 
+        lblEstadoCampo.AutoSize = true;
+        lblEstadoCampo.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+        lblEstadoCampo.ForeColor = Color.Gray;
+        lblEstadoCampo.Location = new Point(12, 150);
+        lblEstadoCampo.Name = "lblEstadoCampo";
+        lblEstadoCampo.Size = new Size(291, 20);
+        lblEstadoCampo.TabIndex = 58;
+        lblEstadoCampo.Text = "Sin selección: elige un nombre de campo";
+        // 
+        // lblTipoAyuda
+        // 
+        lblTipoAyuda.AutoSize = true;
+        lblTipoAyuda.ForeColor = Color.DimGray;
+        lblTipoAyuda.Location = new Point(12, 174);
+        lblTipoAyuda.Name = "lblTipoAyuda";
+        lblTipoAyuda.Size = new Size(0, 20);
+        lblTipoAyuda.TabIndex = 59;
         // 
         // btnCampoAdd
         // 
@@ -762,33 +782,13 @@ partial class GestionEmisoresForm
         btnRegexApplyToField.UseVisualStyleBackColor = false;
         btnRegexApplyToField.Click += BtnRegexApplyToField_Click;
         // 
-        // lblEstadoCampo
-        // 
-        lblEstadoCampo.AutoSize = true;
-        lblEstadoCampo.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-        lblEstadoCampo.ForeColor = Color.Gray;
-        lblEstadoCampo.Location = new Point(12, 150);
-        lblEstadoCampo.Name = "lblEstadoCampo";
-        lblEstadoCampo.Size = new Size(280, 20);
-        lblEstadoCampo.TabIndex = 58;
-        lblEstadoCampo.Text = "Sin selección: elige un nombre de campo";
-        // 
-        // lblTipoAyuda
-        // 
-        lblTipoAyuda.AutoSize = true;
-        lblTipoAyuda.ForeColor = Color.DimGray;
-        lblTipoAyuda.Location = new Point(12, 174);
-        lblTipoAyuda.Name = "lblTipoAyuda";
-        lblTipoAyuda.Size = new Size(0, 20);
-        lblTipoAyuda.TabIndex = 59;
-        // 
         // lblSinPdf
         // 
         lblSinPdf.AutoSize = true;
         lblSinPdf.ForeColor = Color.Gray;
         lblSinPdf.Location = new Point(136, 255);
         lblSinPdf.Name = "lblSinPdf";
-        lblSinPdf.Size = new Size(360, 20);
+        lblSinPdf.Size = new Size(430, 20);
         lblSinPdf.TabIndex = 60;
         lblSinPdf.Text = "Carga un PDF o imagen de muestra para probar las expresiones";
         // 
@@ -1242,6 +1242,79 @@ partial class GestionEmisoresForm
         lstPostProc.TabIndex = 1;
         lstPostProc.SelectedIndexChanged += LstPostProc_SelectedIndexChanged;
         // 
+        // tabColumnasExcel
+        // 
+        tabColumnasExcel.Controls.Add(dgvColumnasExcel);
+        tabColumnasExcel.Controls.Add(panelColumnasBotones);
+        tabColumnasExcel.Location = new Point(4, 29);
+        tabColumnasExcel.Name = "tabColumnasExcel";
+        tabColumnasExcel.Padding = new Padding(6);
+        tabColumnasExcel.Size = new Size(745, 443);
+        tabColumnasExcel.TabIndex = 0;
+        tabColumnasExcel.Text = "Columnas Excel (importación)";
+        tabColumnasExcel.UseVisualStyleBackColor = true;
+        // 
+        // dgvColumnasExcel
+        // 
+        dgvColumnasExcel.AllowUserToAddRows = false;
+        dgvColumnasExcel.AllowUserToDeleteRows = false;
+        dgvColumnasExcel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+        dgvColumnasExcel.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        dgvColumnasExcel.BackgroundColor = Color.White;
+        dgvColumnasExcel.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+        dgvColumnasExcel.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumnColumnasCampo, dataGridViewTextBoxColumnColumnasCabeceras });
+        dgvColumnasExcel.Location = new Point(9, 12);
+        dgvColumnasExcel.MultiSelect = false;
+        dgvColumnasExcel.Name = "dgvColumnasExcel";
+        dgvColumnasExcel.RowHeadersVisible = false;
+        dgvColumnasExcel.RowHeadersWidth = 51;
+        dgvColumnasExcel.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+        dgvColumnasExcel.Size = new Size(727, 379);
+        dgvColumnasExcel.TabIndex = 0;
+        // 
+        // dataGridViewTextBoxColumnColumnasCampo
+        // 
+        dataGridViewTextBoxColumnColumnasCampo.FillWeight = 30F;
+        dataGridViewTextBoxColumnColumnasCampo.HeaderText = "Campo interno";
+        dataGridViewTextBoxColumnColumnasCampo.MinimumWidth = 6;
+        dataGridViewTextBoxColumnColumnasCampo.Name = "dataGridViewTextBoxColumnColumnasCampo";
+        dataGridViewTextBoxColumnColumnasCampo.ReadOnly = true;
+        // 
+        // dataGridViewTextBoxColumnColumnasCabeceras
+        // 
+        dataGridViewTextBoxColumnColumnasCabeceras.FillWeight = 70F;
+        dataGridViewTextBoxColumnColumnasCabeceras.HeaderText = "Cabeceras aceptadas (separadas por coma)";
+        dataGridViewTextBoxColumnColumnasCabeceras.MinimumWidth = 6;
+        dataGridViewTextBoxColumnColumnasCabeceras.Name = "dataGridViewTextBoxColumnColumnasCabeceras";
+        // 
+        // panelColumnasBotones
+        // 
+        panelColumnasBotones.Controls.Add(btnGuardarColumnas);
+        panelColumnasBotones.Controls.Add(btnRestaurarColumnas);
+        panelColumnasBotones.Dock = DockStyle.Bottom;
+        panelColumnasBotones.Location = new Point(6, 397);
+        panelColumnasBotones.Name = "panelColumnasBotones";
+        panelColumnasBotones.Size = new Size(733, 40);
+        panelColumnasBotones.TabIndex = 1;
+        // 
+        // btnGuardarColumnas
+        // 
+        btnGuardarColumnas.Location = new Point(6, 6);
+        btnGuardarColumnas.Name = "btnGuardarColumnas";
+        btnGuardarColumnas.Size = new Size(150, 28);
+        btnGuardarColumnas.TabIndex = 0;
+        btnGuardarColumnas.Text = "Guardar columnas";
+        btnGuardarColumnas.UseVisualStyleBackColor = true;
+        // 
+        // btnRestaurarColumnas
+        // 
+        btnRestaurarColumnas.Location = new Point(162, 6);
+        btnRestaurarColumnas.Name = "btnRestaurarColumnas";
+        btnRestaurarColumnas.Size = new Size(170, 28);
+        btnRestaurarColumnas.TabIndex = 1;
+        btnRestaurarColumnas.Text = "Restaurar por defecto";
+        btnRestaurarColumnas.UseVisualStyleBackColor = true;
+        // 
         // cmbModoExtraccion
         // 
         cmbModoExtraccion.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -1316,15 +1389,12 @@ partial class GestionEmisoresForm
         // 
         // lblMuestraEscaneada
         // 
-        // Marca de que el PDF de muestra cargado en este editor no tiene capa
-        // de texto y el motor lo extrae con OCR. Se oculta si no hay muestra;
-        // el texto/visibilidad lo decide ActualizarAyudasMuestra().
         lblMuestraEscaneada.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
         lblMuestraEscaneada.AutoSize = true;
         lblMuestraEscaneada.ForeColor = Color.FromArgb(180, 110, 0);
         lblMuestraEscaneada.Location = new Point(500, 677);
         lblMuestraEscaneada.Name = "lblMuestraEscaneada";
-        lblMuestraEscaneada.Size = new Size(165, 20);
+        lblMuestraEscaneada.Size = new Size(196, 20);
         lblMuestraEscaneada.TabIndex = 3;
         lblMuestraEscaneada.Text = "▨ Muestra escaneada (OCR)";
         lblMuestraEscaneada.TextAlign = ContentAlignment.MiddleLeft;
@@ -1398,6 +1468,11 @@ partial class GestionEmisoresForm
         panelCentral.Size = new Size(239, 711);
         panelCentral.TabIndex = 2;
         // 
+        // timerRefrescoValores
+        // 
+        timerRefrescoValores.Interval = 500;
+        timerRefrescoValores.Tick += TimerRefrescoValores_Tick;
+        // 
         // GestionEmisoresForm
         // 
         ClientSize = new Size(1347, 711);
@@ -1425,6 +1500,9 @@ partial class GestionEmisoresForm
         tabMultiLinea.ResumeLayout(false);
         tabMultiLinea.PerformLayout();
         ((System.ComponentModel.ISupportInitialize)dgvMultiLineaMapeo).EndInit();
+        tabColumnasExcel.ResumeLayout(false);
+        ((System.ComponentModel.ISupportInitialize)dgvColumnasExcel).EndInit();
+        panelColumnasBotones.ResumeLayout(false);
         ((System.ComponentModel.ISupportInitialize)picFactura).EndInit();
         panelDerecho.ResumeLayout(false);
         panelDerecho.PerformLayout();
@@ -1470,6 +1548,13 @@ partial class GestionEmisoresForm
     private Button btnCampoAdd;
     private Button btnCampoRemove;
     private TabPage tabMultiLinea;
+    private TabPage tabColumnasExcel;
+    private DataGridView dgvColumnasExcel;
+    private DataGridViewTextBoxColumn dataGridViewTextBoxColumnColumnasCampo;
+    private DataGridViewTextBoxColumn dataGridViewTextBoxColumnColumnasCabeceras;
+    private Panel panelColumnasBotones;
+    private Button btnGuardarColumnas;
+    private Button btnRestaurarColumnas;
     private Label lblMultiLineas;
     private ListBox lstMultiLineas;
     private Button btnMultiLineaAdd;
