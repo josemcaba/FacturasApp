@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ColumnasExcel>
+  <Version>1</Version>
+  <Columnas>
+    <Columna>
+      <Campo>NumeroFactura</Campo>
+      <Cabeceras>
+        <Cabecera>número factura</Cabecera>
+        <Cabecera>número de factura</Cabecera>
+        <Cabecera>numero factura</Cabecera>
+        <Cabecera>numero de factura</Cabecera>
+        <Cabecera>nº factura</Cabecera>
+        <Cabecera>nº de factura</Cabecera>
+        <Cabecera>n° factura</Cabecera>
+      </Cabeceras>
+    </Columna>
+    <Columna>
+      <Campo>Fecha</Campo>
+      <Cabeceras>
+        <Cabecera>fecha factura</Cabecera>
+        <Cabecera>fecha de factura</Cabecera>
+        <Cabecera>fecha</Cabecera>
+      </Cabeceras>
+    </Columna>
+    <Columna>
+      <Campo>EmisorNombre</Campo>
+      <Cabeceras>
+        <Cabecera>emisor</Cabecera>
+        <Cabecera>nombre emisor</Cabecera>
+        <Cabecera>nif del emisor</Cabecera>
+        <Cabecera>nombre del emisor</Cabecera>
+      </Cabeceras>
+    </Columna>
+    <Columna>
+      <Campo>EmisorNIF</Campo>
+      <Cabeceras>
+        <Cabecera>cif emisor</Cabecera>
+        <Cabecera>nif emisor</Cabecera>
+        <Cabecera>cif del emisor</Cabecera>
+      </Cabeceras>
+    </Columna>
+    <Columna>
+      <Campo>ClienteNombre</Campo>
+      <Cabeceras>
+        <Cabecera>cliente</Cabecera>
+        <Cabecera>nombre cliente</Cabecera>
+        <Cabecera>nombre del cliente</Cabecera>
+      </Cabeceras>
+    </Columna>
+    <Columna>
+      <Campo>ClienteNIF</Campo>
+      <Cabeceras>
+        <Cabecera>cif</Cabecera>
+        <Cabecera>nif / cif</Cabecera>
+        <Cabecera>nif cliente</Cabecera>
+        <Cabecera>cif cliente</Cabecera>
+        <Cabecera>nif del cliente</Cabecera>
+      </Cabeceras>
+    </Columna>
+    <Columna>
+      <Campo>BaseImponible</Campo>
+      <Cabeceras>
+        <Cabecera>base</Cabecera>
+        <Cabecera>base imponible</Cabecera>
+        <Cabecera>base iva</Cabecera>
+        <Cabecera>base irpf</Cabecera>
+        <Cabecera>base re</Cabecera>
+      </Cabeceras>
+    </Columna>
+    <Columna>
+      <Campo>PorcentajeIVA</Campo>
+      <Cabeceras>
+        <Cabecera>tipo</Cabecera>
+        <Cabecera>% iva</Cabecera>
+        <Cabecera>iva %</Cabecera>
+      </Cabeceras>
+    </Columna>
+    <Columna>
+      <Campo>CuotaIVA</Campo>
+      <Cabeceras>
+        <Cabecera>iva</Cabecera>
+        <Cabecera>cuota iva</Cabecera>
+      </Cabeceras>
+    </Columna>
+    <Columna>
+      <Campo>PorcentajeIRPF</Campo>
+      <Cabeceras>
+        <Cabecera>irpf %</Cabecera>
+        <Cabecera>% irpf</Cabecera>
+      </Cabeceras>
+    </Columna>
+    <Columna>
+      <Campo>CuotaIRPF</Campo>
+      <Cabeceras>
+        <Cabecera>irpf</Cabecera>
+        <Cabecera>cuota irpf</Cabecera>
+      </Cabeceras>
+    </Columna>
+    <Columna>
+      <Campo>PorcentajeRE</Campo>
+      <Cabeceras>
+        <Cabecera>re %</Cabecera>
+        <Cabecera>% re</Cabecera>
+      </Cabeceras>
+    </Columna>
+    <Columna>
+      <Campo>CuotaRE</Campo>
+      <Cabeceras>
+        <Cabecera>re</Cabecera>
+        <Cabecera>cuota re</Cabecera>
+      </Cabeceras>
+    </Columna>
+    <Columna>
+      <Campo>TotalFactura</Campo>
+      <Cabeceras>
+        <Cabecera>total</Cabecera>
+        <Cabecera>importe total</Cabecera>
+      </Cabeceras>
+    </Columna>
+    <Columna>
+      <Campo>Concepto</Campo>
+      <Cabeceras>
+        <Cabecera>concepto</Cabecera>
+      </Cabeceras>
+    </Columna>
+  </Columnas>
+</ColumnasExcel>

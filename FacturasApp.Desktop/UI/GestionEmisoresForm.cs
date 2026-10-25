@@ -36,6 +36,14 @@ public partial class GestionEmisoresForm : Form
     private bool _cargandoPostProc;
     private bool _refrescandoCuadroPostProc;
     private bool _cargandoLinea;
+    // Pestaña «Columnas Excel»: mapeo de cabeceras → campos internos.
+    private bool _columnasModificadas;
+    private readonly ConfiguracionColumnasExcel _configColumnas = new();
+    private DataGridView _dgvColumnasExcel = null!;
+    private TabPage _tabColumnasExcel = null!;
+    private Button _btnGuardarColumnas = null!;
+    private Button _btnRestaurarColumnas = null!;
+    private Label _lblEstadoColumnas = null!;
     // Última consulta VIES en memoria, claveada por el NIF exacto consultado:
     // evita repetir la llamada a la red al guardar tras pulsar "Verificar VIES".
     private string? _viesNifConsultado;
@@ -66,6 +74,8 @@ public partial class GestionEmisoresForm : Form
 
         InitializeComponent();
 
+        InicializarPestanaColumnasExcel();
+
         // InitializeComponent puede disparar handlers de controles (p. ej.
         // CellValueChanged al fijar HeaderText de las columnas de dgvZonas) con
         // _cargando todavía a false; sin este reset el formulario se abriría
@@ -83,10 +93,10 @@ public partial class GestionEmisoresForm : Form
         Load += (_, _) => PanelCentral_Resize(null, EventArgs.Empty);
         FormClosing += (_, args) =>
         {
-            if (_modificado)
+            if (_modificado || _columnasModificadas)
             {
-                var msg = _esNuevo
-                    ? "Hay un emisor nuevo sin guardar. ¿Salir sin guardar?"
+                var msg = _columnasModificadas && !_modificado
+                    ? "Hay cambios en las columnas de Excel sin guardar. ¿Salir sin guardar?"
                     : "Hay cambios sin guardar. ¿Salir sin guardar?";
                 var r = MessageBox.Show(msg,
                     "Cambios no guardados", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -94,6 +104,182 @@ public partial class GestionEmisoresForm : Form
             }
             LimpiarPaginas();
         };
+    }
+
+    private void InicializarPestanaColumnasExcel()
+    {
+        var tab = new TabPage("Columnas Excel (importación)");
+        _tabColumnasExcel = tab;
+        tab.Padding = new Padding(6);
+
+        _dgvColumnasExcel = new DataGridView
+        {
+            Dock = DockStyle.Fill,
+            AllowUserToAddRows = false,
+            AllowUserToDeleteRows = false,
+            AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+            SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+            MultiSelect = false,
+            RowHeadersVisible = false
+        };
+
+        var colCampo = new DataGridViewTextBoxColumn
+        {
+            Name = "Campo",
+            HeaderText = "Campo interno",
+            ReadOnly = true,
+            FillWeight = 30
+        };
+        var colCabeceras = new DataGridViewTextBoxColumn
+        {
+            Name = "Cabeceras",
+            HeaderText = "Cabeceras aceptadas (separadas por coma)",
+            FillWeight = 70
+        };
+        _dgvColumnasExcel.Columns.Add(colCampo);
+        _dgvColumnasExcel.Columns.Add(colCabeceras);
+
+        var panelBotones = new Panel { Dock = DockStyle.Bottom, Height = 40 };
+        _btnGuardarColumnas = new Button
+        {
+            Text = "Guardar columnas",
+            Location = new Point(6, 6),
+            Size = new Size(150, 28)
+        };
+        _btnRestaurarColumnas = new Button
+        {
+            Text = "Restaurar por defecto",
+            Location = new Point(162, 6),
+            Size = new Size(170, 28)
+        };
+        _lblEstadoColumnas = new Label
+        {
+            Text = "Listo",
+            Location = new Point(340, 10),
+            AutoSize = true
+        };
+        panelBotones.Controls.Add(_btnGuardarColumnas);
+        panelBotones.Controls.Add(_btnRestaurarColumnas);
+        panelBotones.Controls.Add(_lblEstadoColumnas);
+
+        tab.Controls.Add(_dgvColumnasExcel);
+        tab.Controls.Add(panelBotones);
+
+        tabs.TabPages.Add(tab);
+
+        _dgvColumnasExcel.CellValueChanged += (_, _) =>
+        {
+            if (!_cargando) { _columnasModificadas = true; _btnGuardarColumnas.Enabled = true; }
+        };
+        _dgvColumnasExcel.CurrentCellDirtyStateChanged += (_, _) =>
+        {
+            if (_dgvColumnasExcel.IsCurrentCellDirty)
+                _dgvColumnasExcel.CommitEdit(DataGridViewDataErrorContexts.Commit);
+        };
+
+        _btnGuardarColumnas.Click += BtnGuardarColumnas_Click;
+        _btnRestaurarColumnas.Click += BtnRestaurarColumnas_Click;
+
+        CargarColumnasEnGrid();
+        _btnGuardarColumnas.Enabled = false;
+
+        tabs.SelectedIndexChanged += (_, _) =>
+        {
+            if (tabs.SelectedTab == _tabColumnasExcel)
+                LimpiarPaginas();
+            ActualizarVersionXml();
+        };
+    }
+
+    private void CargarColumnasEnGrid()
+    {
+        _cargando = true;
+        try
+        {
+            var config = _configColumnas.Cargar();
+            _dgvColumnasExcel.Rows.Clear();
+            foreach (var col in config.Columnas)
+            {
+                _dgvColumnasExcel.Rows.Add(col.Campo, string.Join(", ", col.Cabeceras));
+            }
+            _columnasModificadas = false;
+            _btnGuardarColumnas.Enabled = false;
+            _lblEstadoColumnas.Text = $"Cargadas {config.Columnas.Count} columnas (v{config.Version})";
+            if (tabs.SelectedTab == _tabColumnasExcel)
+                ActualizarVersionXml();
+        }
+        finally
+        {
+            _cargando = false;
+        }
+    }
+
+    private void BtnGuardarColumnas_Click(object? sender, EventArgs e)
+    {
+        try
+        {
+            var config = _configColumnas.Cargar();
+            // Reconstruimos la lista a partir del grid, manteniendo el orden.
+            var nuevas = new List<FacturasApp.Core.Models.ColumnaExcelConfig>();
+            foreach (DataGridViewRow row in _dgvColumnasExcel.Rows)
+            {
+                var campo = row.Cells["Campo"].Value?.ToString()?.Trim() ?? "";
+                if (string.IsNullOrEmpty(campo)) continue;
+                var texto = row.Cells["Cabeceras"].Value?.ToString() ?? "";
+                var cabeceras = texto.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                    .Select(x => x.Trim().ToLowerInvariant())
+                    .Where(x => !string.IsNullOrEmpty(x))
+                    .Distinct()
+                    .ToList();
+                nuevas.Add(new FacturasApp.Core.Models.ColumnaExcelConfig
+                {
+                    Campo = campo,
+                    Cabeceras = cabeceras
+                });
+            }
+            config.Columnas = nuevas;
+            _configColumnas.Guardar(config);
+
+            // Validación: campos obligatorios sin variantes.
+            var obligatorios = new[] { "NumeroFactura", "Fecha", "BaseImponible", "TotalFactura" };
+            var sinVariantes = nuevas
+                .Where(c => obligatorios.Contains(c.Campo, StringComparer.OrdinalIgnoreCase) && (c.Cabeceras == null || c.Cabeceras.Count == 0))
+                .Select(c => c.Campo)
+                .ToList();
+            if (sinVariantes.Count > 0)
+                MessageBox.Show($"Aviso: los siguientes campos obligatorios no tienen ninguna cabecera: {string.Join(", ", sinVariantes)}",
+                    "Columnas Excel", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            _columnasModificadas = false;
+            _btnGuardarColumnas.Enabled = false;
+            _lblEstadoColumnas.Text = $"Guardado (v{config.Version})";
+            ActualizarVersionXml();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error al guardar: {ex.Message}", "Columnas Excel", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    private void BtnRestaurarColumnas_Click(object? sender, EventArgs e)
+    {
+        var r = MessageBox.Show("¿Restaurar las columnas por defecto? Se perderán los cambios no guardados.",
+            "Columnas Excel", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+        if (r != DialogResult.Yes) return;
+        try
+        {
+            // Borramos el archivo para que Cargar() lo resembrara con defaults.
+            var ruta = _configColumnas.RutaArchivo;
+            if (File.Exists(ruta)) File.Delete(ruta);
+            var sentinel = Path.Combine(Path.GetDirectoryName(ruta)!, "ColumnasExcel.eliminado");
+            if (File.Exists(sentinel)) File.Delete(sentinel);
+            CargarColumnasEnGrid();
+            _lblEstadoColumnas.Text = "Restaurado por defecto";
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error: {ex.Message}", "Columnas Excel", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
     }
 
     private void MarcarModificado()
@@ -878,6 +1064,8 @@ public partial class GestionEmisoresForm : Form
         _pendienteTabla = false;
         timerRefrescoValores.Stop();
         picFactura.Image = null;
+        txtRegexSource.Text = string.Empty;
+        try { dgvValoresExtraidos.Rows.Clear(); } catch { }
         ActualizarAyudasMuestra();
         // tabPaginas remains visible (empty) to reserve layout space
     }
@@ -1209,7 +1397,15 @@ public partial class GestionEmisoresForm : Form
     /// </summary>
     private void ActualizarVersionXml()
     {
-        long version = _emisorActual?.Version ?? 1;
+        long version = 1;
+        if (tabs.SelectedTab == _tabColumnasExcel)
+        {
+            try { version = _configColumnas.Cargar().Version; } catch { version = 1; }
+        }
+        else
+        {
+            version = _emisorActual?.Version ?? 1;
+        }
         if (version <= 1)
         {
             lblVersionXml.Text = "Versión XML: —";

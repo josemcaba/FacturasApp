@@ -31,6 +31,10 @@ public class ConfiguracionEmisores
 
         foreach (var ruta in Directory.GetFiles(RutaDirectorio, "*.xml"))
         {
+            // ColumnasExcel.xml comparte carpeta pero no es un emisor.
+            if (Path.GetFileName(ruta).Equals("ColumnasExcel.xml", StringComparison.OrdinalIgnoreCase))
+                continue;
+
             try
             {
                 using var stream = File.OpenRead(ruta);
@@ -201,7 +205,7 @@ public class ConfiguracionEmisores
         }
     }
 
-    private static long LeerVersion(byte[] datos)
+    public static long LeerVersion(byte[] datos)
     {
         try
         {
@@ -213,7 +217,7 @@ public class ConfiguracionEmisores
         }
     }
 
-    private static long LeerVersion(string ruta)
+    public static long LeerVersion(string ruta)
     {
         try
         {
@@ -225,7 +229,7 @@ public class ConfiguracionEmisores
         }
     }
 
-    private static long LeerVersion(XDocument documento)
+    public static long LeerVersion(XDocument documento)
     {
         var texto = documento.Root?.Element("Version")?.Value;
         return long.TryParse(texto, out var version) && version > 0 ? version : 1;
@@ -242,7 +246,7 @@ public class ConfiguracionEmisores
     /// Deja el XML sin el elemento &lt;Version&gt; y normaliza fin de línea, para
     /// comparar el contenido real ignorando la versión y los CRLF/LF del editor.
     /// </summary>
-    private static string ContenidoSinVersion(string xml)
+    public static string ContenidoSinVersion(string xml)
     {
         var sinVersion = Regex.Replace(xml, "<Version>.*?</Version>", string.Empty,
             RegexOptions.Singleline);

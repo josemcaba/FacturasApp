@@ -6,60 +6,39 @@ namespace FacturasApp.Core.Services
 {
     public class ExcelExtractor
     {
-        // ── Variantes aceptadas por cada campo ───────────────────────────────
-        // Añade aquí cualquier nombre de columna que puedas encontrar
-        private static readonly Dictionary<string, string[]> MapaColumnas = new()
-        {
-            ["NumeroFactura"]   = ["número factura", "número de factura"],
-            ["Fecha"]           = ["fecha factura"],
-            ["EmisorNombre"]    = ["emisor", "nombre emisor"],
-            ["EmisorNIF"]       = ["cif emisor", "nif emisor"],
-            ["ClienteNombre"]   = ["cliente"],
-            ["ClienteNIF"]      = ["cif", "nif / cif"],
-            ["BaseImponible"]   = ["base", "base imponible"],
-            ["PorcentajeIVA"]   = ["tipo"],
-            ["CuotaIVA"]        = ["iva"],
-            ["PorcentajeIRPF"]  = ["irpf %", "% irpf"],
-            ["CuotaIRPF"]       = ["irpf"],
-            ["PorcentajeRE"]    = ["re %", "% re"],
-            ["CuotaRE"]         = ["re"],
-            ["TotalFactura"]    = ["total", "importe total"],
-        };
+        private readonly ConfiguracionColumnasExcel _configuracion = new();
 
         // ── Método principal ─────────────────────────────────────────────────
-
         public List<Factura> ImportarDesdeExcel(string rutaExcel)
         {
+            var config = _configuracion.Cargar();
+            var mapa = ConfiguracionColumnasExcel.ToMapa(config);
+
             var facturas = new List<Factura>();
 
             using var workbook = new XLWorkbook(rutaExcel);
             var hoja = workbook.Worksheets.First();
-            var mapaIndices = MapearColumnas(hoja);
+            var mapaIndices = MapearColumnas(hoja, mapa);
 
-            // Comprobamos que hay columnas reconocidas
             if (mapaIndices.Count == 0)
                 throw new InvalidOperationException(
                     "No se reconoció ninguna columna del Excel. " +
                     "Verifica que la primera fila contiene cabeceras.");
 
-            // Procesamos cada fila de datos (empezamos en la 2ª fila)
             int ultimaFila = hoja.LastRowUsed()?.RowNumber() ?? 1;
 
             for (int fila = 2; fila <= ultimaFila; fila++)
             {
                 var row = hoja.Row(fila);
-
-                // Saltamos filas completamente vacías
                 if (row.IsEmpty()) continue;
 
                 try
                 {
-                    var factura = ConstruirFactura(row, mapaIndices, rutaExcel, fila);
+                    var factura = ConstruirFactura(row, mapaIndices, rutaExcel, fila, mapa);
                     facturas.Add(factura);
                 }
                 catch (Exception ex)
                 {
-                    // Si una fila falla la registramos y continuamos
                     facturas.Add(new Factura
                     {
                         Estado = EstadoFactura.Error,
@@ -72,10 +51,7 @@ namespace FacturasApp.Core.Services
         }
 
         // ── Mapeo de columnas ────────────────────────────────────────────────
-
-        // Lee la cabecera del Excel y devuelve un diccionario
-        // campo → número de columna
-        private Dictionary<string, int> MapearColumnas(IXLWorksheet hoja)
+        private Dictionary<string, int> MapearColumnas(IXLWorksheet hoja, Dictionary<string, string[]> mapa)
         {
             var resultado = new Dictionary<string, int>();
             var filaHeader = hoja.Row(1);
@@ -89,10 +65,10 @@ namespace FacturasApp.Core.Services
 
                 if (string.IsNullOrEmpty(cabecera)) continue;
 
-                // Buscamos a qué campo corresponde esta cabecera
-                foreach (var kvp in MapaColumnas)
+                foreach (var kvp in mapa)
                 {
-                    if (kvp.Value.Contains(cabecera) && !resultado.ContainsKey(kvp.Key))
+                    if (kvp.Value.Contains(cabecera, StringComparer.OrdinalIgnoreCase)
+                        && !resultado.ContainsKey(kvp.Key))
                     {
                         resultado[kvp.Key] = col;
                         break;
@@ -104,19 +80,18 @@ namespace FacturasApp.Core.Services
         }
 
         // ── Construcción de la factura ───────────────────────────────────────
-
         private Factura ConstruirFactura(IXLRow row,
-            Dictionary<string, int> mapaIndices, string rutaExcel, int numFila)
+            Dictionary<string, int> mapaIndices, string rutaExcel, int numFila,
+            Dictionary<string, string[]> mapa)
         {
             var factura = new Factura
             {
-                ExtractedByOcr = false, // viene de Excel, no de OCR
+                ExtractedByOcr = false,
                 Emisor = new Empresa(),
                 Receptor = new Empresa(),
                 RutaArchivo = $"{rutaExcel} (fila {numFila})"
             };
 
-            // Lectura de campos
             factura.NumeroFactura = LeerTexto(row, mapaIndices, "NumeroFactura");
             factura.Fecha = LeerFecha(row, mapaIndices);
             factura.Emisor.Nombre = LeerTexto(row, mapaIndices, "EmisorNombre");
@@ -130,7 +105,6 @@ namespace FacturasApp.Core.Services
             factura.BaseImponible = LeerDecimal(row, mapaIndices, "BaseImponible");
             factura.CuotaIVA = LeerDecimal(row, mapaIndices, "CuotaIVA");
             factura.PorcentajeIVA = LeerDecimal(row, mapaIndices, "PorcentajeIVA");
-            // Si el porcentaje de IVA es 0 y la cuota de IVA es distinto de 0, asumimos que es 21%
             if (factura.PorcentajeIVA == 0m && factura.CuotaIVA != 0m)
                 factura.PorcentajeIVA = 21m;
             factura.PorcentajeIRPF = LeerDecimal(row, mapaIndices, "PorcentajeIRPF");
@@ -139,22 +113,17 @@ namespace FacturasApp.Core.Services
             factura.CuotaRE = LeerDecimal(row, mapaIndices, "CuotaRE");
             factura.TotalFactura = LeerDecimal(row, mapaIndices, "TotalFactura");
 
-            // Validación de campos mínimos
             if (string.IsNullOrEmpty(factura.NumeroFactura))
                 factura.MensajeError.Add("Falta número de factura");
             if (factura.BaseImponible == 0m && factura.TotalFactura == 0m)
                 factura.MensajeError.Add("Faltan base imponible y total");
 
-            // Determinar estado y mensajes de error
             factura.Estado = FacturaEstado.Determinar(factura);
-
             return factura;
         }
 
         // ── Lectores de celda ────────────────────────────────────────────────
-
-        private string LeerTexto(IXLRow row,
-            Dictionary<string, int> mapa, string campo)
+        private string LeerTexto(IXLRow row, Dictionary<string, int> mapa, string campo)
         {
             if (!mapa.TryGetValue(campo, out int col)) return string.Empty;
             return row.Cell(col).GetString().Trim();
@@ -163,83 +132,41 @@ namespace FacturasApp.Core.Services
         private DateTime? LeerFecha(IXLRow row, Dictionary<string, int> mapa)
         {
             if (!mapa.TryGetValue("Fecha", out int col)) return null;
-
             var celda = row.Cell(col);
-
-            // Intentamos primero como fecha nativa de Excel
             if (celda.DataType == XLDataType.DateTime)
                 return celda.GetDateTime();
 
-            // Si es texto intentamos parsearlo
             string texto = celda.GetString().Trim();
             if (string.IsNullOrEmpty(texto)) return null;
-
-            if (DateTime.TryParse(texto,
-                new CultureInfo("es-ES"),
-                DateTimeStyles.None,
-                out DateTime fecha))
+            if (DateTime.TryParse(texto, new CultureInfo("es-ES"), DateTimeStyles.None, out DateTime fecha))
                 return fecha;
-
             return null;
         }
 
-        private decimal LeerDecimal(IXLRow row,
-            Dictionary<string, int> mapa, string campo)
+        private decimal LeerDecimal(IXLRow row, Dictionary<string, int> mapa, string campo)
         {
             if (!mapa.TryGetValue(campo, out int col)) return 0m;
-
             var celda = row.Cell(col);
-
-            // Si la celda ya es numérica lo leemos directamente
             if (celda.DataType == XLDataType.Number)
                 return (decimal)celda.GetDouble();
 
-            // Si es texto lo parseamos
-            string texto = celda.GetString()
-                .Trim()
-                .Replace("€", "")
-                .Replace("%", "")
-                .Trim();
-
+            string texto = celda.GetString().Trim().Replace("€", "").Replace("%", "").Trim();
             if (string.IsNullOrEmpty(texto)) return 0m;
 
-            // Detectamos si usa coma o punto como separador decimal
-            // Formato europeo: 1.234,56 → 1234.56
             if (texto.Contains(',') && texto.Contains('.'))
                 texto = texto.Replace(".", "").Replace(",", ".");
             else if (texto.Contains(','))
                 texto = texto.Replace(",", ".");
 
-            return decimal.TryParse(texto,
-                NumberStyles.Any,
-                CultureInfo.InvariantCulture,
-                out var r) ? r : 0m;
+            return decimal.TryParse(texto, NumberStyles.Any, CultureInfo.InvariantCulture, out var r) ? r : 0m;
         }
-
 
         // ── Utilidad: columnas no reconocidas ────────────────────────────────
         public List<string> ObtenerColumnasNoReconocidas(string rutaExcel)
         {
-            using var workbook = new XLWorkbook(rutaExcel);
-            var hoja = workbook.Worksheets.First();
-            var noReconocidas = new List<string>();
-            int ultimaCol = hoja.LastColumnUsed()?.ColumnNumber() ?? 0;
-            var todasLasVariantes = MapaColumnas.Values
-                .SelectMany(v => v)
-                .ToHashSet();
-
-            for (int col = 1; col <= ultimaCol; col++)
-            {
-                string cabecera = hoja.Row(1).Cell(col).GetString()
-                    .Trim()
-                    .ToLowerInvariant();
-
-                if (!string.IsNullOrEmpty(cabecera) &&
-                    !todasLasVariantes.Contains(cabecera))
-                    noReconocidas.Add(cabecera);
-            }
-
-            return noReconocidas;
+            var config = _configuracion.Cargar();
+            var mapa = ConfiguracionColumnasExcel.ToMapa(config);
+            return ConfiguracionColumnasExcel.ObtenerColumnasNoReconocidas(rutaExcel, mapa);
         }
     }
 }

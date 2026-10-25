@@ -52,7 +52,7 @@ Mezcla de estilos; seguir el de la carpeta que se toque:
 
 - Código en español (nombres, comentarios, ficheros). Nullable e ImplicitUsings activados, WinForms con ficheros de Designer (`*.Designer.cs`, `.resx`), solución en formato `.slnx`.
 - **Commitear**: cuando estimes oportuno, pídeme permiso explicando brevemente el motivo; autorizado el commit, hago `push` sin preguntar de nuevo (salvo que diga «no hagas push»). Commitea siempre todo el working tree, aunque haya algo en el stage.
-- **Todo commit incluye los XML de emisores**: antes de commitear, sincroniza `%APPDATA%/FacturasApp/Emisores/*.xml` → `FacturasApp.Core/Data/Emisores/` (`bash ActualizarEmisores.sh`) y comprueba en `git status` que los pendientes entren en el commit; nunca un add selectivo que los deje fuera.
+- **Todo commit incluye los XML de emisores y de columnas Excel**: antes de commitear, sincroniza `%APPDATA%/FacturasApp/Emisores/*.xml` → `FacturasApp.Core/Data/Emisores/` (`bash ActualizarEmisores.sh`, que también cubre `ColumnasExcel.xml` en la misma carpeta) y comprueba en `git status` que los pendientes entren en el commit; nunca un add selectivo que los deje fuera.
 - **«Publicar» ≠ «push»**: en este proyecto **publicar significa desplegar a los clientes** con `PublicarFacturasApp.sh` (ClickOnce → josemcaba.github.io). «No publiques» pide no ejecutar ese despliegue, **no** omitir el push.
 
 ## Key Packages (csproj)
