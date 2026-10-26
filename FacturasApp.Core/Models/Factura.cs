@@ -58,8 +58,8 @@
         public decimal DiferenciaTotal =>
             Math.Abs(TotalCalculado - TotalFactura);
 
-        // Tolerancia aceptable en la comparación de totales (0,01€)
-        private const decimal ToleranciaTotal = 0.01m;
+        // Tolerancia aceptable en la comparación de totales (0,05€)
+        private const decimal ToleranciaTotal = 0.05m;
 
         public bool TotalesCoinciden =>
             DiferenciaTotal <= ToleranciaTotal;
