@@ -141,6 +141,7 @@ partial class GestionEmisoresForm
         lblVersionXml = new Label();
         lblMuestraEscaneada = new Label();
         btnCargarPdfMuestra = new Button();
+        txtRutaMuestra = new TextBox();
         tabPaginas = new TabControl();
         picFactura = new PictureBox();
         panelDerecho = new Panel();
@@ -1402,17 +1403,29 @@ partial class GestionEmisoresForm
         // 
         // btnCargarPdfMuestra
         // 
-        btnCargarPdfMuestra.Anchor = AnchorStyles.Top;
         btnCargarPdfMuestra.BackColor = Color.FromArgb(46, 117, 182);
         btnCargarPdfMuestra.FlatStyle = FlatStyle.Flat;
         btnCargarPdfMuestra.ForeColor = Color.White;
         btnCargarPdfMuestra.Location = new Point(8, 0);
         btnCargarPdfMuestra.Name = "btnCargarPdfMuestra";
-        btnCargarPdfMuestra.Size = new Size(225, 32);
+        btnCargarPdfMuestra.Size = new Size(160, 32);
         btnCargarPdfMuestra.TabIndex = 0;
-        btnCargarPdfMuestra.Text = "Cargar PDF o imagen de muestra";
+        btnCargarPdfMuestra.Text = "Cargar PDF/imagen";
         btnCargarPdfMuestra.UseVisualStyleBackColor = false;
         btnCargarPdfMuestra.Click += BtnCargarPdfMuestra_Click;
+        // 
+        // txtRutaMuestra
+        // 
+        txtRutaMuestra.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        txtRutaMuestra.BackColor = Color.FromArgb(240, 240, 240);
+        txtRutaMuestra.Location = new Point(174, 4);
+        txtRutaMuestra.Name = "txtRutaMuestra";
+        txtRutaMuestra.PlaceholderText = "...Ruta de la factura de muestra";
+        txtRutaMuestra.ReadOnly = true;
+        txtRutaMuestra.RightToLeft = RightToLeft.Yes;
+        txtRutaMuestra.Size = new Size(57, 27);
+        txtRutaMuestra.TabIndex = 61;
+        txtRutaMuestra.TextAlign = HorizontalAlignment.Right;
         // 
         // tabPaginas
         // 
@@ -1460,6 +1473,7 @@ partial class GestionEmisoresForm
         // panelCentral
         // 
         panelCentral.Controls.Add(btnCargarPdfMuestra);
+        panelCentral.Controls.Add(txtRutaMuestra);
         panelCentral.Controls.Add(tabPaginas);
         panelCentral.Controls.Add(picFactura);
         panelCentral.Dock = DockStyle.Left;
@@ -1507,6 +1521,7 @@ partial class GestionEmisoresForm
         panelDerecho.ResumeLayout(false);
         panelDerecho.PerformLayout();
         panelCentral.ResumeLayout(false);
+        panelCentral.PerformLayout();
         ResumeLayout(false);
     }
 
@@ -1608,6 +1623,7 @@ partial class GestionEmisoresForm
     private Panel panelDerecho;
     private Panel panelCentral;
     private Button btnCargarPdfMuestra;
+    private TextBox txtRutaMuestra;
     private TabControl tabPaginas;
     private PictureBox picFactura;
     private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;

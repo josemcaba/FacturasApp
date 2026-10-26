@@ -357,8 +357,9 @@ public partial class GestionEmisoresForm : Form
             picFactura.Left = 8;
             picFactura.Top = topY;
 
-            btnCargarPdfMuestra.Left = 8;
-            btnCargarPdfMuestra.Width = picFactura.Width;
+            // El botón NO se dimensiona aquí: con Anchor Top|Left mantiene su
+            // ancho fijo (160) en cualquier tamaño de ventana, y a su derecha
+            // txtRutaMuestra ocupa el resto de la columna por su Anchor.
 
             tabPaginas.Left = 8;
             tabPaginas.Width = picFactura.Width;
@@ -2703,6 +2704,15 @@ public partial class GestionEmisoresForm : Form
 
         if (lblMuestraEscaneada != null)
             lblMuestraEscaneada.Visible = hayPdf && EsPdfEscaneado(_rutaPdf);
+
+        // Ruta de la muestra junto al botón de carga (estilo txtRutaExcel):
+        // vacía muestra el placeholder; el cursor al principio para ver «C:\…».
+        if (txtRutaMuestra != null)
+        {
+            txtRutaMuestra.Text = _rutaPdf ?? string.Empty;
+            if (txtRutaMuestra.TextLength > 0)
+                txtRutaMuestra.SelectionStart = 0;
+        }
     }
 
     // ── EVENTOS POST-PROCESAMIENTO ─────────────────────────────────────────────

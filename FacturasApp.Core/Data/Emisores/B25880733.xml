@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B25880733</Nif>
   <Nombre>IMPULSO SARIGABO, SLU</Nombre>
-  <Version>202610230458</Version>
+  <Version>202610261458</Version>
   <Identificadores>
     <Id>IMPULSO SARIGABO, SLU</Id>
     <Id>B25880733</Id>
@@ -29,8 +29,9 @@
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="ReceptorNif">
+      <Regex>CIF\s+(.{8})</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
-      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="BaseImponible">
       <Regex>Tot.+porte(.+)€</Regex>
@@ -70,6 +71,12 @@
       <Accion Tipo="Establecer Valor" CampoDestino="ReceptorNif" Valor="74898980J" Sustituto="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
     </Regla>
   </PostProcesamiento>
-  <ZonasOcr />
+  <ZonasOcr>
+    <Zona Campo="P1_Z1" Pagina="1" X="2.8" Y="25.7" Ancho="38" Alto="6.4" />
+    <Zona Campo="P1_Z2" Pagina="1" X="39.3" Y="25.5" Ancho="33.4" Alto="6.9" />
+    <Zona Campo="P1_Z3" Pagina="1" X="49.4" Y="6.4" Ancho="47" Alto="17.6" />
+    <Zona Campo="P2_Z1" Pagina="2" X="50.8" Y="67.3" Ancho="46.6" Alto="19.6" />
+    <Zona Campo="P1_Z4" Pagina="1" X="50.8" Y="67.3" Ancho="46.6" Alto="19.6" />
+  </ZonasOcr>
   <NifEstado>Valido</NifEstado>
 </Emisor>
