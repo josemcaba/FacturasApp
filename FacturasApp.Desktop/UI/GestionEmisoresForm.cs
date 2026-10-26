@@ -3338,6 +3338,18 @@ public partial class GestionEmisoresForm : Form
         // Ningún código parsea esta cadena: la selección siempre se resuelve
         // con SelectedItem → Config.Nif.
         public string DisplayText =>
-            $"{Config.Nif} - " + (Escaneado ? "▨ " : "") + Config.Nombre;
+            $"{NifVisual(Config.Nif)} - " + (Escaneado ? "▨ " : "") + Config.Nombre;
+
+        /// <summary>
+        /// NIF para pintar en la lista: máximo 9 caracteres para que la columna
+        /// «NIF - nombre» quede alineada (Consolas). Si el NIF pasa de 9 se
+        /// muestran los últimos 8 precedidos de «*», que indica el truncado
+        /// (p. ej. NL850209092B01 → *09092B01).
+        /// </summary>
+        private static string NifVisual(string? nif)
+        {
+            var n = nif ?? string.Empty;
+            return n.Length > 9 ? "*" + n[^8..] : n;
+        }
     }
 }
