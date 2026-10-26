@@ -2,17 +2,16 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B25880733</Nif>
   <Nombre>IMPULSO SARIGABO, SLU</Nombre>
-  <Version>202610261458</Version>
+  <Version>202610262339</Version>
   <Identificadores>
     <Id>IMPULSO SARIGABO, SLU</Id>
-    <Id>B25880733</Id>
     <Id>LEKKERLAND</Id>
   </Identificadores>
-  <ModoExtraccion>Ordenado</ModoExtraccion>
+  <ModoExtraccion>Simple</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\OSCAR ARIAS 2\Gastos\Contabilizados\2026-07-07_Impulso_Sarigabo_SLU_FVR26070884.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\OSCAR ARIAS\Gastos\Contabilizados\2026-07-15_Impulso_Sarigabo_SLU_FVR26071916.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>Factura (F.+?)\s</Regex>
@@ -24,7 +23,7 @@
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="ReceptorNombre">
-      <Regex>LEKKERLAND\s+(.+)</Regex>
+      <Regex>LEKKERLAND.*\s+(.+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
@@ -33,18 +32,8 @@
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
-    <Campo Nombre="BaseImponible">
-      <Regex>Tot.+porte(.+)€</Regex>
-      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
-      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-    </Campo>
     <Campo Nombre="TotalFactura">
-      <Regex>Importe RE\s*[\d.,]+€\s+\d+%\s+[\d.,]+€\s*[\S\s]*?([\d.,]+)€</Regex>
-      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
-      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
-    </Campo>
-    <Campo Nombre="PorcentajeIVA">
-      <Regex>Importe RE\s*[\d.,]+€\s+(\d+)%\s+[\d.,]+€\s*[\S\s]*?[\d.,]+€</Regex>
+      <Regex>Tota.\s+Factura\s+([\d.,]+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
@@ -53,10 +42,10 @@
     <RegexLinea />
     <Lineas>
       <Linea>
-        <Regex>Nueva línea (regex)</Regex>
+        <Regex>([\d.,]+)€\s+([\d.,]+)%</Regex>
         <MapeoCampos>
           <Mapeo Nombre="BaseImponible" Grupo="1" />
-          <Mapeo Nombre="PorcentajeIVA" Grupo="1" />
+          <Mapeo Nombre="PorcentajeIVA" Grupo="2" />
         </MapeoCampos>
       </Linea>
     </Lineas>
@@ -64,19 +53,23 @@
   </MultiLinea>
   <PostProcesamiento>
     <Regla>
+      <Accion Tipo="Sustituir" CampoDestino="ReceptorNombre" Valor=" MERINI" Sustituto="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+    </Regla>
+    <Regla>
       <CondicionCampo>
-        <Campo>ReceptorNif</Campo>
-        <Valor>74898980</Valor>
+        <Campo>ReceptorNombre</Campo>
+        <Valor>ARIAS MERINO OSCAR</Valor>
       </CondicionCampo>
-      <Accion Tipo="Establecer Valor" CampoDestino="ReceptorNif" Valor="74898980J" Sustituto="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
+      <Accion Tipo="Establecer Valor" CampoDestino="ReceptorNif" Valor="74890980J" Sustituto="" CampoOrigen1="" Operador="+" CampoOrigen2="" />
     </Regla>
   </PostProcesamiento>
   <ZonasOcr>
-    <Zona Campo="P1_Z1" Pagina="1" X="2.8" Y="25.7" Ancho="38" Alto="6.4" />
-    <Zona Campo="P1_Z2" Pagina="1" X="39.3" Y="25.5" Ancho="33.4" Alto="6.9" />
+    <Zona Campo="P1_Z1" Pagina="1" X="2.8" Y="25.7" Ancho="38" Alto="9" />
+    <Zona Campo="P1_Z2" Pagina="1" X="39.3" Y="25.5" Ancho="33.4" Alto="8" />
     <Zona Campo="P1_Z3" Pagina="1" X="49.4" Y="6.4" Ancho="47" Alto="17.6" />
-    <Zona Campo="P2_Z1" Pagina="2" X="50.8" Y="67.3" Ancho="46.6" Alto="19.6" />
-    <Zona Campo="P1_Z4" Pagina="1" X="50.8" Y="67.3" Ancho="46.6" Alto="19.6" />
+    <Zona Campo="P2_Z1" Pagina="2" X="50" Y="67.3" Ancho="50" Alto="23" />
+    <Zona Campo="P1_Z4" Pagina="1" X="50" Y="67.3" Ancho="50" Alto="23" />
+    <Zona Campo="P1_Z5" Pagina="1" X="26" Y="24.8" Ancho="15" Alto="9" />
   </ZonasOcr>
   <NifEstado>Valido</NifEstado>
 </Emisor>

@@ -2,15 +2,16 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>B98613540</Nif>
   <Nombre>SUGARLAND FOODS, S.L.U.</Nombre>
-  <Version>202610230605</Version>
+  <Version>202610262325</Version>
   <Identificadores>
-    <Id>SUGAR</Id>
+    <Id>FACTURA</Id>
+    <Id>Agente</Id>
   </Identificadores>
   <ModoExtraccion>Ordenado</ModoExtraccion>
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\OSCAR ARIAS 2\Gastos\Contabilizados\2026-07-09_SUGARLAND_FOODS_S.L.U._A_2604463.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\OSCAR ARIAS\Gastos\No contabilizadas\sugarland_A2605666__CamScanner_08-10-2026_11.06.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>Factura(.+)Fecha</Regex>
@@ -18,7 +19,8 @@
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="Fecha">
-      <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
+      <Regex>Fecha(.+?)\s</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="ReceptorNombre">
@@ -31,12 +33,12 @@
       <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="BaseImponible">
-      <Regex>\s*—\s*([\d.,]+)\s+[\d.,]+\s+—\s*[\d.,]+\s+[\d.,]+\s</Regex>
+      <Regex>Base Imponible\s+([\d.,]+)</Regex>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
     <Campo Nombre="PorcentajeIVA">
-      <Regex>\s*—\s*[\d.,]+\s+([\d.,]+)\s+—\s*[\d.,]+\s+[\d.,]+\s</Regex>
+      <ValorFijo>10</ValorFijo>
       <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
       <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
     </Campo>
@@ -48,10 +50,10 @@
   </Campos>
   <PostProcesamiento />
   <ZonasOcr>
-    <Zona Campo="P1_Z1" Pagina="1" X="9.8" Y="12" Ancho="41.9" Alto="4.3" />
+    <Zona Campo="P1_Z1" Pagina="1" X="9.8" Y="12" Ancho="60" Alto="4.3" />
     <Zona Campo="P1_Z2" Pagina="1" X="7.6" Y="15.8" Ancho="42.7" Alto="11.2" />
-    <Zona Campo="P1_Z3" Pagina="1" X="34.8" Y="66" Ancho="43.2" Alto="12" />
-    <Zona Campo="P1_Z4" Pagina="1" X="71.1" Y="79.3" Ancho="22.2" Alto="7.4" />
+    <Zona Campo="P1_Z3" Pagina="1" X="32.9" Y="67.5" Ancho="15.2" Alto="11.6" />
+    <Zona Campo="P1_Z6" Pagina="1" X="70.5" Y="79.6" Ancho="23.1" Alto="6.8" />
   </ZonasOcr>
   <NifEstado>Valido</NifEstado>
 </Emisor>

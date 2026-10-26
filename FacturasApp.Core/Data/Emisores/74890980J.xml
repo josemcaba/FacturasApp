@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>74890980J</Nif>
   <Nombre>ARIAS MERINO, OSCAR</Nombre>
-  <Version>202610241754</Version>
+  <Version>202610262206</Version>
   <Identificadores>
     <Id>Óscar Arias Merino</Id>
     <Id>74890989-J</Id>
@@ -12,7 +12,7 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\OSCAR ARIAS 2\Ingresos septiembre 2026\Contabilizados\F260003_Castillo_Sempere_SL_Romeral.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\OSCAR ARIAS\Ingresos septiembre 2026\Contabilizados\F260017_Mario_Membrilla_Tomas.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>FACTURA #(.+?)\s</Regex>
