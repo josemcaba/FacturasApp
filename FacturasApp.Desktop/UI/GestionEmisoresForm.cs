@@ -1537,7 +1537,10 @@ public partial class GestionEmisoresForm : Form
                 new() { Nombre = "NumeroFactura", Regex = "FACTURA(.+)" },
                 new() { Nombre = "Fecha", UsarRegexFechaGeneral = true },
                 new() { Nombre = "ReceptorNombre", Regex = "CLIENTE(.+)" },
-                new() { Nombre = "ReceptorNif", UsarRegexNifGeneral = true }
+                new() { Nombre = "ReceptorNif", UsarRegexNifGeneral = true },
+                new() { Nombre = "BaseImponible", Regex = "Base imponible(.+)" },
+                new() { Nombre = "PorcentajeIVA", Regex = "IVA(.+)%" },
+                new() { Nombre = "TotalFactura", Regex = "Total Factura(.+)" }
             }
         };
         _esNuevo = true;
