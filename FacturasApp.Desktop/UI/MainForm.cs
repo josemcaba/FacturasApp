@@ -1,4 +1,6 @@
 using System.ComponentModel;
+using System.Globalization;
+using System.Reflection;
 using FacturasApp.Core.Models;
 using FacturasApp.Core.Services;
 using FacturasApp.Services;
@@ -13,6 +15,13 @@ namespace FacturasApp.UI
         private readonly InvoiceProcessorService _procesador;
         private readonly ExportService _exportador = new();
         private List<Factura> _facturas = new();
+
+        // Propiedades de FacturaGridRow que corresponden a las columnas
+        // visibles del grid (se resuelven una sola vez en
+        // ConfigurarDataGridView) y caché del texto de búsqueda por factura,
+        // para no repetir la reflexión en cada tecla que se pulsa en el filtro.
+        private PropertyInfo[] _propiedadesFiltro = Array.Empty<PropertyInfo>();
+        private readonly Dictionary<Factura, string> _cacheTextoBusqueda = new();
 
         public MainForm()
         {
@@ -156,6 +165,13 @@ namespace FacturasApp.UI
             lstArchivos.Items.Clear();
             txtRutaExcel.Text = string.Empty;
             dgvFacturas.DataSource = null;
+
+            // Se vacían también las facturas y su caché de búsqueda: si no,
+            // al teclear en el filtro se repoblaría la tabla con facturas
+            // de un lote anterior
+            _facturas.Clear();
+            _cacheTextoBusqueda.Clear();
+
             lblEstado.Text = "Listo";
             btnProcesar.Enabled = false;
             ActualizarContadorArchivos();
@@ -297,6 +313,21 @@ namespace FacturasApp.UI
                         });
             dgvFacturas.CellDoubleClick += DgvFacturas_CellDoubleClick;
             dgvFacturas.RowPrePaint += DgvFacturas_RowPrePaint;
+
+            // El filtro de texto se aplica sobre TODAS las columnas visibles:
+            // se toman sus DataPropertyName y se resuelven una sola vez contra
+            // FacturaGridRow (así, si se añade o quita una columna, el filtro
+            // la sigue sin tocar este método).
+            var nombresColumnas = dgvFacturas.Columns
+                .Cast<DataGridViewColumn>()
+                .Where(c => c.Visible && !string.IsNullOrEmpty(c.DataPropertyName))
+                .Select(c => c.DataPropertyName)
+                .ToHashSet(StringComparer.Ordinal);
+
+            _propiedadesFiltro = typeof(FacturaGridRow)
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.CanRead && nombresColumnas.Contains(p.Name))
+                .ToArray();
         }
 
         private void ConfigurarComboEstado()
@@ -308,8 +339,14 @@ namespace FacturasApp.UI
 
         private void MostrarResultadosEnGrid(List<Factura> facturas)
         {
-            var filas = facturas.Select(f => new FacturaGridRow(f)).ToList();
-            dgvFacturas.DataSource = new BindingSource { DataSource = filas };
+            // Lote nuevo: los textos de búsqueda cacheados dejan de servir
+            _facturas = facturas;
+            _cacheTextoBusqueda.Clear();
+
+            // Se reutiliza AplicarFiltros() para que un filtro de texto o de
+            // estado ya escrito siga vigente con el nuevo lote (antes se
+            // mostraban todas las facturas y se perdía el filtro)
+            AplicarFiltros();
         }
 
         private void DgvFacturas_RowPrePaint(object? sender,
@@ -376,33 +413,71 @@ namespace FacturasApp.UI
 
         private void AplicarFiltros()
         {
-            if (_facturas.Count == 0) return;
+            if (_facturas.Count == 0)
+            {
+                dgvFacturas.DataSource = null;
+                return;
+            }
 
-            string textoBusqueda = txtFiltro.Text;
             string estadoFiltro = cmbFiltroEstado.SelectedItem?.ToString() ?? "Todos";
 
-            var filtradas = _facturas.Where(f =>
+            // Búsqueda por palabras sueltas: TODAS deben aparecer en la fila,
+            // en cualquiera de sus columnas
+            var palabras = txtFiltro.Text.Split(' ',
+                StringSplitOptions.RemoveEmptyEntries |
+                StringSplitOptions.TrimEntries);
+
+            var filtradas = _facturas
+                // Primero el estado (sobre la factura, sin crear filas)
+                .Where(f => estadoFiltro == "Todos" ||
+                            f.Estado.ToString() == estadoFiltro)
+                .Select(f => new FacturaGridRow(f))
+                // Y después el texto, en cualquier columna de la fila
+                .Where(fila =>
+                {
+                    if (palabras.Length == 0) return true;
+
+                    string texto = TextoBusqueda(fila);
+                    return palabras.All(p =>
+                        texto.Contains(p, StringComparison.OrdinalIgnoreCase));
+                })
+                .ToList();
+
+            dgvFacturas.DataSource = new BindingSource { DataSource = filtradas };
+        }
+
+        /// <summary>
+        /// Texto de búsqueda de una fila: concatenación del valor de TODAS las
+        /// columnas visibles del grid (exactamente las que se pintan), en su
+        /// formato de visualización. Se cachea por factura para no repetir
+        /// reflexión en cada tecla.
+        /// </summary>
+        private string TextoBusqueda(FacturaGridRow fila)
+        {
+            if (_cacheTextoBusqueda.TryGetValue(fila.FacturaOriginal,
+                    out string? cacheado))
+                return cacheado;
+
+            var textos = new List<string>();
+
+            foreach (PropertyInfo propiedad in _propiedadesFiltro)
             {
-                bool coincideTexto =
-                    string.IsNullOrEmpty(textoBusqueda) ||
-                    f.NumeroFactura.Contains(textoBusqueda,
-                        StringComparison.OrdinalIgnoreCase) ||
-                    f.Emisor.Nombre.Contains(textoBusqueda,
-                        StringComparison.OrdinalIgnoreCase) ||
-                    f.Emisor.NIF.Contains(textoBusqueda,
-                        StringComparison.OrdinalIgnoreCase);
+                object? valor = propiedad.GetValue(fila);
+                if (valor is null) continue;
 
-                bool coincideEstado =
-                    estadoFiltro == "Todos" ||
-                    f.Estado.ToString() == estadoFiltro;
+                // La columna OCR es booleana: se busca como «Sí»/«No»,
+                // igual que se ve en la tabla
+                string texto = valor is bool marcado
+                    ? (marcado ? "Sí" : "No")
+                    : Convert.ToString(valor, CultureInfo.CurrentCulture)
+                        ?? string.Empty;
 
-                return coincideTexto && coincideEstado;
-            });
+                if (texto.Length > 0) textos.Add(texto);
+            }
 
-            dgvFacturas.DataSource = new BindingSource
-            {
-                DataSource = filtradas.Select(f => new FacturaGridRow(f)).ToList()
-            };
+            string resultado = string.Join(' ', textos);
+            _cacheTextoBusqueda[fila.FacturaOriginal] = resultado;
+            return resultado;
         }
 
         // ── Exportación ───────────────────────────────────────────────────────
