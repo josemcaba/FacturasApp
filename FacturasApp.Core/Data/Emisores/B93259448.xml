@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Nif>B93259448</Nif>
+  <Nombre>GESTION MALAGUEÑA DE TECNOLOGIA, S.L.</Nombre>
+  <Version>202610271154</Version>
+  <Identificadores>
+    <Id>GESTION MALAGUEÑA DE TECNOLOGIA, SL</Id>
+    <Id>B-93259448</Id>
+    <Id>www.gesmatec.com</Id>
+  </Identificadores>
+  <ModoExtraccion>Ordenado</ModoExtraccion>
+  <ConceptoIngreso>700</ConceptoIngreso>
+  <ConceptoGasto>G22</ConceptoGasto>
+  <CulturaFecha>es-ES</CulturaFecha>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\PYTHON\PYTHON-2025\DistiFact\DistiFact-Facturas\+MERCADONA\otros\FACTURA 1 (3).pdf</RutaPdfMuestra>
+  <Campos>
+    <Campo Nombre="NumeroFactura">
+      <Regex>FACTURA\s*(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="Fecha">
+      <UsarRegexFechaGeneral>true</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNombre">
+      <Regex>CLIENTE]:(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="ReceptorNif">
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>true</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="BaseImponible">
+      <Regex>BASE IMPONIBLE\s+(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="PorcentajeIVA">
+      <Regex>% IVA\s+(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+    <Campo Nombre="TotalFactura">
+      <Regex>T O T A L\s+(.+)</Regex>
+      <UsarRegexFechaGeneral>false</UsarRegexFechaGeneral>
+      <UsarRegexNifGeneral>false</UsarRegexNifGeneral>
+    </Campo>
+  </Campos>
+  <PostProcesamiento />
+  <ZonasOcr>
+    <Zona Campo="P1_Z1" Pagina="1" X="4.3" Y="12.9" Ancho="16.3" Alto="4.9" />
+    <Zona Campo="P1_Z2" Pagina="1" X="19.4" Y="12.9" Ancho="14.3" Alto="5.1" />
+    <Zona Campo="P1_Z3" Pagina="1" X="19.3" Y="17.4" Ancho="14.3" Alto="5.1" />
+    <Zona Campo="CLIENTE" Pagina="1" X="43.9" Y="13.1" Ancho="47.4" Alto="9.1" />
+    <Zona Campo="P1_Z5" Pagina="1" X="4.5" Y="88.5" Ancho="17.2" Alto="5.5" />
+    <Zona Campo="P1_Z6" Pagina="1" X="21.3" Y="88.6" Ancho="7.8" Alto="5.5" />
+    <Zona Campo="P1_Z7" Pagina="1" X="46.9" Y="84.1" Ancho="21.7" Alto="10.2" />
+  </ZonasOcr>
+  <NifEstado>Valido</NifEstado>
+</Emisor>
