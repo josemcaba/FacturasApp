@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>A46103834</Nif>
   <Nombre>MERCADONA, S.A.</Nombre>
-  <Version>202610280953</Version>
+  <Version>202610281035</Version>
   <Identificadores>
     <Id>A-46103834</Id>
     <Id>Mercadona</Id>
@@ -43,7 +43,7 @@
     <RegexLinea />
     <Lineas>
       <Linea>
-        <Regex>(\d+)%\s+([-\d.,]+)\s+([-\d.,]+)\s+([-\d.,]+)[\r\n]</Regex>
+        <Regex>(\d+)%\s+([-\d.,]+)\s+[-\d.,]+\s+[-\d.,]+[\r\n]</Regex>
         <MapeoCampos>
           <Mapeo Nombre="BaseImponible" Grupo="2" />
           <Mapeo Nombre="PorcentajeIVA" Grupo="1" />

@@ -96,7 +96,6 @@ partial class GestionEmisoresForm
         lblMultiLineaRegex = new Label();
         txtMultiLineaRegex = new TextBox();
         lblMultiLineaMapeo = new Label();
-        btnMultiLineaGrupos = new Button();
         dgvMultiLineaMapeo = new DataGridView();
         dataGridViewComboBoxColumn1 = new DataGridViewComboBoxColumn();
         dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
@@ -805,7 +804,6 @@ partial class GestionEmisoresForm
         tabMultiLinea.Controls.Add(lblMultiLineaRegex);
         tabMultiLinea.Controls.Add(txtMultiLineaRegex);
         tabMultiLinea.Controls.Add(lblMultiLineaMapeo);
-        tabMultiLinea.Controls.Add(btnMultiLineaGrupos);
         tabMultiLinea.Controls.Add(dgvMultiLineaMapeo);
         tabMultiLinea.Controls.Add(lblSeparadorPostProc);
         tabMultiLinea.Controls.Add(btnPostProcAdd);
@@ -939,19 +937,6 @@ partial class GestionEmisoresForm
         lblMultiLineaMapeo.Size = new Size(198, 20);
         lblMultiLineaMapeo.TabIndex = 9;
         lblMultiLineaMapeo.Text = "Mapeo de grupos a campos:";
-        // 
-        // btnMultiLineaGrupos
-        // 
-        btnMultiLineaGrupos.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        btnMultiLineaGrupos.Enabled = false;
-        btnMultiLineaGrupos.FlatStyle = FlatStyle.Flat;
-        btnMultiLineaGrupos.Location = new Point(571, 62);
-        btnMultiLineaGrupos.Name = "btnMultiLineaGrupos";
-        btnMultiLineaGrupos.Size = new Size(162, 25);
-        btnMultiLineaGrupos.TabIndex = 61;
-        btnMultiLineaGrupos.Text = "Detectar grupos";
-        btnMultiLineaGrupos.UseVisualStyleBackColor = true;
-        btnMultiLineaGrupos.Click += BtnMultiLineaGrupos_Click;
         // 
         // dgvMultiLineaMapeo
         // 
@@ -1599,7 +1584,6 @@ partial class GestionEmisoresForm
     private Label lblMultiLineaRegex;
     private TextBox txtMultiLineaRegex;
     private Label lblMultiLineaMapeo;
-    private Button btnMultiLineaGrupos;
     private DataGridView dgvMultiLineaMapeo;
     private DataGridViewComboBoxColumn dataGridViewComboBoxColumn1;
     private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;

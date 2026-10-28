@@ -1744,8 +1744,6 @@ public partial class GestionEmisoresForm : Form
         {
             lblMultiLineaRegex.ForeColor = Color.Gray;
             lblMultiLineaRegex.Text = "Regex de la línea (1 match = 1 línea):";
-            btnMultiLineaGrupos.Enabled = false;
-            btnMultiLineaGrupos.Text = "Detectar grupos";
             return;
         }
 
@@ -1753,8 +1751,6 @@ public partial class GestionEmisoresForm : Form
         {
             lblMultiLineaRegex.ForeColor = Color.Gray;
             lblMultiLineaRegex.Text = "Regex · escribe la expresión que detecta cada línea";
-            btnMultiLineaGrupos.Enabled = false;
-            btnMultiLineaGrupos.Text = "Detectar grupos";
             return;
         }
 
@@ -1767,16 +1763,10 @@ public partial class GestionEmisoresForm : Form
         {
             lblMultiLineaRegex.ForeColor = Color.FromArgb(192, 0, 0);
             lblMultiLineaRegex.Text = "Regex · ⚠ expresión no válida";
-            btnMultiLineaGrupos.Enabled = false;
-            btnMultiLineaGrupos.Text = "Detectar grupos";
             return;
         }
 
         var grupos = regex.GetGroupNumbers().Where(g => g > 0).ToList();
-        btnMultiLineaGrupos.Text = grupos.Count > 0
-            ? $"Detectar grupos ({grupos.Count})"
-            : "Detectar grupos";
-        btnMultiLineaGrupos.Enabled = grupos.Count > 0;
 
         if (grupos.Count == 0)
         {
@@ -1805,54 +1795,6 @@ public partial class GestionEmisoresForm : Form
         lblMultiLineaRegex.ForeColor = Color.FromArgb(0, 128, 0);
         lblMultiLineaRegex.Text =
             $"Regex · ✓ {coincidencias} coincidencia(s) · {grupos.Count} grupo(s)";
-    }
-
-    /// <summary>
-    /// Crea una fila de mapeo por cada grupo de captura que aún no tenga una,
-    /// para que el usuario sólo tenga que elegir el campo en la combo.
-    /// </summary>
-    private void BtnMultiLineaGrupos_Click(object? sender, EventArgs e)
-    {
-        if (lstMultiLineas.SelectedItem is not LineaMultiLineaItem item) return;
-
-        Regex regex;
-        try
-        {
-            regex = new Regex(item.Linea.Regex);
-        }
-        catch (RegexParseException)
-        {
-            return;
-        }
-
-        var grupos = regex.GetGroupNumbers().Where(g => g > 0).ToList();
-        if (grupos.Count == 0) return;
-
-        var yaMapeados = dgvMultiLineaMapeo.Rows.Cast<DataGridViewRow>()
-            .Where(r => !r.IsNewRow)
-            .Select(r => int.TryParse(r.Cells[1].Value?.ToString(), out var g) ? g : 0)
-            .ToHashSet();
-
-        _cargandoLinea = true;
-        try
-        {
-            foreach (var grupo in grupos.Where(g => !yaMapeados.Contains(g)).Reverse())
-            {
-                // Sólo viene dado el número de grupo: el campo se deja vacío
-                // para que lo elija el usuario en la combo.
-                dgvMultiLineaMapeo.Rows.Insert(0, new object[] { null!, grupo });
-            }
-        }
-        finally
-        {
-            _cargandoLinea = false;
-        }
-
-        SincronizarLineaSeleccionadaDesdeUI();
-        RefrescarListaMultiLineas();
-        MarcarModificado();
-        ProgramarRefrescoValores();
-        ActualizarEstadoMultiLinea();
     }
 
     /// <summary>
