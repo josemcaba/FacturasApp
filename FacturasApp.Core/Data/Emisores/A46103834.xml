@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>A46103834</Nif>
   <Nombre>MERCADONA, S.A.</Nombre>
-  <Version>202610141410</Version>
+  <Version>202610280953</Version>
   <Identificadores>
     <Id>A-46103834</Id>
     <Id>Mercadona</Id>
@@ -12,7 +12,7 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>600</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\fixture\Mercadona 3.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\PYTHON\PYTHON-2025\DistiFact\DistiFact-Facturas\Mix\- MERCADONA.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>N. Factura:\s*(\S+)</Regex>

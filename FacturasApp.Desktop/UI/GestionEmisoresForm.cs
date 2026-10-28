@@ -124,8 +124,19 @@ public partial class GestionEmisoresForm : Form
 
         tabs.SelectedIndexChanged += (_, _) =>
         {
+            // Al entrar en «Columnas Excel» se liberan las páginas renderizadas
+            // (bitmaps a 300 DPI: lo que más memoria ocupa), pero se conservan
+            // la ruta, el texto cacheado y «Valores extraídos». Al volver se
+            // re-renderizan las páginas sin repetir extracción ni OCR.
             if (tabs.SelectedTab == tabColumnasExcel)
-                LimpiarPaginas();
+            {
+                if (_imagenPaginas.Count > 0)
+                    LiberarImagenesMuestra();
+            }
+            else if (!string.IsNullOrEmpty(_rutaPdf) && _imagenPaginas.Count == 0)
+            {
+                RecargarPaginasMuestra();
+            }
             ActualizarVersionXml();
         };
     }
@@ -385,87 +396,19 @@ public partial class GestionEmisoresForm : Form
         LimpiarPaginas();
         _rutaPdf = rutaPdf;
 
-        if (FormatosDocumento.EsImagen(rutaPdf))
+        if (!RenderizarPaginasMuestra(rutaPdf, mostrarErrores))
         {
-            // JPG/PNG: la imagen es la única «página»; las zonas en % y la
-            // caché de texto funcionan igual que con un PDF escaneado.
-            var bitmap = OcrBase.CargarImagen(rutaPdf);
-            if (bitmap == null)
-            {
-                if (mostrarErrores)
-                    MessageBox.Show("No se pudo cargar la imagen de muestra.",
-                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                _rutaPdf = null;
-                ActualizarAyudasMuestra();
-                ActualizarVistaPreviaZonal();
-                ActualizarIndicadorIdentificadores();
-                return false;
-            }
-
-            _imagenPaginas.Add(bitmap);
-        }
-        else
-        {
-            int numPaginas;
-            PdfDocument documento;
-            try
-            {
-                documento = PdfDocument.Load(rutaPdf);
-                numPaginas = documento.PageCount;
-            }
-            catch (Exception ex)
-            {
-                if (mostrarErrores)
-                    MessageBox.Show($"Error al contar páginas:\n{ex.Message}",
-                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Sin PDF de muestra utilizable: la vista previa y el probador
-                // de regex quedan como al inicio (sin fuente de texto).
-                _rutaPdf = null;
-                ActualizarAyudasMuestra();
-                ActualizarVistaPreviaZonal();
-                ActualizarIndicadorIdentificadores();
-                return false;
-            }
-
-            using (documento)
-            {
-                for (int i = 0; i < numPaginas; i++)
-                {
-                    try
-                    {
-                        SizeF tamano = documento.PageSizes[i];
-                        int ancho = (int)Math.Ceiling(tamano.Width * 300 / 72f);
-                        int alto = (int)Math.Ceiling(tamano.Height * 300 / 72f);
-                        var imagen = documento.Render(
-                            i, ancho, alto, 300, 300, PdfRenderFlags.ForPrinting);
-                        if (imagen is Bitmap bitmapPagina)
-                            _imagenPaginas.Add(bitmapPagina);
-                        else
-                            imagen.Dispose();
-                    }
-                    catch (Exception ex)
-                    {
-                        if (mostrarErrores)
-                            MessageBox.Show($"Error al renderizar página {i + 1}:\n{ex.Message}",
-                                "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        _rutaPdf = null;
-                        ActualizarAyudasMuestra();
-                        ActualizarVistaPreviaZonal();
-                        ActualizarIndicadorIdentificadores();
-                        return false;
-                    }
-                }
-            }
+            // Sin muestra utilizable: la vista previa y el probador de regex
+            // quedan como al inicio (sin fuente de texto).
+            LiberarImagenesMuestra();
+            _rutaPdf = null;
+            ActualizarAyudasMuestra();
+            ActualizarVistaPreviaZonal();
+            ActualizarIndicadorIdentificadores();
+            return false;
         }
 
-        CrearPestanas();
-
-        if (tabPaginas.TabCount > 0)
-            tabPaginas.SelectedIndex = 0;
-        PanelCentral_Resize(null, EventArgs.Empty);
-
-        MostrarPaginaActual();
-        picFactura.Invalidate();
+        MostrarPaginasMuestra();
 
         // El texto del PDF de muestra se extrae UNA sola vez y queda cacheado:
         // la consola del probador y la tabla «Valores extraídos» se alimentan
@@ -486,6 +429,114 @@ public partial class GestionEmisoresForm : Form
     }
 
     /// <summary>
+    /// Renderiza en _imagenPaginas el PDF o la imagen de muestra. No toca la
+    /// ruta, el texto cacheado ni las zonas: lo usan tanto la carga inicial
+    /// como la recarga al volver de «Columnas Excel». Devuelve false si no se
+    /// pudo cargar/leer (el llamador decide qué hacer con la ruta).
+    /// </summary>
+    private bool RenderizarPaginasMuestra(string rutaPdf, bool mostrarErrores)
+    {
+        if (FormatosDocumento.EsImagen(rutaPdf))
+        {
+            // JPG/PNG: la imagen es la única «página»; las zonas en % y la
+            // caché de texto funcionan igual que con un PDF escaneado.
+            var bitmap = OcrBase.CargarImagen(rutaPdf);
+            if (bitmap == null)
+            {
+                if (mostrarErrores)
+                    MessageBox.Show("No se pudo cargar la imagen de muestra.",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            _imagenPaginas.Add(bitmap);
+            return true;
+        }
+
+        int numPaginas;
+        PdfDocument documento;
+        try
+        {
+            documento = PdfDocument.Load(rutaPdf);
+            numPaginas = documento.PageCount;
+        }
+        catch (Exception ex)
+        {
+            if (mostrarErrores)
+                MessageBox.Show($"Error al contar páginas:\n{ex.Message}",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return false;
+        }
+
+        using (documento)
+        {
+            for (int i = 0; i < numPaginas; i++)
+            {
+                try
+                {
+                    SizeF tamano = documento.PageSizes[i];
+                    int ancho = (int)Math.Ceiling(tamano.Width * 300 / 72f);
+                    int alto = (int)Math.Ceiling(tamano.Height * 300 / 72f);
+                    var imagen = documento.Render(
+                        i, ancho, alto, 300, 300, PdfRenderFlags.ForPrinting);
+                    if (imagen is Bitmap bitmapPagina)
+                        _imagenPaginas.Add(bitmapPagina);
+                    else
+                        imagen.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    if (mostrarErrores)
+                        MessageBox.Show($"Error al renderizar página {i + 1}:\n{ex.Message}",
+                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>Crea las pestañas de página y muestra la primera.</summary>
+    private void MostrarPaginasMuestra()
+    {
+        CrearPestanas();
+
+        if (tabPaginas.TabCount > 0)
+            tabPaginas.SelectedIndex = 0;
+        PanelCentral_Resize(null, EventArgs.Empty);
+
+        MostrarPaginaActual();
+        picFactura.Invalidate();
+    }
+
+    /// <summary>
+    /// Vuelve a renderizar la muestra conservando su ruta, el texto cacheado y
+    /// las zonas. Se usa al regresar de «Columnas Excel», donde se liberaron
+    /// las páginas para no mantener en memoria todos los bitmaps a 300 DPI:
+    /// así no se repite la extracción de texto ni el OCR.
+    /// </summary>
+    private void RecargarPaginasMuestra()
+    {
+        if (string.IsNullOrEmpty(_rutaPdf) || !File.Exists(_rutaPdf))
+        {
+            LimpiarPaginas();
+            return;
+        }
+
+        LiberarImagenesMuestra();
+        if (!RenderizarPaginasMuestra(_rutaPdf, mostrarErrores: false))
+        {
+            // Se conserva el texto cacheado; simplemente no hay páginas que
+            // enseñar hasta que se vuelva a cargar la muestra.
+            LiberarImagenesMuestra();
+            return;
+        }
+
+        MostrarPaginasMuestra();
+    }
+
+    /// <summary>
     /// Refresca la consola «Texto Extraido» (la fuente del probador) y la tabla
     /// «Valores extraídos», todo a partir del texto cacheado del motor. Al
     /// terminar la tabla ya está al día, así que no hace falta recalcularla
@@ -503,6 +554,8 @@ public partial class GestionEmisoresForm : Form
             _firmaTextoMuestra = null;
             txtRegexSource.Clear();
             ActualizarTablaValoresExtraidos();
+            RefrescarListaMultiLineas();
+            ActualizarEstadoMultiLinea();
             return;
         }
 
@@ -521,6 +574,10 @@ public partial class GestionEmisoresForm : Form
         // que salga aquí es lo que saldrá en la tabla.
         txtRegexSource.Text = NormalizarSaltoLinea(texto);
         ActualizarTablaValoresExtraidos();
+        // El resumen de la lista y el estado de la línea también dependen de la
+        // muestra (coincidencias), así que se refrescan con ella.
+        RefrescarListaMultiLineas();
+        ActualizarEstadoMultiLinea();
     }
 
     /// <summary>
@@ -988,11 +1045,7 @@ public partial class GestionEmisoresForm : Form
 
     private void LimpiarPaginas()
     {
-        tabPaginas.TabPages.Clear();
-        foreach (var img in _imagenPaginas)
-            img.Dispose();
-        _imagenPaginas.Clear();
-        _paginaActual = 0;
+        LiberarImagenesMuestra();
         _rutaPdf = null;
         // Sin PDF no hay texto que cachear ni refrescos pendientes que resolver.
         _textoMuestra = null;
@@ -1000,22 +1053,44 @@ public partial class GestionEmisoresForm : Form
         _pendientePrevia = false;
         _pendienteTabla = false;
         timerRefrescoValores.Stop();
-        picFactura.Image = null;
         txtRegexSource.Text = string.Empty;
         try { dgvValoresExtraidos.Rows.Clear(); } catch { }
         ActualizarAyudasMuestra();
         // tabPaginas remains visible (empty) to reserve layout space
+    }
+
+    /// <summary>
+    /// Libera sólo las páginas renderizadas (los bitmaps a 300 DPI son lo que
+    /// más memoria ocupa) conservando la ruta y el texto cacheado. Se usa al
+    /// pasar a «Columnas Excel»: al volver se re-renderizan las páginas sin
+    /// repetir la extracción de texto ni el OCR.
+    /// </summary>
+    private void LiberarImagenesMuestra()
+    {
+        tabPaginas.TabPages.Clear();
+        foreach (var img in _imagenPaginas)
+            img.Dispose();
+        _imagenPaginas.Clear();
+        _paginaActual = 0;
+        picFactura.Image = null;
+        picFactura.Invalidate();
     }
     private void DgvCellValueChanged(object? sender, DataGridViewCellEventArgs e)
     {
         // RowIndex < 0 = celda de CABECERA (p. ej. asignar HeaderText en el
         // InitializeComponent, que ya trae las columnas añadidas a la rejilla):
         // no es una edición de datos y no debe marcar el emisor como modificado.
-        if (_sincronizando || _cargando || e.RowIndex < 0) return;
+        if (_sincronizando || _cargando || _cargandoLinea || e.RowIndex < 0) return;
         MarcarModificado();
 
-        // El mapeo multilinea no toca zonas: no debe reextraer el texto.
-        if (ReferenceEquals(sender, dgvMultiLineaMapeo)) return;
+        // El mapeo multilinea no toca zonas ni el texto: sólo cambia la línea
+        // seleccionada, así que se sincroniza y se reparsea el texto cacheado.
+        if (ReferenceEquals(sender, dgvMultiLineaMapeo))
+        {
+            SincronizarLineaSeleccionadaDesdeUI();
+            ProgramarRefrescoValores();
+            return;
+        }
 
         SincronizarZonasDesdeDgv();
         picFactura.Invalidate();
@@ -1024,7 +1099,11 @@ public partial class GestionEmisoresForm : Form
         ProgramarRefrescoVistaPrevia();
     }
 
-    private void DgvUserAddedRow(object? sender, DataGridViewRowEventArgs e) => MarcarModificado();
+    private void DgvUserAddedRow(object? sender, DataGridViewRowEventArgs e)
+    {
+        if (_cargandoLinea) return;
+        MarcarModificado();
+    }
 
     private void DgvMultiLineaMapeo_EditingControlShowing(object? sender, DataGridViewEditingControlShowingEventArgs e)
     {
@@ -1034,8 +1113,18 @@ public partial class GestionEmisoresForm : Form
 
     private void DgvUserDeletedRow(object? sender, DataGridViewRowEventArgs e)
     {
-        if (_sincronizando || _cargando) return;
+        if (_sincronizando || _cargando || _cargandoLinea) return;
         MarcarModificado();
+
+        // Quitar una fila del mapeo multilínea no toca las zonas ni obliga a
+        // reextraer el texto: sólo cambia la línea seleccionada.
+        if (ReferenceEquals(sender, dgvMultiLineaMapeo))
+        {
+            SincronizarLineaSeleccionadaDesdeUI();
+            ProgramarRefrescoValores();
+            return;
+        }
+
         SincronizarZonasDesdeDgv();
         picFactura.Invalidate();
         ProgramarRefrescoVistaPrevia();
@@ -1268,25 +1357,28 @@ public partial class GestionEmisoresForm : Form
             lstCampos.SelectedIndex = 0;
 
         lstMultiLineas.Items.Clear();
-        var multi = config.MultiLinea;
+        // Se cargan las líneas de la COPIA (_emisorActual), no las del objeto
+        // vivo de la caché: la edición es en sitio y debe poder descartarse.
+        var multi = _emisorActual.MultiLinea;
         if (multi != null)
         {
             if (multi.Lineas.Count > 0)
             {
                 foreach (var l in multi.Lineas)
-                    lstMultiLineas.Items.Add(l);
+                    lstMultiLineas.Items.Add(new LineaMultiLineaItem(l));
             }
             else if (!string.IsNullOrEmpty(multi.RegexLinea))
             {
                 // Compatibilidad: config antiguo con una única línea
-                lstMultiLineas.Items.Add(new LineaConfig
+                lstMultiLineas.Items.Add(new LineaMultiLineaItem(new LineaConfig
                 {
                     Regex = multi.RegexLinea,
                     MapeoCampos = multi.MapeoCampos
                         .Select(m => new MapeoCampoLinea { Nombre = m.Nombre, Grupo = m.Grupo }).ToList()
-                });
+                }));
             }
         }
+        RefrescarListaMultiLineas();
         if (lstMultiLineas.Items.Count > 0)
             lstMultiLineas.SelectedIndex = 0;
         else
@@ -1370,49 +1462,151 @@ public partial class GestionEmisoresForm : Form
 
     private void LstMultiLineas_SelectedIndexChanged(object? sender, EventArgs e)
     {
-        CargarLineaEnUI(lstMultiLineas.SelectedItem as LineaConfig);
+        CargarLineaEnUI((lstMultiLineas.SelectedItem as LineaMultiLineaItem)?.Linea);
     }
 
+    /// <summary>
+    /// Refleja en la UI la línea seleccionada. No vuelca nada: la edición se
+    /// sincroniza en vivo con la LineaConfig (SincronizarLineaSeleccionadaDesdeUI).
+    /// </summary>
     private void CargarLineaEnUI(LineaConfig? linea)
     {
         _cargandoLinea = true;
-        txtMultiLineaRegex.Text = linea?.Regex ?? "";
-        dgvMultiLineaMapeo.Rows.Clear();
-        if (linea != null)
+        try
         {
-            foreach (var m in linea.MapeoCampos)
-                dgvMultiLineaMapeo.Rows.Add(m.Nombre, m.Grupo);
+            txtMultiLineaRegex.Text = linea?.Regex ?? "";
+            dgvMultiLineaMapeo.Rows.Clear();
+            if (linea != null)
+            {
+                // SubTotal no se extrae nunca en multilínea (el motor lo
+                // ignora): se descarta también al cargar configs antiguos.
+                foreach (var m in linea.MapeoCampos.Where(m => m.Nombre != "SubTotal"))
+                    AñadirFilaMapeo(m.Nombre, m.Grupo);
+            }
         }
-        _cargandoLinea = false;
+        finally
+        {
+            _cargandoLinea = false;
+        }
+        ActualizarEstadoMultiLinea();
+    }
+
+    /// <summary>
+    /// Añade una fila de mapeo. Si el campo no está en la combo se añade a sus
+    /// Items: un valor que no pertenece a la lista hace saltar el DataError de
+    /// la rejilla al pintar la celda y acabaría perdiendo el mapeo.
+    /// </summary>
+    private void AñadirFilaMapeo(string? nombre, int grupo)
+    {
+        string campo = nombre ?? string.Empty;
+        bool vacio = campo.Length == 0;
+        if (!vacio && !dataGridViewComboBoxColumn1.Items.Contains(campo))
+            dataGridViewComboBoxColumn1.Items.Add(campo);
+
+        int indice = dgvMultiLineaMapeo.Rows.Add();
+        var fila = dgvMultiLineaMapeo.Rows[indice];
+        fila.Cells[0].Value = vacio ? null : campo;
+        fila.Cells[1].Value = grupo;
+    }
+
+    /// <summary>Vuelca el panel en la línea seleccionada y en la config en memoria.</summary>
+    private void SincronizarLineaSeleccionadaDesdeUI()
+    {
+        if (lstMultiLineas.SelectedItem is LineaMultiLineaItem item)
+            ActualizarLineaDesdeUI(item.Linea);
+        SincronizarMultiLineaEnConfig();
+    }
+
+    /// <summary>
+    /// Arma _emisorActual.MultiLinea con las líneas de la lista. Se excluyen
+    /// las que no tienen regex: una expresión vacía produce un match de longitud
+    /// cero en cada posición del texto y no debe llegar nunca al motor.
+    /// </summary>
+    private void SincronizarMultiLineaEnConfig()
+    {
+        if (_emisorActual == null) return;
+        var lineas = lstMultiLineas.Items.Cast<LineaMultiLineaItem>()
+            .Select(i => i.Linea)
+            .Where(l => !string.IsNullOrWhiteSpace(l.Regex))
+            .ToList();
+        _emisorActual.MultiLinea = lineas.Count > 0
+            ? new MultiLineaConfig { Lineas = lineas }
+            : null;
     }
 
     private void ActualizarLineaDesdeUI(LineaConfig linea)
     {
         linea.Regex = txtMultiLineaRegex.Text.Trim();
         linea.MapeoCampos = dgvMultiLineaMapeo.Rows.Cast<DataGridViewRow>()
-            .Where(r => r.Cells[0].Value != null)
+            .Where(r => r.Cells[0].Value?.ToString() is string campo && campo != "SubTotal")
             .Select(r => new MapeoCampoLinea
             {
                 Nombre = r.Cells[0].Value?.ToString() ?? "",
-                Grupo = int.TryParse(r.Cells[1].Value?.ToString(), out var g) ? g : 1
+                // Un grupo ilegible queda en 0: la validación al guardar lo
+                // señala en vez de asumir el grupo 1 en silencio.
+                Grupo = int.TryParse(r.Cells[1].Value?.ToString(), out var g) ? g : 0
             }).ToList();
+    }
+
+    private void TxtMultiLineaRegex_TextChanged(object? sender, EventArgs e)
+    {
+        if (_cargandoLinea || _emisorActual == null) return;
+        SincronizarLineaSeleccionadaDesdeUI();
+        MarcarModificado();
+        ProgramarRefrescoValores();
+    }
+
+    private void DgvMultiLineaMapeo_CurrentCellDirtyStateChanged(object? sender, EventArgs e)
+    {
+        if (dgvMultiLineaMapeo.IsCurrentCellDirty)
+            dgvMultiLineaMapeo.CommitEdit(DataGridViewDataErrorContexts.Commit);
     }
 
     private void BtnMultiLineaAdd_Click(object? sender, EventArgs e)
     {
-        var linea = new LineaConfig { Regex = "Nueva línea (regex)" };
-        lstMultiLineas.Items.Add(linea);
-        lstMultiLineas.SelectedIndex = lstMultiLineas.Items.Count - 1;
-        CargarLineaEnUI(linea);
+        if (_emisorActual == null) return;
+
+        // Si ya hay una línea en blanco, se reutiliza: evita altas duplicadas
+        // por doble clic y deja el foco donde hay que escribir.
+        var vacia = lstMultiLineas.Items.Cast<LineaMultiLineaItem>()
+            .FirstOrDefault(i => string.IsNullOrWhiteSpace(i.Linea.Regex)
+                              && i.Linea.MapeoCampos.Count == 0);
+        if (vacia != null)
+        {
+            lstMultiLineas.SelectedItem = vacia;
+            txtMultiLineaRegex.Focus();
+            return;
+        }
+
+        var item = new LineaMultiLineaItem(new LineaConfig());
+        lstMultiLineas.Items.Add(item);
+        lstMultiLineas.SelectedItem = item;
+        RefrescarListaMultiLineas();
+        SincronizarMultiLineaEnConfig();
         MarcarModificado();
+        txtMultiLineaRegex.Focus();
     }
 
     private void BtnMultiLineaRemove_Click(object? sender, EventArgs e)
     {
-        if (lstMultiLineas.SelectedIndex < 0) return;
-        lstMultiLineas.Items.RemoveAt(lstMultiLineas.SelectedIndex);
-        CargarLineaEnUI(lstMultiLineas.SelectedItem as LineaConfig);
+        if (lstMultiLineas.SelectedItem is not LineaMultiLineaItem item) return;
+
+        var r = MessageBox.Show(
+            $"¿Quitar la línea «{item.Texto}»?\n\nLos cambios se aplicarán al guardar el emisor.",
+            "Quitar línea multilínea", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+        if (r != DialogResult.Yes) return;
+
+        int idx = lstMultiLineas.SelectedIndex;
+        lstMultiLineas.Items.RemoveAt(idx);
+        if (lstMultiLineas.Items.Count > 0)
+            lstMultiLineas.SelectedIndex = Math.Min(idx, lstMultiLineas.Items.Count - 1);
+        else
+            CargarLineaEnUI(null);
+
+        RefrescarListaMultiLineas();
+        SincronizarMultiLineaEnConfig();
         MarcarModificado();
+        ProgramarRefrescoValores();
     }
 
     private void BtnMultiLineaUp_Click(object? sender, EventArgs e) => MoverLinea(-1);
@@ -1424,11 +1618,337 @@ public partial class GestionEmisoresForm : Form
         int idx = lstMultiLineas.SelectedIndex;
         int nuevo = idx + desplazamiento;
         if (idx < 0 || nuevo < 0 || nuevo >= lstMultiLineas.Items.Count) return;
-        var linea = lstMultiLineas.Items[idx];
+        var item = lstMultiLineas.Items[idx];
         lstMultiLineas.Items.RemoveAt(idx);
-        lstMultiLineas.Items.Insert(nuevo, linea);
+        lstMultiLineas.Items.Insert(nuevo, item);
         lstMultiLineas.SelectedIndex = nuevo;
+        RefrescarListaMultiLineas();
+        SincronizarMultiLineaEnConfig();
         MarcarModificado();
+        ProgramarRefrescoValores();
+    }
+
+    // ── RESUMEN, ESTADO Y AYUDAS DE MULTILÍNEA ───────────────────────────────
+
+    /// <summary>
+    /// Texto de la muestra que ya está cacheado, o null si no hay muestra o la
+    /// caché no corresponde a la firma actual. Nunca dispara OCR: el resumen y
+    /// el estado se refrescan al teclear y no deben congelar la UI.
+    /// </summary>
+    private string? TextoMuestraDisponible()
+    {
+        if (_emisorActual == null || string.IsNullOrEmpty(_rutaPdf)) return null;
+        if (!_textoMuestra.HasValue || _firmaTextoMuestra != FirmaTextoMuestra()) return null;
+        return _textoMuestra.Value.Texto;
+    }
+
+    /// <summary>
+    /// La lista es owner-draw: el texto que se pinta se lee en cada repintado
+    /// del propio item (cambiar «DisplayMember» o el texto cacheado por el
+    /// ListBox no basta, porque la cadena se copia al añadir la entrada).
+    /// </summary>
+    private void LstMultiLineas_DrawItem(object? sender, DrawItemEventArgs e)
+    {
+        e.DrawBackground();
+        if (e.Index < 0) return;
+
+        var item = lstMultiLineas.Items[e.Index] as LineaMultiLineaItem;
+        var texto = item == null ? "" : (string.IsNullOrEmpty(item.Texto)
+            ? item.Linea.Regex : item.Texto);
+
+        TextRenderer.DrawText(e.Graphics, texto, e.Font ?? lstMultiLineas.Font,
+            e.Bounds, e.ForeColor,
+            TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis |
+            TextFormatFlags.NoPrefix);
+        e.DrawFocusRectangle();
+    }
+
+    private void RefrescarListaMultiLineas()
+    {
+        var texto = TextoMuestraDisponible();
+        for (int i = 0; i < lstMultiLineas.Items.Count; i++)
+        {
+            if (lstMultiLineas.Items[i] is not LineaMultiLineaItem item) continue;
+            item.Texto = ResumenLinea(item.Linea, i, texto);
+        }
+        lstMultiLineas.Invalidate();
+    }
+
+    /// <summary>
+    /// Texto de una entrada de la lista: número, campos mapeados y estado
+    /// (coincidencias con la muestra, sin muestra o expresión no válida).
+    /// </summary>
+    private static string ResumenLinea(LineaConfig linea, int indice, string? texto)
+    {
+        var campos = linea.MapeoCampos
+            .Where(m => m.Nombre != "SubTotal")
+            .Select(m => EtiquetaCampo(m.Nombre))
+            .Distinct()
+            .ToList();
+        var resumen = $"{indice + 1} · " +
+            (campos.Count > 0 ? string.Join(", ", campos) : "sin mapeo");
+
+        if (string.IsNullOrWhiteSpace(linea.Regex))
+            return resumen + " · sin expresión";
+
+        try
+        {
+            // Sin Compiled: aquí sólo se valida y se cuentan coincidencias, y
+            // esto se ejecuta en cada tecla; compilar a IL sería tirar CPU.
+            var regex = new Regex(linea.Regex);
+            if (texto == null)
+                return resumen + " · sin muestra";
+            int coincidencias = regex.Matches(texto).Count;
+            return resumen + $" · {coincidencias} coincidencia" +
+                (coincidencias == 1 ? "" : "s");
+        }
+        catch (RegexParseException)
+        {
+            return resumen + " · ⚠ expresión no válida";
+        }
+    }
+
+    private static string EtiquetaCampo(string nombre) => nombre switch
+    {
+        "BaseImponible" => "Base Imponible",
+        "PorcentajeIVA" => "% IVA",
+        "CuotaIVA" => "Cuota IVA",
+        "PorcentajeIRPF" => "% IRPF",
+        "CuotaIRPF" => "Cuota IRPF",
+        "PorcentajeRE" => "% RE",
+        "CuotaRE" => "Cuota RE",
+        "TotalFactura" => "Total Factura",
+        "NumeroFactura" => "Nº Factura",
+        "ReceptorNombre" => "Receptor",
+        "ReceptorNif" => "NIF Receptor",
+        "EmisorNif" => "NIF Emisor",
+        "ConceptoIngreso" => "Concepto ingreso",
+        "ConceptoGasto" => "Concepto gasto",
+        _ => nombre
+    };
+
+    /// <summary>
+    /// Estado en vivo de la línea seleccionada, en la misma etiqueta que antes
+    /// sólo describía el textbox: validez, grupos y coincidencias con la muestra.
+    /// </summary>
+    private void ActualizarEstadoMultiLinea()
+    {
+        var linea = (lstMultiLineas.SelectedItem as LineaMultiLineaItem)?.Linea;
+
+        // Sin línea seleccionada el panel es sólo un espejo de la lista: no se
+        // deja teclear ahí porque ese texto no pertenecería a ninguna línea.
+        txtMultiLineaRegex.Enabled = linea != null;
+        dgvMultiLineaMapeo.Enabled = linea != null;
+
+        if (linea == null)
+        {
+            lblMultiLineaRegex.ForeColor = Color.Gray;
+            lblMultiLineaRegex.Text = "Regex de la línea (1 match = 1 línea):";
+            btnMultiLineaGrupos.Enabled = false;
+            btnMultiLineaGrupos.Text = "Detectar grupos";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(linea.Regex))
+        {
+            lblMultiLineaRegex.ForeColor = Color.Gray;
+            lblMultiLineaRegex.Text = "Regex · escribe la expresión que detecta cada línea";
+            btnMultiLineaGrupos.Enabled = false;
+            btnMultiLineaGrupos.Text = "Detectar grupos";
+            return;
+        }
+
+        Regex regex;
+        try
+        {
+            regex = new Regex(linea.Regex);
+        }
+        catch (RegexParseException)
+        {
+            lblMultiLineaRegex.ForeColor = Color.FromArgb(192, 0, 0);
+            lblMultiLineaRegex.Text = "Regex · ⚠ expresión no válida";
+            btnMultiLineaGrupos.Enabled = false;
+            btnMultiLineaGrupos.Text = "Detectar grupos";
+            return;
+        }
+
+        var grupos = regex.GetGroupNumbers().Where(g => g > 0).ToList();
+        btnMultiLineaGrupos.Text = grupos.Count > 0
+            ? $"Detectar grupos ({grupos.Count})"
+            : "Detectar grupos";
+        btnMultiLineaGrupos.Enabled = grupos.Count > 0;
+
+        if (grupos.Count == 0)
+        {
+            lblMultiLineaRegex.ForeColor = Color.FromArgb(192, 0, 0);
+            lblMultiLineaRegex.Text = "Regex · ⚠ sin grupos de captura";
+            return;
+        }
+
+        var texto = TextoMuestraDisponible();
+        if (texto == null)
+        {
+            lblMultiLineaRegex.ForeColor = Color.FromArgb(0, 128, 0);
+            lblMultiLineaRegex.Text = $"Regex · ✓ {grupos.Count} grupo(s) · sin muestra";
+            return;
+        }
+
+        int coincidencias = regex.Matches(texto).Count;
+        if (coincidencias == 0)
+        {
+            lblMultiLineaRegex.ForeColor = Color.FromArgb(192, 0, 0);
+            lblMultiLineaRegex.Text =
+                $"Regex · ⚠ 0 coincidencias en la muestra ({grupos.Count} grupos)";
+            return;
+        }
+
+        lblMultiLineaRegex.ForeColor = Color.FromArgb(0, 128, 0);
+        lblMultiLineaRegex.Text =
+            $"Regex · ✓ {coincidencias} coincidencia(s) · {grupos.Count} grupo(s)";
+    }
+
+    /// <summary>
+    /// Crea una fila de mapeo por cada grupo de captura que aún no tenga una,
+    /// para que el usuario sólo tenga que elegir el campo en la combo.
+    /// </summary>
+    private void BtnMultiLineaGrupos_Click(object? sender, EventArgs e)
+    {
+        if (lstMultiLineas.SelectedItem is not LineaMultiLineaItem item) return;
+
+        Regex regex;
+        try
+        {
+            regex = new Regex(item.Linea.Regex);
+        }
+        catch (RegexParseException)
+        {
+            return;
+        }
+
+        var grupos = regex.GetGroupNumbers().Where(g => g > 0).ToList();
+        if (grupos.Count == 0) return;
+
+        var yaMapeados = dgvMultiLineaMapeo.Rows.Cast<DataGridViewRow>()
+            .Where(r => !r.IsNewRow)
+            .Select(r => int.TryParse(r.Cells[1].Value?.ToString(), out var g) ? g : 0)
+            .ToHashSet();
+
+        _cargandoLinea = true;
+        try
+        {
+            foreach (var grupo in grupos.Where(g => !yaMapeados.Contains(g)).Reverse())
+            {
+                // Sólo viene dado el número de grupo: el campo se deja vacío
+                // para que lo elija el usuario en la combo.
+                dgvMultiLineaMapeo.Rows.Insert(0, new object[] { null!, grupo });
+            }
+        }
+        finally
+        {
+            _cargandoLinea = false;
+        }
+
+        SincronizarLineaSeleccionadaDesdeUI();
+        RefrescarListaMultiLineas();
+        MarcarModificado();
+        ProgramarRefrescoValores();
+        ActualizarEstadoMultiLinea();
+    }
+
+    /// <summary>
+    /// Valida TODAS las líneas multilínea antes de guardar. Devuelve el motivo
+    /// del primer error, el índice de la línea y el control a enfocar (null si
+    /// todo está bien). El llamador selecciona la línea y muestra el aviso.
+    /// </summary>
+    private (string? Error, int Indice, Control? Foco) ValidarMultiLinea()
+    {
+        // Lo tecleado en el panel ya está sincronizado, pero se asegura antes
+        // de leer el modelo (p. ej. si se llegó aquí desde un guardado en cola).
+        SincronizarLineaSeleccionadaDesdeUI();
+
+        for (int i = 0; i < lstMultiLineas.Items.Count; i++)
+        {
+            if (lstMultiLineas.Items[i] is not LineaMultiLineaItem item) continue;
+            var linea = item.Linea;
+
+            if (string.IsNullOrWhiteSpace(linea.Regex))
+                return ($"La línea multilínea {i + 1} no tiene expresión regular.\n\n" +
+                        "Escribe la expresión o quita la línea.", i, txtMultiLineaRegex);
+
+            Regex regex;
+            try
+            {
+                regex = new Regex(linea.Regex);
+            }
+            catch (RegexParseException ex)
+            {
+                return ($"Línea multilínea {i + 1}: la expresión no es válida:\n{ex.Message}",
+                        i, txtMultiLineaRegex);
+            }
+
+            var grupos = regex.GetGroupNumbers().Where(g => g > 0).ToList();
+            if (grupos.Count == 0)
+                return ($"Línea multilínea {i + 1}: la expresión no tiene grupos de captura.\n\n" +
+                        "Envuelve entre paréntesis lo que hay que extraer de cada línea.",
+                        i, txtMultiLineaRegex);
+
+            var mapeos = linea.MapeoCampos
+                .Where(m => !string.IsNullOrWhiteSpace(m.Nombre))
+                .ToList();
+            if (mapeos.Count == 0)
+                return ($"Línea multilínea {i + 1}: no tiene ningún campo mapeado.\n\n" +
+                        "Asigna al menos «BaseImponible» a un grupo de la expresión.",
+                        i, dgvMultiLineaMapeo);
+
+            foreach (var mapeo in mapeos)
+            {
+                if (grupos.Contains(mapeo.Grupo)) continue;
+                return ($"Línea multilínea {i + 1}: el campo «{mapeo.Nombre}» apunta al " +
+                        $"grupo {mapeo.Grupo}, que no existe.\n\n" +
+                        $"Grupos disponibles: {string.Join(", ", grupos)}.",
+                        i, dgvMultiLineaMapeo);
+            }
+
+            var duplicado = mapeos
+                .GroupBy(m => m.Nombre, StringComparer.OrdinalIgnoreCase)
+                .FirstOrDefault(g => g.Count() > 1);
+            if (duplicado != null)
+                return ($"Línea multilínea {i + 1}: el campo «{duplicado.Key}» está mapeado " +
+                        "más de una vez.", i, dgvMultiLineaMapeo);
+        }
+
+        return (null, -1, null);
+    }
+
+    /// <summary>
+    /// Avisos no bloqueantes de multilínea (se muestran antes de guardar):
+    /// una línea sin BaseImponible usará el valor global del documento (o se
+    /// descartará si vale 0), que casi nunca es lo que se quiere.
+    /// </summary>
+    private bool ConfirmarAvisosMultiLinea()
+    {
+        if (lstMultiLineas.Items.Count == 0) return true;
+
+        var hayBaseGlobal = _emisorActual?.Campos
+            .Any(c => c.Nombre == "BaseImponible") == true;
+
+        var avisos = new List<string>();
+        for (int i = 0; i < lstMultiLineas.Items.Count; i++)
+        {
+            if (lstMultiLineas.Items[i] is not LineaMultiLineaItem item) continue;
+            if (item.Linea.MapeoCampos.Any(m => m.Nombre == "BaseImponible")) continue;
+            avisos.Add(hayBaseGlobal
+                ? $"Línea {i + 1}: no asigna «BaseImponible»; se usará el valor global del documento."
+                : $"Línea {i + 1}: no asigna «BaseImponible» y el emisor no tiene ese campo global; sus coincidencias se descartarán.");
+        }
+
+        if (avisos.Count == 0) return true;
+
+        var r = MessageBox.Show(
+            "Avisos de multilínea:\n\n" + string.Join("\n", avisos) +
+            "\n\n¿Guardar de todos modos?",
+            "Multilínea", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+        return r == DialogResult.Yes;
     }
 
     private void SincronizarUIaConfig()
@@ -1446,6 +1966,7 @@ public partial class GestionEmisoresForm : Form
         SincronizarCamposDesdeUI();
         _emisorActual.Campos = lstCampos.Items.Cast<CampoConfig>().ToList();
         _emisorActual.PostProcesamiento = lstPostProc.Items.Cast<PostProcesamientoConfig>().ToList();
+        SincronizarLineaSeleccionadaDesdeUI();
     }
 
     /// <summary>
@@ -1906,6 +2427,21 @@ public partial class GestionEmisoresForm : Form
             return false;
         }
 
+        // Multilínea: expresión válida, con grupos y con mapeo coherente. Se
+        // valida ANTES de VIES para no consultar la red por un XML que no se
+        // va a poder guardar.
+        var (errorMulti, indiceMulti, focoMulti) = ValidarMultiLinea();
+        if (errorMulti != null)
+        {
+            tabs.SelectedTab = tabMultiLinea;
+            if (indiceMulti >= 0 && indiceMulti < lstMultiLineas.Items.Count)
+                lstMultiLineas.SelectedIndex = indiceMulti;
+            MessageBox.Show(errorMulti,
+                "Multilínea incompleta", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            focoMulti?.Focus();
+            return false;
+        }
+
         // VIES: sólo para NIF-IVA comunitarios (con prefijo de estado miembro)
         // y sólo si no hay ya un resultado en caché para ese mismo NIF. Un NIF
         // español sin prefijo no dispara ninguna llamada de red al guardar.
@@ -1966,14 +2502,6 @@ public partial class GestionEmisoresForm : Form
 
         _emisorActual.Identificadores = ObtenerIdentificadores();
 
-        if (lstMultiLineas.SelectedItem is LineaConfig lineaActual)
-            ActualizarLineaDesdeUI(lineaActual);
-
-        _emisorActual.MultiLinea = lstMultiLineas.Items.Count > 0 ? new MultiLineaConfig
-        {
-            Lineas = lstMultiLineas.Items.Cast<LineaConfig>().ToList()
-        } : null;
-
         _emisorActual.ZonasOcr = dgvZonas.Rows.Cast<DataGridViewRow>()
             .Where(r => r.Cells[0].Value != null)
             .Select(r => new ZonaOcrConfig
@@ -1989,6 +2517,7 @@ public partial class GestionEmisoresForm : Form
         // Avisos no bloqueantes: no impiden guardar, pero avisan de lo que hará
         // que las facturas salgan en «Revisar» o «Error».
         if (!ConfirmarAvisosCampos()) return false;
+        if (!ConfirmarAvisosMultiLinea()) return false;
 
         try
         {
@@ -2652,7 +3181,6 @@ public partial class GestionEmisoresForm : Form
     /// </summary>
     private void ProgramarRefrescoValores()
     {
-        if (string.IsNullOrEmpty(_rutaPdf)) return;
         _pendienteTabla = true;
         ArrancarTemporizadorRefresco();
     }
@@ -2684,13 +3212,20 @@ public partial class GestionEmisoresForm : Form
         _pendientePrevia = false;
         _pendienteTabla = false;
 
-        if (_emisorActual == null || string.IsNullOrEmpty(_rutaPdf)) return;
+        if (_emisorActual == null) return;
 
         // Si hay pendiente una reextracción, ésta ya deja la tabla al día.
         if (previa)
             ActualizarVistaPreviaZonal();
         else if (tabla)
-            ActualizarTablaValoresExtraidos();
+        {
+            if (!string.IsNullOrEmpty(_rutaPdf))
+                ActualizarTablaValoresExtraidos();
+            // El estado y el resumen de multilínea también se actualizan sin
+            // muestra: validez de la expresión y grupos no dependen del PDF.
+            RefrescarListaMultiLineas();
+            ActualizarEstadoMultiLinea();
+        }
     }
 
     /// <summary>
@@ -3354,5 +3889,19 @@ public partial class GestionEmisoresForm : Form
             var n = nif ?? string.Empty;
             return n.Length > 9 ? "*" + n[^8..] : n;
         }
+    }
+
+    /// <summary>
+    /// Entrada de la lista «Multilínea». Envuelve la LineaConfig para poder
+    /// pintar un resumen (campos mapeados y coincidencias) en vez de la regex
+    /// en crudo, sin añadir propiedades al modelo que se serializa al XML.
+    /// </summary>
+    private sealed class LineaMultiLineaItem
+    {
+        public LineaConfig Linea { get; }
+        public LineaMultiLineaItem(LineaConfig linea) => Linea = linea;
+
+        /// <summary>Resumen que pinta el ListBox (DisplayMember = "Texto").</summary>
+        public string Texto { get; set; } = "";
     }
 }

@@ -96,6 +96,7 @@ partial class GestionEmisoresForm
         lblMultiLineaRegex = new Label();
         txtMultiLineaRegex = new TextBox();
         lblMultiLineaMapeo = new Label();
+        btnMultiLineaGrupos = new Button();
         dgvMultiLineaMapeo = new DataGridView();
         dataGridViewComboBoxColumn1 = new DataGridViewComboBoxColumn();
         dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
@@ -804,6 +805,7 @@ partial class GestionEmisoresForm
         tabMultiLinea.Controls.Add(lblMultiLineaRegex);
         tabMultiLinea.Controls.Add(txtMultiLineaRegex);
         tabMultiLinea.Controls.Add(lblMultiLineaMapeo);
+        tabMultiLinea.Controls.Add(btnMultiLineaGrupos);
         tabMultiLinea.Controls.Add(dgvMultiLineaMapeo);
         tabMultiLinea.Controls.Add(lblSeparadorPostProc);
         tabMultiLinea.Controls.Add(btnPostProcAdd);
@@ -847,17 +849,20 @@ partial class GestionEmisoresForm
         lblMultiLineas.Name = "lblMultiLineas";
         lblMultiLineas.Size = new Size(215, 20);
         lblMultiLineas.TabIndex = 1;
-        lblMultiLineas.Text = "━━━━━━ MULTILÍNEA ━━━━━━";
+        lblMultiLineas.Text = "━━━ MULTILÍNEA · 1 match = 1 línea ━━━";
         // 
         // lstMultiLineas
         // 
         lstMultiLineas.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-        lstMultiLineas.DisplayMember = "Regex";
+        lstMultiLineas.DisplayMember = "Texto";
+        lstMultiLineas.DrawMode = DrawMode.OwnerDrawFixed;
         lstMultiLineas.FormattingEnabled = true;
+        lstMultiLineas.ItemHeight = 20;
         lstMultiLineas.Location = new Point(12, 34);
         lstMultiLineas.Name = "lstMultiLineas";
         lstMultiLineas.Size = new Size(340, 144);
         lstMultiLineas.TabIndex = 2;
+        lstMultiLineas.DrawItem += LstMultiLineas_DrawItem;
         lstMultiLineas.SelectedIndexChanged += LstMultiLineas_SelectedIndexChanged;
         // 
         // btnMultiLineaAdd
@@ -912,17 +917,18 @@ partial class GestionEmisoresForm
         lblMultiLineaRegex.Name = "lblMultiLineaRegex";
         lblMultiLineaRegex.Size = new Size(355, 20);
         lblMultiLineaRegex.TabIndex = 7;
-        lblMultiLineaRegex.Text = "Regex de líneas seleccionadas (1 match = 1 factura):";
+        lblMultiLineaRegex.Text = "Regex de la línea (1 match = 1 línea):";
         // 
         // txtMultiLineaRegex
         // 
         txtMultiLineaRegex.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        txtMultiLineaRegex.Font = new Font("Consolas", 9.75F);
         txtMultiLineaRegex.Location = new Point(368, 34);
         txtMultiLineaRegex.Multiline = true;
         txtMultiLineaRegex.Name = "txtMultiLineaRegex";
         txtMultiLineaRegex.Size = new Size(365, 27);
         txtMultiLineaRegex.TabIndex = 8;
-        txtMultiLineaRegex.TextChanged += ControlModificado;
+        txtMultiLineaRegex.TextChanged += TxtMultiLineaRegex_TextChanged;
         // 
         // lblMultiLineaMapeo
         // 
@@ -933,6 +939,19 @@ partial class GestionEmisoresForm
         lblMultiLineaMapeo.Size = new Size(198, 20);
         lblMultiLineaMapeo.TabIndex = 9;
         lblMultiLineaMapeo.Text = "Mapeo de grupos a campos:";
+        // 
+        // btnMultiLineaGrupos
+        // 
+        btnMultiLineaGrupos.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        btnMultiLineaGrupos.Enabled = false;
+        btnMultiLineaGrupos.FlatStyle = FlatStyle.Flat;
+        btnMultiLineaGrupos.Location = new Point(571, 62);
+        btnMultiLineaGrupos.Name = "btnMultiLineaGrupos";
+        btnMultiLineaGrupos.Size = new Size(162, 25);
+        btnMultiLineaGrupos.TabIndex = 61;
+        btnMultiLineaGrupos.Text = "Detectar grupos";
+        btnMultiLineaGrupos.UseVisualStyleBackColor = true;
+        btnMultiLineaGrupos.Click += BtnMultiLineaGrupos_Click;
         // 
         // dgvMultiLineaMapeo
         // 
@@ -946,6 +965,7 @@ partial class GestionEmisoresForm
         dgvMultiLineaMapeo.Size = new Size(365, 121);
         dgvMultiLineaMapeo.TabIndex = 10;
         dgvMultiLineaMapeo.CellValueChanged += DgvCellValueChanged;
+        dgvMultiLineaMapeo.CurrentCellDirtyStateChanged += DgvMultiLineaMapeo_CurrentCellDirtyStateChanged;
         dgvMultiLineaMapeo.EditingControlShowing += DgvMultiLineaMapeo_EditingControlShowing;
         dgvMultiLineaMapeo.UserAddedRow += DgvUserAddedRow;
         dgvMultiLineaMapeo.UserDeletedRow += DgvUserDeletedRow;
@@ -954,7 +974,7 @@ partial class GestionEmisoresForm
         // 
         dataGridViewComboBoxColumn1.FlatStyle = FlatStyle.Flat;
         dataGridViewComboBoxColumn1.HeaderText = "Campo";
-        dataGridViewComboBoxColumn1.Items.AddRange(new object[] { "BaseImponible", "PorcentajeIVA", "CuotaIVA", "PorcentajeIRPF", "CuotaIRPF", "PorcentajeRE", "CuotaRE", "SubTotal", "TotalFactura" });
+        dataGridViewComboBoxColumn1.Items.AddRange(new object[] { "BaseImponible", "PorcentajeIVA", "CuotaIVA", "PorcentajeIRPF", "CuotaIRPF", "PorcentajeRE", "CuotaRE", "TotalFactura", "NumeroFactura", "Fecha", "ReceptorNombre", "ReceptorNif", "EmisorNif", "ConceptoIngreso", "ConceptoGasto" });
         dataGridViewComboBoxColumn1.MinimumWidth = 6;
         dataGridViewComboBoxColumn1.Name = "dataGridViewComboBoxColumn1";
         // 
@@ -1579,6 +1599,7 @@ partial class GestionEmisoresForm
     private Label lblMultiLineaRegex;
     private TextBox txtMultiLineaRegex;
     private Label lblMultiLineaMapeo;
+    private Button btnMultiLineaGrupos;
     private DataGridView dgvMultiLineaMapeo;
     private DataGridViewComboBoxColumn dataGridViewComboBoxColumn1;
     private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ColumnasExcel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Version>202610280143</Version>
+  <Version>202610280945</Version>
   <Columnas>
     <Columna>
       <Campo>NumeroFactura</Campo>
@@ -8,7 +8,6 @@
         <Cabecera>número factura</Cabecera>
         <Cabecera>número de factura</Cabecera>
         <Cabecera>numero factura</Cabecera>
-        <Cabecera>num</Cabecera>
       </Cabeceras>
     </Columna>
     <Columna>
