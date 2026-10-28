@@ -161,9 +161,9 @@ public partial class GestionEmisoresForm : Form
             var nuevas = new List<FacturasApp.Core.Models.ColumnaExcelConfig>();
             foreach (DataGridViewRow row in dgvColumnasExcel.Rows)
             {
-                var campo = row.Cells["Campo"].Value?.ToString()?.Trim() ?? "";
+                var campo = row.Cells[dataGridViewTextBoxColumnColumnasCampo.Index].Value?.ToString()?.Trim() ?? "";
                 if (string.IsNullOrEmpty(campo)) continue;
-                var texto = row.Cells["Cabeceras"].Value?.ToString() ?? "";
+                var texto = row.Cells[dataGridViewTextBoxColumnColumnasCabeceras.Index].Value?.ToString() ?? "";
                 var cabeceras = texto.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                     .Select(x => x.Trim().ToLowerInvariant())
                     .Where(x => !string.IsNullOrEmpty(x))

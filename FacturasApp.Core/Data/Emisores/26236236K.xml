@@ -2,7 +2,7 @@
 <Emisor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Nif>26236236K</Nif>
   <Nombre>CAZALLA MEDINA, ANDRES</Nombre>
-  <Version>202610122015</Version>
+  <Version>202610280127</Version>
   <Identificadores>
     <Id>SEMIRUEDA</Id>
     <Id>Cazalla</Id>
@@ -11,7 +11,7 @@
   <ConceptoIngreso>700</ConceptoIngreso>
   <ConceptoGasto>648</ConceptoGasto>
   <CulturaFecha>es-ES</CulturaFecha>
-  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\fixture\Andres Cazalla 1.pdf</RutaPdfMuestra>
+  <RutaPdfMuestra>C:\Users\Jose\Carpeta DIGI storage\Mis Documentos (en DIGI)\Facturas V3\2026 3T\CAZALLA MEDINA, ANDRES\Factura nº 2026444 de Hrns. Sarmiento.pdf</RutaPdfMuestra>
   <Campos>
     <Campo Nombre="NumeroFactura">
       <Regex>FACTURA\s*(\S+)</Regex>
