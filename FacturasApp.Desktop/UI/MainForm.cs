@@ -172,6 +172,10 @@ namespace FacturasApp.UI
             _facturas.Clear();
             _cacheTextoBusqueda.Clear();
 
+            // Y el panel de estadísticas, que sólo describe el lote actual
+            LimpiarChips();
+            pnlEstados.Visible = false;
+
             lblEstado.Text = "Listo";
             btnProcesar.Enabled = false;
             ActualizarContadorArchivos();
@@ -381,22 +385,119 @@ namespace FacturasApp.UI
 
         // ── Estadísticas ──────────────────────────────────────────────────────
 
+        /// <summary>
+        /// Fuente de las «chips» del panel de estados (una sola instancia para
+        /// no crear una fuente por chip y por lote).
+        /// </summary>
+        private static readonly Font FuenteChips = new("Segoe UI", 8.25F);
+
+        /// <summary>Fuente del chip cuyo estado filtra el listado ahora mismo.</summary>
+        private static readonly Font FuenteChipsActiva =
+            new("Segoe UI", 8.25F, FontStyle.Bold);
+
+        /// <summary>Chip de cada estado, para marcar en negrita el filtro activo.</summary>
+        private readonly Dictionary<EstadoFactura, Label> _chipsEstado = new();
+
+        /// <summary>
+        /// Pinta el resumen del lote COMPLETO (no del grid filtrado): una chip
+        /// por estado —con recuento y porcentaje, en el color del grid y
+        /// pulsable para filtrar— más documentos únicos, OCR e importe sin
+        /// errores. Lo calcula <see cref="EstadisticasLote"/>.
+        /// </summary>
         private void MostrarResumenEstadisticas(List<Factura> facturas)
         {
-            int total = facturas.Count;
-            int ok = facturas.Count(f => f.Estado == EstadoFactura.OK);
-            int revision = facturas.Count(f => f.Estado ==
-                                     EstadoFactura.Revisar);
-            int errores = facturas.Count(f => f.Estado == EstadoFactura.Error);
-            int porOcr = facturas.Count(f => f.ExtractedByOcr);
-            decimal totalEuros = facturas
-                .Where(f => f.Estado != EstadoFactura.Error)
-                .Sum(f => f.ImporteVerificacion);
+            var estadisticas = EstadisticasLote.Calcular(facturas);
 
-            lblResumen.Text =
-                $"Total: {total}  |  ✔ OK: {ok}  |  " +
-                $"⚠ Revisión: {revision}  |  ✖ Errores: {errores}  |  " +
-                $"OCR: {porOcr}  |  Importe total: {totalEuros:N2} €";
+            pnlEstados.SuspendLayout();
+            LimpiarChips();
+
+            foreach (var estado in estadisticas.Estados)
+            {
+                Label chip = CrearChip(
+                    $"{estado.Estado.ToDisplayText()} {estado.Filas} " +
+                    $"({estado.PorcentajeFilas:N1} %)",
+                    estado.Estado.ToColor(), estado.Estado);
+
+                _chipsEstado[estado.Estado] = chip;
+                pnlEstados.Controls.Add(chip);
+            }
+
+            pnlEstados.Controls.Add(
+                CrearChip($"Documentos: {estadisticas.TotalDocumentos}"));
+            pnlEstados.Controls.Add(
+                CrearChip($"OCR: {estadisticas.ExtraidasPorOcr}"));
+            pnlEstados.Controls.Add(
+                CrearChip($"Importe: {estadisticas.ImporteSinErrores:N2} €"));
+
+            pnlEstados.ResumeLayout();
+            pnlEstados.Visible = facturas.Count > 0;
+            MarcarChipActivo();
+        }
+
+        /// <summary>
+        /// Crea una chip del panel. Sólo las de estado son pulsables (cursiva
+        /// de mano + clic para filtrar); el resto son informativas.
+        /// </summary>
+        private Label CrearChip(string texto, Color? color = null,
+            EstadoFactura? estado = null)
+        {
+            var chip = new Label
+            {
+                AutoSize = true,
+                BackColor = color ?? Color.FromArgb(238, 238, 238),
+                BorderStyle = BorderStyle.FixedSingle,
+                Font = FuenteChips,
+                Margin = new Padding(0, 0, 8, 4),
+                Padding = new Padding(6, 2, 6, 2),
+                Text = texto
+            };
+
+            if (estado is EstadoFactura estadoChip)
+            {
+                chip.Cursor = Cursors.Hand;
+                chip.Click += (_, _) => AlternarFiltroEstado(estadoChip);
+            }
+
+            return chip;
+        }
+
+        /// <summary>
+        /// Chip pulsado: filtra el listado por ese estado; si ya era el filtro
+        /// activo, lo quita y vuelve a «Todos».
+        /// </summary>
+        private void AlternarFiltroEstado(EstadoFactura estado)
+        {
+            string actual = cmbFiltroEstado.SelectedItem?.ToString() ?? "Todos";
+
+            cmbFiltroEstado.SelectedItem = actual == estado.ToString()
+                ? "Todos"
+                : estado.ToString();
+        }
+
+        /// <summary>Marca en negrita la chip del estado que filtra el listado.</summary>
+        private void MarcarChipActivo()
+        {
+            string actual = cmbFiltroEstado.SelectedItem?.ToString() ?? "Todos";
+
+            foreach (var (estado, chip) in _chipsEstado)
+                chip.Font = estado.ToString() == actual
+                    ? FuenteChipsActiva
+                    : FuenteChips;
+        }
+
+        /// <summary>
+        /// Vacía el panel de chips liberando los controles (Controls.Clear no
+        /// los dispone y cada uno tiene su handle GDI).
+        /// </summary>
+        private void LimpiarChips()
+        {
+            _chipsEstado.Clear();
+
+            var chips = pnlEstados.Controls.Cast<Control>().ToList();
+            pnlEstados.Controls.Clear();
+
+            foreach (Control chip in chips)
+                chip.Dispose();
         }
 
         // ── Filtros ───────────────────────────────────────────────────────────
@@ -409,6 +510,7 @@ namespace FacturasApp.UI
         private void cmbFiltroEstado_SelectedIndexChanged(object sender, EventArgs e)
         {
             AplicarFiltros();
+            MarcarChipActivo();
         }
 
         private void AplicarFiltros()

@@ -31,7 +31,7 @@ namespace FacturasApp.UI
             txtFiltro = new TextBox();
             cmbFiltroEstado = new ComboBox();
             dgvFacturas = new DataGridView();
-            lblResumen = new Label();
+            pnlEstados = new FlowLayoutPanel();
             btnExportarExcelIngresos = new Button();
             btnExportarExcelGastos = new Button();
             lblFiltro = new Label();
@@ -170,11 +170,12 @@ namespace FacturasApp.UI
             // 
             // cmbFiltroEstado
             // 
+            cmbFiltroEstado.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             cmbFiltroEstado.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbFiltroEstado.Location = new Point(352, 285);
+            cmbFiltroEstado.Location = new Point(812, 529);
             cmbFiltroEstado.Name = "cmbFiltroEstado";
-            cmbFiltroEstado.Size = new Size(150, 28);
-            cmbFiltroEstado.TabIndex = 14;
+            cmbFiltroEstado.Size = new Size(158, 28);
+            cmbFiltroEstado.TabIndex = 17;
             cmbFiltroEstado.SelectedIndexChanged += cmbFiltroEstado_SelectedIndexChanged;
             // 
             // dgvFacturas
@@ -184,18 +185,20 @@ namespace FacturasApp.UI
             dgvFacturas.Location = new Point(12, 318);
             dgvFacturas.Name = "dgvFacturas";
             dgvFacturas.RowHeadersWidth = 51;
-            dgvFacturas.Size = new Size(958, 235);
+            dgvFacturas.Size = new Size(958, 204);
             dgvFacturas.TabIndex = 15;
             // 
-            // lblResumen
+            // pnlEstados
             // 
-            lblResumen.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            lblResumen.AutoSize = true;
-            lblResumen.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lblResumen.Location = new Point(12, 525);
-            lblResumen.Name = "lblResumen";
-            lblResumen.Size = new Size(0, 20);
-            lblResumen.TabIndex = 16;
+            pnlEstados.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            pnlEstados.AutoScroll = true;
+            pnlEstados.FlowDirection = FlowDirection.LeftToRight;
+            pnlEstados.Location = new Point(12, 528);
+            pnlEstados.Name = "pnlEstados";
+            pnlEstados.Padding = new Padding(0, 4, 0, 0);
+            pnlEstados.Size = new Size(788, 64);
+            pnlEstados.TabIndex = 16;
+            pnlEstados.WrapContents = true;
             // 
             // btnExportarExcelIngresos
             // 
@@ -204,7 +207,7 @@ namespace FacturasApp.UI
             btnExportarExcelIngresos.Enabled = false;
             btnExportarExcelIngresos.FlatStyle = FlatStyle.Flat;
             btnExportarExcelIngresos.ForeColor = Color.White;
-            btnExportarExcelIngresos.Location = new Point(12, 559);
+            btnExportarExcelIngresos.Location = new Point(12, 598);
             btnExportarExcelIngresos.Name = "btnExportarExcelIngresos";
             btnExportarExcelIngresos.Size = new Size(161, 34);
             btnExportarExcelIngresos.TabIndex = 18;
@@ -219,7 +222,7 @@ namespace FacturasApp.UI
             btnExportarExcelGastos.Enabled = false;
             btnExportarExcelGastos.FlatStyle = FlatStyle.Flat;
             btnExportarExcelGastos.ForeColor = Color.White;
-            btnExportarExcelGastos.Location = new Point(179, 559);
+            btnExportarExcelGastos.Location = new Point(179, 598);
             btnExportarExcelGastos.Name = "btnExportarExcelGastos";
             btnExportarExcelGastos.Size = new Size(161, 34);
             btnExportarExcelGastos.TabIndex = 19;
@@ -257,7 +260,7 @@ namespace FacturasApp.UI
             // 
             // MainForm
             // 
-            ClientSize = new Size(982, 603);
+            ClientSize = new Size(982, 640);
             Controls.Add(btnSeleccionarArchivos);
             Controls.Add(btnSeleccionarCarpeta);
             Controls.Add(btnSeleccionarExcel);
@@ -274,13 +277,13 @@ namespace FacturasApp.UI
             Controls.Add(lblEstadoFiltro);
             Controls.Add(cmbFiltroEstado);
             Controls.Add(dgvFacturas);
-            Controls.Add(lblResumen);
+            Controls.Add(pnlEstados);
             Controls.Add(btnExportarExcelIngresos);
             Controls.Add(btnExportarExcelGastos);
             Controls.Add(btnGestionEmisores);
             Font = new Font("Segoe UI", 9F);
             Icon = (Icon)resources.GetObject("$this.Icon");
-            MinimumSize = new Size(800, 600);
+            MinimumSize = new Size(900, 640);
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Gestión de Facturas";
@@ -304,7 +307,7 @@ namespace FacturasApp.UI
         private Label lblContadorArchivos;
         private Label lblEstado;
         private Label lblPorcentaje;
-        private Label lblResumen;
+        private FlowLayoutPanel pnlEstados;
         private TextBox txtFiltro;
         private ComboBox cmbFiltroEstado;
         private DataGridView dgvFacturas;
